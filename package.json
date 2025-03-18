@@ -1,0 +1,28 @@
+{
+  "name": "hisonvue",
+  "version": "1.0.0",
+  "description": "A simple Vue 3 UI component library built with Vite",
+  "main": "dist/hisonvue.cjs.js",
+  "module": "dist/hisonvue.es.js",
+  "unpkg": "dist/hisonvue.iife.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "type-check": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.3",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.2",
+    "vue": "^3.5.13"
+  }
+}
