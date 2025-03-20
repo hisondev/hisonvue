@@ -1,4 +1,5 @@
 <template>
+  <h1>Nuxt Playground Test</h1>
   <HButton @click="handleClick">Click me!</HButton>
 </template>
 
