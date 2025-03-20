@@ -1,28 +1,45 @@
 {
   "name": "hisonvue",
   "version": "1.0.0",
-  "description": "A simple Vue 3 UI component library built with Vite",
-  "main": "dist/hisonvue.cjs.js",
-  "module": "dist/hisonvue.es.js",
-  "unpkg": "dist/hisonvue.iife.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/hisonvue.cjs.js",
+  "module": "./dist/hisonvue.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/hisonvue.es.js",
+      "require": "./dist/hisonvue.cjs.js"
+    },
+    "./style.css": {
+      "default": "./dist/hisonvue.css"
+    },
+    "./nuxt": {
+      "import": "./nuxt/module.mjs"
+    }
+  },
   "files": [
     "dist",
-    "src"
+    "nuxt/module.mjs",
+    "nuxt/plugin.mjs"
   ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:nuxt": "tsc nuxt/module.ts --module ESNext --outDir nuxt && tsc nuxt/plugin.ts --module ESNext --outDir nuxt",
     "type-check": "tsc --noEmit",
     "preview": "vite preview"
   },
   "peerDependencies": {
-    "vue": "^3.5.13"
+    "vue": "^3.0.0",
+    "@nuxt/kit": "^3.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
     "typescript": "^5.8.2",
     "vite": "^6.2.2",
+    "vite-plugin-dts": "^4.5.3",
     "vue": "^3.5.13"
+  },
+  "dependencies": {
+    "vanillanote": "^1.1.0"
   }
 }
