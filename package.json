@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "./dist/hisonvue.cjs.js",
   "module": "./dist/hisonvue.es.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/hisonvue.d.ts",
   "exports": {
     ".": {
       "import": "./dist/hisonvue.es.js",
@@ -23,17 +23,19 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run type:bundle",
+    "type:bundle": "dts-bundle-generator -c dts-bundle-generator.json",
     "build:nuxt": "tsc nuxt/module.ts --module ESNext --outDir nuxt && tsc nuxt/plugin.ts --module ESNext --outDir nuxt",
     "type-check": "tsc --noEmit",
     "preview": "vite preview"
   },
   "peerDependencies": {
-    "vue": "^3.0.0",
-    "@nuxt/kit": "^3.0.0"
+    "@nuxt/kit": "^3.0.0",
+    "vue": "^3.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
+    "dts-bundle-generator": "^9.5.1",
     "typescript": "^5.8.2",
     "vite": "^6.2.2",
     "vite-plugin-dts": "^4.5.3",
