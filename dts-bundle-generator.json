@@ -1,0 +1,15 @@
+[
+  {
+    "entries": [
+      {
+        "filePath": "./dist/index.d.ts",
+        "outputPath": "./dist/hisonvue.d.ts"
+      },
+      {
+        "filePath": "./src/global-components.ts",
+        "outputPath": "./dist/hisonvue.d.ts",
+        "noCheck": true
+      }
+    ]
+  }
+]
