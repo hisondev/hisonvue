@@ -1,11 +1,20 @@
 <template>
-  <button class="hison-btn" @click="$emit('click')">
+  <button
+    class="hison-btn"
+    :style="{ color: textColor || '#fff' }"
+    @click="$emit('click')"
+  >
     <slot>Hison Button</slot>
   </button>
 </template>
 
-<script lang="ts" setup>
-
+<script setup lang="ts">
+const props = defineProps<{
+  textColor?: `#${string}`
+}>()
+defineEmits<{
+  (e: 'click'): void
+}>()
 </script>
 
 <style scoped>
@@ -13,9 +22,9 @@
   padding: 0.5rem 1rem;
   border-radius: 6px;
   background-color: var(--primary-color, #000);
-  color: #fff;
   border: none;
   cursor: pointer;
+  transition: opacity 0.2s;
 }
 .hison-btn:hover {
   opacity: 0.8;
