@@ -9,6 +9,8 @@ export default defineConfig({
       insertTypesEntry: true,
       cleanVueFileName: true,
       copyDtsFiles: true,
+      rollupTypes: true,
+      entryRoot: 'src',
     }),
   ],
   build: {
