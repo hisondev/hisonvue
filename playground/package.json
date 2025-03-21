@@ -12,7 +12,8 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
-    "vite": "^6.2.2",
-    "typescript": "^5.0.0"
+    "hisonvue": "file:../hisonvue-1.0.0.tgz",
+    "typescript": "^5.0.0",
+    "vite": "^6.2.2"
   }
 }
