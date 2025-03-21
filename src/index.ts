@@ -1,13 +1,10 @@
 import { App } from 'vue'
 import { createSSRClientOnly } from './utils/createSSRClientOnly'
-import { DefineComponent } from 'vue'
 
-/**
- * hisonvue custom button component
- */
-type HButtonType = DefineComponent<{}, {}, any>
-
-const HButton: HButtonType = createSSRClientOnly(() => import('./components/HButton.vue'), 'HButton')
+const HButton = createSSRClientOnly<typeof import('./components/HButton.vue').default>(
+  () => import('./components/HButton.vue'),
+  'HButton'
+)
 
 export const HisonVue = {
   install(app: App) {
@@ -15,4 +12,6 @@ export const HisonVue = {
   }
 }
 
-export { HButton }
+export {
+  HButton
+}
