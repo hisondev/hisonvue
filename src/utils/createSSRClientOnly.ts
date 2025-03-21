@@ -1,10 +1,11 @@
-import { defineComponent, ref, h, onMounted, markRaw } from 'vue'
+// hisonvue/utils/createSSRClientOnly.ts
+import { defineComponent, ref, h, onMounted, markRaw, type DefineComponent } from 'vue'
 
-export const createSSRClientOnly = (importer: () => Promise<any>, componentName: string) =>
+export const createSSRClientOnly = <T extends DefineComponent<any, any, any>>(importer: () => Promise<{ default: T }>, componentName: string) =>
 defineComponent({
   name: `${componentName}SSRWrapper`,
   setup(_, { slots, attrs }) {
-    const comp = ref<any>(null)
+    const comp = ref<T | null>(null)
 
     onMounted(async () => {
       const imported = await importer()
