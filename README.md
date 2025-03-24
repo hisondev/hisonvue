@@ -31,17 +31,22 @@ npm install hisonvue
 ```ts
 import { createApp } from 'vue'
 import App from './App.vue'
-import { HisonVue } from 'hisonvue'
+import { HisonVue, type HisonVueConfig } from 'hisonvue'
 import 'hisonvue/style.css'
 
+const hisonVueConfig: HisonVueConfig = {
+    primaryColor: '#00aa00',
+    size: 'm'
+}
+
 const app = createApp(App)
-app.use(HisonVue)
+app.use(HisonVue, hisonVueConfig)
 app.mount('#app')
 ```
-
 > ✅ Once registered globally, you can directly use components like:
 ```html
 <HButton>Click me!</HButton>
+<HEditor />
 ```
 
 ---
@@ -56,19 +61,40 @@ export default defineNuxtConfig({
 })
 ```
 > ✅ No manual type registration needed.  
-> Global components and type IntelliSense are automatically injected into your Nuxt project.
+> Global components and type IntelliSense are automatically injected into your Nuxt project.  
+> ⚠️ Note: In SSR environments like Nuxt, the `.nuxt` directory and type declarations are generated dynamically when you run `npm run dev`. For newly added components or updated JSDoc comments, make sure to restart `npm run dev` to refresh type hints and documentation.  
+> ❗ **Important:** When using Nuxt, you only need to declare `modules: ['hisonvue/nuxt']` in your `nuxt.config.ts`. Do not manually import components like `import { HButton } from '#build/types/hisonvue-components';` — this will cause runtime errors.
+
+Additionally, in Nuxt projects, you can configure global HisonVue settings by creating a plugin file:
+
+**`/plugins/hisonvue.client.ts`**
+```ts
+import { defineNuxtPlugin } from '#app'
+import { HisonVue, type HisonVueConfig } from 'hisonvue'
+import 'hisonvue/style.css'
+
+const hisonVueConfig: HisonVueConfig = {
+  primaryColor: '#00aa00',
+  size: 's'
+}
+
+export default defineNuxtPlugin((nuxtApp) => {
+  nuxtApp.vueApp.use(HisonVue, hisonVueConfig)
+})
+```
 
 ---
 
 ### 3️⃣ **Individual component import**
 If you want to import only specific components manually:
 ```ts
-import { HButton } from 'hisonvue'
+import { HButton, HEditor } from 'hisonvue'
 import 'hisonvue/style.css'
 
 export default {
   components: {
-    HButton
+    HButton,
+    HEditor
   }
 }
 ```
@@ -80,12 +106,14 @@ export default {
 | Component   | Description                                          |
 |-------------|------------------------------------------------------|
 | `<HButton>` | A simple customizable button with text color prop and click event |
+| `<HEditor>` | A rich text editor component using Vanillanote, customizable via `editorConfig` |
 
-### HButton Props
+### Global Config Options (`HisonVueConfig`)
 
-| Prop       | Type          | Description                                         |
-|------------|---------------|-----------------------------------------------------|
-| `textColor`| `#RRGGBB`     | Button text color in hex RGB format (e.g., `#ffffff`) |
+| Option         | Type                           | Description                                                                 |
+|----------------|--------------------------------|-----------------------------------------------------------------------------|
+| `primaryColor` | `#RRGGBB`                      | Main color applied to all components (e.g., `#00aa00`)                      |
+| `size`         | `'s' \| 'm' \| 'l' \| 'xl'` | Default size applied across components                                      |
 
 ---
 
