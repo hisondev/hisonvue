@@ -6,6 +6,7 @@
   "types": "./dist/hisonvue.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/hisonvue.d.ts",
       "import": "./dist/hisonvue.es.js",
       "require": "./dist/hisonvue.cjs.js"
     },
