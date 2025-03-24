@@ -3,7 +3,7 @@ import { HisonVue, type HisonVueConfig } from 'hisonvue'
 import 'hisonvue/style.css'
 
 const hisonVueConfig: HisonVueConfig = {
-  primaryColor: '#00aa00',
+  primaryColor: '#ccddcc',
   size: 's',
 }
 

@@ -1,14 +1,15 @@
 <template>
-    <div>
-        <h1>Nuxt Playground Test</h1>
-        <HButton text-color="#ff0000" @click="onClick">Click Me (Nuxt)</HButton>
-        <br>
-        <HEditor></HEditor>
-    </div>
+    <HProvider>
+        <h1>Nuxt Home Page</h1>
+        <HButton @click="goToTest" text-color="#007bff">Go to Test Page</HButton>
+        <HGrid></HGrid>
+    </HProvider>
 </template>
 
 <script setup lang="ts">
-const onClick = () => {
-    alert('HButton Clicked in Nuxt Playground!')
+const router = useRouter()
+    const goToTest = () => {
+    router.push('/test001')
 }
 </script>
+  
