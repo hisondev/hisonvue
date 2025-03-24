@@ -34,3 +34,6 @@ playground-nuxt/.nuxt/
 # Environment files
 .env
 .env.local
+
+# pack
+hisonvue-1.0.0.tgz

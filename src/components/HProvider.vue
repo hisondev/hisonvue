@@ -1,44 +1,85 @@
 <template>
-    <div>
+    <!-- HisonVue의 모든 컴포넌트를 감싸는 Provider 컨테이너 -->
+    <div ref="providerContainer">
         <slot />
     </div>
 </template>
 
 <script setup lang="ts">
-import { provide, onMounted, onBeforeUnmount } from 'vue'
+import { provide, onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
 import { getVanillanote, createVanillanote, destroyVanillanote } from 'vanillanote'
 
+// 전역 Vanillagrid 인스턴스를 가져옵니다 (하나의 전역 객체로 사용)
+import vg from 'vanillagrid';
+// 전역 Vanillanote 인스턴스를 가져옵니다 (하나의 전역 객체로 사용)
 const vn = getVanillanote()
 
-// 내부 컴포넌트에 vn 주입
+// 내부 HEditor 및 기타 컴포넌트에서 사용할 수 있도록 vn 인스턴스 및 HProvider 존재 여부를 전역 주입합니다.
 provide('hisonvue-vn', vn)
-provide('hprovider', true) // 컴포넌트 내부에서 HProvider 감지용
+provide('hisonvue-vg', vg)
+provide('hprovider', true) // 컴포넌트가 HProvider 내부에서 사용 중인지 확인하기 위함
 
+// provider 컨테이너에 대한 ref
+const providerContainer = ref<HTMLElement | null>(null)
+
+// MutationObserver 및 디바운스 관련 변수
 let observer: MutationObserver | null = null
 
-onMounted(() => {
-observer = new MutationObserver((mutations, obs) => {
-    const targetEl = document.querySelector('[data-vanillanote]')
-    if (targetEl) {
-    createVanillanote(vn)
-    obs.disconnect() // 감지 후 observer 종료
+/**
+ * 에디터가 초기화되지 않았을 경우 createVanillanote를 실행하는 함수
+ * - DOM 변화 감지 시 실행되며, requestAnimationFrame() 을 통해
+ *   한 프레임 뒤에 실행해 DOM이 완전히 준비된 상태에서 실행합니다.
+ * - 각 editor 엘리먼트에 .getNoteData 메서드가 없으면 초기화가 필요하다고 판단합니다.
+ */
+const initializeEditorsIfNeeded = () => {
+requestAnimationFrame(() => {
+    // DOM이 안정화된 직후 1회 실행
+    const editors = document.querySelectorAll('[data-vanillanote]')
+    const grids = document.querySelectorAll('vanilla-grid')
+    const hasUninitializedVn = Array.from(editors).some(
+        (el) => !(el as any).getNoteData
+    )
+    const hasUninitializedVg = Array.from(grids).some(
+        (el) => !(el as HTMLElement).className
+    );
+    if (hasUninitializedVn) {
+        createVanillanote(vn)
+    }
+    if (hasUninitializedVg) {
+        vg.create();
     }
 })
+}
 
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
+onMounted(async () => {
+// 슬롯 내부 콘텐츠 렌더링을 보장
+await nextTick()
+
+// MutationObserver 생성 (provider 내부 DOM 감지)
+observer = new MutationObserver(() => {
+    // DOM 변화 감지 시 createVanillanote 실행 여부 판단
+    initializeEditorsIfNeeded()
 })
+
+// provider 내부 컨테이너 감시 시작
+if (providerContainer.value) {
+    observer.observe(providerContainer.value, {
+        childList: true, // 직계 자식의 추가/삭제 감지
+        subtree: true    // 하위 모든 트리까지 감지
+    })
+}
+
+// 최초 마운트 시 한 번 초기화 실행
+initializeEditorsIfNeeded()
 })
 
 onBeforeUnmount(() => {
-destroyVanillanote(vn)
-if (observer) {
-    observer.disconnect()
-    observer = null
-}
+    // provider 언마운트 시 editor 파괴 및 observer 해제
+    destroyVanillanote(vn)
+    vg.destroy()
+    if (observer) observer.disconnect()
 })
 </script>
 
 <style scoped>
-</style>
+</style>  

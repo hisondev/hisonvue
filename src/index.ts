@@ -12,6 +12,11 @@ const HEditor = createSSRClientOnly<typeof import('./components/HEditor.vue').de
   'HEditor'
 )
 
+const HGrid = createSSRClientOnly<typeof import('./components/HGrid.vue').default>(
+  () => import('./components/HGrid.vue'),
+  'HGrid'
+)
+
 const HProvider = createSSRClientOnly<typeof import('./components/HProvider.vue').default>(
   () => import('./components/HProvider.vue'),
   'HProvider'
@@ -22,6 +27,7 @@ export const HisonVue = {
     app.provide('hisonvue-config', config || {});
     app.component('HButton', HButton);
     app.component('HEditor', HEditor);
+    app.component('HGrid', HGrid);
     app.component('HProvider', HProvider);
   }
 }
@@ -29,6 +35,7 @@ export const HisonVue = {
 export {
   HButton,
   HEditor,
+  HGrid,
   HProvider,
 }
 

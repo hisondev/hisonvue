@@ -1,6 +1,7 @@
 import type { 
   HButton,
   HEditor,
+  HGrid,
   HProvider
 } from './index'
 
@@ -27,6 +28,11 @@ declare module 'vue' {
      * <HEditor main-color="#00aa00" size-level-desktop="3" textarea-height="300px" />
      */
     HEditor: typeof HEditor
+
+    /**
+     * HisonVue custom grid component.
+     */
+    HGrid: typeof HGrid
 
     /**
      * HisonVue provider component that must wrap all HisonVue components.
