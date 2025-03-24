@@ -1,4 +1,8 @@
-import type { HButton } from './index'
+import type { 
+  HButton,
+  HEditor,
+  HProvider
+} from './index'
 
 declare module 'vue' {
   export interface GlobalComponents {
@@ -12,5 +16,29 @@ declare module 'vue' {
      * @event click - Fired when the button is clicked
      */
     HButton: typeof HButton
+
+    /**
+     * HisonVue custom editor component.
+     *
+     * @prop mainColor - Primary color for the editor (hex RGB format, e.g., '#ffffff')
+     * @prop sizeLevelDesktop - Size level (1 to 9) for editor UI scaling
+     * @prop textareaHeight - Height of the textarea (e.g., '300px')
+     * @example
+     * <HEditor main-color="#00aa00" size-level-desktop="3" textarea-height="300px" />
+     */
+    HEditor: typeof HEditor
+
+    /**
+     * HisonVue provider component that must wrap all HisonVue components.
+     *  
+     * It manages global configurations and Vanillanote lifecycle.
+     *  
+     * @example
+     * <HProvider>
+     *   <HButton />
+     *   <HEditor />
+     * </HProvider>
+     */
+    HProvider: typeof HProvider
   }
 }
