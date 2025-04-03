@@ -1,6 +1,8 @@
 import { App } from 'vue'
 import { createSSRClientOnly } from './utils/createSSRClientOnly'
 import type { HisonVueConfig } from './types'
+import { getVanillanote } from 'vanillanote2'
+import vg from 'vanillagrid';
 
 const HButton = createSSRClientOnly<typeof import('./components/HButton.vue').default>(
   () => import('./components/HButton.vue'),
@@ -17,18 +19,16 @@ const HGrid = createSSRClientOnly<typeof import('./components/HGrid.vue').defaul
   'HGrid'
 )
 
-const HProvider = createSSRClientOnly<typeof import('./components/HProvider.vue').default>(
-  () => import('./components/HProvider.vue'),
-  'HProvider'
-)
-
 export const HisonVue = {
   install(app: App, config?: HisonVueConfig) {
+    const _vn = getVanillanote();
+    const _vg = vg;
     app.provide('hisonvue-config', config || {});
+    app.provide('hisonvue-vn', _vn);
+    app.provide('hisonvue-vg', _vg);
     app.component('HButton', HButton);
     app.component('HEditor', HEditor);
     app.component('HGrid', HGrid);
-    app.component('HProvider', HProvider);
   }
 }
 
@@ -36,7 +36,6 @@ export {
   HButton,
   HEditor,
   HGrid,
-  HProvider,
 }
 
 export type { HisonVueConfig } from './types'
