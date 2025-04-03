@@ -45,6 +45,6 @@
   "dependencies": {
     "hisonjs": "^1.1.3",
     "vanillagrid": "^1.1.0",
-    "vanillanote": "^1.1.0"
+    "vanillanote2": "^1.0.0"
   }
 }
