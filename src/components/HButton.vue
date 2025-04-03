@@ -12,11 +12,6 @@
 import { inject, computed } from 'vue';
 import { HisonVueConfig } from '..';
 
-const isInsideHProvider = inject('hprovider', false)
-if (import.meta.env.DEV && !isInsideHProvider) {
-  throw new Error('[HisonVue] <HEditor> must be used inside <HProvider>.')
-}
-
 const config = inject<HisonVueConfig>('hisonvue-config', {});
 const buttonColor = computed(() => config?.primaryColor || '#000');
 const buttonSize = computed(() => {
