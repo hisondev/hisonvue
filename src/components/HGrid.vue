@@ -13,20 +13,15 @@ import { inject, computed } from 'vue'
 import { HisonVueConfig } from '..'
 import { isValidHexColor } from '../utils/validators'
 
-const isInsideHProvider = inject('hprovider', false)
-if (import.meta.env.DEV && !isInsideHProvider) {
-    throw new Error('[HisonVue] <HGrid> must be used inside <HProvider>.')
-}
-
 const props = defineProps<{
 mainColor?: string
 }>()
 
 const config = inject<HisonVueConfig>('hisonvue-config', {})
-const vn = inject('hisonvue-vn')
+const vg = inject('hisonvue-vg')
 
-if (!vn) {
-    throw new Error('[HisonVue] Vanillanote instance not found. Ensure <HProvider> is used.')
+if (!vg) {
+    throw new Error('[HisonVue] Vanillagrid instance not found. Ensure <HProvider> is used.')
 }
 
 // mainColor 속성 처리
