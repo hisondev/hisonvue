@@ -1,31 +1,31 @@
 <template>
-  <div>
+  <div ref="editorWrap">
     <div data-vanillanote v-bind="combinedAttrs"></div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { inject, computed } from 'vue'
+import { inject, computed, ref, onMounted, onBeforeMount } from 'vue'
 import { HisonVueConfig } from '..'
 import { isValidHexColor, isValidPxValue } from '../utils/validators'
-
-const isInsideHProvider = inject('hprovider', false)
-if (import.meta.env.DEV && !isInsideHProvider) {
-  throw new Error('[HisonVue] <HEditor> must be used inside <HProvider>.')
-}
+import { Vanillanote } from 'vanillanote2';
 
 const props = defineProps<{
+  dataId: string
   mainColor?: string
   sizeLevelDesktop?: number
   textareaHeight?: string
 }>()
 
-const config = inject<HisonVueConfig>('hisonvue-config', {})
-const vn = inject('hisonvue-vn')
+const config = inject<HisonVueConfig>('hisonvue-config', {});
+const editorWrap = ref<HTMLElement | null>(null);
+const vn: Vanillanote = inject('hisonvue-vn')!
 
-if (!vn) {
-  throw new Error('[HisonVue] Vanillanote instance not found. Ensure <HProvider> is used.')
-}
+// mainColor 속성 처리
+const dataIdAttr = computed(() => {
+  if(!props.dataId) throw new Error(`data-id attribute is requierd`);
+  return { 'data-id': props.dataId }
+})
 
 // mainColor 속성 처리
 const mainColorAttr = computed(() => {
@@ -62,10 +62,21 @@ const textareaHeightAttr = computed(() => {
 
 // 모든 속성 병합
 const combinedAttrs = computed(() => ({
+  ...dataIdAttr.value,
   ...mainColorAttr.value,
   ...sizeLevelDesktopAttr.value,
   ...textareaHeightAttr.value
 }))
+
+onMounted(()=>{
+  if(!editorWrap.value) return;
+  vn.mountNote(editorWrap.value);
+})
+
+onBeforeMount(()=>{
+  if(!editorWrap.value) return;
+  vn.unmountNote(editorWrap.value);
+})
 </script>
 
 <style scoped>
