@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, computed, ref, onMounted, onBeforeMount } from 'vue'
+import { inject, computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { HisonVueConfig } from '..'
 import { isValidHexColor, isValidPxValue } from '../utils/validators'
 import { Vanillanote } from 'vanillanote2';
@@ -69,11 +69,12 @@ const combinedAttrs = computed(() => ({
 }))
 
 onMounted(()=>{
+  vn.init();
   if(!editorWrap.value) return;
   vn.mountNote(editorWrap.value);
 })
 
-onBeforeMount(()=>{
+onBeforeUnmount(()=>{
   if(!editorWrap.value) return;
   vn.unmountNote(editorWrap.value);
 })
