@@ -2,7 +2,6 @@ import type {
   HButton,
   HEditor,
   HGrid,
-  HProvider
 } from './index'
 
 declare module 'vue' {
@@ -21,6 +20,7 @@ declare module 'vue' {
     /**
      * HisonVue custom editor component.
      *
+     * @prop dataId - note id
      * @prop mainColor - Primary color for the editor (hex RGB format, e.g., '#ffffff')
      * @prop sizeLevelDesktop - Size level (1 to 9) for editor UI scaling
      * @prop textareaHeight - Height of the textarea (e.g., '300px')
@@ -33,18 +33,5 @@ declare module 'vue' {
      * HisonVue custom grid component.
      */
     HGrid: typeof HGrid
-
-    /**
-     * HisonVue provider component that must wrap all HisonVue components.
-     *  
-     * It manages global configurations and Vanillanote lifecycle.
-     *  
-     * @example
-     * <HProvider>
-     *   <HButton />
-     *   <HEditor />
-     * </HProvider>
-     */
-    HProvider: typeof HProvider
   }
 }
