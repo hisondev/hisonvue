@@ -12,4 +12,3 @@ const router = useRouter()
     router.push('/')
 }
 </script>
-  
