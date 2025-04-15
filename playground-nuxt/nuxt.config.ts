@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     define: { 'process.env.DEBUG': false }
   },
   compatibilityDate: '2025-03-19',
+  plugins: ['@/plugins/hisonvue.client.ts'],
   modules: ['hisonvue/nuxt'],
   components: true,
 })
