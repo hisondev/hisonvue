@@ -14,7 +14,7 @@ export default defineNuxtModule({
 
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = dirname(__filename)
-    const globalComponentsPath = resolve(__dirname, '../dist/hisonvue.d.ts')  // ✅ 여기로 변경!
+    const globalComponentsPath = resolve(__dirname, '../dist/hisonvue.d.ts')
 
     addTypeTemplate({
       filename: 'types/hisonvue-components.d.ts',
