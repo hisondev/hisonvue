@@ -10,4 +10,3 @@ const router = useRouter()
     router.push('/test001')
 }
 </script>
-  
