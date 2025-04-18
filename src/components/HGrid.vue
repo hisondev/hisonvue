@@ -1,24 +1,28 @@
 <template>
-    <vanilla-grid id="grid01" rownum-visible="false" status-visible="false" word-break="break-all" white-space="normal"
-    v-bind="combinedAttrs">
-        <v-col id="col1" header="grid\nattributes" data-type="link" width="25%"></v-col>
-        <v-col id="col2" header="column\nattributes" data-type="link" width="25%"></v-col>
-        <v-col id="col3" header="events" data-type="link" width="25%"></v-col>
-        <v-col id="col4" header="methods" data-type="link" width="25%"></v-col>
-    </vanilla-grid>
+    <div  ref="editorWrap">
+        <div data-vanillagrid data-id="grid01" rownum-visible="false" status-visible="false" word-break="break-all" white-space="normal"
+        v-bind="combinedAttrs">
+            <div data-col id="col1" header="header;1" data-type="text" width="25%"></div>
+            <div data-col id="col2" header=";2" data-type="text" width="25%"></div>
+            <div data-col id="col3" header=";3" data-type="text" width="25%"></div>
+            <div data-col id="col4" header=";4" data-type="text" width="25%"></div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts" setup>
-import { inject, computed } from 'vue'
+import { inject, computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { HisonVueConfig } from '..'
 import { isValidHexColor } from '../utils/validators'
+import { Vanillagrid } from 'vanillagrid2';
 
 const props = defineProps<{
 mainColor?: string
 }>()
 
-const config = inject<HisonVueConfig>('hisonvue-config', {})
-const vg = inject('hisonvue-vg')
+const config = inject<HisonVueConfig>('hisonvue-config', {});
+const editorWrap = ref<HTMLElement | null>(null);
+const vg: Vanillagrid = inject('hisonvue-vg')!;
 
 if (!vg) {
     throw new Error('[HisonVue] Vanillagrid instance not found. Ensure <HProvider> is used.')
@@ -37,6 +41,17 @@ const mainColorAttr = computed(() => {
 const combinedAttrs = computed(() => ({
 ...mainColorAttr.value,
 }))
+
+onMounted(()=>{
+  vg.init();
+  if(!editorWrap.value) return;
+  vg.mountGrid(editorWrap.value);
+})
+
+onBeforeUnmount(()=>{
+  if(!editorWrap.value) return;
+  vg.unmountGrid(editorWrap.value);
+})
 </script>
 
 <style scoped>
