@@ -1,1 +1,2 @@
-export type { HisonVueConfig } from './hison-vue-config'
+export * from './hisonVueConfig'
+export * from './hison'
