@@ -1,5 +1,5 @@
 import { defineNuxtPlugin } from '#app'
-import { HisonVue, type HisonVueConfig } from 'hisonvue'
+import { hisonVue, type HisonVueConfig } from 'hisonvue'
 import 'hisonvue/style.css'
 
 const hisonVueConfig: HisonVueConfig = {
@@ -8,5 +8,5 @@ const hisonVueConfig: HisonVueConfig = {
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.use(HisonVue, hisonVueConfig)
+  nuxtApp.vueApp.use(hisonVue, hisonVueConfig)
 })
