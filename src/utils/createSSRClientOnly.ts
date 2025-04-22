@@ -1,5 +1,5 @@
 // hisonvue/utils/createSSRClientOnly.ts
-import { defineComponent, ref, h, onMounted, markRaw, type DefineComponent, Component } from 'vue'
+import { defineComponent, ref, h, onMounted, markRaw, Component } from 'vue'
 
 export const createSSRClientOnly = <T extends Component>(
   importer: () => Promise<{ default: T }>,
