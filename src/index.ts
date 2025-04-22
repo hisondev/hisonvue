@@ -1,8 +1,9 @@
 import { App } from 'vue'
 import { createSSRClientOnly } from './utils/createSSRClientOnly'
-import type { HisonVueConfig } from './types'
-import { getVanillanote, getVanillanoteConfig } from 'vanillanote2'
-import { getVanillagrid, getVanillagridConfig } from 'vanillagrid2'
+import type { HisonVue, HisonVueConfig } from './types'
+import { getVanillanote, getVanillanoteConfig, type Vanillanote } from 'vanillanote2'
+import { getVanillagrid, getVanillagridConfig, type Vanillagrid } from 'vanillagrid2'
+import { createHison } from 'hisonjs'
 
 const HButton = createSSRClientOnly<typeof import('./components/HButton.vue').default>(
   () => import('./components/HButton.vue'),
@@ -19,16 +20,25 @@ const HGrid = createSSRClientOnly<typeof import('./components/HGrid.vue').defaul
   'HGrid'
 )
 
-export const HisonVue = {
+export let hison: HisonVue;
+export const hisonVue = {
   install(app: App, config?: HisonVueConfig) {
+    hison = createHison() as HisonVue;
+    
     const vnConfig = getVanillanoteConfig();
     const vgConfig = getVanillagridConfig();
     const vn = getVanillanote(vnConfig);
     const vg = getVanillagrid(vgConfig);
+
+    hison.vue = {
+      note: vn,
+      grid: vg
+    };
     
     app.provide('hisonvue-config', config || {});
     app.provide('hisonvue-vn', vn);
     app.provide('hisonvue-vg', vg);
+    app.provide('hison', hison);
     app.component('HButton', HButton);
     app.component('HEditor', HEditor);
     app.component('HGrid', HGrid);
@@ -41,4 +51,4 @@ export {
   HGrid,
 }
 
-export type { HisonVueConfig } from './types'
+export type { HisonVue, HisonVueConfig } from './types'
