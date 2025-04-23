@@ -1,2 +1,2 @@
-export * from './hisonVueConfig'
-export * from './hison'
+export * from './hisonvueConfig'
+export * from './hisonvue'
