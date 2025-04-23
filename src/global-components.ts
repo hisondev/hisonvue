@@ -30,7 +30,13 @@ declare module 'vue' {
     HEditor: typeof HEditor
 
     /**
-     * HisonVue custom grid component.
+     * Hisonvue custom grid component.
+     *
+     * @prop dataId - Required grid ID
+     * @prop columns - Column definitions for the grid
+     * @prop height - Grid height in CSS format (e.g., "300px")
+     * @example
+     * <HGrid data-id="grid1" :columns="columns" height="300px" />
      */
     HGrid: typeof HGrid
   }
