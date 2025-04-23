@@ -1,15 +1,15 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import { hisonVue, type HisonVueConfig } from 'hisonvue'
+import { hisonvueApp, type HisonvueConfig } from 'hisonvue'
 import 'hisonvue/style.css'
 import router from './router'
 
 const app = createApp(App)
 
-const hisonVueConfig: HisonVueConfig = {
+const hisonvueConfig: HisonvueConfig = {
     primaryColor: '#ccddcc',
     size: 's',
 }
-app.use(hisonVue, hisonVueConfig)
+app.use(hisonvueApp, hisonvueConfig)
 app.use(router)
 app.mount('#app')
