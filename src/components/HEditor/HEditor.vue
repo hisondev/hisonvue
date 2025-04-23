@@ -6,8 +6,8 @@
 
 <script lang="ts" setup>
 import { inject, computed, ref, onMounted, onBeforeUnmount, defineEmits, watch } from 'vue'
-import { HisonVueConfig } from '..'
-import { isValidHexColor, isValidPxValue } from '../utils/validators'
+import { HisonvueConfig } from '../..'
+import { isValidHexColor, isValidPxValue } from '../../utils/validators'
 import { Vanillanote, VanillanoteElement, NoteData } from 'vanillanote2'
 
 // props
@@ -25,7 +25,7 @@ const emit = defineEmits<{
   (e: 'mounted', note: VanillanoteElement | null): void
 }>()
 
-const config = inject<HisonVueConfig>('hisonvue-config', {})
+const config = inject<HisonvueConfig>('hisonvue-config', {})
 const vn: Vanillanote = inject('hisonvue-vn')!
 
 const editorWrap = ref<HTMLElement | null>(null)
@@ -33,7 +33,7 @@ const noteInstance = ref<VanillanoteElement | null>(null)
 
 // data-id 속성 처리
 const dataIdAttr = computed(() => {
-  if (!props.dataId) throw new Error(`[HisonVue] data-id attribute is required.`)
+  if (!props.dataId) throw new Error(`[Hisonvue] data-id attribute is required.`)
   return { 'data-id': props.dataId }
 })
 
@@ -41,7 +41,7 @@ const dataIdAttr = computed(() => {
 const mainColorAttr = computed(() => {
   const color = props.mainColor ?? config.primaryColor
   if (color && !isValidHexColor(color)) {
-    throw new Error(`[HisonVue] Invalid mainColor: '${color}'. Must be a valid hex color (e.g., '#ffffff').`)
+    throw new Error(`[Hisonvue] Invalid mainColor: '${color}'. Must be a valid hex color (e.g., '#ffffff').`)
   }
   return color ? { 'main-color': color } : {}
 })
@@ -57,7 +57,7 @@ const sizeLevelDesktopAttr = computed(() => {
     : undefined
 
   if (sizeLevel !== undefined && (sizeLevel < 1 || sizeLevel > 9)) {
-    throw new Error(`[HisonVue] Invalid sizeLevelDesktop: '${sizeLevel}'. Must be between 1 and 9.`)
+    throw new Error(`[Hisonvue] Invalid sizeLevelDesktop: '${sizeLevel}'. Must be between 1 and 9.`)
   }
   return sizeLevel !== undefined ? { 'size-level-desktop': sizeLevel } : {}
 })
@@ -65,7 +65,7 @@ const sizeLevelDesktopAttr = computed(() => {
 // textareaHeight 속성 처리
 const textareaHeightAttr = computed(() => {
   if (props.textareaHeight && !isValidPxValue(props.textareaHeight)) {
-    throw new Error(`[HisonVue] Invalid textareaHeight: '${props.textareaHeight}'. Must be a positive number ending with 'px'.`)
+    throw new Error(`[Hisonvue] Invalid textareaHeight: '${props.textareaHeight}'. Must be a positive number ending with 'px'.`)
   }
   return props.textareaHeight ? { 'textarea-height': props.textareaHeight } : {}
 })
@@ -78,17 +78,55 @@ const combinedAttrs = computed(() => ({
   ...textareaHeightAttr.value
 }))
 
+const mutationObserver = new MutationObserver((mutations) => {
+  let mutationEl
+  mutations.forEach((mutation) => {
+      mutationEl = mutation.target
+  })
+  if(!mutationEl) return
+  const note = getParentNote(mutationEl)
+  if(!note) return
+  syncNoteData()
+})
+
+const getParentNote = (targetElement: HTMLElement): VanillanoteElement | null => {
+  let target: any = targetElement
+  while(!(target instanceof Element)) {
+      target = target.parentNode
+  }
+  if(!target.closest) return null
+  return target.closest('[data-vanillanote]')!
+}
+
+const isNoteDataEqual = (a: NoteData, b: NoteData) => {
+  if (!a || !b) return false;
+  if (a.html !== b.html) return false;
+  if (a.plainText !== b.plainText) return false;
+
+  if (JSON.stringify(a.links) !== JSON.stringify(b.links)) return false;
+  if (JSON.stringify(a.files) !== JSON.stringify(b.files)) return false;
+  if (JSON.stringify(a.images) !== JSON.stringify(b.images)) return false;
+  if (JSON.stringify(a.videos) !== JSON.stringify(b.videos)) return false;
+
+  const fileKeysA = Object.keys(a.fileObjects || {});
+  const fileKeysB = Object.keys(b.fileObjects || {});
+  if (fileKeysA.length !== fileKeysB.length) return false;
+  if (!fileKeysA.every(k => fileKeysB.includes(k))) return false;
+
+  const imageKeysA = Object.keys(a.imageObjects || {});
+  const imageKeysB = Object.keys(b.imageObjects || {});
+  if (imageKeysA.length !== imageKeysB.length) return false;
+  if (!imageKeysA.every(k => imageKeysB.includes(k))) return false;
+
+  return true;
+}
+
 // note 데이터 외부로 동기화하는 함수
 const syncNoteData = () => {
   if (noteInstance.value) {
-    isInput = false;
     const noteData = noteInstance.value.getNoteData()
     emit('update:modelValue', noteData)
   }
-}
-let isInput = false;
-const setIsInputTrue = () => {
-  isInput = true;
 }
 
 // mounted 시 에디터 등록 및 modelValue 반영
@@ -107,13 +145,8 @@ onMounted(() => {
   // 내부 편집 감지해서 sync
   if (noteInstance.value) {
     const textarea = noteInstance.value._elements?.textarea
-    if (textarea) {
-      textarea.addEventListener('beforeInput', setIsInputTrue);
-      textarea.addEventListener('input', setIsInputTrue);
-      textarea.addEventListener('blur', syncNoteData);
-    }
+    mutationObserver.observe(textarea, {characterData: true, childList: true, subtree: true})
   }
-
   emit('mounted', noteInstance.value)
 })
 
@@ -122,19 +155,15 @@ onBeforeUnmount(() => {
   if (!editorWrap.value) return
   vn.unmountNote(editorWrap.value)
   if (noteInstance.value) {
-    const textarea = noteInstance.value._elements?.textarea
-    if (textarea) {
-      textarea.removeEventListener('beforeInput', setIsInputTrue);
-      textarea.removeEventListener('input', setIsInputTrue);
-      textarea.removeEventListener('blur', syncNoteData);
-    }
+    mutationObserver.disconnect()
   }
 })
 
-
 watch(() => props.modelValue, (newValue) => {
-  if (!isInput && newValue && noteInstance.value) {
-    noteInstance.value.setNoteData(newValue)
+  if (!noteInstance.value) return;
+  const current = noteInstance.value.getNoteData();
+  if (!isNoteDataEqual(current, newValue!)) {
+    noteInstance.value.setNoteData(newValue!);
   }
 })
 </script>
