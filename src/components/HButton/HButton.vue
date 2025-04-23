@@ -10,9 +10,10 @@
 
 <script setup lang="ts">
 import { inject, computed } from 'vue';
-import { HisonVueConfig } from '..';
+import { HisonvueConfig } from '../..';
 
-const config = inject<HisonVueConfig>('hisonvue-config', {});
+const config = inject<HisonvueConfig>('hisonvue-config', {});
+console.log('hbutton config', config);
 const buttonColor = computed(() => config?.primaryColor || '#000');
 const buttonSize = computed(() => {
   switch (config?.size) {
