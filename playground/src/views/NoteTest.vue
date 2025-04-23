@@ -11,12 +11,11 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { onBeforeUpdate, onMounted, ref } from 'vue'
-import { hison } from 'hisonvue'
 import { NoteData, VanillanoteElement } from 'vanillanote2'
+import { hisonvue } from 'hisonvue'
 
-let noteData: NoteData;
+
 const router = useRouter()
-
 const noteData1 = ref<NoteData>()
 const noteData2 = ref<NoteData>()
 const noteData3 = ref<NoteData>()
@@ -25,26 +24,22 @@ const goBack = () => {
     router.push('/')
 }
 const getNote1 = () => {
+    hisonvue.utils.getNumberFormat(1234.12789,'#,##0.##')
     console.log("##### getNote1");
-    console.log(noteData1.value);
+    console.log("noteData1.value", noteData1.value);
 }
 const setNote3 = () => {
     console.log("##### setNote3");
+    console.log("noteData3.value", noteData3.value);
     noteData3.value = noteData1.value;
-    console.log(noteData3.value);
+    console.log("noteData3.value", noteData3.value);
 }
 
 const mountNote1 = (note: VanillanoteElement) => {
-    console.log("##### mountNote1");
-    console.log(note);
 }
 const mountNote2 = () => {
-    console.log("##### mountNote2");
-    console.log(hison.vue.note.getNote('note2'));
 }
 const mountNote3 = () => {
-    console.log("##### mountNote3");
-    console.log(hison.vue.note.getNote('note3'));
 }
 
 onMounted(() => {
