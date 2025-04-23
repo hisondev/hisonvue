@@ -63,7 +63,7 @@ import type { Vanillanote } from "vanillanote2";
  * ### Encapsulation and Usage
  * 
  * - The `hison` object is a **singleton** created internally by `hisonvue`.
- * - It is globally available after installing `HisonVue` into your Vue application.
+ * - It is globally available after installing `Hisonvue` into your Vue application.
  * - It consolidates backend communication, frontend rendering, and utility logic into a unified, type-safe API.
  * 
  * 
@@ -109,7 +109,7 @@ import type { Vanillanote } from "vanillanote2";
  * 
  * allowing you to develop robust, scalable, and highly modular applications.
  */
-export interface HisonVue extends HisonBase {
+export interface Hisonvue extends HisonBase {
   vue: {
     note: Vanillanote;
     grid: Vanillagrid;
