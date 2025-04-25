@@ -1,2 +1,3 @@
-export * from './hisonvueConfig'
-export * from './hisonvue'
+export * from './hisonConfig'
+export * from './hison'
+export * from './componentTypes'
