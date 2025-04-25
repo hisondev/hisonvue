@@ -37,6 +37,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
     "dts-bundle-generator": "^9.5.1",
+    "sass-embedded": "^1.87.0",
     "typescript": "^5.8.2",
     "vite": "^6.2.2",
     "vite-plugin-dts": "^4.5.3",
@@ -44,7 +45,7 @@
   },
   "dependencies": {
     "hisonjs": "^1.1.7",
-    "vanillagrid2": "^1.0.2",
-    "vanillanote2": "^1.0.3"
+    "vanillagrid2": "^1.0.4",
+    "vanillanote2": "^1.0.6"
   }
 }
