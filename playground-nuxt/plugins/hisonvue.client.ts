@@ -1,12 +1,11 @@
 import { defineNuxtPlugin } from '#app'
-import { hisonvueApp, type HisonvueConfig } from 'hisonvue'
+import { getDefaultHisonConfig, hisonvue, Size, type HisonConfig } from 'hisonvue'
 import 'hisonvue/style.css'
 
-const hisonvueConfig: HisonvueConfig = {
-  primaryColor: '#ccddcc',
-  size: 's',
-}
+const hisonConfig: HisonConfig = getDefaultHisonConfig()
+hisonConfig.primaryColor = '#ccddcc'
+hisonConfig.size = Size.xl
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.use(hisonvueApp, hisonvueConfig)
+  nuxtApp.vueApp.use(hisonvue, hisonConfig)
 })
