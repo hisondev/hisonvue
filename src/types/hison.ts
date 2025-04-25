@@ -1,4 +1,4 @@
-import type { Hison as HisonBase } from "hisonjs";
+import type { Hison as Hisonjs } from "hisonjs";
 import type { Vanillagrid } from "vanillagrid2";
 import type { Vanillanote } from "vanillanote2";
 
@@ -105,11 +105,11 @@ import type { Vanillanote } from "vanillanote2";
  * The extended `Hison` for `hisonvue` provides a **fullstack bridge**:
  * 
  * - Core system management via `hisonjs`
- * - Frontend visual components via `hisonvue.vue`
+ * - Frontend visual components via `hison.vue`
  * 
  * allowing you to develop robust, scalable, and highly modular applications.
  */
-export interface Hisonvue extends HisonBase {
+export interface Hison extends Hisonjs {
   vue: {
     note: Vanillanote;
     grid: Vanillagrid;
