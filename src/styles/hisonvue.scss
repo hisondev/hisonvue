@@ -1,0 +1,51 @@
+:root {
+    --hison-color4: #ccddcc;
+    --hison-color5: #9dae9d;
+    --hison-color7: #9dae9d;
+    --hison-size-rate: 1;
+    --hison-font-family: 'Arial, sans-serif';
+}
+
+/* 공통 버튼 스타일 */
+.hison-button {
+    padding: calc(var(--hison-size-rate) * 0.5rem) calc(var(--hison-size-rate) * 1rem);
+    font-size: calc(var(--hison-size-rate) * 0.8rem);
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+    margin: 2px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-color7);
+    background-color: var(--hison-color4);
+    font-family: var(--hison-font-family);
+}
+
+/* 상태 클래스 */
+.hison-on-button-on,
+.hison-on-active {
+    background-color: var(--hison-color5) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-color7);
+}
+
+.hison-on-mouseover {
+    background-color: var(--hison-color5) !important;
+}
+
+.hison-on-mouseout {
+    background-color: var(--hison-color4) !important;
+}
+
+/* display helpers */
+.hison-on-display-inline {
+    display: inline;
+}
+.hison-on-display-inline-block {
+    display: inline-block;
+}
+.hison-on-display-block {
+    display: block;
+}
+.hison-on-display-none {
+    display: none;
+}
