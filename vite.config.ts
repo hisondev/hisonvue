@@ -16,7 +16,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: './src/index.ts',
-      name: 'HisonVue',
+      name: 'Hisonvue',
       fileName: (format) => `hisonvue.${format}.js`,
       formats: ['es', 'cjs']
     },
