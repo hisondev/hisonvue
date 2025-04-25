@@ -1,13 +1,13 @@
 import type { 
   HButton,
-  HEditor,
+  HNote,
   HGrid,
 } from './index'
 
 declare module 'vue' {
   export interface GlobalComponents {
     /**
-     * HisonVue custom button component.
+     * Hisonvue custom button component.
      *
      * @prop textColor - Button text color (hex RGB format, e.g., '#ffffff')
      * @example
@@ -18,16 +18,16 @@ declare module 'vue' {
     HButton: typeof HButton
 
     /**
-     * HisonVue custom editor component.
+     * Hisonvue custom editor component.
      *
      * @prop dataId - note id
      * @prop mainColor - Primary color for the editor (hex RGB format, e.g., '#ffffff')
      * @prop sizeLevelDesktop - Size level (1 to 9) for editor UI scaling
      * @prop textareaHeight - Height of the textarea (e.g., '300px')
      * @example
-     * <HEditor main-color="#00aa00" size-level-desktop="3" textarea-height="300px" />
+     * <HNote main-color="#00aa00" size-level-desktop="3" textarea-height="300px" />
      */
-    HEditor: typeof HEditor
+    HNote: typeof HNote
 
     /**
      * Hisonvue custom grid component.
