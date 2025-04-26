@@ -23,6 +23,7 @@ playground/dist/
 # playground-nuxt
 playground-nuxt/node_modules/
 playground-nuxt/dist/
+playground-nuxt/.output/
 playground-nuxt/.nuxt/
 
 # TypeScript build cache
