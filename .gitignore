@@ -38,3 +38,5 @@ playground-nuxt/.nuxt/
 
 # pack
 hisonvue-1.0.0.tgz
+
+package-lock.json
