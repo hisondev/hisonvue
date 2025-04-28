@@ -1,6 +1,6 @@
 import type { Hison as Hisonjs } from "hisonjs";
-import type { Vanillagrid } from "vanillagrid2";
-import type { Vanillanote } from "vanillanote2";
+import { GridMethods } from "vanillagrid2";
+import { VanillanoteElement } from "vanillanote2";
 
 /**
  * Extended `Hison` interface for `hisonvue`.
@@ -42,7 +42,7 @@ import type { Vanillanote } from "vanillanote2";
  * 
  * Example:
  * ```typescript
- * const editor = hison.vue.note.getNote("editor-id");
+ * const editor = hison.note.getNote("editor-id");
  * editor.setNoteData({ html: "<p>Hello</p>" });
  * ```
  * 
@@ -53,7 +53,7 @@ import type { Vanillanote } from "vanillanote2";
  * 
  * Example:
  * ```typescript
- * const grid = hison.vue.grid.getGrid("grid-id");
+ * const grid = hison.grid.getGrid("grid-id");
  * grid.load([{ id: "001", name: "Alice" }]);
  * ```
  * 
@@ -76,11 +76,11 @@ import type { Vanillanote } from "vanillanote2";
  * const isAlpha = hison.utils.isAlpha("Hello");
  * 
  * // Accessing Vanillanote editor
- * const note = hison.vue.note.getNote("note1");
+ * const note = hison.note.getNote("note1");
  * note.setNoteData({ html: "<p>World</p>" });
  * 
  * // Accessing Vanillagrid
- * const grid = hison.vue.grid.getGrid("grid1");
+ * const grid = hison.grid.getGrid("grid1");
  * grid.load([{ id: "001", name: "Alice" }]);
  * ```
  * 
@@ -105,13 +105,27 @@ import type { Vanillanote } from "vanillanote2";
  * The extended `Hison` for `hisonvue` provides a **fullstack bridge**:
  * 
  * - Core system management via `hisonjs`
- * - Frontend visual components via `hison.vue`
+ * - Frontend visual components via `hison .note .grid .button ..`
  * 
  * allowing you to develop robust, scalable, and highly modular applications.
  */
 export interface Hison extends Hisonjs {
-  vue: {
-    note: Vanillanote;
-    grid: Vanillagrid;
+  cssEvent : {
+    setButtonOnBefoerClick(func: ((e: MouseEvent) => boolean)): void
+    setButtonOnAfterClick(func: ((e: MouseEvent) => void)): void
+    setButtonOnBeforeMouseover(func: ((e: MouseEvent) => boolean)): void
+    setButtonOnAfterMouseover(func: ((e: MouseEvent) => void)): void
+    setButtonOnBeforeMouseout(func: ((e: MouseEvent) => boolean)): void
+    setButtonOnAfterMouseout(func: ((e: MouseEvent) => void)): void
+    setButtonOnBeforeTouchstart(func: ((e: TouchEvent) => boolean)): void
+    setButtonOnAfterTouchstart(func: ((e: TouchEvent) => void)): void
+    setButtonOnBeforeTouchend(func: ((e: TouchEvent) => boolean)): void
+    setButtonOnAfterTouchend(func: ((e: TouchEvent) => void)): void
+  }
+  note : {
+    getNote(noteId: string): VanillanoteElement | null
+  }
+  grid : {
+    getGrid(gridId: string): GridMethods | null
   }
 }
