@@ -60,9 +60,79 @@ export const getDefaultHisonConfig = () => {
     afterDeleteUrlRequest(responseData: { data: any; response: Response }): boolean | void { return true; },
     interceptApiResult(result: InterfaceDataWrapper | undefined, response: Response): boolean | void { return true; },
     interceptApiError(error: any): boolean | void { return true; },
-    //vue
-    primaryColor: '#eeffee',
-    size: Size.m,
+    
+    componentStyle : {
+      size: Size.m,
+      filledColor: 'rgba(184,206,184,1)',
+      emptyColor: 'rgba(255,255,255,0)',
+      filledTextColor: 'rgba(48,48,48,1)',
+      emptyTextColor: 'rgba(48,48,48,1)',
+      primaryColor : 'rgba(184,206,184,1)',
+      mutedColor : 'rgba(128,128,128,1)',
+      infoColor : 'rgba(180,205,235,1)',
+      successColor : 'rgba(92,184,92,1)',
+      dangerColor : 'rgba(217,83,79,1)',
+      warningColor : 'rgba(240,173,78,1)',
+      invertColor : false,
+      componentColor: {
+        primary: {
+          buttonColor : null,
+          borderColor : null,
+          shadowColor : null,
+          hoverColor : null,
+          activeColor : null,
+        },
+        muted: {
+          buttonColor : null,
+          borderColor : null,
+          shadowColor : null,
+          hoverColor : null,
+          activeColor : null,
+        },
+        info: {
+          buttonColor : null,
+          borderColor : null,
+          shadowColor : null,
+          hoverColor : null,
+          activeColor : null,
+        },
+        success: {
+          buttonColor : null,
+          borderColor : null,
+          shadowColor : null,
+          hoverColor : null,
+          activeColor : null,
+        },
+        danger: {
+          buttonColor : null,
+          borderColor : null,
+          shadowColor : null,
+          hoverColor : null,
+          activeColor : null,
+        },
+        warning: {
+          buttonColor : null,
+          borderColor : null,
+          shadowColor : null,
+          hoverColor : null,
+          activeColor : null,
+        }
+      }
+    },
+    event : {
+      cssEvent : {
+        button_onBeforeClick: (e: MouseEvent) => { return true },
+        button_onAfterClick: (e: MouseEvent) => {},
+        button_onBeforeMouseover: (e: MouseEvent) => { return true },
+        button_onAfterMouseover: (e: MouseEvent) => {},
+        button_onBeforeMouseout: (e: MouseEvent) => { return true },
+        button_onAfterMouseout: (e: MouseEvent) => {},
+        button_onBeforeTouchstart: (e: TouchEvent) => { return true },
+        button_onAfterTouchstart: (e: TouchEvent) => {},
+        button_onBeforeTouchend: (e: TouchEvent) => { return true },
+        button_onAfterTouchend: (e: TouchEvent) => {},
+      }
+    }
   }
   return hisonConfig;
 }
