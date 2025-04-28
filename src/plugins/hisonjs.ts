@@ -1,7 +1,7 @@
 import type { Hison } from 'hisonjs';
 import type { HisonConfig } from '../types'
 
-export const setHisonConfig = (hison: Hison, hisonConfig: HisonConfig) => {
+export const setHisonFromHisonConfig = (hison: Hison, hisonConfig: HisonConfig) => {
     //utils
     if(hisonConfig.dateFormat) hison.setDateFormat(hisonConfig.dateFormat)
     if(hisonConfig.timeFormat) hison.setTimeFormat(hisonConfig.timeFormat)
