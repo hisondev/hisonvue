@@ -1,6 +1,6 @@
 import type { InterfaceDataWrapper } from "hisonjs";
 import { DateFormat, DateTimeFormat, DayFormat, DayOfWeekFormat, HourFormat, HourMinuteFormat, MinuteFormat, MonthFormat, SecondFormat, Size, TimeFormat, YearFormat, YearMonthFormat } from "../enums";
-
+import { HisonvueEvent } from "./hisonCloser";
 
 interface UtilsConfig {
   /**
@@ -618,8 +618,67 @@ interface LinkConfig {
   interceptApiError(error: any): boolean | void;
 }
 
-interface Event {
-  
+export interface ComponentColor {
+  primary: {
+    buttonColor: string | null;
+    borderColor: string | null;
+    shadowColor: string | null;
+    hoverColor: string | null;
+    activeColor: string | null;
+  }
+  muted: {
+    buttonColor: string | null;
+    borderColor: string | null;
+    shadowColor: string | null;
+    hoverColor: string | null;
+    activeColor: string | null;
+  }
+  info: {
+    buttonColor: string | null;
+    borderColor: string | null;
+    shadowColor: string | null;
+    hoverColor: string | null;
+    activeColor: string | null;
+  }
+  success: {
+    buttonColor: string | null;
+    borderColor: string | null;
+    shadowColor: string | null;
+    hoverColor: string | null;
+    activeColor: string | null;
+  }
+  danger: {
+    buttonColor: string | null;
+    borderColor: string | null;
+    shadowColor: string | null;
+    hoverColor: string | null;
+    activeColor: string | null;
+  }
+  warning: {
+    buttonColor: string | null;
+    borderColor: string | null;
+    shadowColor: string | null;
+    hoverColor: string | null;
+    activeColor: string | null;
+  }
+}
+
+export interface ComponentStyle {
+  size: Size.s | Size.m | Size.l | Size.xl;
+
+  primaryColor: string;
+  mutedColor: string;
+  infoColor: string;
+  successColor: string;
+  dangerColor: string;
+  warningColor: string;
+  filledColor: string;
+  emptyColor: string;
+  filledTextColor: string;
+  emptyTextColor: string;
+  componentColor: ComponentColor
+  invertColor: boolean;
+
 }
 
 /**
@@ -630,6 +689,6 @@ interface Event {
  * @property editorConfig - Default config for HNote (based on Vanillanote).
  */
 export interface HisonConfig extends UtilsConfig, ShieldConfig, DataConfig, LinkConfig {
-  primaryColor: string;
-  size: Size.s | Size.m | Size.l | Size.xl;
+  componentStyle: ComponentStyle;
+  event: HisonvueEvent;
 }
