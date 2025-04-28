@@ -10,6 +10,7 @@ import type { Vanillanote, VanillanoteElement, NoteData } from 'vanillanote2'
 import type { HisonConfig } from '../../types'
 import { noteProps } from './props'
 import { Size } from "../../enums";
+import { hisonCloser } from '../../core';
 
 export default defineComponent({
   name: 'HNote',
@@ -17,7 +18,8 @@ export default defineComponent({
   emits: ['update:modelValue', 'mounted'],
   setup(props, { emit }) {
     const config = inject<HisonConfig>('hisonvue-config')!
-    const vn: Vanillanote = inject('hisonvue-vn')!
+    const vn: Vanillanote = hisonCloser.note
+    console.log(vn);
     const editorWrap = ref<HTMLElement | null>(null)
     const noteInstance = ref<VanillanoteElement | null>(null)
 
@@ -41,7 +43,7 @@ export default defineComponent({
 
     const getSizeLevel = (sizeLevel: string) => {
       let size = Number(sizeLevel)
-      switch(config.size) {
+      switch(config.componentStyle.size) {
         case Size.s:
           size = size - 2
           break
