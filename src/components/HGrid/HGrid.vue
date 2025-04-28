@@ -9,13 +9,15 @@ import { defineComponent, inject, computed, onMounted, onBeforeUnmount, ref } fr
 import type { Vanillagrid, GridMethods } from 'vanillagrid2'
 import type { HGridColumn } from '../../types'
 import { gridProps } from './props'
+import { hisonCloser } from '../../core'
 
 export default defineComponent({
     name: 'HGrid',
     props: gridProps,
     emits: ['mounted'],
     setup(props, { emit }) {
-        const vg: Vanillagrid = inject('hisonvue-vg')!
+        const vg: Vanillagrid = hisonCloser.grid
+        console.log(vg);
         const editorWrap = ref<HTMLElement | null>(null)
         const gridInstance = ref<GridMethods | null>(null)
 
