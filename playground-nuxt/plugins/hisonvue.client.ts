@@ -3,8 +3,8 @@ import { getDefaultHisonConfig, hisonvue, Size, type HisonConfig } from 'hisonvu
 import 'hisonvue/style.css'
 
 const hisonConfig: HisonConfig = getDefaultHisonConfig()
-hisonConfig.primaryColor = '#ccddcc'
-hisonConfig.size = Size.xl
+hisonConfig.componentStyle.primaryColor = '#ccddcc'
+hisonConfig.componentStyle.size = Size.xl
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(hisonvue, hisonConfig)
