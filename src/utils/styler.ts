@@ -46,8 +46,11 @@ export const normalizeToRgba = (color: string) => {
  * @returns Updated rgba string
  */
 export const adjustRgbaColor = (rgbaString: string, add: number, newOpacity?: number) => {
-    if (!isValidNumber(add) || !isValidNumber(newOpacity)) {
-      throw new Error('add and newOpacity must be valid numbers')
+    if (!isValidNumber(add)) {
+      throw new Error('add must be valid numbers')
+    }
+    if (newOpacity && !isValidNumber(newOpacity)) {
+      throw new Error('newOpacity must be valid numbers')
     }
   
     // Clamp function to enforce min/max
