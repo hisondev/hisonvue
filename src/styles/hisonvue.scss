@@ -1,7 +1,40 @@
 :root {
-    --hison-color4: #ccddcc;
-    --hison-color5: #9dae9d;
-    --hison-color7: #9dae9d;
+    --hison-filledColor: 'rgba(184,206,184,1)',
+    --hison-emptyColor: 'rgba(255,255,255,0)',
+    --hison-filledTextColor: 'rgba(48,48,48,1)',
+    --hison-emptyTextColor: 'rgba(48,48,48,1)',
+
+    --hison-primary-buttonColor: '',
+    --hison-primary-borderColor: '',
+    --hison-primary-shadowColor: '',
+    --hison-primary-hoverColor: '',
+    --hison-primary-activeColor: '',
+    --hison-muted-buttonColor: '',
+    --hison-muted-borderColor: '',
+    --hison-muted-shadowColor: '',
+    --hison-muted-hoverColor: '',
+    --hison-muted-activeColor: '',
+    --hison-info-buttonColor: '',
+    --hison-info-borderColor: '',
+    --hison-info-shadowColor: '',
+    --hison-info-hoverColor: '',
+    --hison-info-activeColor: '',
+    --hison-success-buttonColor: '',
+    --hison-success-borderColor: '',
+    --hison-success-shadowColor: '',
+    --hison-success-hoverColor: '',
+    --hison-success-activeColor: '',
+    --hison-danger-buttonColor: '',
+    --hison-danger-borderColor: '',
+    --hison-danger-shadowColor: '',
+    --hison-danger-hoverColor: '',
+    --hison-danger-activeColor: '',
+    --hison-warning-buttonColor: '',
+    --hison-warning-borderColor: '',
+    --hison-warning-shadowColor: '',
+    --hison-warning-hoverColor: '',
+    --hison-warning-activeColor: '',
+
     --hison-size-rate: 1;
     --hison-font-family: 'Arial, sans-serif';
 }
@@ -16,24 +49,24 @@
     margin: 2px;
     border: none;
     border-radius: 5px;
-    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-color7);
-    background-color: var(--hison-color4);
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-primary-shadowColor);
+    background-color: var(--hison-primary-buttonColor);
     font-family: var(--hison-font-family);
 }
 
 /* 상태 클래스 */
 .hison-on-button-on,
 .hison-on-active {
-    background-color: var(--hison-color5) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-color7);
+    background-color: var(--hison-primary-hoverColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-primary-shadowColor);
 }
 
 .hison-on-mouseover {
-    background-color: var(--hison-color5) !important;
+    background-color: var(--hison-primary-activeColor) !important;
 }
 
 .hison-on-mouseout {
-    background-color: var(--hison-color4) !important;
+    background-color: var(--hison-primary-buttonColor) !important;
 }
 
 /* display helpers */
