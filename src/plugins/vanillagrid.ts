@@ -12,14 +12,14 @@ export const getVg = (hisonConfig: HisonConfig) => {
 }
 
 const setVnConfigWithHisonConfig = (vgConfig: VanillagridConfig, hisonConfig: HisonConfig) => {
-    if(hisonConfig.primaryColor) {
-        if (!isValidHexColor(hisonConfig.primaryColor)) {
-          throw new Error(`[Hisonvue] Invalid mainColor: '${hisonConfig.primaryColor}'. Must be a valid hex color (e.g., '#ffffff').`)
+    if(hisonConfig.componentStyle.primaryColor) {
+        if (!isValidHexColor(hisonConfig.componentStyle.primaryColor)) {
+          throw new Error(`[Hisonvue] Invalid mainColor: '${hisonConfig.componentStyle.primaryColor}'. Must be a valid hex color (e.g., '#ffffff').`)
         }
-        vgConfig.attributes.defaultGridCssInfo.color = hisonConfig.primaryColor;
+        vgConfig.attributes.defaultGridCssInfo.color = hisonConfig.componentStyle.primaryColor;
     }
-    if(hisonConfig.size) {
-        switch (hisonConfig.size) {
+    if(hisonConfig.componentStyle.size) {
+        switch (hisonConfig.componentStyle.size) {
             case Size.s :
                 vgConfig.attributes.defaultGridCssInfo.sizeLevel = 3;
                 break;
