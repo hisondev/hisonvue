@@ -11,10 +11,10 @@ export const getVn = (hisonConfig: HisonConfig) => {
 }
 
 const setVnConfigWithHisonConfig = (vnConfig: VanillanoteConfig, hisonConfig: HisonConfig) => {
-    if(hisonConfig.primaryColor) {
-        if (!isValidHexColor(hisonConfig.primaryColor)) {
-          throw new Error(`[Hisonvue] Invalid mainColor: '${hisonConfig.primaryColor}'. Must be a valid hex color (e.g., '#ffffff').`)
+    if(hisonConfig.componentStyle.primaryColor) {
+        if (!isValidHexColor(hisonConfig.componentStyle.primaryColor)) {
+          throw new Error(`[Hisonvue] Invalid mainColor: '${hisonConfig.componentStyle.primaryColor}'. Must be a valid hex color (e.g., '#ffffff').`)
         }
-        vnConfig.attributes.mainColor = hisonConfig.primaryColor;
+        vnConfig.attributes.mainColor = hisonConfig.componentStyle.primaryColor;
     }
 }
