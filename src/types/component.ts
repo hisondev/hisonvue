@@ -1,6 +1,5 @@
 import { GridAlign, GridVerticalAlign } from "../enums"
 
-
 export interface HGridColumn {
     id: string
     name?: string
@@ -38,4 +37,8 @@ export interface HGridColumn {
     fontItalic?: boolean
     fontThruline?: boolean
     fontUnderline?: boolean
-  }
+}
+
+export interface HButton extends HTMLButtonElement {
+
+}
