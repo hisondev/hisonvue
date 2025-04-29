@@ -1,6 +1,6 @@
 import { getVanillagrid, getVanillagridConfig, type VanillagridConfig } from 'vanillagrid2'
 import type { HisonConfig } from '../types'
-import { isValidHexColor } from '../utils';
+import { isValidHexColor, normalizeToHex } from '../utils';
 import { Size } from '../enums';
 
 export const getVg = (hisonConfig: HisonConfig) => {
@@ -13,10 +13,11 @@ export const getVg = (hisonConfig: HisonConfig) => {
 
 const setVnConfigWithHisonConfig = (vgConfig: VanillagridConfig, hisonConfig: HisonConfig) => {
     if(hisonConfig.componentStyle.primaryColor) {
-        if (!isValidHexColor(hisonConfig.componentStyle.primaryColor)) {
+        const primaryColor = normalizeToHex(hisonConfig.componentStyle.primaryColor)
+        if (!isValidHexColor(primaryColor)) {
           throw new Error(`[Hisonvue] Invalid mainColor: '${hisonConfig.componentStyle.primaryColor}'. Must be a valid hex color (e.g., '#ffffff').`)
         }
-        vgConfig.attributes.defaultGridCssInfo.color = hisonConfig.componentStyle.primaryColor;
+        vgConfig.attributes.defaultGridCssInfo.color = primaryColor;
     }
     if(hisonConfig.componentStyle.size) {
         switch (hisonConfig.componentStyle.size) {
