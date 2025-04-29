@@ -1,6 +1,7 @@
 import type { Hison as Hisonjs } from "hisonjs";
 import { GridMethods } from "vanillagrid2";
 import { VanillanoteElement } from "vanillanote2";
+import { HButton } from "./component";
 
 /**
  * Extended `Hison` interface for `hisonvue`.
@@ -122,10 +123,9 @@ export interface Hison extends Hisonjs {
     setButtonOnBeforeTouchend(func: ((e: TouchEvent) => boolean)): void
     setButtonOnAfterTouchend(func: ((e: TouchEvent) => void)): void
   }
-  note : {
+  vue : {
     getNote(noteId: string): VanillanoteElement | null
-  }
-  grid : {
     getGrid(gridId: string): GridMethods | null
+    getButton(buttonId: string): HButton | null
   }
 }
