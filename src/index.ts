@@ -45,12 +45,12 @@ export const hisonvue = {
       setButtonOnAfterTouchstart(func: ((e: TouchEvent) => void)) {hisonCloser.event.cssEvent.button_onAfterTouchstart = func},
       setButtonOnBeforeTouchend(func: ((e: TouchEvent) => boolean)) {hisonCloser.event.cssEvent.button_onBeforeTouchend = func},
       setButtonOnAfterTouchend(func: ((e: TouchEvent) => void)) {hisonCloser.event.cssEvent.button_onAfterTouchend = func}
-    }
-    console.log(hisonCloser);
-    (hison as any).note = {};
-    hison.note.getNote = (noteId: string) => { return hisonCloser.note.getNote(noteId) }
-    (hison as any).grid = {};
-    hison.grid.getGrid = (gridId: string) => { return hisonCloser.grid.getGrid(gridId) }
+    };
+    
+    (hison as any).vue = {}
+    hison.vue.getNote = (noteId: string) => { return hisonCloser.note.getNote(noteId) }
+    hison.vue.getGrid = (gridId: string) => { return hisonCloser.grid.getGrid(gridId) }
+    hison.vue.getButton = (buttonId: string) => { return hisonCloser.element.buttonList[buttonId] }
 
     //window setting
     if (typeof window !== 'undefined') {
