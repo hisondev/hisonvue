@@ -11,6 +11,7 @@ import type { HisonConfig } from '../../types'
 import { noteProps } from './props'
 import { Size } from "../../enums";
 import { hisonCloser } from '../../core';
+import { getHexCodeFromColorText } from '../../utils'
 
 export default defineComponent({
   name: 'HNote',
@@ -19,14 +20,15 @@ export default defineComponent({
   setup(props, { emit }) {
     const config = inject<HisonConfig>('hisonvue-config')!
     const vn: Vanillanote = hisonCloser.note
-    console.log(vn);
     const editorWrap = ref<HTMLElement | null>(null)
     const noteInstance = ref<VanillanoteElement | null>(null)
 
-    const EXCLUDED_KEYS = ['modelValue'] as const
+    const EXCLUDED_KEYS = ['modelValue', 'color'] as const
     const bindAttrs = computed(() => {
-      if (!props.dataId) throw new Error(`[Hisonvue] data-id attribute is required.`)
+      if (!props.id) throw new Error(`[Hisonvue] id attribute is required.`)
       const attrs: Record<string, string> = {}
+      attrs['data-id'] = props.id
+
       for (const [key, value] of Object.entries(props)) {
           if (EXCLUDED_KEYS.includes(key as any)) continue
           if (value === undefined || value === null) continue
@@ -38,6 +40,9 @@ export default defineComponent({
       const sizeLevelMobile = getSizeLevel(attrs['size-level-mobile'] ? attrs['size-level-mobile'] : "7")
       attrs['size-level-mobile'] = sizeLevelMobile
 
+      if(attrs.color && getHexCodeFromColorText(attrs.color)) {
+        attrs['main-color'] = getHexCodeFromColorText(attrs.color)
+      }
       return attrs
     })
 
@@ -116,7 +121,7 @@ export default defineComponent({
       if (!editorWrap.value) return
       vn.mountNote(editorWrap.value)
 
-      noteInstance.value = vn.getNote(props.dataId!)
+      noteInstance.value = vn.getNote(props.id!)
       if (props.modelValue && noteInstance.value) {
         noteInstance.value.setNoteData(props.modelValue)
       }
