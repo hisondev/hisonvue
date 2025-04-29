@@ -1,5 +1,22 @@
 import { isValidHexColor, isValidNumber, isValidRgbaColor } from "./validators"
 
+export const primaryColorHex = '#428bca'
+export const mutedColorHex = '#808080'
+export const infoColorHex = '#5bc0de'
+export const successColorHex = '#5cb85c'
+export const dangerColorHex = '#d9534f'
+export const warningColorHex = '#f0ad4e'
+
+export const primaryColorRGBA = 'rgba(66,139,202,1)'
+export const mutedColorRGBA = 'rgba(128,128,128,1)'
+export const infoColorRGBA = 'rgba(91,192,222,1)'
+export const successColorRGBA = 'rgba(92,184,92,1)'
+export const dangerColorRGBA = 'rgba(217,83,79,1)'
+export const warningColorRGBA = 'rgba(240,173,78,1)'
+export const darkTextColorRGBA = 'rgba(48,48,48,1)'
+export const lightTextColorRGBA = 'rgba(255,255,255,1)'
+export const emptyColorRGBA = 'rgba(255,255,255,0)'
+
 /**
  * Converts a hex color string (#fff or #ffffff) to rgba(r, g, b, 1) format.
  */
@@ -21,7 +38,49 @@ export const hexToRgba = (hex: string) => {
   
     return `rgba(${r}, ${g}, ${b}, 1)`
 }
+
+/**
+ * Converts an rgba() string to a hex color string (#rrggbb).
+ * Opacity (alpha) value is ignored.
+ * 
+ * @param rgba A string in rgba(r, g, b, a) format
+ * @returns A string in #rrggbb format
+ */
+export const rgbaToHex = (rgba: string): string => {
+  const match = rgba.replace(/\s+/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?.*\)$/i);
   
+  if (!match) {
+    throw new Error(`Invalid rgba color format: ${rgba}`);
+  }
+
+  const r = parseInt(match[1], 10);
+  const g = parseInt(match[2], 10);
+  const b = parseInt(match[3], 10);
+
+  const toHex = (n: number) => {
+    const hex = n.toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+  
+/**
+ * Takes a color string (hex or rgba) and returns a standardized rgba() string.
+ * @param color A string in hex (#fff, #ffffff) or rgba() format
+ * @returns rgba(r, g, b, a) format string
+ * @throws Error if the input is not a valid color
+ */
+export const normalizeToHex = (color: string) => {
+    if (isValidHexColor(color)) {
+      return color.replace(/\s+/g, '')
+    }
+    if (isValidRgbaColor(color)) {
+      return rgbaToHex(color)
+    }
+    throw new Error(`Invalid color format: ${color}`)
+}
+
 /**
  * Takes a color string (hex or rgba) and returns a standardized rgba() string.
  * @param color A string in hex (#fff, #ffffff) or rgba() format
@@ -109,6 +168,45 @@ export const getIsColorLight = (rgba: string) => {
     }
   
     const brightness = r + g + b;
-    return brightness > 382.5;
+    return brightness > 450;
 }
-  
+
+export const getHexCodeFromColorText = (colorText: string) => {
+  switch(colorText) {
+    case 'primary' :
+        return primaryColorHex
+    case 'muted' :
+        return mutedColorHex
+    case 'info' :
+        return infoColorHex
+    case 'success' :
+        return successColorHex
+    case 'danger' :
+        return dangerColorHex
+    case 'warning' :
+        return warningColorHex
+  }
+  return ''
+}
+
+export const getRGBAFromColorText = (colorText: string) => {
+  switch(colorText) {
+    case 'primary' :
+        return primaryColorRGBA
+    case 'muted' :
+        return mutedColorRGBA
+    case 'info' :
+        return infoColorRGBA
+    case 'success' :
+        return successColorRGBA
+    case 'danger' :
+        return dangerColorRGBA
+    case 'warning' :
+        return warningColorRGBA
+  }
+  return ''
+}
+
+export const getBasicTextColor = (backgroundColor: string) => {
+  return getIsColorLight(backgroundColor) ? darkTextColorRGBA : lightTextColorRGBA
+}
