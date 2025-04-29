@@ -1,34 +1,37 @@
 <template>
   <h1>Test Page with multiple grids</h1>
-  <HButton @click="goBack" text-color="#ff0000">Back to Home</HButton> | 
-  <HButton @click="test1" text-color="#ff0000">test1</HButton> | 
-  <HButton @click="test2" text-color="#ff0000">test2</HButton>
+  <HButton @click="goBack" id="b1" :color="'success'">Back to Home</HButton> | 
+  <HButton @click="test1" id="b2" :color="'danger'">test1</HButton> | 
+  <HButton @click="test2" id="b3" :color="'warning'">test2</HButton>
   <br><br>
   <HGrid
-    data-id="grid01"
+    id="grid01"
     :columns="columns"
     :height="'200px'"
     :rownumVisible="'false'"
     :statusVisible="'false'"
     :visible="'true'"
+    :color="'success'"
     @mounted="mountGrid1"
   />
   <br>
   <HGrid
-    data-id="grid02"
+    id="grid02"
     :columns="columns"
     :height="'200px'"
     :rownumVisible="'false'"
     :statusVisible="'false'"
+    :color="'danger'"
     @mounted="mountGrid2"
   />
   <br>
   <HGrid
-    data-id="grid03"
+    id="grid03"
     :columns="columns"
     :height="'200px'"
     :rownumVisible="'false'"
     :statusVisible="'false'"
+    :color="'warning'"
     @mounted="mountGrid3"
   />
 </template>
@@ -67,11 +70,11 @@
 
   // 버튼 테스트용
   const test1 = () => {
-    const grid1 = hison.grid.getGrid("grid01")!;
+    const grid1 = hison.vue.getGrid("grid01")!;
     grid1.load(sampleData1)
   }
   const test2 = () => {
-    const grid2 = hison.grid.getGrid("grid02")!;
+    const grid2 = hison.vue.getGrid("grid02")!;
     grid2.load(sampleData1)
   }
 
