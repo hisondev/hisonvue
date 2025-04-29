@@ -5,11 +5,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, computed, onMounted, onBeforeUnmount, ref } from 'vue'
+import { defineComponent, computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import type { Vanillagrid, GridMethods } from 'vanillagrid2'
 import type { HGridColumn } from '../../types'
 import { gridProps } from './props'
 import { hisonCloser } from '../../core'
+import { getHexCodeFromColorText } from '../../utils'
 
 export default defineComponent({
     name: 'HGrid',
@@ -17,20 +18,24 @@ export default defineComponent({
     emits: ['mounted'],
     setup(props, { emit }) {
         const vg: Vanillagrid = hisonCloser.grid
-        console.log(vg);
         const editorWrap = ref<HTMLElement | null>(null)
         const gridInstance = ref<GridMethods | null>(null)
 
-        const EXCLUDED_KEYS = ['columns'] as const
+        const EXCLUDED_KEYS = ['columns', 'id'] as const
         const bindAttrs = computed(() => {
-            if (!props.dataId) throw new Error(`[Hisonvue] data-id attribute is required.`)
+            if (!props.id) throw new Error(`[Hisonvue] id attribute is required.`)
             const attrs: Record<string, string> = {}
+            attrs['data-id'] = props.id
 
             for (const [key, value] of Object.entries(props)) {
                 if (EXCLUDED_KEYS.includes(key as any)) continue
                 if (value === undefined || value === null) continue
 
                 attrs[key.replace(/[A-Z]/g, m => '-' + m.toLowerCase())] = String(value)
+            }
+
+            if(attrs.color) {
+                attrs.color = getHexCodeFromColorText(attrs.color) ?? attrs.color
             }
             return attrs
         })
@@ -54,7 +59,7 @@ export default defineComponent({
             })
 
             vg.mountGrid(editorWrap.value)
-            gridInstance.value = vg.getGrid(props.dataId!)
+            gridInstance.value = vg.getGrid(props.id!)
             emit('mounted', gridInstance.value)
         })
 
