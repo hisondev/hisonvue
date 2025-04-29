@@ -1,8 +1,7 @@
 
 import { PropType } from "vue";
 import type { HGridColumn } from "../../types";
-import { SelectionPolicy, GridDateFormat, GridMonthFormat, GridVerticalAlign, ColorSet } from "../../enums";
-import { BoolString } from "../../enums/props";
+import { SelectionPolicy, GridDateFormat, GridMonthFormat, GridVerticalAlign, ColorSet, BoolString } from "../../enums";
 
 export const gridProps = {
     modelValue: Array as PropType<any[]>,
