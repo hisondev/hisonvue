@@ -1,6 +1,5 @@
 import { PropType } from "vue";
-import { Color, Size } from "../../enums";
-import { BoolString } from "../../enums/props";
+import { Color, Size, BoolString } from "../../enums";
 
 export const buttonProps = {
     id: { type: String, required: true },
