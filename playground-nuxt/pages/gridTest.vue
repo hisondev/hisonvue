@@ -67,11 +67,11 @@
 
   // 버튼 테스트용
   const test1 = () => {
-    const grid1 = hison.vue.grid.getGrid("grid01")!;
+    const grid1 = hison.grid.getGrid("grid01")!;
     grid1.load(sampleData1)
   }
   const test2 = () => {
-    const grid2 = hison.vue.grid.getGrid("grid02")!;
+    const grid2 = hison.grid.getGrid("grid02")!;
     grid2.load(sampleData1)
   }
 
