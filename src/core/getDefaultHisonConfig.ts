@@ -1,6 +1,7 @@
 import type { HisonConfig } from "../types";
 import type { InterfaceDataWrapper } from "hisonjs";
 import { DateFormat, DateTimeFormat, DayFormat, DayOfWeekFormat, HourFormat, HourMinuteFormat, MinuteFormat, MonthFormat, SecondFormat, Size, TimeFormat, YearFormat, YearMonthFormat } from "../enums";
+import { emptyColorRGBA, getRGBAFromColorText, lightTextColorRGBA, primaryColorRGBA } from "../utils";
 
 export const getDefaultHisonConfig = () => {
   const hisonConfig: HisonConfig = {
@@ -63,16 +64,16 @@ export const getDefaultHisonConfig = () => {
     
     componentStyle : {
       size: Size.m,
-      filledColor: 'rgba(184,206,184,1)',
-      emptyColor: 'rgba(255,255,255,0)',
-      filledTextColor: 'rgba(48,48,48,1)',
-      emptyTextColor: 'rgba(48,48,48,1)',
-      primaryColor : 'rgba(184,206,184,1)',
-      mutedColor : 'rgba(128,128,128,1)',
-      infoColor : 'rgba(180,205,235,1)',
-      successColor : 'rgba(92,184,92,1)',
-      dangerColor : 'rgba(217,83,79,1)',
-      warningColor : 'rgba(240,173,78,1)',
+      filledColor: primaryColorRGBA,
+      emptyColor: emptyColorRGBA,
+      filledTextColor: lightTextColorRGBA,
+      emptyTextColor: emptyColorRGBA,
+      primaryColor : getRGBAFromColorText('primary'),
+      mutedColor : getRGBAFromColorText('muted'),
+      infoColor : getRGBAFromColorText('info'),
+      successColor : getRGBAFromColorText('success'),
+      dangerColor : getRGBAFromColorText('danger'),
+      warningColor : getRGBAFromColorText('warning'),
       invertColor : false,
       componentColor: {
         primary: {
@@ -81,6 +82,8 @@ export const getDefaultHisonConfig = () => {
           shadowColor : null,
           hoverColor : null,
           activeColor : null,
+          emptyTextColor: null,
+          filledTextColor: null,
         },
         muted: {
           buttonColor : null,
@@ -88,6 +91,8 @@ export const getDefaultHisonConfig = () => {
           shadowColor : null,
           hoverColor : null,
           activeColor : null,
+          emptyTextColor: null,
+          filledTextColor: null,
         },
         info: {
           buttonColor : null,
@@ -95,6 +100,8 @@ export const getDefaultHisonConfig = () => {
           shadowColor : null,
           hoverColor : null,
           activeColor : null,
+          emptyTextColor: null,
+          filledTextColor: null,
         },
         success: {
           buttonColor : null,
@@ -102,6 +109,8 @@ export const getDefaultHisonConfig = () => {
           shadowColor : null,
           hoverColor : null,
           activeColor : null,
+          emptyTextColor: null,
+          filledTextColor: null,
         },
         danger: {
           buttonColor : null,
@@ -109,6 +118,8 @@ export const getDefaultHisonConfig = () => {
           shadowColor : null,
           hoverColor : null,
           activeColor : null,
+          emptyTextColor: null,
+          filledTextColor: null,
         },
         warning: {
           buttonColor : null,
@@ -116,6 +127,8 @@ export const getDefaultHisonConfig = () => {
           shadowColor : null,
           hoverColor : null,
           activeColor : null,
+          emptyTextColor: null,
+          filledTextColor: null,
         }
       }
     },
