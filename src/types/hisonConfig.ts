@@ -625,6 +625,8 @@ export interface ComponentColor {
     shadowColor: string | null;
     hoverColor: string | null;
     activeColor: string | null;
+    emptyTextColor: string | null;
+    filledTextColor: string | null;
   }
   muted: {
     buttonColor: string | null;
@@ -632,6 +634,8 @@ export interface ComponentColor {
     shadowColor: string | null;
     hoverColor: string | null;
     activeColor: string | null;
+    emptyTextColor: string | null;
+    filledTextColor: string | null;
   }
   info: {
     buttonColor: string | null;
@@ -639,6 +643,8 @@ export interface ComponentColor {
     shadowColor: string | null;
     hoverColor: string | null;
     activeColor: string | null;
+    emptyTextColor: string | null;
+    filledTextColor: string | null;
   }
   success: {
     buttonColor: string | null;
@@ -646,6 +652,8 @@ export interface ComponentColor {
     shadowColor: string | null;
     hoverColor: string | null;
     activeColor: string | null;
+    emptyTextColor: string | null;
+    filledTextColor: string | null;
   }
   danger: {
     buttonColor: string | null;
@@ -653,6 +661,8 @@ export interface ComponentColor {
     shadowColor: string | null;
     hoverColor: string | null;
     activeColor: string | null;
+    emptyTextColor: string | null;
+    filledTextColor: string | null;
   }
   warning: {
     buttonColor: string | null;
@@ -660,6 +670,8 @@ export interface ComponentColor {
     shadowColor: string | null;
     hoverColor: string | null;
     activeColor: string | null;
+    emptyTextColor: string | null;
+    filledTextColor: string | null;
   }
 }
 
