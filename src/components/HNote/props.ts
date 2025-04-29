@@ -1,7 +1,6 @@
 import { PropType } from "vue";
-import { Color, NoteModeByDevice, NoteToolPosition } from "../../enums";
+import { Color, NoteModeByDevice, NoteToolPosition, BoolString } from "../../enums";
 import { NoteData } from "vanillanote2";
-import { BoolString } from "../../enums/props";
 
 export const noteProps = {
     modelValue: Object as () => NoteData,
