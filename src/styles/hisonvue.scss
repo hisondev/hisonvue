@@ -1,72 +1,172 @@
 :root {
-    --hison-filledColor: 'rgba(184,206,184,1)',
-    --hison-emptyColor: 'rgba(255,255,255,0)',
-    --hison-filledTextColor: 'rgba(48,48,48,1)',
-    --hison-emptyTextColor: 'rgba(48,48,48,1)',
+    --hison-filledColor: '',
+    --hison-emptyColor: '',
+    --hison-filledTextColor: '',
+    --hison-emptyTextColor: '',
 
     --hison-primary-buttonColor: '',
     --hison-primary-borderColor: '',
     --hison-primary-shadowColor: '',
     --hison-primary-hoverColor: '',
     --hison-primary-activeColor: '',
+    --hison-primary-emptyTextColor: '',
+    --hison-primary-filledTextColor: '',
     --hison-muted-buttonColor: '',
     --hison-muted-borderColor: '',
     --hison-muted-shadowColor: '',
     --hison-muted-hoverColor: '',
     --hison-muted-activeColor: '',
+    --hison-muted-emptyTextColor: '',
+    --hison-muted-filledTextColor: '',
     --hison-info-buttonColor: '',
     --hison-info-borderColor: '',
     --hison-info-shadowColor: '',
     --hison-info-hoverColor: '',
     --hison-info-activeColor: '',
+    --hison-info-emptyTextColor: '',
+    --hison-info-filledTextColor: '',
     --hison-success-buttonColor: '',
     --hison-success-borderColor: '',
     --hison-success-shadowColor: '',
     --hison-success-hoverColor: '',
     --hison-success-activeColor: '',
+    --hison-success-emptyTextColor: '',
+    --hison-success-filledTextColor: '',
     --hison-danger-buttonColor: '',
     --hison-danger-borderColor: '',
     --hison-danger-shadowColor: '',
     --hison-danger-hoverColor: '',
     --hison-danger-activeColor: '',
+    --hison-danger-emptyTextColor: '',
+    --hison-danger-filledTextColor: '',
     --hison-warning-buttonColor: '',
     --hison-warning-borderColor: '',
     --hison-warning-shadowColor: '',
     --hison-warning-hoverColor: '',
     --hison-warning-activeColor: '',
+    --hison-warning-emptyTextColor: '',
+    --hison-warning-filledTextColor: '',
 
-    --hison-size-rate: 1;
     --hison-font-family: 'Arial, sans-serif';
 }
 
-/* 공통 버튼 스타일 */
+/* HButton */
 .hison-button {
-    padding: calc(var(--hison-size-rate) * 0.5rem) calc(var(--hison-size-rate) * 1rem);
-    font-size: calc(var(--hison-size-rate) * 0.8rem);
     display: inline-block;
     cursor: pointer;
     text-align: center;
     margin: 2px;
     border: none;
     border-radius: 5px;
-    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-primary-shadowColor);
-    background-color: var(--hison-primary-buttonColor);
     font-family: var(--hison-font-family);
 }
+.hison-s-button {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.7rem;
+}
+.hison-m-button {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.8rem;
+}
+.hison-l-button {
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+}
+.hison-xl-button {
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+}
+.hison-primary-button {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-primary-shadowColor);
+    background-color: var(--hison-primary-buttonColor);
+    color: var(--hison-primary-filledTextColor);
+}
+.hison-muted-button {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-muted-shadowColor);
+    background-color: var(--hison-muted-buttonColor);
+    color: var(--hison-muted-filledTextColor);
+}
+.hison-info-button {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-info-shadowColor);
+    background-color: var(--hison-info-buttonColor);
+    color: var(--hison-info-filledTextColor);
+}
+.hison-success-button {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-success-shadowColor);
+    background-color: var(--hison-success-buttonColor);
+    color: var(--hison-success-filledTextColor);
+}
+.hison-danger-button {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-danger-shadowColor);
+    background-color: var(--hison-danger-buttonColor);
+    color: var(--hison-danger-filledTextColor);
+}
+.hison-warning-button {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-warning-shadowColor);
+    background-color: var(--hison-warning-buttonColor);
+    color: var(--hison-warning-filledTextColor);
+}
 
-/* 상태 클래스 */
-.hison-on-button-on,
-.hison-on-active {
+/* Css Event */
+.hison-primary-on-active {
     background-color: var(--hison-primary-hoverColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-primary-shadowColor);
 }
-
-.hison-on-mouseover {
+.hison-primary-on-mouseover {
     background-color: var(--hison-primary-activeColor) !important;
 }
-
-.hison-on-mouseout {
+.hison-primary-on-mouseout {
     background-color: var(--hison-primary-buttonColor) !important;
+}
+.hison-muted-on-active {
+    background-color: var(--hison-muted-hoverColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-muted-shadowColor);
+}
+.hison-muted-on-mouseover {
+    background-color: var(--hison-muted-activeColor) !important;
+}
+.hison-muted-on-mouseout {
+    background-color: var(--hison-muted-buttonColor) !important;
+}
+.hison-info-on-active {
+    background-color: var(--hison-info-hoverColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-info-shadowColor);
+}
+.hison-info-on-mouseover {
+    background-color: var(--hison-info-activeColor) !important;
+}
+.hison-info-on-mouseout {
+    background-color: var(--hison-info-buttonColor) !important;
+}
+.hison-success-on-active {
+    background-color: var(--hison-success-hoverColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-success-shadowColor);
+}
+.hison-success-on-mouseover {
+    background-color: var(--hison-success-activeColor) !important;
+}
+.hison-success-on-mouseout {
+    background-color: var(--hison-success-buttonColor) !important;
+}
+.hison-danger-on-active {
+    background-color: var(--hison-danger-hoverColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-danger-shadowColor);
+}
+.hison-danger-on-mouseover {
+    background-color: var(--hison-danger-activeColor) !important;
+}
+.hison-danger-on-mouseout {
+    background-color: var(--hison-danger-buttonColor) !important;
+}
+.hison-warning-on-active {
+    background-color: var(--hison-warning-hoverColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-warning-shadowColor);
+}
+.hison-warning-on-mouseover {
+    background-color: var(--hison-warning-activeColor) !important;
+}
+.hison-warning-on-mouseout {
+    background-color: var(--hison-warning-buttonColor) !important;
 }
 
 /* display helpers */
