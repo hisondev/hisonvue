@@ -1,21 +1,5 @@
+import { hisonCloser } from "../core"
 import { isValidHexColor, isValidNumber, isValidRgbaColor } from "./validators"
-
-export const primaryColorHex = '#428bca'
-export const mutedColorHex = '#808080'
-export const infoColorHex = '#5bc0de'
-export const successColorHex = '#5cb85c'
-export const dangerColorHex = '#d9534f'
-export const warningColorHex = '#f0ad4e'
-
-export const primaryColorRGBA = 'rgba(66,139,202,1)'
-export const mutedColorRGBA = 'rgba(128,128,128,1)'
-export const infoColorRGBA = 'rgba(91,192,222,1)'
-export const successColorRGBA = 'rgba(92,184,92,1)'
-export const dangerColorRGBA = 'rgba(217,83,79,1)'
-export const warningColorRGBA = 'rgba(240,173,78,1)'
-export const darkTextColorRGBA = 'rgba(48,48,48,1)'
-export const lightTextColorRGBA = 'rgba(255,255,255,1)'
-export const emptyColorRGBA = 'rgba(255,255,255,0)'
 
 /**
  * Converts a hex color string (#fff or #ffffff) to rgba(r, g, b, 1) format.
@@ -168,23 +152,23 @@ export const getIsColorLight = (rgba: string) => {
     }
   
     const brightness = r + g + b;
-    return brightness > 450;
+    return brightness > 385;
 }
 
 export const getHexCodeFromColorText = (colorText: string) => {
   switch(colorText) {
     case 'primary' :
-        return primaryColorHex
+        return normalizeToHex(hisonCloser.componentStyle.primaryColor)
     case 'muted' :
-        return mutedColorHex
+        return normalizeToHex(hisonCloser.componentStyle.mutedColor)
     case 'info' :
-        return infoColorHex
+        return normalizeToHex(hisonCloser.componentStyle.infoColor)
     case 'success' :
-        return successColorHex
+        return normalizeToHex(hisonCloser.componentStyle.successColor)
     case 'danger' :
-        return dangerColorHex
+        return normalizeToHex(hisonCloser.componentStyle.dangerColor)
     case 'warning' :
-        return warningColorHex
+        return normalizeToHex(hisonCloser.componentStyle.warningColor)
   }
   return ''
 }
@@ -192,21 +176,47 @@ export const getHexCodeFromColorText = (colorText: string) => {
 export const getRGBAFromColorText = (colorText: string) => {
   switch(colorText) {
     case 'primary' :
-        return primaryColorRGBA
+        return hisonCloser.componentStyle.primaryColor
     case 'muted' :
-        return mutedColorRGBA
+        return hisonCloser.componentStyle.mutedColor
     case 'info' :
-        return infoColorRGBA
+        return hisonCloser.componentStyle.infoColor
     case 'success' :
-        return successColorRGBA
+        return hisonCloser.componentStyle.successColor
     case 'danger' :
-        return dangerColorRGBA
+        return hisonCloser.componentStyle.dangerColor
     case 'warning' :
-        return warningColorRGBA
+        return hisonCloser.componentStyle.warningColor
   }
   return ''
 }
 
 export const getBasicTextColor = (backgroundColor: string) => {
-  return getIsColorLight(backgroundColor) ? darkTextColorRGBA : lightTextColorRGBA
+  return getIsColorLight(backgroundColor) ? hisonCloser.componentStyle.emptyTextColor : hisonCloser.componentStyle.filledTextColor
 }
+
+export const colorCycleChange = (obj: Object, changeFunc: (value: string) => string) => {
+  Object.entries(obj).forEach(([key, value]) => {
+    if (key.endsWith('Color')) {
+      if (typeof value === 'string') {
+        (obj as any)[key] = changeFunc(value);
+      } else if (typeof value === 'object' && value !== null) {
+        Object.entries(value).forEach(([innerKey, innerValue]) => {
+          if (innerKey.endsWith('Color') && typeof innerValue === 'string') {
+            (value as any)[innerKey] = changeFunc(innerValue);
+          }
+        });
+      }
+    }
+  });
+};
+
+export const applyDefaultColor = (target: any, baseColor: string) => {
+  target.buttonColor = baseColor;
+  target.borderColor = adjustRgbaColor(baseColor, -31);
+  target.shadowColor = adjustRgbaColor(baseColor, -47);
+  target.hoverColor = adjustRgbaColor(baseColor, -24);
+  target.activeColor = adjustRgbaColor(baseColor, -24);
+  target.emptyTextColor = baseColor;
+  target.filledTextColor = getBasicTextColor(baseColor);
+};
