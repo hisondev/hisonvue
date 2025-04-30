@@ -2,6 +2,7 @@ import type { Hison as Hisonjs } from "hisonjs";
 import { GridMethods } from "vanillagrid2";
 import { VanillanoteElement } from "vanillanote2";
 import { HButton } from "./component";
+import { Size } from "../enums";
 
 /**
  * Extended `Hison` interface for `hisonvue`.
@@ -111,7 +112,7 @@ import { HButton } from "./component";
  * allowing you to develop robust, scalable, and highly modular applications.
  */
 export interface Hison extends Hisonjs {
-  cssEvent : {
+  cssEvent: {
     setButtonOnBefoerClick(func: ((e: MouseEvent) => boolean)): void
     setButtonOnAfterClick(func: ((e: MouseEvent) => void)): void
     setButtonOnBeforeMouseover(func: ((e: MouseEvent) => boolean)): void
@@ -123,9 +124,23 @@ export interface Hison extends Hisonjs {
     setButtonOnBeforeTouchend(func: ((e: TouchEvent) => boolean)): void
     setButtonOnAfterTouchend(func: ((e: TouchEvent) => void)): void
   }
-  vue : {
+  vue: {
     getNote(noteId: string): VanillanoteElement | null
     getGrid(gridId: string): GridMethods | null
     getButton(buttonId: string): HButton | null
+  }
+  style: {
+    setSize(size: Size.s | Size.m | Size.l | Size.xl): void
+    setFilledColor(filledColor: string): void
+    setEmptyColor(emptyColor: string): void
+    setFilledTextColor(filledTextColor: string): void
+    setEmptyTextColor(emptyTextColor: string): void
+    setPrimaryColor(primaryColor: string): void
+    setMutedColor(mutedColor: string): void
+    setInfoColor(infoColor: string): void
+    setSuccessColor(successColor: string): void
+    setDangerColor(dangerColor: string): void
+    setWarningColor(warningColor: string): void
+    setInvertColor(invert: boolean): void
   }
 }
