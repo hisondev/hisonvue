@@ -1,20 +1,20 @@
 import { getVanillanote, getVanillanoteConfig, type VanillanoteConfig } from 'vanillanote2'
-import type { HisonConfig } from '../types'
 import { isValidHexColor, normalizeToHex } from '../utils';
+import { hisonCloser } from '../core';
 
-export const getVn = (hisonConfig: HisonConfig) => {
+export const getVn = () => {
     const vnConfig = getVanillanoteConfig();
-    setVnConfigWithHisonConfig(vnConfig, hisonConfig);
+    setVnConfigWithHisonConfig(vnConfig);
     const vn = getVanillanote(vnConfig);
 
     return vn;
 }
 
-const setVnConfigWithHisonConfig = (vnConfig: VanillanoteConfig, hisonConfig: HisonConfig) => {
-    if(hisonConfig.componentStyle.primaryColor) {
-        const primaryColor = normalizeToHex(hisonConfig.componentStyle.primaryColor)
+const setVnConfigWithHisonConfig = (vnConfig: VanillanoteConfig) => {
+    if(hisonCloser.componentStyle.primaryColor) {
+        const primaryColor = normalizeToHex(hisonCloser.componentStyle.primaryColor)
         if (!isValidHexColor(primaryColor)) {
-          throw new Error(`[Hisonvue] Invalid mainColor: '${hisonConfig.componentStyle.primaryColor}'. Must be a valid hex color (e.g., '#ffffff').`)
+          throw new Error(`[Hisonvue] Invalid mainColor: '${hisonCloser.componentStyle.primaryColor}'. Must be a valid hex color (e.g., '#ffffff').`)
         }
         vnConfig.attributes.mainColor = primaryColor;
     }
