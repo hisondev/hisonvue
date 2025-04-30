@@ -1,6 +1,5 @@
 import type { InterfaceDataWrapper } from "hisonjs";
 import { DateFormat, DateTimeFormat, DayFormat, DayOfWeekFormat, HourFormat, HourMinuteFormat, MinuteFormat, MonthFormat, SecondFormat, Size, TimeFormat, YearFormat, YearMonthFormat } from "../enums";
-import { HisonvueEvent } from "./hisonCloser";
 
 interface UtilsConfig {
   /**
@@ -618,64 +617,7 @@ interface LinkConfig {
   interceptApiError(error: any): boolean | void;
 }
 
-export interface ComponentColor {
-  primary: {
-    buttonColor: string | null;
-    borderColor: string | null;
-    shadowColor: string | null;
-    hoverColor: string | null;
-    activeColor: string | null;
-    emptyTextColor: string | null;
-    filledTextColor: string | null;
-  }
-  muted: {
-    buttonColor: string | null;
-    borderColor: string | null;
-    shadowColor: string | null;
-    hoverColor: string | null;
-    activeColor: string | null;
-    emptyTextColor: string | null;
-    filledTextColor: string | null;
-  }
-  info: {
-    buttonColor: string | null;
-    borderColor: string | null;
-    shadowColor: string | null;
-    hoverColor: string | null;
-    activeColor: string | null;
-    emptyTextColor: string | null;
-    filledTextColor: string | null;
-  }
-  success: {
-    buttonColor: string | null;
-    borderColor: string | null;
-    shadowColor: string | null;
-    hoverColor: string | null;
-    activeColor: string | null;
-    emptyTextColor: string | null;
-    filledTextColor: string | null;
-  }
-  danger: {
-    buttonColor: string | null;
-    borderColor: string | null;
-    shadowColor: string | null;
-    hoverColor: string | null;
-    activeColor: string | null;
-    emptyTextColor: string | null;
-    filledTextColor: string | null;
-  }
-  warning: {
-    buttonColor: string | null;
-    borderColor: string | null;
-    shadowColor: string | null;
-    hoverColor: string | null;
-    activeColor: string | null;
-    emptyTextColor: string | null;
-    filledTextColor: string | null;
-  }
-}
-
-export interface ComponentStyle {
+export interface ComponentStyleHisonConfig {
   size: Size.s | Size.m | Size.l | Size.xl;
 
   primaryColor: string;
@@ -688,9 +630,24 @@ export interface ComponentStyle {
   emptyColor: string;
   filledTextColor: string;
   emptyTextColor: string;
-  componentColor: ComponentColor
   invertColor: boolean;
+}
 
+export interface CssEvent {
+  button_onBeforeClick: (e: MouseEvent) => boolean
+  button_onAfterClick: (e: MouseEvent) => void
+  button_onBeforeMouseover: (e: MouseEvent) => boolean
+  button_onAfterMouseover: (e: MouseEvent) => void
+  button_onBeforeMouseout: (e: MouseEvent) => boolean
+  button_onAfterMouseout: (e: MouseEvent) => void
+  button_onBeforeTouchstart: (e: TouchEvent) => boolean
+  button_onAfterTouchstart: (e: TouchEvent) => void
+  button_onBeforeTouchend: (e: TouchEvent) => boolean
+  button_onAfterTouchend: (e: TouchEvent) => void
+}
+
+export interface HisonvueEvent {
+  cssEvent: CssEvent
 }
 
 /**
@@ -701,6 +658,6 @@ export interface ComponentStyle {
  * @property editorConfig - Default config for HNote (based on Vanillanote).
  */
 export interface HisonConfig extends UtilsConfig, ShieldConfig, DataConfig, LinkConfig {
-  componentStyle: ComponentStyle;
+  componentStyle: ComponentStyleHisonConfig;
   event: HisonvueEvent;
 }
