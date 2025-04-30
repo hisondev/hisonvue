@@ -4,11 +4,23 @@
     <HButton @click="getNote1" id="b2">getNote1</HButton> | 
     <HButton @click="setNote3" id="b3">setNote3</HButton>
     <br><br>
-    <HNote v-model="noteData1" id="note1" @mounted="mountNote1" textarea-height="200px"></HNote>
+    <HNote v-model="noteData1"
+    id="note1"
+    @mounted="mountNote1"
+    textarea-height="200px"
+    ></HNote>
     <br>
-    <HNote v-model="noteData2" id="note2" @mounted="mountNote2" textarea-height="200px"></HNote>
+    <HNote v-model="noteData2"
+    id="note2"
+    @mounted="mountNote2"
+    textarea-height="200px"
+    ></HNote>
     <br>
-    <HNote v-model="noteData3" id="note3" @mounted="mountNote3" textarea-height="200px"></HNote>
+    <HNote v-model="noteData3"
+    id="note3"
+    @mounted="mountNote3"
+    textarea-height="200px"
+    ></HNote>
 </template>
 
 <script setup lang="ts">
