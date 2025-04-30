@@ -37,7 +37,6 @@ const onMouseoutForCss = (e: MouseEvent) => {
         return
     }
     target.classList.remove(getColorClass(target, 'on-mouseover'))
-    target.classList.add(getColorClass(target, 'on-mouseout'))
     hisonCloser.event.cssEvent.button_onAfterMouseout(e)
 }
 const onTouchstartForCss = (e: TouchEvent) => {
@@ -48,7 +47,6 @@ const onTouchstartForCss = (e: TouchEvent) => {
         return
     }
     target.classList.add(getColorClass(target, 'on-mouseover'))
-    target.classList.remove(getColorClass(target, 'on-mouseout'))
     hisonCloser.event.cssEvent.button_onAfterTouchstart(e)
 }
 const onTouchendForCss = (e: TouchEvent) => {
@@ -58,7 +56,6 @@ const target = e.currentTarget as HTMLElement
         e.preventDefault()
         return
     }
-    target.classList.add(getColorClass(target, 'on-mouseout'))
     target.classList.remove(getColorClass(target, 'on-mouseover'))
     hisonCloser.event.cssEvent.button_onAfterTouchend(e)
 }
