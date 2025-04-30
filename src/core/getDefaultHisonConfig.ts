@@ -1,9 +1,19 @@
 import type { HisonConfig } from "../types";
 import type { InterfaceDataWrapper } from "hisonjs";
 import { DateFormat, DateTimeFormat, DayFormat, DayOfWeekFormat, HourFormat, HourMinuteFormat, MinuteFormat, MonthFormat, SecondFormat, Size, TimeFormat, YearFormat, YearMonthFormat } from "../enums";
-import { emptyColorRGBA, getRGBAFromColorText, lightTextColorRGBA, primaryColorRGBA } from "../utils";
+import { adjustRgbaColor, colorCycleChange, getBasicTextColor, normalizeToRgba } from "../utils";
 
 export const getDefaultHisonConfig = () => {
+  const primaryColorRGBA = 'rgba(96,169,232,1)'
+  const mutedColorRGBA = 'rgba(158,158,158,1)'
+  const infoColorRGBA = 'rgba(121,232,252,1)'
+  const successColorRGBA = 'rgba(122,214,122,1)'
+  const dangerColorRGBA = 'rgba(247,113,109,1)'
+  const warningColorRGBA = 'rgba(255,193,98,1)'
+  const darkTextColorRGBA = 'rgba(48,48,48,1)'
+  const lightTextColorRGBA = 'rgba(255,255,255,1)'
+  const emptyColorRGBA = 'rgba(255,255,255,0)'
+
   const hisonConfig: HisonConfig = {
     //utils
     dateFormat : DateFormat['yyyy-MM-dd'],
@@ -67,70 +77,14 @@ export const getDefaultHisonConfig = () => {
       filledColor: primaryColorRGBA,
       emptyColor: emptyColorRGBA,
       filledTextColor: lightTextColorRGBA,
-      emptyTextColor: emptyColorRGBA,
-      primaryColor : getRGBAFromColorText('primary'),
-      mutedColor : getRGBAFromColorText('muted'),
-      infoColor : getRGBAFromColorText('info'),
-      successColor : getRGBAFromColorText('success'),
-      dangerColor : getRGBAFromColorText('danger'),
-      warningColor : getRGBAFromColorText('warning'),
+      emptyTextColor: darkTextColorRGBA,
+      primaryColor : primaryColorRGBA,
+      mutedColor : mutedColorRGBA,
+      infoColor : infoColorRGBA,
+      successColor : successColorRGBA,
+      dangerColor : dangerColorRGBA,
+      warningColor : warningColorRGBA,
       invertColor : false,
-      componentColor: {
-        primary: {
-          buttonColor : null,
-          borderColor : null,
-          shadowColor : null,
-          hoverColor : null,
-          activeColor : null,
-          emptyTextColor: null,
-          filledTextColor: null,
-        },
-        muted: {
-          buttonColor : null,
-          borderColor : null,
-          shadowColor : null,
-          hoverColor : null,
-          activeColor : null,
-          emptyTextColor: null,
-          filledTextColor: null,
-        },
-        info: {
-          buttonColor : null,
-          borderColor : null,
-          shadowColor : null,
-          hoverColor : null,
-          activeColor : null,
-          emptyTextColor: null,
-          filledTextColor: null,
-        },
-        success: {
-          buttonColor : null,
-          borderColor : null,
-          shadowColor : null,
-          hoverColor : null,
-          activeColor : null,
-          emptyTextColor: null,
-          filledTextColor: null,
-        },
-        danger: {
-          buttonColor : null,
-          borderColor : null,
-          shadowColor : null,
-          hoverColor : null,
-          activeColor : null,
-          emptyTextColor: null,
-          filledTextColor: null,
-        },
-        warning: {
-          buttonColor : null,
-          borderColor : null,
-          shadowColor : null,
-          hoverColor : null,
-          activeColor : null,
-          emptyTextColor: null,
-          filledTextColor: null,
-        }
-      }
     },
     event : {
       cssEvent : {
@@ -147,5 +101,6 @@ export const getDefaultHisonConfig = () => {
       }
     }
   }
+
   return hisonConfig;
 }
