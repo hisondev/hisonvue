@@ -1,8 +1,7 @@
 import { App } from 'vue'
 import type { Hison, HisonConfig } from './types'
 import { createHison } from 'hisonjs'
-import { setHisonFromHisonConfig } from './plugins'
-import { applyCssVariables, createSSRClientOnly, getDefaultHisonConfig, hisonCloser, setHisonCloserFromHisonConfig } from './core'
+import { createSSRClientOnly, getDefaultHisonConfig, createHisonCloser, setHison } from './core'
 import './styles/hisonvue.scss'
 
 const HButton = createSSRClientOnly<typeof import('./components/HButton/HButton.vue').default>(
@@ -32,30 +31,8 @@ export const hisonvue = {
     else {
       config = getDefaultHisonConfig()
     }
-    setHisonCloserFromHisonConfig(config)
-    setHisonFromHisonConfig(hison, config)
-    hison.cssEvent = {
-      setButtonOnBefoerClick(func: ((e: MouseEvent) => boolean)) {hisonCloser.event.cssEvent.button_onBeforeClick = func},
-      setButtonOnAfterClick(func: ((e: MouseEvent) => void)) {hisonCloser.event.cssEvent.button_onAfterClick = func},
-      setButtonOnBeforeMouseover(func: ((e: MouseEvent) => boolean)) {hisonCloser.event.cssEvent.button_onBeforeMouseover = func},
-      setButtonOnAfterMouseover(func: ((e: MouseEvent) => void)) {hisonCloser.event.cssEvent.button_onAfterMouseover = func},
-      setButtonOnBeforeMouseout(func: ((e: MouseEvent) => boolean)) {hisonCloser.event.cssEvent.button_onBeforeMouseout = func},
-      setButtonOnAfterMouseout(func: ((e: MouseEvent) => void)) {hisonCloser.event.cssEvent.button_onAfterMouseout = func},
-      setButtonOnBeforeTouchstart(func: ((e: TouchEvent) => boolean)) {hisonCloser.event.cssEvent.button_onBeforeTouchstart = func},
-      setButtonOnAfterTouchstart(func: ((e: TouchEvent) => void)) {hisonCloser.event.cssEvent.button_onAfterTouchstart = func},
-      setButtonOnBeforeTouchend(func: ((e: TouchEvent) => boolean)) {hisonCloser.event.cssEvent.button_onBeforeTouchend = func},
-      setButtonOnAfterTouchend(func: ((e: TouchEvent) => void)) {hisonCloser.event.cssEvent.button_onAfterTouchend = func}
-    };
-    
-    (hison as any).vue = {}
-    hison.vue.getNote = (noteId: string) => { return hisonCloser.note.getNote(noteId) }
-    hison.vue.getGrid = (gridId: string) => { return hisonCloser.grid.getGrid(gridId) }
-    hison.vue.getButton = (buttonId: string) => { return hisonCloser.element.buttonList[buttonId] }
-
-    //window setting
-    if (typeof window !== 'undefined') {
-      applyCssVariables(config)
-    }
+    createHisonCloser(config)
+    setHison(hison, config)
     
     app.provide('hisonvue-config', config)
     app.provide('hison', hison)
