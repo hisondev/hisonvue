@@ -11,7 +11,6 @@
     :rownumVisible="'false'"
     :statusVisible="'false'"
     :visible="'true'"
-    :color="'success'"
     @mounted="mountGrid1"
   />
   <br>
@@ -72,7 +71,7 @@
   const test1 = () => {
     const grid1 = hison.vue.getGrid("grid01")!;
     grid1.load(sampleData1)
-    console.log(hison.vue.getButton('b1'))
+    hison.style.setInvertColor(true)
   }
   const test2 = () => {
     const grid2 = hison.vue.getGrid("grid02")!;
