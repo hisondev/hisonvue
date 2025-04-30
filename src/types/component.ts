@@ -40,5 +40,8 @@ export interface HGridColumn {
 }
 
 export interface HButton extends HTMLButtonElement {
-
+    isDisable(): boolean
+    isVisible(): boolean
+    setDisable(disable: boolean): void
+    setVisible(visible: boolean): void
 }
