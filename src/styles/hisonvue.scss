@@ -61,7 +61,7 @@
     font-family: var(--hison-font-family);
 }
 .hison-s-button {
-    padding: 0.5rem 0.6rem;
+    padding: 0.4rem 0.6rem;
     font-size: 0.7rem;
 }
 .hison-m-button {
@@ -109,76 +109,80 @@
 
 /* Css Event */
 .hison-primary-on-active {
-    background-color: var(--hison-primary-hoverColor) !important;
+    background-color: var(--hison-primary-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-primary-shadowColor);
 }
 .hison-primary-on-mouseover {
-    background-color: var(--hison-primary-activeColor) !important;
-}
-.hison-primary-on-mouseout {
-    background-color: var(--hison-primary-buttonColor) !important;
+    background-color: var(--hison-primary-hoverColor) !important;
 }
 .hison-muted-on-active {
-    background-color: var(--hison-muted-hoverColor) !important;
+    background-color: var(--hison-muted-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-muted-shadowColor);
 }
 .hison-muted-on-mouseover {
-    background-color: var(--hison-muted-activeColor) !important;
-}
-.hison-muted-on-mouseout {
-    background-color: var(--hison-muted-buttonColor) !important;
+    background-color: var(--hison-muted-hoverColor) !important;
 }
 .hison-info-on-active {
-    background-color: var(--hison-info-hoverColor) !important;
+    background-color: var(--hison-info-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-info-shadowColor);
 }
 .hison-info-on-mouseover {
-    background-color: var(--hison-info-activeColor) !important;
-}
-.hison-info-on-mouseout {
-    background-color: var(--hison-info-buttonColor) !important;
+    background-color: var(--hison-info-hoverColor) !important;
 }
 .hison-success-on-active {
-    background-color: var(--hison-success-hoverColor) !important;
+    background-color: var(--hison-success-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-success-shadowColor);
 }
 .hison-success-on-mouseover {
-    background-color: var(--hison-success-activeColor) !important;
-}
-.hison-success-on-mouseout {
-    background-color: var(--hison-success-buttonColor) !important;
+    background-color: var(--hison-success-hoverColor) !important;
 }
 .hison-danger-on-active {
-    background-color: var(--hison-danger-hoverColor) !important;
+    background-color: var(--hison-danger-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-danger-shadowColor);
 }
 .hison-danger-on-mouseover {
-    background-color: var(--hison-danger-activeColor) !important;
-}
-.hison-danger-on-mouseout {
-    background-color: var(--hison-danger-buttonColor) !important;
+    background-color: var(--hison-danger-hoverColor) !important;
 }
 .hison-warning-on-active {
-    background-color: var(--hison-warning-hoverColor) !important;
+    background-color: var(--hison-warning-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-warning-shadowColor);
 }
 .hison-warning-on-mouseover {
-    background-color: var(--hison-warning-activeColor) !important;
-}
-.hison-warning-on-mouseout {
-    background-color: var(--hison-warning-buttonColor) !important;
+    background-color: var(--hison-warning-hoverColor) !important;
 }
 
 /* display helpers */
-.hison-on-display-inline {
+.hison-display-inline {
     display: inline;
 }
-.hison-on-display-inline-block {
+.hison-display-inline-block {
     display: inline-block;
 }
-.hison-on-display-block {
+.hison-display-block {
     display: block;
 }
-.hison-on-display-none {
+.hison-display-none {
     display: none;
 }
+
+/* disable */
+.hison-disable {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* posision */
+.hison-position-left {
+    float: left;
+}
+.hison-position-right {
+    float: right;
+}
+/* 둘중하나
+.hison-position-left {
+    align-self: flex-start;
+}
+.hison-position-right {
+    align-self: flex-end;
+}
+*/
