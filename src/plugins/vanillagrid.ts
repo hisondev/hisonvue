@@ -1,26 +1,26 @@
 import { getVanillagrid, getVanillagridConfig, type VanillagridConfig } from 'vanillagrid2'
-import type { HisonConfig } from '../types'
 import { isValidHexColor, normalizeToHex } from '../utils';
 import { Size } from '../enums';
+import { hisonCloser } from '../core';
 
-export const getVg = (hisonConfig: HisonConfig) => {
+export const getVg = () => {
     const vgConfig = getVanillagridConfig();
-    setVnConfigWithHisonConfig(vgConfig, hisonConfig);
+    setVnConfigWithHisonConfig(vgConfig);
     const vg = getVanillagrid(vgConfig);
 
     return vg;
 }
 
-const setVnConfigWithHisonConfig = (vgConfig: VanillagridConfig, hisonConfig: HisonConfig) => {
-    if(hisonConfig.componentStyle.primaryColor) {
-        const primaryColor = normalizeToHex(hisonConfig.componentStyle.primaryColor)
+const setVnConfigWithHisonConfig = (vgConfig: VanillagridConfig) => {
+    if(hisonCloser.componentStyle.primaryColor) {
+        const primaryColor = normalizeToHex(hisonCloser.componentStyle.primaryColor)
         if (!isValidHexColor(primaryColor)) {
-          throw new Error(`[Hisonvue] Invalid mainColor: '${hisonConfig.componentStyle.primaryColor}'. Must be a valid hex color (e.g., '#ffffff').`)
+          throw new Error(`[Hisonvue] Invalid mainColor: '${hisonCloser.componentStyle.primaryColor}'. Must be a valid hex color (e.g., '#ffffff').`)
         }
         vgConfig.attributes.defaultGridCssInfo.color = primaryColor;
     }
-    if(hisonConfig.componentStyle.size) {
-        switch (hisonConfig.componentStyle.size) {
+    if(hisonCloser.componentStyle.size) {
+        switch (hisonCloser.componentStyle.size) {
             case Size.s :
                 vgConfig.attributes.defaultGridCssInfo.sizeLevel = 3;
                 break;
