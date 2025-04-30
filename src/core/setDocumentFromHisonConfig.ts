@@ -1,27 +1,12 @@
-// setDocumentFromHisonConfig.ts
-import { HisonConfig } from "../types";
-import { adjustRgbaColor, getBasicTextColor, getInvertColor, normalizeToRgba } from "../utils";
+import { applyDefaultColor, colorCycleChange, getBasicTextColor, getInvertColor, normalizeToRgba } from "../utils";
+import { hisonCloser } from "./createHisonCloser";
 
-export const applyCssVariables = (config: HisonConfig) => {
-  const c = config.componentStyle;
+export const applyCssVariables = () => {
+  const c = hisonCloser.componentStyle;
+
+  console.log('hisonCloser.componentStyle111', hisonCloser.componentStyle)
 
   // 색상 순회 및 normalize 처리
-  const colorCycleChange = (obj: Object, changeFunc: (value: string) => string) => {
-    Object.entries(obj).forEach(([key, value]) => {
-      if (key.endsWith('Color')) {
-        if (typeof value === 'string') {
-          (obj as any)[key] = changeFunc(value);
-        } else if (typeof value === 'object' && value !== null) {
-          Object.entries(value).forEach(([innerKey, innerValue]) => {
-            if (innerKey.endsWith('Color') && typeof innerValue === 'string') {
-              (value as any)[innerKey] = changeFunc(innerValue);
-            }
-          });
-        }
-      }
-    });
-  };
-
   colorCycleChange(c, normalizeToRgba);
 
   if (!c.filledTextColor) c.filledTextColor = getBasicTextColor(c.filledColor);
@@ -29,26 +14,17 @@ export const applyCssVariables = (config: HisonConfig) => {
 
   const cc = c.componentColor;
 
-  const applyDefaults = (target: any, baseColor: string) => {
-    target.buttonColor ??= baseColor;
-    target.borderColor ??= adjustRgbaColor(baseColor, -31);
-    target.shadowColor ??= adjustRgbaColor(baseColor, -47);
-    target.hoverColor ??= adjustRgbaColor(baseColor, -24);
-    target.activeColor ??= adjustRgbaColor(baseColor, -24);
-    target.emptyTextColor ??= baseColor;
-    target.filledTextColor ??= getBasicTextColor(baseColor);
-  };
-
-  applyDefaults(cc.primary, c.primaryColor);
-  applyDefaults(cc.muted, c.mutedColor);
-  applyDefaults(cc.info, c.infoColor);
-  applyDefaults(cc.success, c.successColor);
-  applyDefaults(cc.danger, c.dangerColor);
-  applyDefaults(cc.warning, c.warningColor);
+  applyDefaultColor(cc.primary, c.primaryColor);
+  applyDefaultColor(cc.muted, c.mutedColor);
+  applyDefaultColor(cc.info, c.infoColor);
+  applyDefaultColor(cc.success, c.successColor);
+  applyDefaultColor(cc.danger, c.dangerColor);
+  applyDefaultColor(cc.warning, c.warningColor);
 
   if (c.invertColor) {
     colorCycleChange(c, getInvertColor);
   }
+  console.log('hisonCloser.componentStyle222', hisonCloser.componentStyle)
 
   const cssVariables = `
 :root {
