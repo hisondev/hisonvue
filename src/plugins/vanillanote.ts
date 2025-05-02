@@ -1,6 +1,6 @@
 import { getVanillanote, getVanillanoteConfig, type VanillanoteConfig } from 'vanillanote2'
 import { isValidHexColor, normalizeToHex } from '../utils';
-import { hisonCloser } from '../core';
+import { hisonCloser } from '..';
 
 export const getVn = () => {
     const vnConfig = getVanillanoteConfig();
