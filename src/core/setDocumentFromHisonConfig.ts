@@ -1,37 +1,46 @@
-import { applyDefaultColor, colorCycleChange, getBasicTextColor, getInvertColor, normalizeToRgba } from "../utils";
-import { hisonCloser } from "./createHisonCloser";
+import { hisonCloser } from "..";
+import { applyDefaultColor, getInvertColor, normalizeToRgba } from "../utils";
+import { dangerColorRGBA, darkTextColorRGBA, emptyColorRGBA, infoColorRGBA, lightTextColorRGBA, mutedColorRGBA, primaryColorRGBA, successColorRGBA, warningColorRGBA } from "./getDefaultHisonConfig";
 
 export const applyCssVariables = () => {
   const c = hisonCloser.componentStyle;
 
-  console.log('hisonCloser.componentStyle111', hisonCloser.componentStyle)
+  c.primaryColor = c.primaryColor ? normalizeToRgba(c.primaryColor) : primaryColorRGBA
+  c.mutedColor = c.mutedColor ? normalizeToRgba(c.mutedColor) : mutedColorRGBA
+  c.infoColor = c.infoColor ? normalizeToRgba(c.infoColor) : infoColorRGBA
+  c.successColor = c.successColor ? normalizeToRgba(c.successColor) : successColorRGBA
+  c.dangerColor = c.dangerColor ? normalizeToRgba(c.dangerColor) : dangerColorRGBA
+  c.warningColor = c.warningColor ? normalizeToRgba(c.warningColor) : warningColorRGBA
+  c.filledColor = c.filledColor ? normalizeToRgba(c.filledColor) : primaryColorRGBA
+  c.emptyColor = c.emptyColor ? normalizeToRgba(c.emptyColor) : emptyColorRGBA
+  c.filledTextColor = c.filledTextColor ? normalizeToRgba(c.filledTextColor) : lightTextColorRGBA
+  c.emptyTextColor = c.emptyTextColor ? normalizeToRgba(c.emptyTextColor) : darkTextColorRGBA
 
-  // 색상 순회 및 normalize 처리
-  colorCycleChange(c, normalizeToRgba);
-
-  if (!c.filledTextColor) c.filledTextColor = getBasicTextColor(c.filledColor);
-  if (!c.emptyTextColor) c.emptyTextColor = getBasicTextColor(c.emptyColor);
+  c.primaryInvertColor = getInvertColor(c.primaryColor)
+  c.mutedInvertColor = getInvertColor(c.mutedColor)
+  c.infoInvertColor = getInvertColor(c.infoColor)
+  c.successInvertColor = getInvertColor(c.successColor)
+  c.dangerInvertColor = getInvertColor(c.dangerColor)
+  c.warningInvertColor = getInvertColor(c.warningColor)
+  c.filledInvertColor = getInvertColor(c.filledColor)
+  c.emptyInvertColor = getInvertColor(c.emptyColor)
+  c.filledTextInvertColor = getInvertColor(c.filledTextColor)
+  c.emptyTextInvertColor = getInvertColor(c.emptyTextColor)
 
   const cc = c.componentColor;
-
-  applyDefaultColor(cc.primary, c.primaryColor);
-  applyDefaultColor(cc.muted, c.mutedColor);
-  applyDefaultColor(cc.info, c.infoColor);
-  applyDefaultColor(cc.success, c.successColor);
-  applyDefaultColor(cc.danger, c.dangerColor);
-  applyDefaultColor(cc.warning, c.warningColor);
-
-  if (c.invertColor) {
-    colorCycleChange(c, getInvertColor);
-  }
-  console.log('hisonCloser.componentStyle222', hisonCloser.componentStyle)
+  applyDefaultColor(cc.primary, c.invertColor ? c.primaryInvertColor : c.primaryColor);
+  applyDefaultColor(cc.muted, c.invertColor ? c.mutedInvertColor : c.mutedColor);
+  applyDefaultColor(cc.info, c.invertColor ? c.infoInvertColor : c.infoColor);
+  applyDefaultColor(cc.success, c.invertColor ? c.successInvertColor : c.successColor);
+  applyDefaultColor(cc.danger, c.invertColor ? c.dangerInvertColor : c.dangerColor);
+  applyDefaultColor(cc.warning, c.invertColor ? c.warningInvertColor : c.warningColor);
 
   const cssVariables = `
 :root {
-  --hison-filledColor: ${c.filledColor};
-  --hison-emptyColor: ${c.emptyColor};
-  --hison-filledTextColor: ${c.filledTextColor};
-  --hison-emptyTextColor: ${c.emptyTextColor};
+  --hison-filledColor: ${c.invertColor ? c.filledInvertColor : c.filledColor};
+  --hison-emptyColor: ${c.invertColor ? c.emptyInvertColor : c.emptyColor};
+  --hison-filledTextColor: ${c.invertColor ? c.filledTextInvertColor : c.filledTextColor};
+  --hison-emptyTextColor: ${c.invertColor ? c.emptyTextInvertColor : c.emptyTextColor};
   --hison-primary-buttonColor: ${cc.primary.buttonColor};
   --hison-primary-borderColor: ${cc.primary.borderColor};
   --hison-primary-shadowColor: ${cc.primary.shadowColor};
