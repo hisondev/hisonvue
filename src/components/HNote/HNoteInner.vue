@@ -5,25 +5,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, computed, ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import type { Vanillanote, VanillanoteElement, NoteData } from 'vanillanote2'
-import type { HisonConfig } from '../../types'
 import { noteProps } from './props'
 import { Size } from "../../enums"
-import { hisonCloser } from '../../core'
 import { getHexCodeFromColorText } from '../../utils'
+import { hisonCloser } from '../..'
 
 export default defineComponent({
 name: 'HNoteInner',
 props: noteProps,
 emits: ['update:modelValue', 'mounted'],
 setup(props, { emit }) {
-    const config = inject<HisonConfig>('hisonvue-config')!
     const vn: Vanillanote = hisonCloser.note
     const editorWrap = ref<HTMLElement | null>(null)
     const noteInstance = ref<VanillanoteElement | null>(null)
 
-    const EXCLUDED_KEYS = ['modelValue', 'color'] as const
+    const EXCLUDED_KEYS = ['modelValue'] as const
     const bindAttrs = computed(() => {
         if (!props.id) throw new Error(`[Hisonvue] id attribute is required.`)
         const attrs: Record<string, string> = {}
@@ -41,8 +39,14 @@ setup(props, { emit }) {
         const sizeLevelMobile = getSizeLevel(attrs['size-level-mobile'] || "7")
         attrs['size-level-mobile'] = sizeLevelMobile
 
-        if (props.color && getHexCodeFromColorText(props.color)) {
-            attrs['main-color'] = getHexCodeFromColorText(props.color)
+        if (attrs.color) {
+            attrs.color = getHexCodeFromColorText(attrs.color) ?? attrs.color
+            attrs['main-color'] = attrs.color
+            delete attrs.color
+        }
+        
+        if (hisonCloser.componentStyle.invertColor) {
+            attrs['invert-color'] = 'true'
         }
 
         return attrs
@@ -50,7 +54,7 @@ setup(props, { emit }) {
 
     const getSizeLevel = (sizeLevel: string) => {
         let size = Number(sizeLevel)
-        switch (config.componentStyle.size) {
+        switch (hisonCloser.componentStyle.size) {
             case Size.s: size -= 2; break
             case Size.m: break
             case Size.l: size += 2; break
@@ -99,7 +103,6 @@ setup(props, { emit }) {
     }
 
     onMounted(() => {
-        console.log('note onMounted')
         vn.init()
         if (!editorWrap.value) return
         vn.mountNote(editorWrap.value)
@@ -118,7 +121,6 @@ setup(props, { emit }) {
     })
 
     onBeforeUnmount(() => {
-        console.log('note onBeforeUnmount')
         if (!editorWrap.value) return
         vn.unmountNote(editorWrap.value)
         mutationObserver.disconnect()
