@@ -1,8 +1,8 @@
 <template>
   <h1>Test Page with multiple grids</h1>
-  <HButton @click="goBack" id="b1" :color="'success'">Back to Home</HButton> | 
-  <HButton @click="test1" id="b2" :color="'danger'">test1</HButton> | 
-  <HButton @click="test2" id="b3" :color="'warning'">test2</HButton>
+  <HButton @click="goBack" id="b1">Back to Home</HButton> | 
+  <HButton @click="test1" id="b2">test1</HButton> | 
+  <HButton @click="test2" id="b3">test2</HButton>
   <br><br>
   <HGrid
     id="grid01"
@@ -11,7 +11,7 @@
     :rownumVisible="'false'"
     :statusVisible="'false'"
     :visible="'true'"
-    :color="'success'"
+    :color="'#123456'"
     @mounted="mountGrid1"
   />
   <br>
@@ -53,39 +53,46 @@
     { id: 'col4', header: ';4', dataType: 'text', width: '25%', align : GridAlign.right,}
   ]
 
-  const sampleData1 = [
+  let sampleData = [
       { col1: 'A', col2: 'B', col3: 'C', col4: 'D' },
       { col1: 'A', col2: 'B', col3: 'C', col4: 'D' },
       { col1: 'A', col2: 'B', col3: 'C', col4: 'D' },
       { col1: 'A', col2: 'B', col3: 'C', col4: 'D' },
       { col1: 'A', col2: 'B', col3: 'C', col4: 'D' }
     ];
-  const sampleData2 = [
+
+  // 버튼 테스트용
+  const test1 = () => {
+    const grid1 = hison.vue.getGrid("grid01")!;
+    sampleData = [
       { col1: 'Z', col2: 'Y', col3: 'X', col4: 'W' },
       { col1: 'Z', col2: 'Y', col3: 'X', col4: 'W' },
       { col1: 'Z', col2: 'Y', col3: 'X', col4: 'W' },
       { col1: 'Z', col2: 'Y', col3: 'X', col4: 'W' },
       { col1: 'Z', col2: 'Y', col3: 'X', col4: 'W' }
     ];
-
-  // 버튼 테스트용
-  const test1 = () => {
-    const grid1 = hison.vue.getGrid("grid01")!;
-    grid1.load(sampleData1)
+    hison.style.setInvertColor(true)
   }
   const test2 = () => {
     const grid2 = hison.vue.getGrid("grid02")!;
-    grid2.load(sampleData1)
+    sampleData = [
+      { col1: 'A', col2: 'B', col3: 'C', col4: 'D' },
+      { col1: 'A', col2: 'B', col3: 'C', col4: 'D' },
+      { col1: 'A', col2: 'B', col3: 'C', col4: 'D' },
+      { col1: 'A', col2: 'B', col3: 'C', col4: 'D' },
+      { col1: 'A', col2: 'B', col3: 'C', col4: 'D' }
+    ];
+    hison.style.setInvertColor(false)
   }
 
   // 각 grid mount 이벤트
   const mountGrid1 = (grid: GridMethods) => {
-    grid.load(sampleData2)
+    grid.load(sampleData)
   }
   const mountGrid2 = (grid: GridMethods) => {
-    grid.load(sampleData2)
+    grid.load(sampleData)
   }
   const mountGrid3 = (grid: GridMethods) => {
-    grid.load(sampleData2)
+    grid.load(sampleData)
   }
 </script>
