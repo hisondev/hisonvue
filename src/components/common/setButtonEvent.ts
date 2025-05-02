@@ -1,4 +1,4 @@
-import { hisonCloser } from "../../core"
+import { hisonCloser } from "../.."
 
 const getColorClass = (el: HTMLElement, suffix: string) => {
     const color = el.dataset.color || 'primary'
@@ -12,7 +12,6 @@ const onClickForCss = (e: MouseEvent) => {
       e.preventDefault()
       return
     }
-    // Add dynamic active class
     target.classList.add(getColorClass(target, 'on-active'))
     setTimeout(() => {
       target.classList.remove(getColorClass(target, 'on-active'))
