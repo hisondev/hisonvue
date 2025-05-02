@@ -1,7 +1,7 @@
 import { getVanillagrid, getVanillagridConfig, type VanillagridConfig } from 'vanillagrid2'
 import { isValidHexColor, normalizeToHex } from '../utils';
 import { Size } from '../enums';
-import { hisonCloser } from '../core';
+import { hisonCloser } from '..';
 
 export const getVg = () => {
     const vgConfig = getVanillagridConfig();
