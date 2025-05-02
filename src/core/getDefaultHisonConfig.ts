@@ -1,19 +1,18 @@
 import type { HisonConfig } from "../types";
 import type { InterfaceDataWrapper } from "hisonjs";
 import { DateFormat, DateTimeFormat, DayFormat, DayOfWeekFormat, HourFormat, HourMinuteFormat, MinuteFormat, MonthFormat, SecondFormat, Size, TimeFormat, YearFormat, YearMonthFormat } from "../enums";
-import { adjustRgbaColor, colorCycleChange, getBasicTextColor, normalizeToRgba } from "../utils";
+
+export const primaryColorRGBA = 'rgba(96,169,232,1)'
+export const mutedColorRGBA = 'rgba(158,158,158,1)'
+export const infoColorRGBA = 'rgba(121,232,252,1)'
+export const successColorRGBA = 'rgba(122,214,122,1)'
+export const dangerColorRGBA = 'rgba(247,113,109,1)'
+export const warningColorRGBA = 'rgba(255,193,98,1)'
+export const darkTextColorRGBA = 'rgba(48,48,48,1)'
+export const lightTextColorRGBA = 'rgba(255,255,255,1)'
+export const emptyColorRGBA = 'rgba(255,255,255,1)'
 
 export const getDefaultHisonConfig = () => {
-  const primaryColorRGBA = 'rgba(96,169,232,1)'
-  const mutedColorRGBA = 'rgba(158,158,158,1)'
-  const infoColorRGBA = 'rgba(121,232,252,1)'
-  const successColorRGBA = 'rgba(122,214,122,1)'
-  const dangerColorRGBA = 'rgba(247,113,109,1)'
-  const warningColorRGBA = 'rgba(255,193,98,1)'
-  const darkTextColorRGBA = 'rgba(48,48,48,1)'
-  const lightTextColorRGBA = 'rgba(255,255,255,1)'
-  const emptyColorRGBA = 'rgba(255,255,255,0)'
-
   const hisonConfig: HisonConfig = {
     //utils
     dateFormat : DateFormat['yyyy-MM-dd'],
