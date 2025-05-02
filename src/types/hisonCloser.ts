@@ -1,6 +1,6 @@
 import { Vanillagrid } from "vanillagrid2"
 import { Vanillanote } from "vanillanote2"
-import { HButton } from "./component"
+import { HButtonMethods } from "./component"
 import { ComponentStyleHisonConfig, HisonvueEvent } from "./hisonConfig"
 
 export interface ComponentColor {
@@ -62,13 +62,23 @@ export interface ComponentColor {
 
 export interface ComponentStyle extends ComponentStyleHisonConfig{
   componentColor: ComponentColor
+  primaryInvertColor: string;
+  mutedInvertColor: string;
+  infoInvertColor: string;
+  successInvertColor: string;
+  dangerInvertColor: string;
+  warningInvertColor: string;
+  filledInvertColor: string;
+  emptyInvertColor: string;
+  filledTextInvertColor: string;
+  emptyTextInvertColor: string;
 }
 
 export interface HisonCloser {
     note: Vanillanote
     grid: Vanillagrid
     component: {
-        buttonList: Record<string, HButton>
+        buttonList: Record<string, HButtonMethods>
     }
     event: HisonvueEvent
     componentStyle: ComponentStyle
