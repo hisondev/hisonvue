@@ -39,7 +39,7 @@ export interface HGridColumn {
     fontUnderline?: boolean
 }
 
-export interface HButton extends HTMLButtonElement {
+export interface HButtonMethods {
     isDisable(): boolean
     isVisible(): boolean
     setDisable(disable: boolean): void
