@@ -1,7 +1,7 @@
 
 import { PropType } from "vue";
 import type { HGridColumn } from "../../types";
-import { SelectionPolicy, GridDateFormat, GridMonthFormat, GridVerticalAlign, ColorSet, BoolString } from "../../enums";
+import { SelectionPolicy, GridDateFormat, GridMonthFormat, GridVerticalAlign, ColorSet, BoolString, Color } from "../../enums";
 
 export const gridProps = {
     modelValue: Array as PropType<any[]>,
@@ -107,9 +107,7 @@ export const gridProps = {
     /* Inverts the colors of the grid. */
     invertColor: { type: String as PropType<BoolString>, required: false },
     /* Sets the main color of the grid. Enter the 16-digit color code in cssText. Ex) '#ffffff' */
-    color: { type: String, required: false },
-    /* Sets the color set of the grid. Color sets are 'skyblue', 'blue', 'light-red', 'red', 'light-green', 'green', 'orange', 'yellow', 'purple', 'brown', 'black'. */
-    colorSet: { type: String as PropType<ColorSet>, required: false },
+    color: { type: String as PropType<Color> || String, required: false },
     /* Sets the border color of the grid. Enter the 16-digit color code in cssText. Ex) '#ffffff' */
     gridBorderColor: { type: String, required: false },
     /* Sets the background color of the header cell. Enter the 16-digit color code in cssText. Ex) '#ffffff' */
