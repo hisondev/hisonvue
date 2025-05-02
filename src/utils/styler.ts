@@ -1,4 +1,5 @@
-import { hisonCloser } from "../core"
+import { hisonCloser } from ".."
+import { darkTextColorRGBA, lightTextColorRGBA } from "../core"
 import { isValidHexColor, isValidNumber, isValidRgbaColor } from "./validators"
 
 /**
@@ -170,7 +171,7 @@ export const getHexCodeFromColorText = (colorText: string) => {
     case 'warning' :
         return normalizeToHex(hisonCloser.componentStyle.warningColor)
   }
-  return ''
+  return null
 }
 
 export const getRGBAFromColorText = (colorText: string) => {
@@ -192,24 +193,8 @@ export const getRGBAFromColorText = (colorText: string) => {
 }
 
 export const getBasicTextColor = (backgroundColor: string) => {
-  return getIsColorLight(backgroundColor) ? hisonCloser.componentStyle.emptyTextColor : hisonCloser.componentStyle.filledTextColor
+  return getIsColorLight(backgroundColor) ? darkTextColorRGBA : lightTextColorRGBA
 }
-
-export const colorCycleChange = (obj: Object, changeFunc: (value: string) => string) => {
-  Object.entries(obj).forEach(([key, value]) => {
-    if (key.endsWith('Color')) {
-      if (typeof value === 'string') {
-        (obj as any)[key] = changeFunc(value);
-      } else if (typeof value === 'object' && value !== null) {
-        Object.entries(value).forEach(([innerKey, innerValue]) => {
-          if (innerKey.endsWith('Color') && typeof innerValue === 'string') {
-            (value as any)[innerKey] = changeFunc(innerValue);
-          }
-        });
-      }
-    }
-  });
-};
 
 export const applyDefaultColor = (target: any, baseColor: string) => {
   target.buttonColor = baseColor;
