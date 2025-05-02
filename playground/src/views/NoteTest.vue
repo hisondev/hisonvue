@@ -2,7 +2,7 @@
     <h1>Test Page with multiple editors</h1>
     <HButton @click="goBack" id="b1">Back to Home</HButton> | 
     <HButton @click="getNote1" id="b2">getNote1</HButton> | 
-    <HButton @click="setNote3" id="b3">setNote3</HButton>
+    <HButton @click="setNote3" id="b3" @mounted="btnMount">setNote3</HButton>
     <br><br>
     <HNote v-model="noteData1"
     id="note1"
@@ -27,7 +27,7 @@
 import { useRouter } from 'vue-router'
 import { onBeforeUpdate, onMounted, ref } from 'vue'
 import { NoteData, VanillanoteElement } from 'vanillanote2'
-import { hison } from 'hisonvue'
+import { hison, HButtonMethods } from 'hisonvue'
 
 
 const router = useRouter()
@@ -39,17 +39,24 @@ const goBack = () => {
     router.push('/')
 }
 const getNote1 = () => {
+    console.log('getNote1!!!!!!!!!!!')
     hison.utils.getNumberFormat(1234.12789,'#,##0.##')
+    hison.vue.getButton('b3')!.setDisable(false)
 }
 const setNote3 = () => {
     noteData3.value = noteData1.value;
 }
 
 const mountNote1 = (note: VanillanoteElement) => {
+    console.log(note);
 }
 const mountNote2 = () => {
 }
 const mountNote3 = () => {
+}
+const btnMount = (btn: HButtonMethods) => {
+    console.log(btn)
+    btn.setDisable(true)
 }
 
 onMounted(() => {
