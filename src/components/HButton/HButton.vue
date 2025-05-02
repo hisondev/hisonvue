@@ -3,6 +3,7 @@
     :is="HButtonInner"
     v-bind="props"
     :key="reloadKey"
+    @mounted="$emit('mounted', $event)"
     @click="$emit('click', $event)"
     @mousedown="$emit('mousedown', $event)"
     @mouseup="$emit('mouseup', $event)"
