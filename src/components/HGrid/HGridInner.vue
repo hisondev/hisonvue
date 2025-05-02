@@ -9,8 +9,8 @@ import { defineComponent, computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import type { Vanillagrid, GridMethods } from 'vanillagrid2'
 import type { HGridColumn } from '../../types'
 import { gridProps } from './props'
-import { hisonCloser } from '../../core'
 import { getHexCodeFromColorText } from '../../utils'
+import { hisonCloser } from '../..'
 
 export default defineComponent({
 name: 'HGridInner',
@@ -37,11 +37,14 @@ setup(props, { emit }) {
         if (attrs.color) {
             attrs.color = getHexCodeFromColorText(attrs.color) ?? attrs.color
         }
+
+        if (hisonCloser.componentStyle.invertColor) {
+            attrs['invert-color'] = 'true'
+        }
         return attrs
     })
 
     onMounted(() => {
-        console.log('grid onMounted')
         vg.init()
         if (!editorWrap.value) return
 
@@ -70,7 +73,6 @@ setup(props, { emit }) {
     })
 
     onBeforeUnmount(() => {
-        console.log('grid onBeforeUnmount')
         if (!editorWrap.value) return
         vg.unmountGrid(editorWrap.value)
     })
