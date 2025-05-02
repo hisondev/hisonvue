@@ -174,15 +174,7 @@ export const noteProps = {
     /** 
      * Main theme color for the editor
      */
-    color: { type: String as PropType<Color>, required: false },
-    /** 
-     * Main theme color for the editor
-     */
-    mainColor: { type: String, required: false },
-    /** 
-     * Predefined color set name
-     */
-    colorSet: { type: String, required: false },
+    color: { type: String as PropType<Color> || String, required: false },
     /** 
      * Whether to use inverted (dark mode) colors
      */
