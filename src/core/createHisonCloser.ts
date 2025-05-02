@@ -1,23 +1,6 @@
+import type { HisonConfig } from "../types"
+import { hisonCloser } from ".."
 import { getVg, getVn } from "../plugins"
-import { HisonConfig, HisonCloser } from "../types"
-import { applyDefaultColor, colorCycleChange, getBasicTextColor, normalizeToRgba } from "../utils"
-
-export const hisonCloser = {
-  event : {
-    cssEvent: {
-      button_onBeforeClick: (e: MouseEvent) => { return true },
-      button_onAfterClick: (e: MouseEvent) => {},
-      button_onBeforeMouseover: (e: MouseEvent) => { return true },
-      button_onAfterMouseover: (e: MouseEvent) => {},
-      button_onBeforeMouseout: (e: MouseEvent) => { return true },
-      button_onAfterMouseout: (e: MouseEvent) => {},
-      button_onBeforeTouchstart: (e: TouchEvent) => { return true },
-      button_onAfterTouchstart: (e: TouchEvent) => {},
-      button_onBeforeTouchend: (e: TouchEvent) => { return true },
-      button_onAfterTouchend: (e: TouchEvent) => {},
-    }
-  }
-} as HisonCloser
 
 export const createHisonCloser = (hisonConfig: HisonConfig) => {
   // 이벤트 설정
@@ -32,7 +15,7 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
   if(hisonConfig.event.cssEvent.button_onBeforeTouchend) hisonCloser.event.cssEvent.button_onBeforeTouchend = hisonConfig.event.cssEvent.button_onBeforeTouchend
   if(hisonConfig.event.cssEvent.button_onAfterTouchend) hisonCloser.event.cssEvent.button_onAfterTouchend = hisonConfig.event.cssEvent.button_onAfterTouchend
 
-  //컴포넌트 스타일 설정
+  //컴포넌트 스타일 설정 
   hisonCloser.componentStyle = {
     size : hisonConfig.componentStyle.size,
     filledColor : hisonConfig.componentStyle.filledColor,
@@ -46,6 +29,16 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
     dangerColor : hisonConfig.componentStyle.dangerColor,
     warningColor : hisonConfig.componentStyle.warningColor,
     invertColor : hisonConfig.componentStyle.invertColor,
+    primaryInvertColor: null,
+    mutedInvertColor: null,
+    infoInvertColor: null,
+    successInvertColor: null,
+    dangerInvertColor: null,
+    warningInvertColor: null,
+    filledInvertColor: null,
+    emptyInvertColor: null,
+    filledTextInvertColor: null,
+    emptyTextInvertColor: null,
     componentColor : {
       primary: {
         buttonColor : null,
@@ -102,18 +95,7 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
         filledTextColor : null,
       }
     }
-  }
-  const c = hisonCloser.componentStyle;
-  colorCycleChange(c, normalizeToRgba);
-  if (!c.filledTextColor) c.filledTextColor = getBasicTextColor(c.filledColor);
-  if (!c.emptyTextColor) c.emptyTextColor = getBasicTextColor(c.emptyColor);
-  const cc = c.componentColor;
-  applyDefaultColor(cc.primary, c.primaryColor);
-  applyDefaultColor(cc.muted, c.mutedColor);
-  applyDefaultColor(cc.info, c.infoColor);
-  applyDefaultColor(cc.success, c.successColor);
-  applyDefaultColor(cc.danger, c.dangerColor);
-  applyDefaultColor(cc.warning, c.warningColor);
+  } as any
   
   // plugin설정
   const vn = getVn()
