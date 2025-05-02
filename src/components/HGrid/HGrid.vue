@@ -2,7 +2,7 @@
     <component
     :is="HGridInner"
     v-bind="props"
-    v-on="$attrs"
+    @mounted="$emit('mounted', $event)"
     :key="reloadKey" />
 </template>
 
@@ -15,6 +15,7 @@ import { registerReloadable, unregisterReloadable } from '../../utils'
 export default defineComponent({
     name: 'HGrid',
     props: gridProps,
+    emits: ['mounted'],
     setup(props) {
         const reloadKey = ref(0)
         const reloadId = `hgrid:${props.id}`
