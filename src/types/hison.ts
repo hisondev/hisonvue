@@ -1,7 +1,7 @@
 import type { Hison as Hisonjs } from "hisonjs";
 import { GridMethods } from "vanillagrid2";
 import { VanillanoteElement } from "vanillanote2";
-import { HButton } from "./component";
+import { HButtonMethods } from "./component";
 import { Size } from "../enums";
 
 /**
@@ -127,7 +127,7 @@ export interface Hison extends Hisonjs {
   vue: {
     getNote(noteId: string): VanillanoteElement | null
     getGrid(gridId: string): GridMethods | null
-    getButton(buttonId: string): HButton | null
+    getButton(buttonId: string): HButtonMethods | null
   }
   style: {
     setSize(size: Size.s | Size.m | Size.l | Size.xl): void
