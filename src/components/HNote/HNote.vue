@@ -1,9 +1,11 @@
 <template>
   <component
-  :is="HNoteInner"
-  v-bind="props"
-  v-on="$attrs"
-  :key="reloadKey" />
+    :is="HNoteInner"
+    v-bind="props"
+    :key="reloadKey"
+    @mounted="$emit('mounted', $event)"
+    @update:modelValue="$emit('update:modelValue', $event)"
+  />
 </template>
 
 <script lang="ts">
@@ -15,6 +17,7 @@ import { registerReloadable, unregisterReloadable } from '../../utils'
 export default defineComponent({
   name: 'HNote',
   props: noteProps,
+  emits: ['update:modelValue', 'mounted'],
   setup(props) {
     const reloadKey = ref(0)
     const reloadId = `hnote:${props.id}`
@@ -30,7 +33,7 @@ export default defineComponent({
     return {
       reloadKey,
       props,
-      HNoteInner
+      HNoteInner,
     }
   }
 })
