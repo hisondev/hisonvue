@@ -1,5 +1,7 @@
 import type { InterfaceDataWrapper } from "hisonjs";
 import { DateFormat, DateTimeFormat, DayFormat, DayOfWeekFormat, HourFormat, HourMinuteFormat, MinuteFormat, MonthFormat, SecondFormat, Size, TimeFormat, YearFormat, YearMonthFormat } from "../enums";
+import { VanillanoteConfig } from "vanillanote2";
+import { VanillagridConfig } from "vanillagrid2";
 
 interface UtilsConfig {
   /**
@@ -617,7 +619,7 @@ interface LinkConfig {
   interceptApiError(error: any): boolean | void;
 }
 
-export interface ComponentStyleHisonConfig {
+export interface ComponentStyleConfig {
   size: Size.s | Size.m | Size.l | Size.xl;
 
   primaryColor: string;
@@ -634,20 +636,33 @@ export interface ComponentStyleHisonConfig {
 }
 
 export interface CssEvent {
-  button_onBeforeClick: (e: MouseEvent) => boolean
-  button_onAfterClick: (e: MouseEvent) => void
-  button_onBeforeMouseover: (e: MouseEvent) => boolean
-  button_onAfterMouseover: (e: MouseEvent) => void
-  button_onBeforeMouseout: (e: MouseEvent) => boolean
-  button_onAfterMouseout: (e: MouseEvent) => void
-  button_onBeforeTouchstart: (e: TouchEvent) => boolean
-  button_onAfterTouchstart: (e: TouchEvent) => void
-  button_onBeforeTouchend: (e: TouchEvent) => boolean
-  button_onAfterTouchend: (e: TouchEvent) => void
+  button_onBeforeClick: (e: MouseEvent) => boolean;
+  button_onAfterClick: (e: MouseEvent) => void;
+  button_onBeforeMouseover: (e: MouseEvent) => boolean;
+  button_onAfterMouseover: (e: MouseEvent) => void;
+  button_onBeforeMouseout: (e: MouseEvent) => boolean;
+  button_onAfterMouseout: (e: MouseEvent) => void;
+  button_onBeforeTouchstart: (e: TouchEvent) => boolean;
+  button_onAfterTouchstart: (e: TouchEvent) => void;
+  button_onBeforeTouchend: (e: TouchEvent) => boolean;
+  button_onAfterTouchend: (e: TouchEvent) => void;
 }
 
 export interface HisonvueEvent {
-  cssEvent: CssEvent
+  cssEvent: CssEvent;
+}
+
+export interface ComponentConfig {
+  /**
+   * Use npm vanillanote2. See vanillanote2's specification.
+   * The component's style follows HisonConfig's componentStyle property, so there may be properties in vanillanote that are ignored.
+   */
+  note: VanillanoteConfig;
+  /**
+   * Use npm vanillagrid2. See vanillagrid's specification.
+   * The component's style follows HisonConfig's componentStyle property, so there may be properties in vanillagrid that are ignored.
+   */
+  grid: VanillagridConfig;
 }
 
 /**
@@ -658,6 +673,7 @@ export interface HisonvueEvent {
  * @property editorConfig - Default config for HNote (based on Vanillanote).
  */
 export interface HisonConfig extends UtilsConfig, ShieldConfig, DataConfig, LinkConfig {
-  componentStyle: ComponentStyleHisonConfig;
+  componentStyle: ComponentStyleConfig;
+  component: ComponentConfig;
   event: HisonvueEvent;
 }
