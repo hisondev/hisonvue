@@ -50,139 +50,145 @@
     --hison-font-family: 'Arial, sans-serif';
 }
 
+/* HNote, HGrid */
+.hison-wrap { display: inline-block; }
+
 /* HButton */
 .hison-button {
     display: inline-block;
     cursor: pointer;
     text-align: center;
-    margin: 2px;
     border: none;
-    border-radius: 5px;
+    border-radius: 2px;
     font-family: var(--hison-font-family);
 }
-.hison-s-button {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.7rem;
+.hison-size-s-button {
+    padding: 0.3rem 1rem;
+    font-size: 0.65rem;
 }
-.hison-m-button {
-    padding: 0.45rem 0.75rem;
+.hison-size-m-button {
+    padding: 0.4rem 1.1rem;
     font-size: 0.8rem;
 }
-.hison-l-button {
-    padding: 0.6rem 1rem;
+.hison-size-l-button {
+    padding: 0.5rem 1.2rem;
     font-size: 0.9rem;
 }
-.hison-xl-button {
-    padding: 0.8rem 1.25rem;
+.hison-size-xl-button {
+    padding: 0.6rem 1.4rem;
     font-size: 1rem;
 }
-.hison-primary-button {
+.hison-color-primary-button {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-primary-shadowColor);
     background-color: var(--hison-primary-buttonColor);
     color: var(--hison-primary-filledTextColor);
 }
-.hison-muted-button {
+.hison-color-muted-button {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-muted-shadowColor);
     background-color: var(--hison-muted-buttonColor);
     color: var(--hison-muted-filledTextColor);
 }
-.hison-info-button {
+.hison-color-info-button {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-info-shadowColor);
     background-color: var(--hison-info-buttonColor);
     color: var(--hison-info-filledTextColor);
 }
-.hison-success-button {
+.hison-color-success-button {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-success-shadowColor);
     background-color: var(--hison-success-buttonColor);
     color: var(--hison-success-filledTextColor);
 }
-.hison-danger-button {
+.hison-color-danger-button {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-danger-shadowColor);
     background-color: var(--hison-danger-buttonColor);
     color: var(--hison-danger-filledTextColor);
 }
-.hison-warning-button {
+.hison-color-warning-button {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-warning-shadowColor);
     background-color: var(--hison-warning-buttonColor);
     color: var(--hison-warning-filledTextColor);
 }
-
 /* Css Event */
-.hison-primary-on-active {
+.hison-color-primary-on-active {
     background-color: var(--hison-primary-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-primary-shadowColor);
 }
-.hison-primary-on-mouseover {
+.hison-color-primary-on-mouseover {
     background-color: var(--hison-primary-hoverColor) !important;
 }
-.hison-muted-on-active {
+.hison-color-muted-on-active {
     background-color: var(--hison-muted-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-muted-shadowColor);
 }
-.hison-muted-on-mouseover {
+.hison-color-muted-on-mouseover {
     background-color: var(--hison-muted-hoverColor) !important;
 }
-.hison-info-on-active {
+.hison-color-info-on-active {
     background-color: var(--hison-info-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-info-shadowColor);
 }
-.hison-info-on-mouseover {
+.hison-color-info-on-mouseover {
     background-color: var(--hison-info-hoverColor) !important;
 }
-.hison-success-on-active {
+.hison-color-success-on-active {
     background-color: var(--hison-success-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-success-shadowColor);
 }
-.hison-success-on-mouseover {
+.hison-color-success-on-mouseover {
     background-color: var(--hison-success-hoverColor) !important;
 }
-.hison-danger-on-active {
+.hison-color-danger-on-active {
     background-color: var(--hison-danger-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-danger-shadowColor);
 }
-.hison-danger-on-mouseover {
+.hison-color-danger-on-mouseover {
     background-color: var(--hison-danger-hoverColor) !important;
 }
-.hison-warning-on-active {
+.hison-color-warning-on-active {
     background-color: var(--hison-warning-activeColor) !important;
     box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-warning-shadowColor);
 }
-.hison-warning-on-mouseover {
+.hison-color-warning-on-mouseover {
     background-color: var(--hison-warning-hoverColor) !important;
 }
 
+/* HLayout */
+.hison-layout {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.hison-layout > * {
+  display: inline-block;
+  box-sizing: border-box;
+  margin: 0;
+}
+/* 수직 정렬 클래스 */
+.hison-layout-vertical-align-top { align-items: flex-start; }
+.hison-layout-vertical-align-center { align-items: center; }
+.hison-layout-vertical-align-bottom { align-items: flex-end; }
+
 /* display helpers */
-.hison-display-inline {
-    display: inline;
-}
-.hison-display-inline-block {
-    display: inline-block;
-}
-.hison-display-block {
-    display: block;
-}
-.hison-display-none {
-    display: none;
-}
+.hison-display-none { display: none; }
 
 /* disable */
-.hison-disable {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
+.hison-disable { opacity: 0.5; cursor: not-allowed; }
 
-/* posision */
-.hison-position-left {
-    float: left;
-}
-.hison-position-right {
-    float: right;
-}
-/* 둘중하나
-.hison-position-left {
-    align-self: flex-start;
-}
-.hison-position-right {
-    align-self: flex-end;
-}
-*/
+/* 수평 정렬 클래스(layout 내부에서만) */
+.hison-pos-left   { margin-right: auto; }
+.hison-pos-center { margin-left: auto; margin-right: auto; }
+.hison-pos-right  { margin-left: auto; }
+
+/* 가로 12분할 */
+.hison-col-1  { width: 8.3333%; }
+.hison-col-2  { width: 16.6667%; }
+.hison-col-3  { width: 25%; }
+.hison-col-4  { width: 33.3333%; }
+.hison-col-5  { width: 41.6667%; }
+.hison-col-6  { width: 50%; }
+.hison-col-7  { width: 58.3333%; }
+.hison-col-8  { width: 66.6667%; }
+.hison-col-9  { width: 75%; }
+.hison-col-10 { width: 83.3333%; }
+.hison-col-11 { width: 91.6667%; }
+.hison-col-12 { width: 100%; }
