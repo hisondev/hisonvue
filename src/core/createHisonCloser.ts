@@ -98,13 +98,14 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
   } as any
   
   // plugin설정
-  const vn = getVn()
-  const vg = getVg()
+  const vn = getVn(hisonConfig)
+  const vg = getVg(hisonConfig)
   hisonCloser.note = vn
   hisonCloser.grid = vg
 
   // 컴포넌트 리스트 생성
   hisonCloser.component = {
-    buttonList: {}
+    buttonList: {},
+    layoutList: {},
   }
 }
