@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "hisonjs": "^1.1.7",
-    "vanillagrid2": "^1.0.5",
-    "vanillanote2": "^1.0.7"
+    "vanillagrid2": "^1.0.7",
+    "vanillanote2": "^1.1.0"
   }
 }
