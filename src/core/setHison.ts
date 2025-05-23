@@ -1,5 +1,5 @@
 import { setHisonFromHisonConfig } from "../plugins";
-import type { Hison, HisonConfig } from "../types";
+import type { Hison, HisonConfig, HNoteElement } from "../types";
 import { applyCssVariables } from "./setDocumentFromHisonCloser";
 import { Size } from "../enums";
 import { reloadAllHisonComponents } from "../utils/";
@@ -80,7 +80,18 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
     };
     
     (hison as any).vue = {}
-    hison.vue.getNote = (noteId: string) => { return hisonCloser.note.getNote(noteId) }
-    hison.vue.getGrid = (gridId: string) => { return hisonCloser.grid.getGrid(gridId) }
+    hison.vue.getNote = (noteId: string) => {
+        const note: any = hisonCloser.note.getNote(noteId)
+        if(!note) return null
+        note.getId = () => { return noteId }
+        return note
+    }
+    hison.vue.getGrid = (gridId: string) => {
+        const grid: any = hisonCloser.grid.getGrid(gridId)
+        if(!grid) return null
+        grid.getId = () => { return gridId }
+        return grid
+    }
     hison.vue.getButton = (buttonId: string) => { return hisonCloser.component.buttonList[buttonId] }
+    hison.vue.getLayout = (layoutId: string) => { return hisonCloser.component.layoutList[layoutId] }
 }
