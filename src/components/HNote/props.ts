@@ -4,7 +4,9 @@ import { NoteData } from "vanillanote2";
 
 export const noteProps = {
     modelValue: Object as () => NoteData,
-    id: { type: String, required: true },
+    id: { type: String, required: false },
+    class: {type: String, required: false },
+    style: {type: String, required: false },
     /**
      * ADAPTIVE : The composition of notes varies depending on whether the device is a desktop or mobile device.
      * MOBILE : Always recognize as mobile.
@@ -283,4 +285,368 @@ export const noteProps = {
      * Whether to use redo and undo buttons
      */
     usingDo: { type: String as PropType<BoolString>, required: false },
+}
+
+export const noteEventProps = {
+    //textarea event
+    textareaBeforeClick : Function as PropType<(event: Event) => boolean>,
+    textareaAfterClick : Function as PropType<(event: Event) => void>,
+    textareaBeforeFocus : Function as PropType<(event: Event) => boolean>,
+    textareaAfterFocus : Function as PropType<(event: Event) => void>,
+    textareaBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    textareaAfterBlur : Function as PropType<(event: Event) => void>,
+    //paragraphStyleSelect event
+    paragraphStyleSelectBeforeClick : Function as PropType<(event: Event) => boolean>,
+    paragraphStyleSelectAfterClick : Function as PropType<(event: Event) => void>,
+    //toolToggle event
+    toolToggleBeforeClick : Function as PropType<(event: Event) => boolean>,
+    toolToggleAfterClick : Function as PropType<(event: Event) => void>,
+    //styleNomal event
+    styleNomalBeforeClick : Function as PropType<(event: Event) => boolean>,
+    styleNomalAfterClick : Function as PropType<(event: Event) => void>,
+    //styleHeader1 event
+    styleHeader1BeforeClick : Function as PropType<(event: Event) => boolean>,
+    styleHeader1AfterClick : Function as PropType<(event: Event) => void>,
+    //styleHeader2 event
+    styleHeader2BeforeClick : Function as PropType<(event: Event) => boolean>,
+    styleHeader2AfterClick : Function as PropType<(event: Event) => void>,
+    //styleHeader3 event
+    styleHeader3BeforeClick : Function as PropType<(event: Event) => boolean>,
+    styleHeader3AfterClick : Function as PropType<(event: Event) => void>,
+    //styleHeader4 event
+    styleHeader4BeforeClick : Function as PropType<(event: Event) => boolean>,
+    styleHeader4AfterClick : Function as PropType<(event: Event) => void>,
+    //styleHeader5 event
+    styleHeader5BeforeClick : Function as PropType<(event: Event) => boolean>,
+    styleHeader5AfterClick : Function as PropType<(event: Event) => void>,
+    //styleHeader6 event
+    styleHeader6BeforeClick : Function as PropType<(event: Event) => boolean>,
+    styleHeader6AfterClick : Function as PropType<(event: Event) => void>,
+    //bold event
+    boldBeforeClick : Function as PropType<(event: Event) => boolean>,
+    boldAfterClick : Function as PropType<(event: Event) => void>,
+    //underline event
+    underlineBeforeClick : Function as PropType<(event: Event) => boolean>,
+    underlineAfterClick : Function as PropType<(event: Event) => void>,
+    //italic event
+    italicBeforeClick : Function as PropType<(event: Event) => boolean>,
+    italicAfterClick : Function as PropType<(event: Event) => void>,
+    //ul event
+    ulBeforeClick : Function as PropType<(event: Event) => boolean>,
+    ulAfterClick : Function as PropType<(event: Event) => void>,
+    //ol event
+    olBeforeClick : Function as PropType<(event: Event) => boolean>,
+    olAfterClick : Function as PropType<(event: Event) => void>,
+    //textAlignSelect event
+    textAlignSelectBeforeClick : Function as PropType<(event: Event) => boolean>,
+    textAlignSelectAfterClick : Function as PropType<(event: Event) => void>,
+    //textAlignLeft event
+    textAlignLeftBeforeClick : Function as PropType<(event: Event) => boolean>,
+    textAlignLeftAfterClick : Function as PropType<(event: Event) => void>,
+    //textAlignCenter event
+    textAlignCenterBeforeClick : Function as PropType<(event: Event) => boolean>,
+    textAlignCenterAfterClick : Function as PropType<(event: Event) => void>,
+    //textAlignRight event
+    textAlignRightBeforeClick : Function as PropType<(event: Event) => boolean>,
+    textAlignRightAfterClick : Function as PropType<(event: Event) => void>,
+    //attLink event
+    attLinkBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attLinkAfterClick : Function as PropType<(event: Event) => void>,
+    //attFile event
+    attFileBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attFileAfterClick : Function as PropType<(event: Event) => void>,
+    //attImage event
+    attImageBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageAfterClick : Function as PropType<(event: Event) => void>,
+    //attVideo event
+    attVideoBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attVideoAfterClick : Function as PropType<(event: Event) => void>,
+    //fontSizeBox event
+    fontSizeBoxBeforeClick : Function as PropType<(event: Event) => boolean>,
+    fontSizeBoxAfterClick : Function as PropType<(event: Event) => void>,
+    //fontSize event
+    fontSizeBeforeClick : Function as PropType<(event: Event) => boolean>,
+    fontSizeAfterClick : Function as PropType<(event: Event) => void>,
+    fontSizeBeforeInput : Function as PropType<(event: Event) => boolean>,
+    fontSizeAfterInput : Function as PropType<(event: Event) => void>,
+    fontSizeBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    fontSizeAfterBlur : Function as PropType<(event: Event) => void>,
+    //letterSpacingBox event
+    letterSpacingBoxBeforeClick : Function as PropType<(event: Event) => boolean>,
+    letterSpacingBoxAfterClick : Function as PropType<(event: Event) => void>,
+    //letterSpacing event
+    letterSpacingBeforeClick : Function as PropType<(event: Event) => boolean>,
+    letterSpacingAfterClick : Function as PropType<(event: Event) => void>,
+    letterSpacingBeforeInput : Function as PropType<(event: Event) => boolean>,
+    letterSpacingAfterInput : Function as PropType<(event: Event) => void>,
+    letterSpacingBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    letterSpacingAfterBlur : Function as PropType<(event: Event) => void>,
+    //lineHeightBox event
+    lineHeightBoxBeforeClick : Function as PropType<(event: Event) => boolean>,
+    lineHeightBoxAfterClick : Function as PropType<(event: Event) => void>,
+    //lineHeight event
+    lineHeightBeforeClick : Function as PropType<(event: Event) => boolean>,
+    lineHeightAfterClick : Function as PropType<(event: Event) => void>,
+    lineHeightBeforeInput : Function as PropType<(event: Event) => boolean>,
+    lineHeightAfterInput : Function as PropType<(event: Event) => void>,
+    lineHeightBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    lineHeightAfterBlur : Function as PropType<(event: Event) => void>,
+    //fontFamilySelect event
+    fontFamilySelectBeforeClick : Function as PropType<(event: Event) => boolean>,
+    fontFamilySelectAfterClick : Function as PropType<(event: Event) => void>,
+    //color text select
+    colorTextSelectBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorTextSelectAfterClick : Function as PropType<(event: Event) => void>,
+    //color text select box
+    colorTextSelectBoxBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorTextSelectBoxAfterClick : Function as PropType<(event: Event) => void>,
+    //colorText0 
+    colorText0BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorText0AfterClick : Function as PropType<(event: Event) => void>,
+    //colorText1 
+    colorText1BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorText1AfterClick : Function as PropType<(event: Event) => void>,
+    //colorText2 
+    colorText2BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorText2AfterClick : Function as PropType<(event: Event) => void>,
+    //colorText3 
+    colorText3BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorText3AfterClick : Function as PropType<(event: Event) => void>,
+    //colorText4 
+    colorText4BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorText4AfterClick : Function as PropType<(event: Event) => void>,
+    //colorText5 
+    colorText5BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorText5AfterClick : Function as PropType<(event: Event) => void>,
+    //colorText6 
+    colorText6BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorText6AfterClick : Function as PropType<(event: Event) => void>,
+    //colorText7 
+    colorText7BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorText7AfterClick : Function as PropType<(event: Event) => void>,
+    //colorText R event
+    colorTextRBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorTextRAfterClick : Function as PropType<(event: Event) => void>,
+    colorTextRBeforeInput : Function as PropType<(event: Event) => boolean>,
+    colorTextRAfterInput : Function as PropType<(event: Event) => void>,
+    colorTextRBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    colorTextRAfterBlur : Function as PropType<(event: Event) => void>,
+    //colorText G event
+    colorTextGBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorTextGAfterClick : Function as PropType<(event: Event) => void>,
+    colorTextGBeforeInput : Function as PropType<(event: Event) => boolean>,
+    colorTextGAfterInput : Function as PropType<(event: Event) => void>,
+    colorTextGBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    colorTextGAfterBlur : Function as PropType<(event: Event) => void>,
+    //colorText B event
+    colorTextBBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorTextBAfterClick : Function as PropType<(event: Event) => void>,
+    colorTextBBeforeInput : Function as PropType<(event: Event) => boolean>,
+    colorTextBAfterInput : Function as PropType<(event: Event) => void>,
+    colorTextBBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    colorTextBAfterBlur : Function as PropType<(event: Event) => void>,
+    //colorText Opacity event
+    colorTextOpacityBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorTextOpacityAfterClick : Function as PropType<(event: Event) => void>,
+    colorTextOpacityBeforeInput : Function as PropType<(event: Event) => boolean>,
+    colorTextOpacityAfterInput : Function as PropType<(event: Event) => void>,
+    colorTextOpacityBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    colorTextOpacityAfterBlur : Function as PropType<(event: Event) => void>,
+    //color background select
+    colorBackSelectBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBackSelectAfterClick : Function as PropType<(event: Event) => void>,
+    //color back select box
+    colorBackSelectBoxBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBackSelectBoxAfterClick : Function as PropType<(event: Event) => void>,
+    //colorBack0 
+    colorBack0BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBack0AfterClick : Function as PropType<(event: Event) => void>,
+    //colorBack1 
+    colorBack1BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBack1AfterClick : Function as PropType<(event: Event) => void>,
+    //colorBack2 
+    colorBack2BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBack2AfterClick : Function as PropType<(event: Event) => void>,
+    //colorBack3 
+    colorBack3BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBack3AfterClick : Function as PropType<(event: Event) => void>,
+    //colorBack4 
+    colorBack4BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBack4AfterClick : Function as PropType<(event: Event) => void>,
+    //colorBack5 
+    colorBack5BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBack5AfterClick : Function as PropType<(event: Event) => void>,
+    //colorBack6 
+    colorBack6BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBack6AfterClick : Function as PropType<(event: Event) => void>,
+    //colorBack7 
+    colorBack7BeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBack7AfterClick : Function as PropType<(event: Event) => void>,
+    //colorBack R event
+    colorBackRBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBackRAfterClick : Function as PropType<(event: Event) => void>,
+    colorBackRBeforeInput : Function as PropType<(event: Event) => boolean>,
+    colorBackRAfterInput : Function as PropType<(event: Event) => void>,
+    colorBackRBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    colorBackRAfterBlur : Function as PropType<(event: Event) => void>,
+    //colorBack G event
+    colorBackGBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBackGAfterClick : Function as PropType<(event: Event) => void>,
+    colorBackGBeforeInput : Function as PropType<(event: Event) => boolean>,
+    colorBackGAfterInput : Function as PropType<(event: Event) => void>,
+    colorBackGBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    colorBackGAfterBlur : Function as PropType<(event: Event) => void>,
+    //colorBack B event
+    colorBackBBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBackBAfterClick : Function as PropType<(event: Event) => void>,
+    colorBackBBeforeInput : Function as PropType<(event: Event) => boolean>,
+    colorBackBAfterInput : Function as PropType<(event: Event) => void>,
+    colorBackBBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    colorBackBAfterBlur : Function as PropType<(event: Event) => void>,
+    //colorBack Opacity event
+    colorBackOpacityBeforeClick : Function as PropType<(event: Event) => boolean>,
+    colorBackOpacityAfterClick : Function as PropType<(event: Event) => void>,
+    colorBackOpacityBeforeInput : Function as PropType<(event: Event) => boolean>,
+    colorBackOpacityAfterInput : Function as PropType<(event: Event) => void>,
+    colorBackOpacityBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    colorBackOpacityAfterBlur : Function as PropType<(event: Event) => void>,
+    //formatClear event
+    formatClearBeforeClick : Function as PropType<(event: Event) => boolean>,
+    formatClearAfterClick : Function as PropType<(event: Event) => void>,
+    //undo event
+    undoBeforeClick : Function as PropType<(event: Event) => boolean>,
+    undoAfterClick : Function as PropType<(event: Event) => void>,
+    //redo event
+    redoBeforeClick : Function as PropType<(event: Event) => boolean>,
+    redoAfterClick : Function as PropType<(event: Event) => void>,
+    //help event
+    helpBeforeClick : Function as PropType<(event: Event) => boolean>,
+    helpAfterClick : Function as PropType<(event: Event) => void>,
+    //modal back event
+    modalBackBeforeClick : Function as PropType<(event: Event) => boolean>,
+    modalBackAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att link event
+    attLinkModalBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attLinkModalAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att link text input event
+    attLinkTextBeforeInput : Function as PropType<(event: Event) => boolean>,
+    attLinkTextAfterInput : Function as PropType<(event: Event) => void>,
+    attLinkTextBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    attLinkTextAfterBlur : Function as PropType<(event: Event) => void>,
+    //modal att link href input event
+    attLinkHrefBeforeInput : Function as PropType<(event: Event) => boolean>,
+    attLinkHrefAfterInput : Function as PropType<(event: Event) => void>,
+    attLinkHrefBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    attLinkHrefAfterBlur : Function as PropType<(event: Event) => void>,
+    //modal att link insert  event
+    attLinkInsertBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attLinkInsertAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att file event
+    attFileModalBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attFileModalAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att file upload  event
+    attFileUploadBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attFileUploadAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att file upload div event
+    attFileUploadDivBeforeDragover : Function as PropType<(event: Event) => boolean>,
+    attFileUploadDivAfterDragover : Function as PropType<(event: Event) => void>,
+    attFileUploadDivBeforeDrop : Function as PropType<(event: Event) => boolean>,
+    attFileUploadDivAfterDrop : Function as PropType<(event: Event) => void>,
+    attFileUploadDivBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attFileUploadDivAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att file upload input event
+    attFileUploadBeforeInput : Function as PropType<(event: Event) => boolean>,
+    attFileUploadAfterInput : Function as PropType<(event: Event) => void>,
+    attFileUploadBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    attFileUploadAfterBlur : Function as PropType<(event: Event) => void>,
+    //modal att file insert  event
+    attFileInsertBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attFileInsertAfterClick : Function as PropType<(event: Event) => void>,
+    //att link tooltip edit  event
+    attLinkTooltipEditBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attLinkTooltipEditAfterClick : Function as PropType<(event: Event) => void>,
+    //att link tooltip unlink  event
+    attLinkTooltipUnlinkBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attLinkTooltipUnlinkAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att image event
+    attImageModalBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageModalAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att image upload  and view event
+    attImageUploadViewBeforeDragover : Function as PropType<(event: Event) => boolean>,
+    attImageUploadViewAfterDragover : Function as PropType<(event: Event) => void>,
+    attImageUploadViewBeforeDrop : Function as PropType<(event: Event) => boolean>,
+    attImageUploadViewAfterDrop : Function as PropType<(event: Event) => void>,
+    attImageUploadViewBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageUploadViewAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att image view pre  event
+    attImageViewPreBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageViewPreAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att image view next  event
+    attImageViewNextBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageViewNextAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att image upload input event
+    attImageUploadBeforeInput : Function as PropType<(event: Event) => boolean>,
+    attImageUploadAfterInput : Function as PropType<(event: Event) => void>,
+    attImageUploadBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    attImageUploadAfterBlur : Function as PropType<(event: Event) => void>,
+    //modal att image url input event
+    attImageURLBeforeInput : Function as PropType<(event: Event) => boolean>,
+    attImageURLAfterInput : Function as PropType<(event: Event) => void>,
+    attImageURLBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    attImageURLAfterBlur : Function as PropType<(event: Event) => void>,
+    //modal att image insert  event
+    attImageInsertBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageInsertAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att video event
+    attVideoModalBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attVideoModalAfterClick : Function as PropType<(event: Event) => void>,
+    //modal att video embed id input event
+    attVideoEmbedIdBeforeInput : Function as PropType<(event: Event) => boolean>,
+    attVideoEmbedIdAfterInput : Function as PropType<(event: Event) => void>,
+    attVideoEmbedIdBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    attVideoEmbedIdAfterBlur : Function as PropType<(event: Event) => void>,
+    //modal att video width input event
+    attVideoWidthBeforeInput : Function as PropType<(event: Event) => boolean>,
+    attVideoWidthAfterInput : Function as PropType<(event: Event) => void>,
+    attVideoWidthBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    attVideoWidthAfterBlur : Function as PropType<(event: Event) => void>,
+    //modal att video height input event
+    attVideoHeightBeforeInput : Function as PropType<(event: Event) => boolean>,
+    attVideoHeightAfterInput : Function as PropType<(event: Event) => void>,
+    attVideoHeightBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    attVideoHeightAfterBlur : Function as PropType<(event: Event) => void>,
+    //modal att video insert  event
+    attVideoInsertBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attVideoInsertAfterClick : Function as PropType<(event: Event) => void>,
+    //att image tooltip width event
+    attImageAndVideoTooltipWidthBeforeInput : Function as PropType<(event: Event) => boolean>,
+    attImageAndVideoTooltipWidthAfterInput : Function as PropType<(event: Event) => void>,
+    attImageAndVideoTooltipWidthBeforeBlur : Function as PropType<(event: Event) => boolean>,
+    attImageAndVideoTooltipWidthAfterBlur : Function as PropType<(event: Event) => void>,
+    attImageAndVideoTooltipWidthBeforeKeyup : Function as PropType<(event: Event) => boolean>,
+    attImageAndVideoTooltipWidthAfterKeyup : Function as PropType<(event: Event) => void>,
+    //att image tooltip float none radio input event
+    attImageAndVideoTooltipFloatRadioNoneBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageAndVideoTooltipFloatRadioNoneAfterClick : Function as PropType<(event: Event) => void>,
+    //att image tooltip float left radio input event
+    attImageAndVideoTooltipFloatRadioLeftBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageAndVideoTooltipFloatRadioLeftAfterClick : Function as PropType<(event: Event) => void>,
+    //att image tooltip float right radio input event
+    attImageAndVideoTooltipFloatRadioRightBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageAndVideoTooltipFloatRadioRightAfterClick : Function as PropType<(event: Event) => void>,
+    //att image tooltip shape square radio input event
+    attImageAndVideoTooltipShapeRadioSquareBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageAndVideoTooltipShapeRadioSquareAfterClick : Function as PropType<(event: Event) => void>,
+    //att image tooltip shape radius radio input event
+    attImageAndVideoTooltipShapeRadioRadiusBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageAndVideoTooltipShapeRadioRadiusAfterClick : Function as PropType<(event: Event) => void>,
+    //att image tooltip shape circle radio input event
+    attImageAndVideoTooltipShapeRadioCircleBeforeClick : Function as PropType<(event: Event) => boolean>,
+    attImageAndVideoTooltipShapeRadioCircleAfterClick : Function as PropType<(event: Event) => void>,
+    //modal help event
+    helpModalBeforeClick : Function as PropType<(event: Event) => boolean>,
+    helpModalAfterClick : Function as PropType<(event: Event) => void>,
+    //placeholder event
+    placeholderBeforeClick : Function as PropType<(event: Event) => boolean>,
+    placeholderAfterClick : Function as PropType<(event: Event) => void>,
 }
