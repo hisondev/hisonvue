@@ -1,7 +1,7 @@
 
 import { PropType } from "vue";
 import type { HGridColumn } from "../../types";
-import { SelectionPolicy, GridDateFormat, GridMonthFormat, GridVerticalAlign, ColorSet, BoolString, Color } from "../../enums";
+import { SelectionPolicy, GridDateFormat, GridMonthFormat, GridVerticalAlign, BoolString, Color } from "../../enums";
 
 export const gridProps = {
     modelValue: Array as PropType<any[]>,
@@ -10,6 +10,8 @@ export const gridProps = {
         type: Array as PropType<HGridColumn[]>,
         required: true
     },
+    class: {type: String, required: false },
+    style: {type: String, required: false },
     /* The name of the grid. If null, the grid Id is inserted. */
     name: { type: String, required: false },
     /* Indicates whether the cell is editable. If true, the cell cannot be edited. */
@@ -182,4 +184,38 @@ export const gridProps = {
     linkVisitedFontColor: { type: String, required: false },
     /* Sets the font color of the link type cell on focus. Enter the 16-digit color code in cssText. Ex) '#ffffff' */
     linkFocusFontColor: { type: String, required: false },
+}
+
+export const gridEventProps = {
+    activeCell : Function as PropType<(row: number, colId: string) => boolean>,
+    activeCells : Function as PropType<(startRow: number, startColId: string, endRow: number, endColId: string) => boolean>,
+    activeRow : Function as PropType<(row: number) => boolean>,
+    activeRows : Function as PropType<(startRow: number, endRow: number) => boolean>,
+    activeCol : Function as PropType<(colId: string) => boolean>,
+    activeCols : Function as PropType<(startColId: string, endColId: string) => boolean>,
+    beforeChange : Function as PropType<(row: number, colId: string, oldValue: any, newValue: any) => boolean>,
+    afterChange : Function as PropType<(row: number, colId: string, oldValue: any, newValue: any) => void>,
+    beforeClickCell : Function as PropType<(row: number, colId: string) => boolean>,
+    afterClickCell : Function as PropType<(row: number, colId: string) => void>,
+    clickSelect : Function as PropType<(row: number, colId: string, selectNode: HTMLElement) => boolean>,
+    clickCheckbox : Function as PropType<(row: number, colId: string, checkboxNode: HTMLElement) => boolean>,
+    clickButton : Function as PropType<(row: number, colId: string, buttonNude: HTMLElement) => boolean>,
+    clickLink : Function as PropType<(row: number, colId: string, linkNode: HTMLElement) => boolean>,
+    beforeDblClickCell : Function as PropType<(row: number, colId: string) => boolean>,
+    afterDblClickCell : Function as PropType<(row: number, colId: string) => void>,
+    beforeClickHeader : Function as PropType<(row: number, colId: string) => boolean>,
+    afterClickHeader : Function as PropType<(row: number, colId: string) => void>,
+    beforeDblClickHeader : Function as PropType<(row: number, colId: string) => boolean>,
+    afterDblClickHeader : Function as PropType<(row: number, colId: string) => void>,
+    beforeEditEnter : Function as PropType<(row: number, colId: string, editorNode: HTMLElement) => boolean>,
+    afterEditEnter : Function as PropType<(row: number, colId: string, editorNode: HTMLElement) => void>,
+    editEnding : Function as PropType<(row: number, colId: string, oldValue: any, newValue: any) => boolean>,
+    clickFilter : Function as PropType<(row: number, colId: string, filterNode: HTMLElement) => boolean>,
+    chooseFilter : Function as PropType<(row: number, colId: string, oldValue: any, newValue: any) => boolean>,
+    paste : Function as PropType<(startRow: number, startColId: string, clipboardText: string) => boolean>,
+    copy : Function as PropType<(startRow: number, startColId: string, endRow: number, endColId: string, copyText: string) => boolean>,
+    resize : Function as PropType<(colId: string) => boolean>,
+    keydownEditor : Function as PropType<(event: KeyboardEvent) => boolean>,
+    inputEditor : Function as PropType<(event: InputEvent) => boolean>,
+    keydownGrid : Function as PropType<(event: KeyboardEvent) => boolean>,
 }
