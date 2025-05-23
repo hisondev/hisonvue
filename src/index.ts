@@ -1,12 +1,16 @@
 import { App } from 'vue'
 import type { Hison, HisonCloser, HisonConfig } from './types'
 import { createHison } from 'hisonjs'
-import { createSSRClientOnly, getDefaultHisonConfig, createHisonCloser, setHison, applyCssVariables } from './core'
+import { createSSRClientOnly, getDefaultHisonConfig, createHisonCloser, setHison, applyCssVariables, initializeDeviceListener } from './core'
 import './styles/hisonvue.scss'
 
 const HButton = createSSRClientOnly<typeof import('./components/HButton/HButton.vue').default>(
   () => import('./components/HButton/HButton.vue'),
   'HButton'
+)
+const HLayout = createSSRClientOnly<typeof import('./components/HLayout/HLayout.vue').default>(
+  () => import('./components/HLayout/HLayout.vue'),
+  'HLayout'
 )
 const HNote = createSSRClientOnly<typeof import('./components/HNote/HNote.vue').default>(
   () => import('./components/HNote/HNote.vue'),
@@ -49,7 +53,6 @@ export const hisonvue = {
       hisonConfig = getDefaultHisonConfig()
     }
     
-
     createHisonCloser(hisonConfig)
     setHison(hison, hisonConfig)
 
@@ -57,10 +60,13 @@ export const hisonvue = {
     if (typeof window !== 'undefined') {
       applyCssVariables()
     }
-    
+    //device에 따른 window 이벤트 등록
+    initializeDeviceListener()
+
     //사용자 설정값을 적용하기 위해 두번 실행해야함
     app.provide('hison', hison)
     app.component('HButton', HButton)
+    app.component('HLayout', HLayout)
     app.component('HNote', HNote)
     app.component('HGrid', HGrid)
   }
@@ -68,6 +74,7 @@ export const hisonvue = {
 
 export {
   HButton,
+  HLayout,
   HNote,
   HGrid,
   getDefaultHisonConfig,
