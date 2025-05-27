@@ -1,6 +1,6 @@
 import { Vanillagrid } from "vanillagrid2"
 import { Vanillanote } from "vanillanote2"
-import { HButtonMethods, HLayoutMethods } from "./component"
+import { HButtonMethods, HInputMethods, HLayoutMethods } from "./component"
 import { ComponentStyleConfig, HisonvueEvent } from "./hisonConfig"
 
 export interface ComponentColor {
@@ -80,6 +80,7 @@ export interface HisonCloser {
     component: {
         buttonList: Record<string, HButtonMethods>
         layoutList: Record<string, HLayoutMethods>
+        inputList: Record<string, HInputMethods>
     }
     event: HisonvueEvent
     componentStyle: ComponentStyle
