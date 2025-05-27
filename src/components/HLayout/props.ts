@@ -1,10 +1,9 @@
-import { PropType } from "vue";
+import { CSSProperties, PropType } from "vue";
 import { BoolString } from "../../enums";
 
 export const layoutProps = {
     /**
      * Unique identifier for the layout.
-     * - When provided, the layout is registered in `hisonCloser.component.layoutList`
      * - You can later retrieve its methods via `hison.vue.getLayout(id)`
      * - ⚠️ Duplicate `id` values will throw an error at mount time
      */
@@ -20,7 +19,7 @@ export const layoutProps = {
      * - Accepts valid CSS style text (e.g., 'padding: 10px; margin-top: 20px')
      * - Merged with dynamic computed styles like background and border settings
      */
-    style: { type: String, required: false },
+    style: { type: [String, Object] as PropType<string | CSSProperties>, required: false },
     /**
      * Controls visibility of the layout.
      * - Accepts string values: `'true'` or `'false'` (not boolean)
