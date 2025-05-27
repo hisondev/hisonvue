@@ -3,74 +3,87 @@ import type {
   HLayout,
   HNote,
   HGrid,
+  HInput,
 } from './index'
 
 declare module 'vue' {
   export interface GlobalComponents {
-  /**
-   * Hisonvue custom button component.
-   *
-   * `HButton` is a highly customizable button component that provides styling, behavior, and visibility control via props.
-   * It is integrated with `hisonCloser` and supports runtime control using the registered button methods.
-   *
-   * ---
-   *
-   * ### 🎯 Features
-   * - Theme-aware styling (size, color, visibility, disabled state)
-   * - CSS event integration (hover, active, focus)
-   * - Automatic runtime method registration (`isDisable`, `setVisible`, etc.)
-   * - Supports slot content or fallback to default label
-   * - Reactive reloading via `key`
-   *
-   * ---
-   *
-   * ### ⚙️ Usage
-   * ```vue
-   * <HButton
-   *   id="btn01"
-   *   size="m"
-   *   color="primary"
-   *   visible="true"
-   *   disable="false"
-   *   title="Tooltip Text"
-   *   @click="onClickHandler"
-   *   @mounted="onMountedHandler"
-   * >
-   *   Click Me
-   * </HButton>
-   * ```
-   *
-   * ---
-   *
-   * ### 🛠 Runtime Usage
-   * Use `hison.vue.getButton(id)` to retrieve runtime control methods:
-   *
-   * ```ts
-   * const btn = hison.vue.getButton('btn01');
-   * btn.setDisable(true);
-   * btn.setVisible(false);
-   * ```
-   *
-   * ---
-   *
-   * @prop {string} id - Required button identifier. Must be unique.
-   * @prop {string} [class] - Additional CSS classes to append to the button.
-   * @prop {Record<string, string>} [style] - Inline styles (CSS object format).
-   * @prop {Size} [size] - Button size (default inherits from global Hison config). Options: `'s' | 'm' | 'l' | 'xl'`.
-   * @prop {Color} [color] - Theme color (`primary`, `success`, `danger`, etc.) or hex string like `#ff0000`.
-   * @prop {BoolString} [visible] - Whether the button is visible (`'true'` or `'false'`).
-   * @prop {BoolString} [disable] - Whether the button is disabled (`'true'` or `'false'`).
-   * @prop {string} [title] - Tooltip text to display on hover.
-   *
-   * ---
-   *
-   * @event mounted - Emitted when the button is mounted. Passes `HButtonMethods` instance.
-   * @event click - Emitted when the button is clicked.
-   * @event mousedown - Emitted when mouse button is pressed on the button.
-   * @event mouseup - Emitted when mouse button is released.
-   * @event mouseover - Emitted when mouse hovers over the button.
-   * @event mouseout - Emitted when mouse leaves the button.
-   */
+    /**
+     * Hisonvue custom button component.
+     *
+     * `HButton` is a highly customizable and responsive button component that provides styling, state control,
+     * and dynamic behavior via props and runtime methods. It is integrated with `hisonCloser` for global access and control.
+     *
+     * ---
+     *
+     * ### 🎯 Features
+     * - Theme-aware styling via responsive class system (`hison-size-*`, `hison-color-*`, etc.)
+     * - Dynamic visibility and disabled state (`visible`, `disable` props)
+     * - Runtime method control (`setText`, `setDisable`, `setVisible`, etc.)
+     * - Supports both slot-based and `text` prop-based content:
+     *   - If slot is present, it overrides `text`
+     *   - Otherwise, `text` is rendered inside the button
+     * - Tooltip support via `title` prop and dynamic `setTitle` method
+     * - Automatically emits full runtime method object on DOM events (e.g. `@click="(_, btn) => btn.setDisable(true)"`)
+     * - Device-aware responsive reload (`@responsive-change`)
+     * - Integrated CSS event hooks for advanced interaction logic
+     * - Seamless reload via internal `registerReloadable()` support
+     *
+     * ---
+     *
+     * ### ⚙️ Usage
+     * ```vue
+     * <HButton
+     *   id="btn01"
+     *   class="hison-col-6 hison-color-primary"
+     *   text="Click Me"
+     *   title="Tooltip text"
+     *   disable="false"
+     *   visible="true"
+     *   @click="(_, btn) => btn.setDisable(true)"
+     *   @mounted="btn => console.log(btn.getId())"
+     * />
+     * ```
+     * Or with slot:
+     * ```vue
+     * <HButton id="btn02">
+     *   <strong>Custom Slot</strong>
+     * </HButton>
+     * ```
+     *
+     * ---
+     *
+     * ### 🛠 Runtime Usage
+     * Use `hison.vue.getButton(id)` to retrieve control methods at runtime:
+     *
+     * ```ts
+     * const btn = hison.vue.getButton('btn01');
+     * btn.setText('Updated');
+     * btn.setDisable(true);
+     * btn.setVisible(false);
+     * btn.setTitle('Updated tooltip');
+     * ```
+     *
+     * ---
+     *
+     * @prop {string} id - Unique button identifier. Enables runtime access via `hison.vue.getButton(id)`.
+     * @prop {string} [class] - Additional class string. Supports `hison-*` responsive system.
+     * @prop {string} [style] - Inline CSS style string.
+     * @prop {BoolString} [visible] - Whether the button is shown (`'true'` or `'false'`). Default: `'true'`.
+     * @prop {BoolString} [disable] - Whether the button is disabled. Default: `'false'`.
+     * @prop {string} [text] - Fallback label text if no slot is provided. Can be updated at runtime.
+     * @prop {string} [title] - Tooltip text. Can be updated via `setTitle()`.
+     *
+     * ---
+     *
+     * @event mounted - Emitted after mounting. Passes `HButtonMethods` instance.
+     * @event click - Emitted on click. Passes `(MouseEvent, HButtonMethods)` tuple.
+     * @event mousedown - Emitted on mousedown. Passes `(MouseEvent, HButtonMethods)` tuple.
+     * @event mouseup - Emitted on mouseup. Passes `(MouseEvent, HButtonMethods)` tuple.
+     * @event mouseover - Emitted on mouseover. Passes `(MouseEvent, HButtonMethods)` tuple.
+     * @event mouseout - Emitted on mouseout. Passes `(MouseEvent, HButtonMethods)` tuple.
+     * @event responsive-change - Emitted on device class change (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
+     */
     HButton: typeof HButton
 
     /**
@@ -187,6 +200,7 @@ declare module 'vue' {
      * @prop {BoolString} [usingDo] - Show both undo and redo.
      *
      * @event {(note: VanillanoteElement) => void} [mounted] - Called after editor is mounted.
+     * @event responsive-change - Emitted on device class change (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
      * `noteEventProps` supported.
      * @prop {(event: Event) => boolean} [textareaBeforeClick] - Before textarea click
      * @prop {(event: Event) => void} [textareaAfterClick] - After textarea click
@@ -508,6 +522,7 @@ declare module 'vue' {
      * @prop {string} [linkFocusFontColor] - Link focus font color.
      *
      * @event {(grid: GridMethods) => void} [mounted] - Emits the grid instance after mounting.
+     * @event responsive-change - Emitted on device class change (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
      * `gridEventProps` supported.
      * @prop {(row, colId) => boolean} [activeCell] - Called to determine whether a cell is active.
      * @prop {(startRow, startColId, endRow, endColId) => boolean} [activeCells] - Active range.
@@ -546,33 +561,40 @@ declare module 'vue' {
     /**
      * Hisonvue custom layout component.
      *
-     * `HLayout` is a flexible layout container component that supports responsive design,
-     * dynamic styling, and background control via props. It is registered in `hisonCloser`
-     * and can be manipulated at runtime using layout methods.
+     * `HLayout` is a versatile container component for responsive layout composition.
+     * It provides full control over visibility, background, borders, and height — with
+     * dynamic class resolution and runtime method integration via `hisonCloser`.
      *
      * ---
      *
      * ### 🎯 Features
-     * - Responsive layout via `hison-col-*` and device-based class resolution
-     * - Background customization (image, color, alignment, repeat, size)
-     * - Border and height configuration
-     * - Visibility control and method access via `hison.vue.getLayout(id)`
-     * - Emits `responsive-change` when device type changes (`'mb'`, `'tb'`, `'pc'`, `'wd'`)
+     * - Responsive design via `hison-col-*`, `hison-pos-*`, and device-aware class extraction
+     * - Runtime registration using unique `id`, accessible via `hison.vue.getLayout(id)`
+     * - Background image configuration (source, repeat, size, alignment)
+     * - Background color supports CSS and keyword themes (e.g., `'primary'`, `'danger'`)
+     * - Dynamic border configuration (color, width)
+     * - Custom height with CSS values
+     * - Fully controllable via `HLayoutMethods` (`setVisible`, `setBackColor`, `setHeight`, etc.)
+     * - Emits device change via `@responsive-change` (`'mb'`, `'tb'`, `'pc'`, `'wd'`)
      *
      * ---
      *
      * ### ⚙️ Usage
      * ```vue
      * <HLayout
-     *   id="layout01"
+     *   id="mainLayout"
      *   class="hison-col-12-mb hison-col-6-pc"
      *   visible="true"
-     *   backColor="primary"
-     *   backImageSrc="/img/bg.png"
-     *   borderColor="#ccc"
+     *   backColor="muted"
+     *   borderColor="primary"
      *   borderWidth="1px"
      *   height="300px"
-     *   @responsive-change="onDeviceChange"
+     *   backImageSrc="/images/bg.jpg"
+     *   backImageStyle="no-repeat"
+     *   backImageAlign="center"
+     *   backImageVerticalAlign="bottom"
+     *   @click="handleClick"
+     *   @responsive-change="handleDeviceChange"
      * >
      *   <HButton ... />
      * </HLayout>
@@ -581,43 +603,46 @@ declare module 'vue' {
      * ---
      *
      * ### 🛠 Runtime Usage
-     * Use `hison.vue.getLayout(id)` to retrieve runtime control methods:
+     * Access the layout programmatically using `hison.vue.getLayout(id)`:
      *
      * ```ts
-     * const layout = hison.vue.getLayout('layout01');
+     * const layout = hison.vue.getLayout('mainLayout');
      * layout.setVisible(false);
-     * layout.setBackColor('danger');
-     * layout.setHeight('500px');
+     * layout.setBackColor('#f0f0f0');
+     * layout.setHeight('100vh');
+     * layout.setBackImageSrc('/new/image.jpg');
      * ```
      *
      * ---
      *
-     * @prop {string} id - Unique layout identifier. Must be unique if specified. Enables method lookup via `hison.vue.getLayout(id)`.
-     * @prop {string} [class] - Additional responsive classes like `hison-col-*`, `hison-pos-*`, etc.
-     * @prop {string} [style] - Inline style string applied to the container. Merged with computed styles.
-     * @prop {BoolString} [visible] - Controls visibility. `'true'` or `'false'` as string. Defaults to `'true'`.
+     * @prop {string} id - Unique layout identifier for method registration (`hison.vue.getLayout(id)`).
+     * @prop {string} [class] - Responsive and custom classes (e.g., `hison-col-12-mb`, `hison-pos-center`).
+     * @prop {string} [style] - Inline CSS style string merged with internal background/border styles.
+     * @prop {BoolString} [visible] - Layout visibility as `'true'` or `'false'`. Default is visible.
      *
-     * @prop {string} [backImageSrc] - Background image URL (`'/img/bg.jpg'`, `'https://...jpg'`).
-     * @prop {string} [backImageStyle] - Background repeat/cover/contain settings (`'repeat'`, `'no-repeat'`, `'cover'`, etc.).
-     * @prop {string} [backImageWidth] - Background size (`'100%'`, `'300px'`, etc.).
+     * @prop {string} [backImageSrc] - Background image URL.
+     * @prop {string} [backImageStyle] - Background repeat or size mode (`'cover'`, `'repeat'`, etc.).
+     * @prop {string} [backImageWidth] - CSS size of background image (`'100%'`, `'auto'`, `'300px'`).
      * @prop {string} [backImageAlign] - Horizontal alignment (`'left'`, `'center'`, `'right'`).
      * @prop {string} [backImageVerticalAlign] - Vertical alignment (`'top'`, `'center'`, `'bottom'`).
      *
-     * @prop {string} [backColor] - Background color. Hex (`'#fff'`), `rgba()`, or theme keyword (`'primary'`, `'danger'`, etc.).
-     * @prop {string} [borderColor] - Border color. Same value types as `backColor`.
-     * @prop {string} [borderWidth] - Border width (`'1px'`, `'0.5rem'`, etc.).
-     * @prop {string} [height] - Height of the layout (`'100px'`, `'auto'`, `'100vh'`, etc.).
+     * @prop {string} [backColor] - Background color (`#fff`, `rgba(0,0,0,0.1)`, or theme key like `'success'`).
+     * @prop {string} [borderColor] - Border color. Same value rules as `backColor`.
+     * @prop {string} [borderWidth] - Border width in valid CSS units (`'1px'`, `'0.5rem'`, etc.).
+     * @prop {string} [height] - Layout height (`'100px'`, `'50%'`, `'100vh'`, etc.).
      *
      * ---
      *
-     * @event mounted - Emitted when the layout is mounted. Passes `HLayoutMethods` instance.
-     * @event responsive-change - Emitted when device type changes (mobile/tablet/pc/wide). Payload: `'mb' | 'tb' | 'pc' | 'wd'`.
-     * @event click - Emitted on click.
-     * @event mousedown - Emitted on mouse button down.
-     * @event mouseup - Emitted on mouse button up.
-     * @event mouseover - Emitted when hovered.
-     * @event mouseout - Emitted when mouse leaves.
+     * @event mounted - Emitted on mount. Returns `HLayoutMethods` instance for runtime control.
+     * @event click - Mouse click event.
+     * @event mousedown - Mouse down event.
+     * @event mouseup - Mouse up event.
+     * @event mouseover - Mouse over event.
+     * @event mouseout - Mouse out event.
+     * @event responsive-change - Emitted when device type changes (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
      */
     HLayout: typeof HLayout
+
+    HInput: typeof HInput
   }
 }
