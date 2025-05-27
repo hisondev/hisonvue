@@ -1,12 +1,6 @@
 import { hisonCloser } from "../.."
-import { getSpecificClassNameFromClassList } from "../../utils"
+import { getColorClass } from "../../utils"
 
-const getColorClass = (el: HTMLElement, suffix: string) => {
-    const color = getSpecificClassNameFromClassList(el.classList, 'color')
-    if(color) return `hison-color-${color}-${suffix}`
-
-    return `hison-color-primary-${suffix}`
-}
 
 const onClickForCss = (e: MouseEvent) => {
     const target = e.currentTarget as HTMLElement
