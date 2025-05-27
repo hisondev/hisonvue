@@ -7,18 +7,18 @@
             visibleClass,
         ]"
         :style="[props.style, computedBackStyle]"
-        @click="$emit('click', $event)"
-        @mousedown="$emit('mousedown', $event)"
-        @mouseup="$emit('mouseup', $event)"
-        @mouseover="$emit('mouseover', $event)"
-        @mouseout="$emit('mouseout', $event)"
+        @click="$emit('click', $event, layoutMethods)"
+        @mousedown="$emit('mousedown', $event, layoutMethods)"
+        @mouseup="$emit('mouseup', $event, layoutMethods)"
+        @mouseover="$emit('mouseover', $event, layoutMethods)"
+        @mouseout="$emit('mouseout', $event, layoutMethods)"
     >
         <slot>Hison Layout</slot>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
+import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, nextTick, unref } from 'vue'
 import type { HLayoutMethods } from '../../types'
 import { layoutProps } from './props'
 import { hisonCloser } from '../..'
@@ -32,6 +32,7 @@ inheritAttrs: false,
 emits: ['mounted', 'responsive-change', 'click', 'mousedown', 'mouseup', 'mouseover', 'mouseout'],
 setup(props, { emit }) {
     const layoutRef = ref<HTMLDivElement | null>(null)
+    const layoutMethods = ref<HLayoutMethods | null>(null)
     const id = props.id ? props.id : getUUID();
     const reloadId = `hlayout:${props.id}`
     const device = useDevice()
@@ -78,7 +79,7 @@ setup(props, { emit }) {
             if(hisonCloser.component.layoutList[id]) throw new Error(`[Hisonvue] layout id attribute was duplicated.`)
             refleshResponsiveClassList()
 
-            const layoutMethods: HLayoutMethods = {
+            layoutMethods.value = {
                 getId : () => { return id },
                 isVisible : () => window.getComputedStyle(layoutRef.value!).display !== 'none',
                 setVisible : (val: boolean) => {
@@ -137,8 +138,8 @@ setup(props, { emit }) {
                     }
                 },
             }
-            hisonCloser.component.layoutList[id] = layoutMethods
-            emit('mounted', layoutMethods)
+            hisonCloser.component.layoutList[id] = layoutMethods.value
+            emit('mounted', layoutMethods.value)
         }
     }
     const unmount = () => {
@@ -161,6 +162,7 @@ setup(props, { emit }) {
 
     return {
         layoutRef,
+        layoutMethods: computed(() => unref(layoutMethods)),
         props,
         responsiveClassList,
         visibleClass,
