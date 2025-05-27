@@ -4,6 +4,14 @@ import { createHison } from 'hisonjs'
 import { createSSRClientOnly, getDefaultHisonConfig, createHisonCloser, setHison, applyCssVariables, initializeDeviceListener } from './core'
 import './styles/hisonvue.scss'
 
+const HNote = createSSRClientOnly<typeof import('./components/HNote/HNote.vue').default>(
+  () => import('./components/HNote/HNote.vue'),
+  'HNote'
+)
+const HGrid = createSSRClientOnly<typeof import('./components/HGrid/HGrid.vue').default>(
+  () => import('./components/HGrid/HGrid.vue'),
+  'HGrid'
+)
 const HButton = createSSRClientOnly<typeof import('./components/HButton/HButton.vue').default>(
   () => import('./components/HButton/HButton.vue'),
   'HButton'
@@ -12,13 +20,9 @@ const HLayout = createSSRClientOnly<typeof import('./components/HLayout/HLayout.
   () => import('./components/HLayout/HLayout.vue'),
   'HLayout'
 )
-const HNote = createSSRClientOnly<typeof import('./components/HNote/HNote.vue').default>(
-  () => import('./components/HNote/HNote.vue'),
-  'HNote'
-)
-const HGrid = createSSRClientOnly<typeof import('./components/HGrid/HGrid.vue').default>(
-  () => import('./components/HGrid/HGrid.vue'),
-  'HGrid'
+const HInput = createSSRClientOnly<typeof import('./components/HInput/HInput.vue').default>(
+  () => import('./components/HInput/HInput.vue'),
+  'HInput'
 )
 
 export const hisonCloser = {
@@ -34,6 +38,15 @@ export const hisonCloser = {
       button_onAfterTouchstart: (e: TouchEvent) => {},
       button_onBeforeTouchend: (e: TouchEvent) => { return true },
       button_onAfterTouchend: (e: TouchEvent) => {},
+      
+      textbox_onBeforeMouseover: (e: MouseEvent) => { return true },
+      textbox_onAfterMouseover: (e: MouseEvent) => {},
+      textbox_onBeforeMouseout: (e: MouseEvent) => { return true },
+      textbox_onAfterMouseout: (e: MouseEvent) => {},
+      textbox_onBeforeTouchstart: (e: TouchEvent) => { return true },
+      textbox_onAfterTouchstart: (e: TouchEvent) => {},
+      textbox_onBeforeTouchend: (e: TouchEvent) => { return true },
+      textbox_onAfterTouchend: (e: TouchEvent) => {},
     }
   }
 } as HisonCloser
@@ -65,10 +78,11 @@ export const hisonvue = {
 
     //사용자 설정값을 적용하기 위해 두번 실행해야함
     app.provide('hison', hison)
-    app.component('HButton', HButton)
-    app.component('HLayout', HLayout)
     app.component('HNote', HNote)
     app.component('HGrid', HGrid)
+    app.component('HButton', HButton)
+    app.component('HLayout', HLayout)
+    app.component('HInput', HInput)
   }
 }
 
@@ -77,12 +91,17 @@ export {
   HLayout,
   HNote,
   HGrid,
+  HInput,
   getDefaultHisonConfig,
 }
 export type {
   Hison,
   HisonConfig,
   HGridColumn,
+  HNoteElement,
+  HGridMethods,
   HButtonMethods,
+  HLayoutMethods,
+  HInputMethods,
 } from './types'
 export * from './enums'
