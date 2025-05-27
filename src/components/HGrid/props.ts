@@ -1,5 +1,5 @@
 
-import { PropType } from "vue";
+import { CSSProperties, PropType } from "vue";
 import type { HGridColumn } from "../../types";
 import { SelectionPolicy, GridDateFormat, GridMonthFormat, GridVerticalAlign, BoolString, Color } from "../../enums";
 
@@ -11,7 +11,7 @@ export const gridProps = {
         required: true
     },
     class: {type: String, required: false },
-    style: {type: String, required: false },
+    style: { type: [String, Object] as PropType<string | CSSProperties>, required: false },
     /* The name of the grid. If null, the grid Id is inserted. */
     name: { type: String, required: false },
     /* Indicates whether the cell is editable. If true, the cell cannot be edited. */
