@@ -9,7 +9,7 @@ import { defineComponent, computed, onMounted, onBeforeUnmount, ref, nextTick, t
 import type { Vanillagrid } from 'vanillagrid2'
 import type { HGridColumn, HGridMethods } from '../../types'
 import { gridEventProps, gridProps } from './props'
-import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getSpecificClassNameFromClassList, registerReloadable } from '../../utils'
+import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getSpecificClassNameFromClassList, getUUID, registerReloadable } from '../../utils'
 import { hison, hisonCloser, Size } from '../..'
 import { useDevice } from '../../core'
 
@@ -24,6 +24,7 @@ setup(props, { emit }) {
     const vg: Vanillagrid = hisonCloser.grid
     const editorWrap = ref<HTMLElement | null>(null)
     const gridInstance = ref<HGridMethods | null>(null)
+    const id = props.id ? props.id : getUUID();
     const reloadId = `hgrid:${props.id}`
     const reloadTrigger = ref(0)
     const device = useDevice()
@@ -33,7 +34,6 @@ setup(props, { emit }) {
     const EXCLUDED_KEYS = ['columns', 'id', 'class', 'style'] as const
     const bindAttrs = computed(() => {
         reloadTrigger.value
-        if (!props.id) throw new Error(`[Hisonvue] id attribute is required.`)
         const classList = extractResponsiveClasses(props.class || '', device.value)
         const color = getSpecificClassNameFromClassList(classList, 'color')
         const size = getSpecificClassNameFromClassList(classList, 'size')
@@ -41,7 +41,7 @@ setup(props, { emit }) {
         responsiveClassList.value = classList
 
         const attrs: Record<string, string> = {}
-        attrs['data-id'] = props.id
+        attrs['data-id'] = id
 
         for (const [key, value] of Object.entries(props)) {
             if (EXCLUDED_KEYS.includes(key as any)) continue
@@ -102,8 +102,8 @@ setup(props, { emit }) {
         gridElement.style.border = 'none'
         gridElement.style.boxShadow = `0 0.5px 1px 0.5px ${color}`
 
-        const gridMethod: any = vg.getGrid(props.id!)
-        if(gridMethod) gridMethod.getId = () => { return props.id! }
+        const gridMethod: any = vg.getGrid(id)
+        if(gridMethod) gridMethod.getId = () => { return id }
         gridInstance.value = gridMethod as HGridMethods
 
         if(gridInstance.value) {
