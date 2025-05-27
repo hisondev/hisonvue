@@ -1,12 +1,12 @@
-import { PropType } from "vue";
+import { CSSProperties, PropType } from "vue";
 import { Color, NoteModeByDevice, NoteToolPosition, BoolString } from "../../enums";
 import { NoteData } from "vanillanote2";
 
 export const noteProps = {
-    modelValue: Object as () => NoteData,
     id: { type: String, required: false },
+    modelValue: Object as () => NoteData,
     class: {type: String, required: false },
-    style: {type: String, required: false },
+    style: { type: [String, Object] as PropType<string | CSSProperties>, required: false },
     /**
      * ADAPTIVE : The composition of notes varies depending on whether the device is a desktop or mobile device.
      * MOBILE : Always recognize as mobile.
