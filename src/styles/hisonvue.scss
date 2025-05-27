@@ -159,10 +159,12 @@
   justify-content: flex-start;
 }
 .hison-layout > * {
-  display: inline-block;
-  box-sizing: border-box;
   margin: 0;
 }
+/* 수평 정렬 클래스 */
+.hison-pos-left { margin-right: auto; }
+.hison-pos-center { margin-left: auto; margin-right: auto; }
+.hison-pos-right { margin-left: auto; }
 /* 수직 정렬 클래스 */
 .hison-layout-vertical-align-top { align-items: flex-start; }
 .hison-layout-vertical-align-center { align-items: center; }
@@ -174,21 +176,16 @@
 /* disable */
 .hison-disable { opacity: 0.5; cursor: not-allowed; }
 
-/* 수평 정렬 클래스(layout 내부에서만) */
-.hison-pos-left   { margin-right: auto; }
-.hison-pos-center { margin-left: auto; margin-right: auto; }
-.hison-pos-right  { margin-left: auto; }
-
 /* 가로 12분할 */
-.hison-col-1  { width: 8.3333%; }
-.hison-col-2  { width: 16.6667%; }
-.hison-col-3  { width: 25%; }
-.hison-col-4  { width: 33.3333%; }
-.hison-col-5  { width: 41.6667%; }
-.hison-col-6  { width: 50%; }
-.hison-col-7  { width: 58.3333%; }
-.hison-col-8  { width: 66.6667%; }
-.hison-col-9  { width: 75%; }
-.hison-col-10 { width: 83.3333%; }
-.hison-col-11 { width: 91.6667%; }
-.hison-col-12 { width: 100%; }
+.hison-col-1  { width: 8.3333%; box-sizing: border-box; }
+.hison-col-2  { width: 16.6667%; box-sizing: border-box; }
+.hison-col-3  { width: 25%; box-sizing: border-box; }
+.hison-col-4  { width: 33.3333%; box-sizing: border-box; }
+.hison-col-5  { width: 41.6667%; box-sizing: border-box; }
+.hison-col-6  { width: 50%; box-sizing: border-box; }
+.hison-col-7  { width: 58.3333%; box-sizing: border-box; }
+.hison-col-8  { width: 66.6667%; box-sizing: border-box; }
+.hison-col-9  { width: 75%; box-sizing: border-box; }
+.hison-col-10 { width: 83.3333%; box-sizing: border-box; }
+.hison-col-11 { width: 91.6667%; box-sizing: border-box; }
+.hison-col-12 { width: 100%; box-sizing: border-box; }
