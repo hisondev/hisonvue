@@ -1,7 +1,5 @@
 import type { Hison as Hisonjs } from "hisonjs";
-import { GridMethods } from "vanillagrid2";
-import { VanillanoteElement } from "vanillanote2";
-import { HButtonMethods, HGridMethods, HLayoutMethods, HNoteElement } from "./component";
+import { HButtonMethods, HGridMethods, HInputMethods, HLayoutMethods, HNoteElement } from "./component";
 import { Size } from "../enums";
 
 /**
@@ -129,6 +127,7 @@ export interface Hison extends Hisonjs {
     getGrid(gridId: string): HGridMethods | null
     getButton(buttonId: string): HButtonMethods | null
     getLayout(layoutId: string): HLayoutMethods | null
+    getInput(inputId: string): HInputMethods | null
   }
   style: {
     setSize(size: Size.s | Size.m | Size.l | Size.xl): void
