@@ -14,6 +14,15 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
   if(hisonConfig.event.cssEvent.button_onAfterTouchstart) hisonCloser.event.cssEvent.button_onAfterTouchstart = hisonConfig.event.cssEvent.button_onAfterTouchstart
   if(hisonConfig.event.cssEvent.button_onBeforeTouchend) hisonCloser.event.cssEvent.button_onBeforeTouchend = hisonConfig.event.cssEvent.button_onBeforeTouchend
   if(hisonConfig.event.cssEvent.button_onAfterTouchend) hisonCloser.event.cssEvent.button_onAfterTouchend = hisonConfig.event.cssEvent.button_onAfterTouchend
+  
+  if(hisonConfig.event.cssEvent.textbox_onBeforeMouseover) hisonCloser.event.cssEvent.textbox_onBeforeMouseover = hisonConfig.event.cssEvent.textbox_onBeforeMouseover
+  if(hisonConfig.event.cssEvent.textbox_onAfterMouseover) hisonCloser.event.cssEvent.textbox_onAfterMouseover = hisonConfig.event.cssEvent.textbox_onAfterMouseover
+  if(hisonConfig.event.cssEvent.textbox_onBeforeMouseout) hisonCloser.event.cssEvent.textbox_onBeforeMouseout = hisonConfig.event.cssEvent.textbox_onBeforeMouseout
+  if(hisonConfig.event.cssEvent.textbox_onAfterMouseout) hisonCloser.event.cssEvent.textbox_onAfterMouseout = hisonConfig.event.cssEvent.textbox_onAfterMouseout
+  if(hisonConfig.event.cssEvent.textbox_onBeforeTouchstart) hisonCloser.event.cssEvent.textbox_onBeforeTouchstart = hisonConfig.event.cssEvent.textbox_onBeforeTouchstart
+  if(hisonConfig.event.cssEvent.textbox_onAfterTouchstart) hisonCloser.event.cssEvent.textbox_onAfterTouchstart = hisonConfig.event.cssEvent.textbox_onAfterTouchstart
+  if(hisonConfig.event.cssEvent.textbox_onBeforeTouchend) hisonCloser.event.cssEvent.textbox_onBeforeTouchend = hisonConfig.event.cssEvent.textbox_onBeforeTouchend
+  if(hisonConfig.event.cssEvent.textbox_onAfterTouchend) hisonCloser.event.cssEvent.textbox_onAfterTouchend = hisonConfig.event.cssEvent.textbox_onAfterTouchend
 
   //컴포넌트 스타일 설정 
   hisonCloser.componentStyle = {
@@ -107,5 +116,6 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
   hisonCloser.component = {
     buttonList: {},
     layoutList: {},
+    inputList: {},
   }
 }
