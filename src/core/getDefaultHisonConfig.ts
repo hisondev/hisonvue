@@ -176,6 +176,15 @@ export const getDefaultHisonConfig = () => {
         button_onAfterTouchstart: (e: TouchEvent) => {},
         button_onBeforeTouchend: (e: TouchEvent) => { return true },
         button_onAfterTouchend: (e: TouchEvent) => {},
+        
+        textbox_onBeforeMouseover: (e: MouseEvent) => { return true },
+        textbox_onAfterMouseover: (e: MouseEvent) => {},
+        textbox_onBeforeMouseout: (e: MouseEvent) => { return true },
+        textbox_onAfterMouseout: (e: MouseEvent) => {},
+        textbox_onBeforeTouchstart: (e: TouchEvent) => { return true },
+        textbox_onAfterTouchstart: (e: TouchEvent) => {},
+        textbox_onBeforeTouchend: (e: TouchEvent) => { return true },
+        textbox_onAfterTouchend: (e: TouchEvent) => {},
       }
     }
   }
