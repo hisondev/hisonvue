@@ -19,6 +19,13 @@ export const getDeviceType = (width: number): DeviceType => {
   return 'wd'
 }
 
+export const getColorClass = (el: HTMLElement, suffix: string) => {
+    const color = getSpecificClassNameFromClassList(el.classList, 'color')
+    if(color) return `hison-color-${color}-${suffix}`
+
+    return `hison-color-primary-${suffix}`
+}
+
 export const getSpecificClassNameFromClassList = (classList: DOMTokenList | string[], classStarts: string) => {
     const colorClass = Array.from(classList).find(cls => cls.startsWith(`hison-${classStarts}-`))
     if(colorClass) {
