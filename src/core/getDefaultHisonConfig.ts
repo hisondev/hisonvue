@@ -166,6 +166,10 @@ export const getDefaultHisonConfig = () => {
     },
     event : {
       cssEvent : {
+        button_onBeforeFocus: (e: FocusEvent) => { return true },
+        button_onAfterFocus: (e: FocusEvent) => {},
+        button_onBeforeBlur: (e: FocusEvent) => { return true },
+        button_onAfterBlur: (e: FocusEvent) => {},
         button_onBeforeClick: (e: MouseEvent) => { return true },
         button_onAfterClick: (e: MouseEvent) => {},
         button_onBeforeMouseover: (e: MouseEvent) => { return true },
@@ -177,14 +181,18 @@ export const getDefaultHisonConfig = () => {
         button_onBeforeTouchend: (e: TouchEvent) => { return true },
         button_onAfterTouchend: (e: TouchEvent) => {},
         
-        textbox_onBeforeMouseover: (e: MouseEvent) => { return true },
-        textbox_onAfterMouseover: (e: MouseEvent) => {},
-        textbox_onBeforeMouseout: (e: MouseEvent) => { return true },
-        textbox_onAfterMouseout: (e: MouseEvent) => {},
-        textbox_onBeforeTouchstart: (e: TouchEvent) => { return true },
-        textbox_onAfterTouchstart: (e: TouchEvent) => {},
-        textbox_onBeforeTouchend: (e: TouchEvent) => { return true },
-        textbox_onAfterTouchend: (e: TouchEvent) => {},
+        input_onBeforeFocus: (e: FocusEvent) => { return true },
+        input_onAfterFocus: (e: FocusEvent) => {},
+        input_onBeforeBlur: (e: FocusEvent) => { return true },
+        input_onAfterBlur: (e: FocusEvent) => {},
+        input_onBeforeMouseover: (e: MouseEvent) => { return true },
+        input_onAfterMouseover: (e: MouseEvent) => {},
+        input_onBeforeMouseout: (e: MouseEvent) => { return true },
+        input_onAfterMouseout: (e: MouseEvent) => {},
+        input_onBeforeTouchstart: (e: TouchEvent) => { return true },
+        input_onAfterTouchstart: (e: TouchEvent) => {},
+        input_onBeforeTouchend: (e: TouchEvent) => { return true },
+        input_onAfterTouchend: (e: TouchEvent) => {},
       }
     }
   }
