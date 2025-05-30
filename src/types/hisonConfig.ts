@@ -636,6 +636,10 @@ export interface ComponentStyleConfig {
 }
 
 export interface CssEvent {
+  button_onBeforeFocus: (e: FocusEvent) => boolean;
+  button_onAfterFocus: (e: FocusEvent) => void;
+  button_onBeforeBlur: (e: FocusEvent) => boolean;
+  button_onAfterBlur: (e: FocusEvent) => void;
   button_onBeforeClick: (e: MouseEvent) => boolean;
   button_onAfterClick: (e: MouseEvent) => void;
   button_onBeforeMouseover: (e: MouseEvent) => boolean;
@@ -646,6 +650,19 @@ export interface CssEvent {
   button_onAfterTouchstart: (e: TouchEvent) => void;
   button_onBeforeTouchend: (e: TouchEvent) => boolean;
   button_onAfterTouchend: (e: TouchEvent) => void;
+  
+  input_onBeforeFocus: (e: FocusEvent) => boolean;
+  input_onAfterFocus: (e: FocusEvent) => void;
+  input_onBeforeBlur: (e: FocusEvent) => boolean;
+  input_onAfterBlur: (e: FocusEvent) => void;
+  input_onBeforeMouseover: (e: MouseEvent) => boolean;
+  input_onAfterMouseover: (e: MouseEvent) => void;
+  input_onBeforeMouseout: (e: MouseEvent) => boolean;
+  input_onAfterMouseout: (e: MouseEvent) => void;
+  input_onBeforeTouchstart: (e: TouchEvent) => boolean;
+  input_onAfterTouchstart: (e: TouchEvent) => void;
+  input_onBeforeTouchend: (e: TouchEvent) => boolean;
+  input_onAfterTouchend: (e: TouchEvent) => void;
 }
 
 export interface HisonvueEvent {
