@@ -1,5 +1,5 @@
 <template>
-  <div ref="editorWrap" :class="['hison-wrap', ...responsiveClassList]" :style="props.style">
+  <div ref="editorWrap" :class="['hison-wrap', ...responsiveClassList, requiredClass]" :style="props.style">
     <div data-vanillanote v-bind="bindAttrs"></div>
   </div>
 </template>
@@ -28,6 +28,10 @@ export default defineComponent({
     const id = props.id ? props.id : getUUID();
     const reloadId = `hnote:${props.id}`
     const reloadTrigger = ref(0)
+    const required = ref(props.required === 'true')
+    const requiredClass = computed(()=>{
+      if(required.value) return 'hison-note-required'
+    })
     const device = useDevice()
 
     const responsiveClassList = ref<string[]>([])
@@ -130,6 +134,15 @@ export default defineComponent({
         note.setNoteData(props.modelValue)
       }
 
+      //methods
+      if (note) {
+        note.getId = () => id
+        note.getType = () => 'note'
+        note.getRequired = () => required.value
+        note.setRequired = (val: boolean) => { required.value = val }
+      }
+
+      //v-model
       if (note) {
         const textarea = note._elements?.textarea
         mutationObserver.observe(textarea, { characterData: true, childList: true, subtree: true })
@@ -449,7 +462,8 @@ export default defineComponent({
       editorWrap,
       props,
       bindAttrs,
-      responsiveClassList
+      responsiveClassList,
+      requiredClass
     }
   }
 })
