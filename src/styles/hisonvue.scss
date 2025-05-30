@@ -62,6 +62,10 @@
     border-radius: 2px;
     font-family: var(--hison-font-family);
 }
+.hison-button:focus,
+.hison-button:active {
+    outline: none;
+}
 .hison-size-s-button {
     padding: 0.3rem 1rem;
     font-size: 0.65rem;
@@ -108,48 +112,164 @@
     background-color: var(--hison-warning-buttonColor);
     color: var(--hison-warning-filledTextColor);
 }
-/* Css Event */
-.hison-color-primary-on-active {
-    background-color: var(--hison-primary-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-primary-shadowColor);
+/* Button Css Event */
+.hison-color-primary-button-on-focus {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-primary-shadowColor) !important;
 }
-.hison-color-primary-on-mouseover {
+.hison-color-primary-button-on-active {
+    background-color: var(--hison-primary-activeColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-primary-shadowColor) !important;
+}
+.hison-color-primary-button-on-mouseover {
     background-color: var(--hison-primary-hoverColor) !important;
 }
-.hison-color-muted-on-active {
-    background-color: var(--hison-muted-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-muted-shadowColor);
+.hison-color-muted-button-on-focus {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-muted-shadowColor) !important;
 }
-.hison-color-muted-on-mouseover {
+.hison-color-muted-button-on-active {
+    background-color: var(--hison-muted-activeColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-muted-shadowColor) !important;
+}
+.hison-color-muted-button-on-mouseover {
     background-color: var(--hison-muted-hoverColor) !important;
 }
-.hison-color-info-on-active {
-    background-color: var(--hison-info-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-info-shadowColor);
+.hison-color-info-button-on-focus {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-info-shadowColor) !important;
 }
-.hison-color-info-on-mouseover {
+.hison-color-info-button-on-active {
+    background-color: var(--hison-info-activeColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-info-shadowColor) !important;
+}
+.hison-color-info-button-on-mouseover {
     background-color: var(--hison-info-hoverColor) !important;
 }
-.hison-color-success-on-active {
-    background-color: var(--hison-success-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-success-shadowColor);
+.hison-color-success-button-on-focus {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-success-shadowColor) !important;
 }
-.hison-color-success-on-mouseover {
+.hison-color-success-button-on-active {
+    background-color: var(--hison-success-activeColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-success-shadowColor) !important;
+}
+.hison-color-success-button-on-mouseover {
     background-color: var(--hison-success-hoverColor) !important;
 }
-.hison-color-danger-on-active {
-    background-color: var(--hison-danger-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-danger-shadowColor);
+.hison-color-danger-button-on-focus {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-danger-shadowColor) !important;
 }
-.hison-color-danger-on-mouseover {
+.hison-color-danger-button-on-active {
+    background-color: var(--hison-danger-activeColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-danger-shadowColor) !important;
+}
+.hison-color-danger-button-on-mouseover {
     background-color: var(--hison-danger-hoverColor) !important;
 }
-.hison-color-warning-on-active {
-    background-color: var(--hison-warning-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-warning-shadowColor);
+.hison-color-warning-button-on-focus {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-warning-shadowColor) !important;
 }
-.hison-color-warning-on-mouseover {
+.hison-color-warning-button-on-active {
+    background-color: var(--hison-warning-activeColor) !important;
+    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-warning-shadowColor) !important;
+}
+.hison-color-warning-button-on-mouseover {
     background-color: var(--hison-warning-hoverColor) !important;
+}
+
+/* HInput */
+.hison-input {
+    display: inline-block;
+    border: none;
+    border-radius: 2px;
+    font-family: var(--hison-font-family);
+}
+.hison-input-disable { opacity: 0.5; cursor: not-allowed; }
+.hison-input-readonly { box-shadow: none !important; }
+.hison-input:hover,
+.hison-input:focus,
+.hison-input:active {
+    outline: none;
+}
+.hison-size-s-input {
+    padding: 0.3rem 1rem;
+    font-size: 0.65rem;
+}
+.hison-size-m-input {
+    padding: 0.4rem 1.1rem;
+    font-size: 0.8rem;
+}
+.hison-size-l-input {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+}
+.hison-size-xl-input {
+    padding: 0.6rem 1.4rem;
+    font-size: 1rem;
+}
+.hison-color-primary-input {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-primary-shadowColor);
+    color: var(--hison-primary-filledTextColor);
+}
+.hison-color-muted-input {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-muted-shadowColor);
+    color: var(--hison-muted-filledTextColor);
+}
+.hison-color-info-input {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-info-shadowColor);
+    color: var(--hison-info-filledTextColor);
+}
+.hison-color-success-input {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-success-shadowColor);
+    color: var(--hison-success-filledTextColor);
+}
+.hison-color-danger-input {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-danger-shadowColor);
+    color: var(--hison-danger-filledTextColor);
+}
+.hison-color-warning-input {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-warning-shadowColor);
+    color: var(--hison-warning-filledTextColor);
+}
+/* Input Css Event */
+.hison-color-primary-input-on-active {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-primary-shadowColor) !important;
+}
+.hison-color-primary-input-on-mouseover {
+    box-shadow: 1px 1px 3px 1px var(--hison-primary-shadowColor) !important;
+}
+.hison-color-muted-input-on-active {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-muted-shadowColor) !important;
+}
+.hison-color-muted-input-on-mouseover {
+    box-shadow: 1px 1px 3px 1px var(--hison-muted-shadowColor) !important;
+}
+.hison-color-info-input-on-active {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-info-shadowColor) !important;
+}
+.hison-color-info-input-on-mouseover {
+    box-shadow: 1px 1px 3px 1px var(--hison-info-shadowColor) !important;
+}
+.hison-color-success-input-on-active {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-success-shadowColor) !important;
+}
+.hison-color-success-input-on-mouseover {
+    box-shadow: 1px 1px 3px 1px var(--hison-success-shadowColor) !important;
+}
+.hison-color-danger-input-on-active {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-danger-shadowColor) !important;
+}
+.hison-color-danger-input-on-mouseover {
+    box-shadow: 1px 1px 3px 1px var(--hison-danger-shadowColor) !important;
+}
+.hison-color-warning-input-on-active {
+    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-warning-shadowColor) !important;
+}
+.hison-color-warning-input-on-mouseover {
+    box-shadow: 1px 1px 3px 1px var(--hison-warning-shadowColor) !important;
+}
+
+/* HDataGroup */
+.hison-data-group {
+  all: unset;
+  display: inline;
 }
 
 /* HLayout */
@@ -169,6 +289,12 @@
 .hison-layout-vertical-align-top { align-items: flex-start; }
 .hison-layout-vertical-align-center { align-items: center; }
 .hison-layout-vertical-align-bottom { align-items: flex-end; }
+
+/* font decoretion */
+.hison-font-bold { font-weight: bold; }
+.hison-font-italic { font-style: italic; }
+.hison-font-thruline { text-decoration: line-through }
+.hison-font-underline { text-decoration: underline; }
 
 /* display helpers */
 .hison-display-none { display: none; }
