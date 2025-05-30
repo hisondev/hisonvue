@@ -106,6 +106,13 @@ setup(props, { emit }) {
         if(gridMethod) gridMethod.getId = () => { return id }
         gridInstance.value = gridMethod as HGridMethods
 
+        //methods
+        if (gridInstance.value) {
+            gridInstance.value.getId = () => id
+            gridInstance.value.getType = () => 'grid'
+        }
+
+        //event
         if(gridInstance.value) {
             if (typeof props.activeCell === 'function') gridInstance.value.setOnActiveCell(props.activeCell)
             if (typeof props.activeCells === 'function') gridInstance.value.setOnActiveCells(props.activeCells)
