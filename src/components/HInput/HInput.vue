@@ -1,19 +1,45 @@
 <template>
   <input
+    ref="inputTextRef"
     v-show="!editing"
     :class="[
       'hison-input',
       ...responsiveClassList,
       visibleClass,
+      editModeClass,
+      requiredClass,
+      fontBoldClass,
+      fontItalicClass,
+      fontThrulineClass,
+      fontUnderlineClass,
     ]"
     type="text"
     :value="spanText"
     :style="props.style"
-    :disabled="false"
+    :disabled="disable"
+    :readonly="readonly"
     :title="title || undefined"
+    :placeholder="placeholder || undefined"
     @focus="onTextInputFocus"
+    @click="$emit('click', $event, inputMethods)"
+    @dblclick="$emit('dblclick', $event, inputMethods)"
+    @mousedown="$emit('mousedown', $event, inputMethods)"
+    @mouseup="$emit('mouseup', $event, inputMethods)"
+    @mouseenter="$emit('mouseenter', $event, inputMethods)"
+    @mouseleave="$emit('mouseleave', $event, inputMethods)"
     @mouseover="$emit('mouseover', $event, inputMethods)"
     @mouseout="$emit('mouseout', $event, inputMethods)"
+    @mousemove="$emit('mousemove', $event, inputMethods)"
+
+    @pointerdown="$emit('pointerdown', $event, inputMethods)"
+    @pointerup="$emit('pointerup', $event, inputMethods)"
+    @pointermove="$emit('pointermove', $event, inputMethods)"
+    @pointerenter="$emit('pointerenter', $event, inputMethods)"
+    @pointerleave="$emit('pointerleave', $event, inputMethods)"
+    @touchstart="$emit('touchstart', $event, inputMethods)"
+    @touchend="$emit('touchend', $event, inputMethods)"
+    @touchmove="$emit('touchmove', $event, inputMethods)"
+    @touchcancel="$emit('touchcancel', $event, inputMethods)"
   />
   <input
     v-show="editing"
@@ -22,16 +48,34 @@
       'hison-input',
       ...responsiveClassList,
       visibleClass,
+      editModeClass,
     ]"
     :value="inputValue"
     :style="props.style"
-    :disabled="false"
-    :type="type"
+    :disabled="disable"
+    :readonly="readonly"
+    :type="inputType"
     :title="title || undefined"
-    @input="onInput"
-    @click="$emit('input-click', $event, inputMethods)"
+    :placeholder="placeholder || undefined"
+    :max="maxNumber || undefined"
+    :min="minNumber || undefined"
     @focus="onFocus"
     @blur="onBlur"
+    @input="onInput"
+    @compositionstart="$emit('compositionstart', $event, inputMethods)"
+    @compositionupdate="$emit('compositionupdate', $event, inputMethods)"
+    @compositionend="$emit('compositionend', $event, inputMethods)"
+    @keydown="$emit('keydown', $event, inputMethods)"
+    @keyup="$emit('keyup', $event, inputMethods)"
+    @dragstart="$emit('dragstart', $event, inputMethods)"
+    @dragend="$emit('dragend', $event, inputMethods)"
+    @drag="$emit('drag', $event, inputMethods)"
+    @drop="$emit('drop', $event, inputMethods)"
+    @copy="$emit('copy', $event, inputMethods)"
+    @cut="$emit('cut', $event, inputMethods)"
+    @paste="$emit('paste', $event, inputMethods)"
+    @wheel="$emit('wheel', $event, inputMethods)"
+    @contextmenu="$emit('contextmenu', $event, inputMethods)"
   />
 </template>
 
@@ -39,28 +83,62 @@
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, unref } from 'vue'
 import type { HInputMethods } from '../../types'
 import { inputProps } from './props'
-import { hison, hisonCloser, InputEditMode, InputType } from '../..'
-import { addComponentNameToClass, extractResponsiveClasses, getUUID, registerReloadable } from '../../utils'
+import { DateFormat, hison, hisonCloser, EditMode, InputType, YearMonthFormat } from '../..'
+import { addComponentNameToClass, extractResponsiveClasses, getDigitsOnly, getMaskValue, getUUID, isNullOrUndefined, registerReloadable } from '../../utils'
 import { useDevice } from '../../core'
+import { addInputCssEvent, addInputTextCssEvent, removeInputCssEvent, removeInputTextCssEvent } from '../common/setInputCssEvent'
 
 export default defineComponent({
   name: 'HInput',
   props: inputProps,
   inheritAttrs: false,
+  
   emits: [
     'update:modelValue',
     'mounted',
     'responsive-change',
-    'input-click',
+    //input text
+    'click',
+    'dblclick',
+    'mousedown',
+    'mouseup',
+    'mouseenter',
+    'mouseleave',
+    'mouseover',
+    'mouseout',
+    'mousemove',
+    'pointerdown',
+    'pointerup',
+    'pointermove',
+    'pointerenter',
+    'pointerleave',
+    'touchstart',
+    'touchend',
+    'touchmove',
+    'touchcancel',
+    //input
     'focus',
     'blur',
     'input',
     'change',
-    'mouseover',
-    'mouseout'
+    'compositionstart',
+    'compositionupdate',
+    'compositionend',
+    'keydown',
+    'keyup',
+    'dragstart',
+    'dragend',
+    'drag',
+    'drop',
+    'copy',
+    'cut',
+    'paste',
+    'wheel',
+    'contextmenu',
   ],
   setup(props, { emit }) {
     const inputRef = ref<HTMLInputElement | null>(null)
+    const inputTextRef = ref<HTMLInputElement | null>(null)
     const inputMethods = ref<HInputMethods | null>(null)
     const id = props.id ? props.id : getUUID()
     const reloadId = `hinput:${props.id}`
@@ -73,120 +151,248 @@ export default defineComponent({
       addComponentNameToClass(responsiveClassList.value, 'color', 'input', 'primary')
     }
 
-    const modelValue = ref(props.modelValue ?? '')
+    const inputType = ref(props.inputType ?? InputType.text)
+    const format = ref(props.format ?? null)
+    const maxNumber = ref(hison.utils.isNumeric(props.maxNumber) ? Number(props.maxNumber) : null)
+    const minNumber = ref(hison.utils.isNumeric(props.minNumber) ? Number(props.minNumber) : null)
+    const roundNumber = ref(hison.utils.isInteger(props.roundNumber) || hison.utils.isNegativeInteger(props.roundNumber) || props.roundNumber === '0' ? Number(props.roundNumber) : null)
+    const maxLength = ref(hison.utils.isPositiveInteger(props.maxLength) ? Number(props.maxLength) : null)
+    const maxByte = ref(hison.utils.isPositiveInteger(props.maxByte) ? Number(props.maxByte) : null)
+    const getCutLengthString = (value: any) => {
+      value = String(value)
+      if(maxLength.value) value = value.substring(0, maxLength.value)
+      if(maxByte.value) value = hison.utils.getCutByteLength(value, maxByte.value)
+      return value
+    }
+    const getAdjustedNumber = (value: any) => {
+      value = Number(value)
+      if(maxNumber.value && value > maxNumber.value) value = maxNumber.value
+      if(minNumber.value && value < minNumber.value) value = minNumber.value
+      if(roundNumber.value) value = hison.utils.getRound(value, roundNumber.value)
+      return value
+    }
+    //modelValue를 가져올 때 우선적용 필요함
+    const computeValue = (value: any) => {
+      if(isNullOrUndefined(value)) return value
+      try {
+        switch (inputType.value) {
+          case InputType.text:
+          case InputType.password:
+          case InputType.email:
+          case InputType.number:
+          case InputType.mask:
+          case InputType.digit:
+            if (inputType.value === InputType.number) value = getAdjustedNumber(value)
+            if (inputType.value === InputType.mask) value = getMaskValue(value, format.value ?? '')
+            if (inputType.value === InputType.digit) value = getDigitsOnly(value)
+            value = getCutLengthString(value)
+            break;
+          case InputType.date:
+            if(value) value = hison.utils.getDateWithFormat(value, DateFormat['yyyy-MM-dd'])
+            break;
+          case InputType.month:
+            if(value) value = hison.utils.getDateWithFormat(value, YearMonthFormat['yyyy-MM'])
+            break;
+          default:
+            break;
+        } 
+      } catch (e) {
+        console.warn('[HInput] Failed to format value', value, e)
+      }
+      return value;
+    }
+
+    const modelValue = ref(computeValue(props.modelValue))
     const inputValue = computed(() => modelValue.value)
-    const oldValue = ref(props.modelValue ?? '')
+    const oldValue = ref(null)
     const visible = ref(props.visible !== 'false')
     const title = ref(props.title ?? '')
-    const type = ref(props.type ?? InputType.text)
-    const format = ref(props.format ?? '')
-    const editMode = ref(props.editMode ?? InputEditMode.editable)
-    const editModeClass = computed(() => '')
-    const fontBold = ref(props.fontBold ?? false)
-    const fontItalic = ref(props.fontItalic ?? false)
-    const fontThruline = ref(props.fontThruline ?? false)
-    const fontUnderline = ref(props.fontUnderline ?? false)
-    const maxLength = ref(props.maxLength ?? null)
-    const maxByte = ref(props.maxByte ?? null)
-    const required = ref(props.required ?? false)
+    const inputAttrType = computed(() => {
+      switch (inputType.value) {
+        case InputType.mask:
+        case InputType.digit:
+          return 'text'
+        default:
+          return inputType.value
+      }
+    })
+    const nullText = ref(props.nullText ?? '')
+    const editMode = ref(props.editMode ?? EditMode.editable)
+    const disable = computed(() => {
+      if(editMode.value === EditMode.disable) return true
+      return false
+    })
+    const readonly = computed(() => {
+      if(editMode.value === EditMode.readonly) return true
+      return false
+    })
+    const editModeClass = computed(() => {
+      if(editMode.value !== EditMode.editable) return `hison-input-${editMode.value}`
+    })
+    const required = ref(props.required === 'true')
+    const requiredClass = computed(()=>{
+      if(required.value) return 'hison-input-required'
+    })
     const placeholder = ref(props.placeholder ?? '')
+    const fontBold = ref(props.fontBold === 'true')
+    const fontBoldClass = computed(()=>{
+      if(fontBold.value) return 'hison-font-bold'
+    })
+    const fontItalic = ref(props.fontItalic === 'true')
+    const fontItalicClass = computed(()=>{
+      if(fontItalic.value) return 'hison-font-italic'
+    })
+    const fontThruline = ref(props.fontThruline === 'true')
+    const fontThrulineClass = computed(()=>{
+      if(fontThruline.value) return 'hison-font-thruline'
+    })
+    const fontUnderline = ref(props.fontUnderline === 'true')
+    const fontUnderlineClass = computed(()=>{
+      if(fontUnderline.value) return 'hison-font-underline'
+    })
     
     const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
     const editing = ref(false)
+
     const computeSpanText = (value: any) => {
+      if (isNullOrUndefined(value) || value === '') return nullText.value ?? ''
       let text = String(value)
-      switch (type.value) {
-        case InputType.text:
-          break;
-        case InputType.number:
-          text = hison.utils.getNumberFormat(value, format.value ?? hison.getNumberFormat())
-          break;
-        case InputType.mask:
-          break;
-        case InputType.numchar:
-          break;
-        case InputType.email:
-          break;
-        case InputType.password:
-          break;
-        case InputType.date:
-          break;
-        case InputType.year:
-          break;
-        case InputType.month:
-          break;
-        case InputType.minute:
-          break;
-        default:
-          break;
+      try {
+        switch (inputType.value) {
+          case InputType.password:
+            text = '•'.repeat(value.length)
+            break;
+          case InputType.number:
+            text = hison.utils.getNumberFormat(value, format.value ?? hison.getNumberFormat())
+            break;
+          case InputType.date:
+            text = hison.utils.getDateWithFormat(value, format.value ?? hison.getDateFormat())
+            break;
+          case InputType.month:
+            text = hison.utils.getDateWithFormat(value, format.value ?? hison.getYearMonthFormat())
+            break;
+        }
+      } catch (e) {
+        console.warn('[HInput] Failed to format value', value, e)
+        text = ''
       }
-      if (text === null || text === undefined) text = ''
       return text
     }
-    const spanText = ref(computeSpanText(modelValue.value))
+    const spanText = ref('')// 최초에 mount시 spanText를 update처리함
     const onTextInputFocus = (e: Event) => {
-      if(editMode.value === InputEditMode.editable) editing.value = true
+      if(editMode.value === EditMode.editable) editing.value = true
       nextTick(() => {
         inputRef.value?.focus()
       })
     }
     const onInput = (e: Event) => {
-      modelValue.value = inputRef.value!.value
-      emit('update:modelValue', modelValue.value)
+      let value = inputRef.value!.value
+      if (inputType.value === InputType.mask || inputType.value === InputType.digit
+       || maxLength.value || maxByte.value) {
+        value = computeValue(value)
+      }
+      modelValue.value = value
+      inputRef.value!.value = value
+      emit('input', e, inputMethods.value, modelValue.value)
     }
     const onFocus = (e: FocusEvent) => {
-      oldValue.value = inputRef.value!.value
-      console.log('onFocus modelValue', modelValue.value)
+      oldValue.value = modelValue.value
       emit('focus', e, inputMethods.value)
     }
     const onBlur = (e: Event) => {
-      const newValue = modelValue.value
-      console.log('onBlur newValue', newValue)
-      if (newValue !== oldValue.value) {
-        emit('change', oldValue.value, newValue, inputMethods.value)
-        spanText.value = computeSpanText(newValue)
-      }
       editing.value = false
+      updateValue(modelValue.value, true, true)
       emit('blur', e, inputMethods.value)
-      console.log('onBlur modelValue', modelValue.value)
+    }
+    const updateValue = (value: any, doComputeValue = true, doCallChangeEmit = false) => {
+      if(doComputeValue) modelValue.value = computeValue(value)
+      inputRef.value!.value = modelValue.value
+      spanText.value = computeSpanText(modelValue.value)
+      if(doCallChangeEmit) emit('change', oldValue.value, modelValue.value, inputMethods.value)
     }
 
     const mount = () => {
       if (inputRef.value) {
         if (hisonCloser.component.inputList[id]) throw new Error(`[Hisonvue] input id attribute was duplicated.`)
         refleshResponsiveClassList()
+        if(inputTextRef.value) addInputTextCssEvent(inputTextRef.value)
+        addInputCssEvent(inputRef.value)
+        // mount시 value 갱신
+        updateValue(modelValue.value, false)
 
         inputMethods.value = {
-            getId: () => id,
-            getText: () => { return spanText.value },
-            getTitle: () => title.value,
-            isVisible: () => window.getComputedStyle(inputRef.value!).display !== 'none',
-            setTitle: (val: string) => { title.value = val },
-            setVisible: (val: boolean) => { visible.value = val },
-            getType: () => { return InputType.text },
-            setType: (val: keyof typeof InputType) => { type.value = InputType[val] /** input text 새로고침 필요!!! */ },
-            getFormat: () => {return format.value},
-            setFormat: (val: string) => { format.value = val  /** input text 새로고침 필요!!! */ },
-            getEditMode: () => {return InputEditMode.editable},
-            setEditMode: () => {},
-            isFontBold: () => {return true},
-            setFontBold: () => {},
-            isFontItalic: () => {return true},
-            setFontItalic: () => {},
-            isFontThruline: () => {return true},
-            setFontThruline: () => {},
-            isFontUnderline: () => {return true},
-            setFontUnderline: () => {},
-            getMaxLength: () => {return 0},
-            setMaxLength: () => {},
-            getMaxByte: () => {return 0},
-            setMaxByte: () => {},
-            getRequired: () => {return true},
-            setRequired: () => {},
-            getPlaceholder: () => {return ''},
-            setPlaceholder: () => {},
-            getValue: () => {return null},
-            setValue: () => {},
+          getId : () => id,
+          getType : () => 'input',
+          getText : () => { return spanText.value },
+          getValue : () => { return modelValue.value },
+          setValue : (val: any) => {
+            oldValue.value = modelValue.value
+            modelValue.value = val
+            updateValue(modelValue.value)
+          },
+          getTitle : () => title.value,
+          setTitle : (val: string) => { title.value = val },
+          isVisible : () => window.getComputedStyle(inputRef.value!).display !== 'none',
+          setVisible : (val: boolean) => { visible.value = val },
+          getInputType : () => { return inputType.value },
+          setInputType : (val: keyof typeof InputType) => {
+            inputType.value = InputType[val]
+            updateValue(modelValue.value)
+          },
+          getFormat : () => { return format.value ?? '' },
+          setFormat : (val: string) => {
+            format.value = val
+            updateValue(modelValue.value)
+          },
+          getNullText : () => { return nullText.value },
+          setNullText : (val: string) => {
+            nullText.value = val
+            if(isNullOrUndefined(modelValue.value) || modelValue.value === '') spanText.value = computeSpanText(modelValue.value)
+          },
+          getEditMode : () => { return editMode.value },
+          setEditMode : (val: keyof typeof EditMode) => { editMode.value = EditMode[val] },
+          getMaxNumber : () => { return maxNumber.value },
+          setMaxNumber : (val: number) => {
+            if(!hison.utils.isNumeric(val)) return
+            maxNumber.value = val
+            if(inputType.value === InputType.number) updateValue(modelValue.value)
+          },
+          getMinNumber : () => { return minNumber.value },
+          setMinNumber : (val: number) => {
+            if(!hison.utils.isNumeric(val)) return
+            minNumber.value = val
+            if(inputType.value === InputType.number) updateValue(modelValue.value)
+          },
+          getRoundNumber : () => { return roundNumber.value },
+          setRoundNumber : (val: number) => {
+            if(!hison.utils.isPositiveInteger(val)
+              && !hison.utils.isNegativeInteger(val)
+              && val !== 0) return
+            roundNumber.value = val
+            if(inputType.value === InputType.number) updateValue(modelValue.value)
+          },
+          getMaxLength : () => { return maxLength.value },
+          setMaxLength : (val: number) => {
+            if(hison.utils.isPositiveInteger(val)) maxLength.value = val 
+            updateValue(modelValue.value)
+          },
+          getMaxByte : () => { return maxByte.value },
+          setMaxByte : (val: number) => {
+            if(hison.utils.isPositiveInteger(val)) maxByte.value = val
+            updateValue(modelValue.value)
+          },
+          getRequired : () => { return required.value },
+          setRequired : (val: boolean) => { required.value = val },
+          getPlaceholder : () => placeholder.value,
+          setPlaceholder : (val: string) => { placeholder.value = val },
+          isFontBold : () => { return fontBold.value },
+          setFontBold : (val: boolean) => { fontBold.value = val },
+          isFontItalic : () => { return fontItalic.value },
+          setFontItalic : (val: boolean) => { fontItalic.value = val },
+          isFontThruline : () => { return fontThruline.value },
+          setFontThruline : (val: boolean) => { fontThruline.value = val },
+          isFontUnderline : () => { return fontUnderline.value },
+          setFontUnderline : (val: boolean) => { fontUnderline.value = val },
         }
 
         hisonCloser.component.inputList[id] = inputMethods.value
@@ -197,7 +403,9 @@ export default defineComponent({
     const unmount = () => {
       if (inputRef.value) {
         delete hisonCloser.component.inputList[id]
+        removeInputCssEvent(inputRef.value)
       }
+      if(inputTextRef.value) removeInputTextCssEvent(inputTextRef.value)
     }
 
     registerReloadable(reloadId, () => {
@@ -213,17 +421,34 @@ export default defineComponent({
       emit('responsive-change', newDevice)
     })
 
+    watch(() => props.modelValue, (newVal) => {
+      updateValue(newVal, true)
+    })
+
     return {
         inputRef,
+        inputTextRef,
         inputMethods: computed(() => unref(inputMethods)),
         inputValue,
+        editing,
         props,
         responsiveClassList,
         visibleClass,
-        type,
+        editModeClass,
+        requiredClass,
+        fontBoldClass,
+        fontItalicClass,
+        fontThrulineClass,
+        fontUnderlineClass,
+        disable,
+        readonly,
+        inputType,
+        inputAttrType,
         title,
+        placeholder,
+        maxNumber,
+        minNumber,
         spanText,
-        editing,
         onInput,
         onTextInputFocus,
         onFocus,
