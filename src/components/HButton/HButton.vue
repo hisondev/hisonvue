@@ -24,7 +24,7 @@
 <script lang="ts">
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, useSlots, unref } from 'vue'
 import type { HButtonMethods } from '../../types'
-import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonEvent'
+import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
 import { buttonProps } from './props'
 import { hisonCloser } from '../..'
 import { addComponentNameToClass, extractResponsiveClasses, getUUID, registerReloadable } from '../../utils'
@@ -70,23 +70,24 @@ export default defineComponent({
         addButtonCssEvent(buttonRef.value)
 
         buttonMethods.value = {
-            getId: () => id,
-            getText: () => hasSlot.value ? '' : internalText.value,
-            getTitle: () => title.value,
-            isVisible: () => window.getComputedStyle(buttonRef.value!).display !== 'none',
-            isDisable: () => disable.value,
-            setText: (val: string) => {
-                if (!hasSlot.value) internalText.value = val
-            },
-            setTitle: (val: string) => {
-                title.value = val
-            },
-            setVisible: (val: boolean) => {
-                visible.value = val
-            },
-            setDisable: (val: boolean) => {
-                disable.value = val
-            },
+          getId: () => id,
+          getType : () => 'button',
+          getText: () => hasSlot.value ? '' : internalText.value,
+          getTitle: () => title.value,
+          isVisible: () => window.getComputedStyle(buttonRef.value!).display !== 'none',
+          isDisable: () => disable.value,
+          setText: (val: string) => {
+              if (!hasSlot.value) internalText.value = val
+          },
+          setTitle: (val: string) => {
+              title.value = val
+          },
+          setVisible: (val: boolean) => {
+              visible.value = val
+          },
+          setDisable: (val: boolean) => {
+              disable.value = val
+          },
         }
 
         hisonCloser.component.buttonList[id] = buttonMethods.value
