@@ -44,7 +44,7 @@
     "vue": "^3.5.13"
   },
   "dependencies": {
-    "hisonjs": "^1.1.7",
+    "hisonjs": "^1.1.8",
     "vanillagrid2": "^1.0.7",
     "vanillanote2": "^1.1.0"
   }
