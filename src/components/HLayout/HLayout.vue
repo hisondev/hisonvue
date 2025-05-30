@@ -22,7 +22,7 @@ import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, next
 import type { HLayoutMethods } from '../../types'
 import { layoutProps } from './props'
 import { hisonCloser } from '../..'
-import { extractResponsiveClasses, getHexCodeFromColorText, getUUID, registerReloadable, unregisterReloadable } from '../../utils'
+import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getUUID, registerReloadable, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 
 export default defineComponent({
@@ -72,6 +72,7 @@ setup(props, { emit }) {
     const responsiveClassList = ref<string[]>([])
     const refleshResponsiveClassList = () => {
         responsiveClassList.value = extractResponsiveClasses(props.class || '', device.value)
+        if (getIndexSpecificClassNameFromClassList(responsiveClassList.value, 'col') === -1) responsiveClassList.value.push('hison-col-12')
     }
     
     const mount = () => {
@@ -81,6 +82,7 @@ setup(props, { emit }) {
 
             layoutMethods.value = {
                 getId : () => { return id },
+                getType : () => 'layout',
                 isVisible : () => window.getComputedStyle(layoutRef.value!).display !== 'none',
                 setVisible : (val: boolean) => {
                     visible.value = val
