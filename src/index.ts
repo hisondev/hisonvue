@@ -24,31 +24,13 @@ const HInput = createSSRClientOnly<typeof import('./components/HInput/HInput.vue
   () => import('./components/HInput/HInput.vue'),
   'HInput'
 )
+const HDataGroup = createSSRClientOnly<typeof import('./components/HDataGroup/HDataGroup.vue').default>(
+  () => import('./components/HDataGroup/HDataGroup.vue'),
+  'HDataGroup'
+)
 
 export const hisonCloser = {
-  event : {
-    cssEvent: {
-      button_onBeforeClick: (e: MouseEvent) => { return true },
-      button_onAfterClick: (e: MouseEvent) => {},
-      button_onBeforeMouseover: (e: MouseEvent) => { return true },
-      button_onAfterMouseover: (e: MouseEvent) => {},
-      button_onBeforeMouseout: (e: MouseEvent) => { return true },
-      button_onAfterMouseout: (e: MouseEvent) => {},
-      button_onBeforeTouchstart: (e: TouchEvent) => { return true },
-      button_onAfterTouchstart: (e: TouchEvent) => {},
-      button_onBeforeTouchend: (e: TouchEvent) => { return true },
-      button_onAfterTouchend: (e: TouchEvent) => {},
-      
-      textbox_onBeforeMouseover: (e: MouseEvent) => { return true },
-      textbox_onAfterMouseover: (e: MouseEvent) => {},
-      textbox_onBeforeMouseout: (e: MouseEvent) => { return true },
-      textbox_onAfterMouseout: (e: MouseEvent) => {},
-      textbox_onBeforeTouchstart: (e: TouchEvent) => { return true },
-      textbox_onAfterTouchstart: (e: TouchEvent) => {},
-      textbox_onBeforeTouchend: (e: TouchEvent) => { return true },
-      textbox_onAfterTouchend: (e: TouchEvent) => {},
-    }
-  }
+  event : { cssEvent: {} }
 } as HisonCloser
 
 export const hison = createHison() as Hison
@@ -83,6 +65,7 @@ export const hisonvue = {
     app.component('HButton', HButton)
     app.component('HLayout', HLayout)
     app.component('HInput', HInput)
+    app.component('HDataGroup', HDataGroup)
   }
 }
 
@@ -92,6 +75,7 @@ export {
   HNote,
   HGrid,
   HInput,
+  HDataGroup,
   getDefaultHisonConfig,
 }
 export type {
@@ -103,5 +87,6 @@ export type {
   HButtonMethods,
   HLayoutMethods,
   HInputMethods,
+  HDataGroupMethods,
 } from './types'
 export * from './enums'
