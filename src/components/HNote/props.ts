@@ -285,6 +285,12 @@ export const noteProps = {
      * Whether to use redo and undo buttons
      */
     usingDo: { type: String as PropType<BoolString>, required: false },
+    /**
+     * Whether the note is required.
+     * - Accepts `'true'` or `'false'`
+     * - Adds `hison-note-required` class when `'true'`
+     */
+    required: { type: String as PropType<BoolString>, required: false },
 }
 
 export const noteEventProps = {
