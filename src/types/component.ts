@@ -1,6 +1,7 @@
 import { GridMethods } from "vanillagrid2"
-import { GridAlign, GridVerticalAlign, InputEditMode, InputType } from "../enums"
+import { GridAlign, GridVerticalAlign, EditMode, InputType, DataStatus } from "../enums"
 import { VanillanoteElement } from "vanillanote2"
+import { DataModel, InterfaceDataModel } from "hisonjs"
 
 export type DeviceType = 'mb' | 'tb' | 'pc' | 'wd'
 
@@ -44,6 +45,21 @@ export interface HGridColumn {
 }
 
 /**
+ * Basic methods in all components
+ */
+export interface ComponentMethods {
+    /**
+     * Returns the unique ID of the component.
+     * This is the same as the `id` prop (or auto-generated if not set).
+     */
+    getId(): string
+    /**
+     * Returns the type of the component.
+     */
+    getType(): string
+}
+
+/**
  * Provides various methods to manipulate and manage a Vanillagrid instance.
  *
  * - This interface includes over 200 methods for handling grid structure, data,
@@ -66,12 +82,11 @@ export interface HGridColumn {
  * grid.setCellValue(1, 'col1', 'Updated Value');
  * ```
  */
-export interface HGridMethods extends GridMethods{
+export interface HGridMethods extends ComponentMethods, GridMethods{
     /**
-     * Returns the unique ID of the grid.
-     * This is the same as the `id` prop (or auto-generated if not set).
+     * Returns the type of the grid.
      */
-    getId(): string
+    getType(): 'grid'
 }
 
 /**
@@ -118,12 +133,20 @@ export interface HGridMethods extends GridMethods{
  * @see getNoteData
  * @see setNoteData
  */
-export interface HNoteElement extends VanillanoteElement {
+export interface HNoteElement extends ComponentMethods, VanillanoteElement {
     /**
-     * Returns the unique ID of the note.
-     * This is the same as the `id` prop (or auto-generated if not set).
+     * Returns the type of the note.
      */
-    getId(): string
+    getType(): 'note'
+    /**
+     * Gets whether the input is currently required.
+     * - If `true`, the input will show a visual required style.
+     */
+    getRequired(): boolean;
+    /**
+     * Sets the required state of the input.
+     */
+    setRequired(required: boolean): void;
 }
 
 /**
@@ -149,12 +172,11 @@ export interface HNoteElement extends VanillanoteElement {
  * - `setText` and `getText` only work if the button **does not use a slot**.
  * - All changes are reactive and immediately reflected in the DOM.
  */
-export interface HButtonMethods {
+export interface HButtonMethods extends ComponentMethods {
     /**
-     * Returns the unique ID of the button.
-     * This is the same as the `id` prop (or auto-generated if not set).
+     * Returns the type of the button.
      */
-    getId(): string;
+    getType(): 'button'
     /**
      * Gets the current button text.
      * - Returns `''` if the button uses a `<slot>`.
@@ -224,12 +246,11 @@ export interface HButtonMethods {
  * - All methods are reactive and immediately affect the DOM.
  * - Background-related methods directly modify the `style` attribute of the layout.
  */
-export interface HLayoutMethods {
+export interface HLayoutMethods extends ComponentMethods {
     /**
-     * Returns the unique ID of the layout.
-     * Matches the `id` prop used in the component.
+     * Returns the type of the layout.
      */
-    getId(): string;
+    getType(): 'layout'
     /**
      * Returns whether the layout is currently visible.
      * `false` means `display: none` is applied.
@@ -327,16 +348,71 @@ export interface HLayoutMethods {
     setHeight(val: string): void;
 }
 
-export interface HInputMethods {
+/**
+ * Runtime control methods for `HInput` component.
+ *
+ * This interface defines methods accessible via `hison.vue.getInput(id)`.
+ * It enables full runtime control over the input’s value, style, state, and formatting.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const input = hison.vue.getInput('input01');
+ * input.setValue('123456');
+ * input.setVisible(true);
+ * input.setFormat('###-###');
+ * input.setEditMode('readonly');
+ * input.setFontUnderline(true);
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - All changes are reactive and immediately reflected in the DOM.
+ * - Formatting is internally handled via `hison.utils` functions.
+ * - Input can operate in `editable`, `readonly`, or `disable` mode.
+ */
+export interface HInputMethods extends ComponentMethods {
     /**
-     * Returns the unique ID of the input.
-     * This is the same as the `id` prop (or auto-generated if not set).
+     * Returns the type of the input.
      */
-    getId(): string;
+    getType(): 'input'
     /**
-     * 화면상에 나타나는 text를 반환한다.(format이 적용된)
+     * Returns the formatted display text shown in the span layer.
+     * - Applies `format`, `nullText`, and masking logic based on `type`.
      */
     getText(): string;
+    /**
+     * Gets the current raw input value (after internal processing).
+     * - For example, digit-only inputs are stripped via `getDigitsOnly`.
+     */
+    getValue(): any;
+    /**
+     * Sets the current input value.
+     * - Automatically re-applies formatting and validation.
+     */
+    setValue(value: any): void;
+    /**
+     * Gets the current input type.
+     * - Matches the `InputType` enum (e.g., `'text'`, `'date'`, `'number'`, etc.)
+     */
+    getInputType(): keyof typeof InputType;
+    /**
+     * Sets the input type.
+     * - Automatically adjusts formatting/rendering logic.
+     */
+    setInputType(type: keyof typeof InputType): void;
+    /**
+     * Gets the format string used to format the value.
+     * - Affects `'number'`, `'mask'`, `'date'`, `'month'` types.
+     */
+    getFormat(): string;
+    /**
+     * Sets the input format.
+     * - Uses `hison.utils.getDateWithFormat`, `getNumberFormat`, etc.
+     */
+    setFormat(format: string): void;
     /**
      * Returns whether the input is currently visible.
      * - `false` means `display: none` is applied.
@@ -345,110 +421,190 @@ export interface HInputMethods {
     /**
      * Shows or hides the input.
      * - `true` makes the input visible.
-     * - `false` applies `display: none`.
+     * - `false` hides it using `display: none`.
      */
     setVisible(visible: boolean): void;
     /**
-     * Gets the current tooltip (title) of the input.
-     * - Reflects the current `title` attribute shown on hover.
+     * Gets the tooltip (title attribute) of the input.
      */
     getTitle(): string;
     /**
-     * Sets the input tooltip (title) text.
-     * - Affects what appears on hover.
+     * Sets the tooltip (title attribute) of the input.
+     * - Appears on hover.
      */
     setTitle(title: string): void;
-    
     /**
-     * input의 type에 대한 로직
-     * export enum InputType {
-            number = 'number',
-            date = 'date',
-            month = 'month',
-            year = 'year',
-            minute = 'minute',
-            numchar = 'numchar',
-            email = 'email',
-            mask = 'mask',
-            password = 'password',
-        }
+     * Gets the current `nullText` string used when value is empty.
      */
-    getType(): keyof typeof InputType;
-    setType(type: keyof typeof InputType): void;
-
+    getNullText(): string;
     /**
-     * input의 editmode에 대한 로직
-     * export enum InputEditMode {
-            editable = 'editable',
-            readonly = 'readonly',
-            disable = 'disable',
-        }
-        editable => 일반 input
-        disable => 수정 불가. input sapn의 css가 disable처리
-        readonly => 수정 불가. input sapn의 css가 일반 텍스트 처리
+     * Sets the `nullText` to display when the value is empty or null.
      */
-    getEditMode(): keyof typeof InputEditMode;
-    setEditMode(mode: keyof typeof InputEditMode): void;
-
+    setNullText(nullText: string): void;
     /**
-     * input span의 text를 굵게
+     * Gets the current edit mode.
+     * - Possible values: `'editable'`, `'readonly'`, `'disable'`
      */
-    isFontBold(): boolean
-    setFontBold(bold: boolean): void;
-
+    getEditMode(): keyof typeof EditMode;
     /**
-     * input span의 text를 기울게
+     * Sets the edit mode of the input.
+     * - `'readonly'` and `'disable'` both prevent editing but differ in style.
      */
-    isFontItalic(): boolean
-    setFontItalic(italic: boolean): void;
-
+    setEditMode(mode: keyof typeof EditMode): void;
     /**
-     * input span의 text를 취소선
+     * Gets the maximum allowed numeric value (if applicable).
+     * - Only applies when `type === 'number'`
      */
-    isFontThruline(): boolean
-    setFontThruline(thruline: boolean): void;
-
+    getMaxNumber(): number | null;
     /**
-     * input span의 text를 밑줄
+     * Sets the maximum numeric value.
+     * - Enforced on input and formatting.
      */
-    isFontUnderline(): boolean
-    setFontUnderline(underline: boolean): void;
-
+    setMaxNumber(maxNumber: number): void;
     /**
-     * format을 지정
-     * hison.utils을 적극 활용
+     * Gets the minimum allowed numeric value.
      */
-    getFormat(): string;
-    setFormat(format: string): void;
-
+    getMinNumber(): number | null;
     /**
-     * input에 삽입되는 문자의 length를 조작
+     * Sets the minimum numeric value.
+     * - Enforced during input.
      */
-    getMaxLength(): number;
+    setMinNumber(minNumber: number): void;
+    /**
+     * Gets the rounding precision for numeric values.
+     * - Applies only to `type === 'number'`
+     */
+    getRoundNumber(): number | null;
+    /**
+     * Sets the rounding precision.
+     * - Accepts positive/negative integers or `0`.
+     */
+    setRoundNumber(roundNumber: number): void;
+    /**
+     * Gets the current maximum character length allowed.
+     * - Input is truncated if exceeded.
+     */
+    getMaxLength(): number | null;
+    /**
+     * Sets the maximum allowed character length.
+     */
     setMaxLength(maxLength: number): void;
-
     /**
-     * input에 삽입되는 문자의 byte를 조작
+     * Gets the maximum allowed byte size.
+     * - Uses UTF-8 encoding logic via `hison.utils.getCutByteLength()`.
      */
-    getMaxByte(): number;
-    setMaxByte(maxByte: number): void;
-
+    getMaxByte(): number | null;
     /**
-     * input의 required속성을 조작
+     * Sets the maximum allowed byte size.
+     * - Truncates input based on encoded byte length.
+     */
+    setMaxByte(maxByte: number): void;
+    /**
+     * Gets whether the input is currently required.
+     * - If `true`, the input will show a visual required style.
      */
     getRequired(): boolean;
-    setRequired(required: boolean): void;
-
     /**
-     * input의 placeholder를 조작
+     * Sets the required state of the input.
+     */
+    setRequired(required: boolean): void;
+    /**
+     * Gets the current placeholder text.
      */
     getPlaceholder(): string;
+    /**
+     * Sets the placeholder text.
+     * - Maps to the native `placeholder` attribute.
+     */
     setPlaceholder(placeholder: string): void;
+    /**
+     * Returns whether bold font is applied to the span text.
+     */
+    isFontBold(): boolean;
+    /**
+     * Applies or removes bold style from the span text.
+     */
+    setFontBold(bold: boolean): void;
+    /**
+     * Returns whether italic font is applied to the span text.
+     */
+    isFontItalic(): boolean;
+    /**
+     * Applies or removes italic style from the span text.
+     */
+    setFontItalic(italic: boolean): void;
+    /**
+     * Returns whether strikethrough is applied to the span text.
+     */
+    isFontThruline(): boolean;
+    /**
+     * Applies or removes strikethrough style from the span text.
+     */
+    setFontThruline(thruline: boolean): void;
+    /**
+     * Returns whether underline is applied to the span text.
+     */
+    isFontUnderline(): boolean;
+    /**
+     * Applies or removes underline style from the span text.
+     */
+    setFontUnderline(underline: boolean): void;
+}
+
+export interface HDataGroupMethods extends ComponentMethods {
+    /**
+     * Returns the type of the form.
+     */
+    getType(): 'dataGroup'
+
+    //HDataGroup 컴포넌트 안의 내용을 모두 제거한다.
+    //autoSetStatus이 true이면 status를 'C'로 변경. modified를 false로 변경
+    clear(autoSetStatus?: boolean): void
+    //HDataGroup 컴포넌트의 값을 hison.data.DataModel형식으로 반환한다.
+    getDataModel(): InterfaceDataModel
+    //HDataGroup 컴포넌트의 값을 key-Value형식의 object type으로 반환한다.
+    getDataObject(): Record<string, any>
+    //HDataGroup 컴포넌트에 값을 load한다. object 형식, DataModel형식으로 load 가능
+    //autoSetStatus이 true이면 status를 'R'로 변경. modified를 false로 변경
+    load(data: Record<string, any> | DataModel, autoSetStatus?: boolean): void
+
+    //HDataGroup 컴포넌트의 현재 상태값을 반환한다.
+    /**
+     * export enum DataStatus {
+            R = 'R',
+            C = 'C',
+            U = 'U',
+            D = 'D',
+        }
+     */
+    getStatus(): keyof typeof DataStatus
+    //HDataGroup 컴포넌트의 상태값을 설정한다.
+    /**
+     * export enum DataStatus {
+            R = 'R',
+            C = 'C',
+            U = 'U',
+            D = 'D',
+        }
+     */
+    setStatus(status: keyof typeof DataStatus): void
+    //HDataGroup 컴포넌트의 modified(변경 상태)를 반환한다.
+    //modified는 내부 로직에서 HDataGroup 내부의 Input의 값이 하나라도 변경되면 true로 변경됨.
+    isModified(): boolean
+    //HDataGroup 컴포넌트의 modified를 false로 초기화한다.
+    initModified(): void
+    //HDataGroup 컴포넌트의 내부에 required속성이 true인 HInput이나 HNote 컴포넌트를 체크하고,
+    //required속성이 true인데 빈값인 첫번째 컴포넌트의 ComponentMethods를 반환한다.
+    checkRequired(): HInputMethods | HNoteElement | null
 
     /**
-     * input의 value를 조작
-     * value가 변경되면 input span도 변경됨.
+     * Gets the current edit mode.
+     * - Possible values: `'editable'`, `'readonly'`, `'disable'`
      */
-    getValue(): any;
-    setValue(value: any): void;
+    getEditMode(): keyof typeof EditMode
+    /**
+     * Sets the edit mode of the input.
+     * - `'readonly'` and `'disable'` both prevent editing but differ in style.
+     */
+    setEditMode(mode: keyof typeof EditMode): void
 }
