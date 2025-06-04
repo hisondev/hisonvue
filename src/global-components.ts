@@ -4,7 +4,8 @@ import type {
   HNote,
   HGrid,
   HInput,
-  HDataGroup,
+  HInputGroup,
+  HCalendar,
 } from './index'
 
 declare module 'vue' {
@@ -772,6 +773,74 @@ declare module 'vue' {
      */
     HInput: typeof HInput
     
-    HDataGroup: typeof HDataGroup
+    /**
+     * Hisonvue grouped input controller.
+     *
+     * `HInputGroup` is a lightweight component that wraps multiple `HInput` components
+     * and provides batch-level runtime control, such as loading data, resetting values,
+     * validating required fields, and checking modification state.
+     *
+     * It is especially useful when working with structured form data, such as
+     * `Record<string, any>`, `DataWrapper`, or `DataModel`, and integrates with `hison.vue.getInputGroup(id)`
+     * to expose runtime control methods like `.load()`, `.clear()`, `.getDataObject()` and more.
+     *
+     * ---
+     *
+     * ### 🎯 Features
+     * - Auto-registers all child `<HInput>` components rendered inside its `<slot />`
+     * - Supports loading data from:
+     *   - `Record<string, any>`
+     *   - `InterfaceDataWrapper`
+     *   - `InterfaceDataModel`
+     * - Can reset all owned inputs via `.clear()`
+     * - Tracks whether any child `HInput` is modified via `.isModified()`
+     * - Applies or retrieves form-wide status (`C`, `R`, `U`, `D`) via `.getStatus()` and `.setStatus()`
+     * - Applies global edit mode to all child inputs (`editable`, `readonly`, `disable`)
+     * - Supports required field validation via `.checkRequired()`
+     * - Runtime methods available via `hison.vue.getInputGroup(id)`
+     *
+     * ---
+     *
+     * ### ⚙️ Usage
+     * ```vue
+     * <HInputGroup id="group1" :editMode="'editable'" @mounted="group => group.load(myData)">
+     *   <HInput id="userid" inputType="text" required />
+     *   <HInput id="email" inputType="email" />
+     * </HInputGroup>
+     * ```
+     *
+     * --- 
+     *
+     * ### 🛠 Runtime Usage
+     * Use `hison.vue.getInputGroup(id)` to access and control the group:
+     * ```ts
+     * const group = hison.vue.getInputGroup('group1');
+     * group.load({ userid: 'abc', email: 'test@example.com' });
+     * group.clear();
+     * group.setStatus('U');
+     * group.setEditMode('readonly');
+     * const data = group.getDataWrapper();
+     * const changed = group.isModified();
+     * ```
+     *
+     * ---
+     *
+     * ### 🔒 Notes
+     * - `v-model` is not supported. You must use `.load()` to apply external data.
+     * - Modification tracking is internally managed and reflects only user-triggered changes.
+     * - Child `<HInput>` components must use the same `id` as the data key for mapping to work.
+     * - Grouped `HInput` instances register themselves on mount via `provide('registerToInputGroup')`.
+     *
+     * ---
+     *
+     * @prop {string} id - Unique group identifier. Enables runtime access via `hison.vue.getInputGroup(id)`.
+     * @prop {EditMode} [editMode='editable'] - Edit mode: `'editable'`, `'readonly'`, `'disable'`.
+     * @prop {DataStatus} [status='R'] - Data status: `'C'`, `'R'`, `'U'`, `'D'`. Managed via `.getStatus()` / `.setStatus()`.
+     *
+     * @event mounted - Emitted after mount with `HInputGroupMethods` instance.
+     */
+    HInputGroup: typeof HInputGroup
+
+    HCalendar: typeof HCalendar
   }
 }
