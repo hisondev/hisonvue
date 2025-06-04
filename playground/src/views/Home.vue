@@ -20,14 +20,14 @@
         <HButton @click="goToGridTest" id="b2" class="hison-col-2 hison-pos-right hison-size-l-mb hison-size-s-pc">Go to Grid<br>(right-button)</HButton>
     </HLayout>
     <br><br>
-    <HDataGroup>
+    <HInputGroup id="inputGroup1">
         <HLayout class="hison-col-12-tb hison-col-6-pc">
             <HLayout class="hison-col-12-mb hison-col-6-pc hison-pos-right">
                 <HInput
                 id="input1"
                 class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-muted-pc"
                 style="margin-bottom: 5px;"
-                type="date"
+                inputType="date"
                 :format="DateFormat['MMMM dd, yyyy']"
                 v-model="inputValue1"
                 required="true"
@@ -36,9 +36,8 @@
                 id="input2"
                 class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-info-pc"
                 style="margin-bottom: 5px;"
-                :type="InputType.month"
+                :inputType="InputType.month"
                 ref="input2Ref"
-                @input="onInput2"
                 v-model="inputValue2"
                 required="true"
                 ></HInput>
@@ -46,7 +45,7 @@
                 id="input3"
                 class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-success-pc"
                 style="margin-bottom: 5px;"
-                :type="InputType.date"
+                :inputType="InputType.date"
                 v-model="inputValue3"
                 ></HInput>
             </HLayout>
@@ -56,17 +55,18 @@
                 class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-danger-pc"
                 style="margin-bottom: 5px;"
                 v-model="inputValue4"
-                type="number"
+                inputType="number"
                 format="$$ #,###.##"
                 nullText="$$"
-                maxNumber="1000"
+                maxNumber="10000"
+                @input="onInput4"
                 ></HInput>
                 <HInput
                 id="input5"
                 class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
                 style="margin-bottom: 5px;"
                 v-model="inputValue5"
-                type="mask"
+                inputType="mask"
                 format="AA999"
                 nullText="-"
                 required="true"
@@ -77,19 +77,21 @@
                 class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
                 style="margin-bottom: 5px;"
                 v-model="inputValue6"
-                :type="InputType.password"
+                :inputType="InputType.password"
                 placeholder="testtest"
-                maxLength="5"
+                maxLength="10"
                 ></HInput>
             </HLayout>            
         </HLayout>
-    </HDataGroup>
+    </HInputGroup>
     <br><br>
-    <input type="date" value="2025-03-19"></input>
+    <HLayout>
+        <HCalendar/>
+    </HLayout>
 </template>
 
 <script setup lang="ts">
-import { DateFormat, HButtonMethods, HInputMethods, hison, InputType } from 'hisonvue'
+import { DateFormat, EditMode, HButtonMethods, HInputGroupMethods, HInputMethods, hison, InputType } from 'hisonvue'
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
 
@@ -110,8 +112,8 @@ const onChange1 = (oldValue: any, newValue: any, inputMethods: HInputMethods) =>
 }
 const onInputMounted1 = (inputMethods: HInputMethods) => {
 }
-const onInput2 = (value: any) => {
-
+const onInput4 = (value: any, ...param: any) => {
+    console.log(...param)
 }
 const goToGridTest = () => {
     router.push('/gridTest')
@@ -119,21 +121,42 @@ const goToGridTest = () => {
 const goToNoteTest = () => {
     router.push('/noteTest')
 }
+const dw = new hison.data.DataWrapper({
+    input1: '20250319',
+    input2: '19100301',
+    input3: '19100301',
+    input4: '123.132',
+    input5: 'asdfs!!',
+})
+const dm = new hison.data.DataModel({
+    input1: '20221202',
+    input2: '12100301',
+    input3: '29100301',
+    input4: '321.132',
+    input5: 'bbbs!!',
+})
+const obj = {
+    input1: '20220806',
+    input2: '20000101',
+    input3: '21000228',
+    input4: '458.132',
+    input5: 'dsgb!!',
+}
+
 const onClickCenterButton1 = (e: Event, button: HButtonMethods) => {
-    hison.vue.getButton('b4')?.setDisable(toggle)
-    toggle = !toggle
-    hison.vue.getInput('input5')?.setFontThruline(toggle)
-    hison.vue.getInput('input4')?.setMaxNumber(1000)
+    const input4 = hison.vue.getInput('input4')!
+    const input5 = hison.vue.getInput('input5')!
+    input4.setEditMode(EditMode.disable)
+    input5.setEditMode(EditMode.readonly)
 }
 const onMouseoverCenterButton1 = (e: Event, button: HButtonMethods) => {
-    inputValue1.value = '19900319'
 }
 const onMouseoutCenterButton1 = (e: Event, button: HButtonMethods) => {
-    inputValue1.value = '20000319'
 }
 const onClickCenterButton2 = () => {
-    //hison.vue.getInput('input1')?.setValue('20240506')
-    inputValue1.value = '19900319'
-    console.log(hison.vue.getInput('input1')?.getValue())
+    const input4 = hison.vue.getInput('input4')!
+    const input5 = hison.vue.getInput('input5')!
+    input4.setEditMode(EditMode.editable)
+    input5.setEditMode(EditMode.editable)
 }
 </script>
