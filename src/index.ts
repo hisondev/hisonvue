@@ -24,9 +24,13 @@ const HInput = createSSRClientOnly<typeof import('./components/HInput/HInput.vue
   () => import('./components/HInput/HInput.vue'),
   'HInput'
 )
-const HDataGroup = createSSRClientOnly<typeof import('./components/HDataGroup/HDataGroup.vue').default>(
-  () => import('./components/HDataGroup/HDataGroup.vue'),
-  'HDataGroup'
+const HInputGroup = createSSRClientOnly<typeof import('./components/HInputGroup/HInputGroup.vue').default>(
+  () => import('./components/HInputGroup/HInputGroup.vue'),
+  'HInputGroup'
+)
+const HCalendar = createSSRClientOnly<typeof import('./components/HCalendar/HCalendar.vue').default>(
+  () => import('./components/HCalendar/HCalendar.vue'),
+  'HCalendar'
 )
 
 export const hisonCloser = {
@@ -65,7 +69,8 @@ export const hisonvue = {
     app.component('HButton', HButton)
     app.component('HLayout', HLayout)
     app.component('HInput', HInput)
-    app.component('HDataGroup', HDataGroup)
+    app.component('HInputGroup', HInputGroup)
+    app.component('HCalendar', HCalendar)
   }
 }
 
@@ -75,7 +80,8 @@ export {
   HNote,
   HGrid,
   HInput,
-  HDataGroup,
+  HInputGroup,
+  HCalendar,
   getDefaultHisonConfig,
 }
 export type {
@@ -87,6 +93,7 @@ export type {
   HButtonMethods,
   HLayoutMethods,
   HInputMethods,
-  HDataGroupMethods,
+  HInputGroupMethods,
+  HCalendarMethods,
 } from './types'
 export * from './enums'
