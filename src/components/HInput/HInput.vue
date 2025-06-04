@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, unref } from 'vue'
+import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, unref, inject } from 'vue'
 import type { HInputMethods } from '../../types'
 import { inputProps } from './props'
 import { DateFormat, hison, hisonCloser, EditMode, InputType, YearMonthFormat } from '../..'
@@ -179,22 +179,23 @@ export default defineComponent({
           case InputType.text:
           case InputType.password:
           case InputType.email:
-          case InputType.number:
           case InputType.mask:
           case InputType.digit:
-            if (inputType.value === InputType.number) value = getAdjustedNumber(value)
             if (inputType.value === InputType.mask) value = getMaskValue(value, format.value ?? '')
             if (inputType.value === InputType.digit) value = getDigitsOnly(value)
             value = getCutLengthString(value)
-            break;
+            break
+          case InputType.number:
+            if (inputType.value === InputType.number) value = getAdjustedNumber(value)
+            break
           case InputType.date:
             if(value) value = hison.utils.getDateWithFormat(value, DateFormat['yyyy-MM-dd'])
-            break;
+            break
           case InputType.month:
             if(value) value = hison.utils.getDateWithFormat(value, YearMonthFormat['yyyy-MM'])
-            break;
+            break
           default:
-            break;
+            break
         } 
       } catch (e) {
         console.warn('[HInput] Failed to format value', value, e)
@@ -253,6 +254,11 @@ export default defineComponent({
     
     const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
     const editing = ref(false)
+    const isModified = ref(false)
+
+    //HInputGroup에 주입
+    const registerToInputGroup = inject('registerToInputGroup') as ((inputId: string) => void) | undefined
+    const notifyInputGroupStatus = inject<() => void>('notifyInputGroupStatus')
 
     const computeSpanText = (value: any) => {
       if (isNullOrUndefined(value) || value === '') return nullText.value ?? ''
@@ -288,11 +294,18 @@ export default defineComponent({
     const onInput = (e: Event) => {
       let value = inputRef.value!.value
       if (inputType.value === InputType.mask || inputType.value === InputType.digit
-       || maxLength.value || maxByte.value) {
+        || ((maxLength.value || maxByte.value)
+          && (inputType.value === InputType.text
+            || inputType.value === InputType.email
+            || inputType.value === InputType.password
+          ))
+      ) {
         value = computeValue(value)
+        inputRef.value!.value = value
       }
       modelValue.value = value
-      inputRef.value!.value = value
+      isModified.value = true
+      notifyInputGroupStatus?.()
       emit('input', e, inputMethods.value, modelValue.value)
     }
     const onFocus = (e: FocusEvent) => {
@@ -302,6 +315,10 @@ export default defineComponent({
     const onBlur = (e: Event) => {
       editing.value = false
       updateValue(modelValue.value, true, true)
+      if(oldValue.value !== modelValue.value) {
+        isModified.value = true
+        notifyInputGroupStatus?.()
+      }
       emit('blur', e, inputMethods.value)
     }
     const updateValue = (value: any, doComputeValue = true, doCallChangeEmit = false) => {
@@ -337,11 +354,13 @@ export default defineComponent({
           getInputType : () => { return inputType.value },
           setInputType : (val: keyof typeof InputType) => {
             inputType.value = InputType[val]
+            oldValue.value = modelValue.value
             updateValue(modelValue.value)
           },
           getFormat : () => { return format.value ?? '' },
           setFormat : (val: string) => {
             format.value = val
+            oldValue.value = modelValue.value
             updateValue(modelValue.value)
           },
           getNullText : () => { return nullText.value },
@@ -355,12 +374,14 @@ export default defineComponent({
           setMaxNumber : (val: number) => {
             if(!hison.utils.isNumeric(val)) return
             maxNumber.value = val
+            oldValue.value = modelValue.value
             if(inputType.value === InputType.number) updateValue(modelValue.value)
           },
           getMinNumber : () => { return minNumber.value },
           setMinNumber : (val: number) => {
             if(!hison.utils.isNumeric(val)) return
             minNumber.value = val
+            oldValue.value = modelValue.value
             if(inputType.value === InputType.number) updateValue(modelValue.value)
           },
           getRoundNumber : () => { return roundNumber.value },
@@ -369,16 +390,19 @@ export default defineComponent({
               && !hison.utils.isNegativeInteger(val)
               && val !== 0) return
             roundNumber.value = val
+            oldValue.value = modelValue.value
             if(inputType.value === InputType.number) updateValue(modelValue.value)
           },
           getMaxLength : () => { return maxLength.value },
           setMaxLength : (val: number) => {
             if(hison.utils.isPositiveInteger(val)) maxLength.value = val 
+            oldValue.value = modelValue.value
             updateValue(modelValue.value)
           },
           getMaxByte : () => { return maxByte.value },
           setMaxByte : (val: number) => {
             if(hison.utils.isPositiveInteger(val)) maxByte.value = val
+            oldValue.value = modelValue.value
             updateValue(modelValue.value)
           },
           getRequired : () => { return required.value },
@@ -393,6 +417,13 @@ export default defineComponent({
           setFontThruline : (val: boolean) => { fontThruline.value = val },
           isFontUnderline : () => { return fontUnderline.value },
           setFontUnderline : (val: boolean) => { fontUnderline.value = val },
+          isModified : () => { return isModified.value },
+          setModified : (val: boolean) => { isModified.value = val},
+        }
+
+        // HInputGroup이 주입한 등록 함수로 자신을 등록
+        if (registerToInputGroup) {
+          registerToInputGroup(id)
         }
 
         hisonCloser.component.inputList[id] = inputMethods.value
@@ -422,7 +453,7 @@ export default defineComponent({
     })
 
     watch(() => props.modelValue, (newVal) => {
-      updateValue(newVal, true)
+      updateValue(newVal)
     })
 
     return {
