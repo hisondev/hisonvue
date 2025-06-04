@@ -125,6 +125,7 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
     buttonList: {},
     layoutList: {},
     inputList: {},
-    dataGroupList: {},
+    inputGroupList: {},
+    calendarList: {},
   }
 }
