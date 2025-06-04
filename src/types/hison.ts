@@ -1,5 +1,5 @@
 import type { Hison as Hisonjs } from "hisonjs";
-import { HButtonMethods, HDataGroupMethods, HGridMethods, HInputMethods, HLayoutMethods, HNoteElement } from "./component";
+import { HButtonMethods, HInputGroupMethods, HGridMethods, HInputMethods, HLayoutMethods, HNoteElement, HCalendarMethods } from "./component";
 import { Size } from "../enums";
 
 /**
@@ -128,7 +128,8 @@ export interface Hison extends Hisonjs {
     getButton(buttonId: string): HButtonMethods | null
     getLayout(layoutId: string): HLayoutMethods | null
     getInput(inputId: string): HInputMethods | null
-    getDataGroup(dataGroupId: string): HDataGroupMethods | null
+    getInputGroup(inputGroupId: string): HInputGroupMethods | null
+    getCalendar(calendarId: string): HCalendarMethods | null
   }
   style: {
     setSize(size: Size.s | Size.m | Size.l | Size.xl): void
