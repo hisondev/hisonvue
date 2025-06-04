@@ -1,7 +1,7 @@
 import { GridMethods } from "vanillagrid2"
 import { GridAlign, GridVerticalAlign, EditMode, InputType, DataStatus } from "../enums"
 import { VanillanoteElement } from "vanillanote2"
-import { DataModel, InterfaceDataModel } from "hisonjs"
+import { InterfaceDataModel, InterfaceDataWrapper } from "hisonjs"
 
 export type DeviceType = 'mb' | 'tb' | 'pc' | 'wd'
 
@@ -549,62 +549,144 @@ export interface HInputMethods extends ComponentMethods {
      * Applies or removes underline style from the span text.
      */
     setFontUnderline(underline: boolean): void;
+    /**
+     * Returns whether the input value has been modified since initial load or last reset.
+     * - Modification is only tracked via user interactions (`onInput`, `onBlur`).
+     * - This is used by parent components like `HInputGroup` to determine group-level state.
+     */
+    isModified(): boolean;
+    /**
+     * Sets the modified state of the input manually.
+     * - Typically used by container components (e.g., `HInputGroup`) to reset modification tracking.
+     * @param modified A boolean indicating whether the input should be marked as modified.
+     */
+    setModified(modified: boolean): void;
 }
 
-export interface HDataGroupMethods extends ComponentMethods {
-    /**
-     * Returns the type of the form.
-     */
-    getType(): 'dataGroup'
+/**
+ * Runtime control methods for `HInputGroup` component.
+ *
+ * This interface defines the available methods on `HInputGroup`,
+ * accessible via `hison.vue.getInputGroup(id)`, to programmatically control
+ * input group behaviors, state tracking, and data retrieval.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const group = hison.vue.getInputGroup('inputGroup1');
+ * group.load({ userid: 'hison', email: 'a@b.com' });
+ * group.setStatus('U');
+ * if (group.isModified()) {
+ *   const updated = group.getDataWrapper();
+ *   saveToServer(updated);
+ * }
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - `HInputGroup` tracks internal status (`R`, `C`, `U`, `D`) to reflect data lifecycle.
+ * - Modification is automatically tracked when any child input emits a user-driven change.
+ * - Supports runtime edit mode toggle and required-field validation.
+ */
+export interface HInputGroupMethods extends ComponentMethods {
+  /**
+   * Returns the type identifier for the component.
+   * Always returns `'inputGroup'`.
+   */
+  getType(): 'inputGroup';
+  /**
+   * Clears all values inside the group’s child inputs.
+   * 
+   * @param autoSetStatus If `true`, resets status to `'C'` (created) and clears modification state.
+   */
+  clear(autoSetStatus?: boolean): void;
+  /**
+   * Retrieves the current input values as a `DataWrapper` instance.
+   * 
+   * @returns A `DataWrapper` object that holds key-value pairs of group input values.
+   */
+  getDataWrapper(): InterfaceDataWrapper;
+  /**
+   * Retrieves the current input values as a `DataModel` instance.
+   * 
+   * @returns A `DataModel` object representing the group data as a table (1 row).
+   */
+  getDataModel(): InterfaceDataModel;
+  /**
+   * Retrieves the current input values as a plain JavaScript object.
+   * 
+   * @returns An object with keys matching input IDs and values as their current values.
+   */
+  getDataObject(): Record<string, any>;
+  /**
+   * Loads data into the group’s inputs.
+   * 
+   * Supports `Record<string, any>`, `DataModel`, or `DataWrapper` as source.
+   *
+   * @param data The data source to apply to the group inputs.
+   * @param autoSetStatus If `true`, resets status to `'R'` (read) and clears modification state.
+   */
+  load(data: Record<string, any> | InterfaceDataModel | InterfaceDataWrapper, autoSetStatus?: boolean): void;
+  /**
+   * Returns the current status of the input group.
+   *
+   * - `R`: Read
+   * - `C`: Created
+   * - `U`: Updated
+   * - `D`: Deleted
+   */
+  getStatus(): keyof typeof DataStatus;
+  /**
+   * Sets the status of the input group.
+   *
+   * Used to manually change the internal data lifecycle state.
+   * 
+   * @param status A valid `DataStatus` value (`R`, `C`, `U`, `D`).
+   */
+  setStatus(status: keyof typeof DataStatus): void;
+  /**
+   * Returns whether any input inside the group has been modified by user interaction.
+   * 
+   * @returns `true` if at least one input is marked as modified.
+   */
+  isModified(): boolean;
+  /**
+   * Resets the modification status of all inputs in the group.
+   * 
+   * Typically called after saving or loading new data.
+   */
+  initModified(): void;
+  /**
+   * Validates required fields in the group.
+   * 
+   * Checks all child `HInput` and `HNote` components with `required=true`.
+   *
+   * @returns The first invalid component’s method instance, or `null` if all pass.
+   */
+  checkRequired(): HInputMethods | null;
+  /**
+   * Gets the current edit mode of the group.
+   *
+   * Possible values:
+   * - `'editable'`: Inputs are editable
+   * - `'readonly'`: Inputs are readonly (visually different)
+   * - `'disable'`: Inputs are disabled (fully blocked)
+   */
+  getEditMode(): keyof typeof EditMode;
+  /**
+   * Sets the edit mode for all inputs in the group.
+   *
+   * @param mode One of: `'editable'`, `'readonly'`, `'disable'`
+   */
+  setEditMode(mode: keyof typeof EditMode): void;
+}
 
-    //HDataGroup 컴포넌트 안의 내용을 모두 제거한다.
-    //autoSetStatus이 true이면 status를 'C'로 변경. modified를 false로 변경
-    clear(autoSetStatus?: boolean): void
-    //HDataGroup 컴포넌트의 값을 hison.data.DataModel형식으로 반환한다.
-    getDataModel(): InterfaceDataModel
-    //HDataGroup 컴포넌트의 값을 key-Value형식의 object type으로 반환한다.
-    getDataObject(): Record<string, any>
-    //HDataGroup 컴포넌트에 값을 load한다. object 형식, DataModel형식으로 load 가능
-    //autoSetStatus이 true이면 status를 'R'로 변경. modified를 false로 변경
-    load(data: Record<string, any> | DataModel, autoSetStatus?: boolean): void
-
-    //HDataGroup 컴포넌트의 현재 상태값을 반환한다.
-    /**
-     * export enum DataStatus {
-            R = 'R',
-            C = 'C',
-            U = 'U',
-            D = 'D',
-        }
-     */
-    getStatus(): keyof typeof DataStatus
-    //HDataGroup 컴포넌트의 상태값을 설정한다.
-    /**
-     * export enum DataStatus {
-            R = 'R',
-            C = 'C',
-            U = 'U',
-            D = 'D',
-        }
-     */
-    setStatus(status: keyof typeof DataStatus): void
-    //HDataGroup 컴포넌트의 modified(변경 상태)를 반환한다.
-    //modified는 내부 로직에서 HDataGroup 내부의 Input의 값이 하나라도 변경되면 true로 변경됨.
-    isModified(): boolean
-    //HDataGroup 컴포넌트의 modified를 false로 초기화한다.
-    initModified(): void
-    //HDataGroup 컴포넌트의 내부에 required속성이 true인 HInput이나 HNote 컴포넌트를 체크하고,
-    //required속성이 true인데 빈값인 첫번째 컴포넌트의 ComponentMethods를 반환한다.
-    checkRequired(): HInputMethods | HNoteElement | null
-
-    /**
-     * Gets the current edit mode.
-     * - Possible values: `'editable'`, `'readonly'`, `'disable'`
-     */
-    getEditMode(): keyof typeof EditMode
-    /**
-     * Sets the edit mode of the input.
-     * - `'readonly'` and `'disable'` both prevent editing but differ in style.
-     */
-    setEditMode(mode: keyof typeof EditMode): void
+export interface HCalendarMethods extends ComponentMethods {
+  /**
+   * Returns the type identifier for the component.
+   * Always returns `'calendar'`.
+   */
+  getType(): 'calendar';
 }
