@@ -206,27 +206,33 @@
 }
 .hison-color-primary-input {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-primary-shadowColor);
-    color: var(--hison-primary-filledTextColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
 }
 .hison-color-muted-input {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-muted-shadowColor);
-    color: var(--hison-muted-filledTextColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
 }
 .hison-color-info-input {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-info-shadowColor);
-    color: var(--hison-info-filledTextColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
 }
 .hison-color-success-input {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-success-shadowColor);
-    color: var(--hison-success-filledTextColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
 }
 .hison-color-danger-input {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-danger-shadowColor);
-    color: var(--hison-danger-filledTextColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
 }
 .hison-color-warning-input {
     box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-warning-shadowColor);
-    color: var(--hison-warning-filledTextColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
 }
 /* Input Css Event */
 .hison-color-primary-input-on-active {
@@ -266,17 +272,19 @@
     box-shadow: 1px 1px 3px 1px var(--hison-warning-shadowColor) !important;
 }
 
-/* HDataGroup */
+/* HInputGroup */
 .hison-data-group {
-  all: unset;
-  display: inline;
+    all: unset;
+    display: inline;
 }
 
 /* HLayout */
 .hison-layout {
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
 }
 .hison-layout > * {
   margin: 0;
