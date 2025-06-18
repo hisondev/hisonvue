@@ -9,7 +9,7 @@ import { defineComponent, computed, onMounted, onBeforeUnmount, ref, nextTick, t
 import type { Vanillagrid } from 'vanillagrid2'
 import type { HGridColumn, HGridMethods } from '../../types'
 import { gridEventProps, gridProps } from './props'
-import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getSpecificClassNameFromClassList, getUUID, registerReloadable } from '../../utils'
+import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getSpecificClassValueFromClassList, getUUID, registerReloadable } from '../../utils'
 import { hison, hisonCloser, Size } from '../..'
 import { useDevice } from '../../core'
 
@@ -26,17 +26,20 @@ setup(props, { emit }) {
     const gridInstance = ref<HGridMethods | null>(null)
     const id = props.id ? props.id : getUUID();
     const reloadId = `hgrid:${props.id}`
-    const reloadTrigger = ref(0)
     const device = useDevice()
 
     const responsiveClassList = ref<string[]>([])
 
     const EXCLUDED_KEYS = ['columns', 'id', 'class', 'style'] as const
+    const bindAttrsTrigger = ref(0)
+    const forceRecomputeBindAttrs = () => {
+        triggerRef(bindAttrsTrigger)
+    }
     const bindAttrs = computed(() => {
-        reloadTrigger.value
+        bindAttrsTrigger.value
         const classList = extractResponsiveClasses(props.class || '', device.value)
-        const color = getSpecificClassNameFromClassList(classList, 'color')
-        const size = getSpecificClassNameFromClassList(classList, 'size')
+        const color = getSpecificClassValueFromClassList(classList, 'color')
+        const size = getSpecificClassValueFromClassList(classList, 'size')
         if (getIndexSpecificClassNameFromClassList(classList, 'col') === -1) classList.push('hison-col-12')
         responsiveClassList.value = classList
 
@@ -155,7 +158,7 @@ setup(props, { emit }) {
     }
     const reload = () => {
         unmount()
-        triggerRef(reloadTrigger)
+        forceRecomputeBindAttrs()
         nextTick(mount)
     }
     registerReloadable(reloadId, reload)
@@ -166,8 +169,8 @@ setup(props, { emit }) {
         const grid = gridInstance.value
         if(grid) {
             const classList = extractResponsiveClasses(props.class || '', device.value)
-            const color = getSpecificClassNameFromClassList(classList, 'color')
-            const size = getSpecificClassNameFromClassList(classList, 'size')
+            const color = getSpecificClassValueFromClassList(classList, 'color')
+            const size = getSpecificClassValueFromClassList(classList, 'size')
 
             const sizeLevel = props.sizeLevel && hison.utils.isNumber(props.sizeLevel)
             ? String(Math.min(Math.max(Number(props.sizeLevel), 1), 9))
