@@ -33,7 +33,7 @@ export const buttonProps = {
      * - Can be changed at runtime via `HButtonMethods.setDisable(true|false)`
      * - Default: `'false'`
      */
-    disable : { type: String as PropType<BoolString>, required: false },
+    disable : { type: Boolean, required: false },
     /**
      * Tooltip text shown when hovering over the button.
      * - Maps to the `title` attribute.
