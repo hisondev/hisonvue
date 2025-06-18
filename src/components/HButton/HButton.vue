@@ -44,7 +44,7 @@ export default defineComponent({
     const slots = useSlots()
 
     const visible = ref(props.visible !== 'false')
-    const disable = ref(props.disable === 'true')
+    const disable = ref(props.disable === true)
     const title = ref(props.title || '')
 
     const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
