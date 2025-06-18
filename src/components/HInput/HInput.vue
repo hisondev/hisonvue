@@ -80,6 +80,7 @@
 </template>
 
 <script lang="ts">
+//Focus 기능 필요!!!!!!!!!!!!
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, unref, inject } from 'vue'
 import type { HInputMethods } from '../../types'
 import { inputProps } from './props'
