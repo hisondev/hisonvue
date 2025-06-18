@@ -86,16 +86,20 @@ export const getDeviceType = (width: number): DeviceType => {
 }
 
 export const getColorClass = (el: HTMLElement, elTypeName: string, suffix: string) => {
-    const color = getSpecificClassNameFromClassList(el.classList, 'color')
+    const color = getSpecificClassValueFromClassList(el.classList, 'color')
     if(color) return `hison-color-${color}-${elTypeName}-${suffix}`
 
     return `hison-color-primary-${elTypeName}-${suffix}`
 }
 
 export const getSpecificClassNameFromClassList = (classList: DOMTokenList | string[], classStarts: string) => {
-    const colorClass = Array.from(classList).find(cls => cls.startsWith(`hison-${classStarts}-`))
-    if(colorClass) {
-        const parts = colorClass.split('-')
+    return Array.from(classList).find(cls => cls.startsWith(`hison-${classStarts}-`))
+}
+
+export const getSpecificClassValueFromClassList = (classList: DOMTokenList | string[], classStarts: string) => {
+    const specificClassName = getSpecificClassNameFromClassList(classList, classStarts)
+    if(specificClassName) {
+        const parts = specificClassName.split('-')
         if(parts.length >= 3) return parts[2]
     }
     return null
