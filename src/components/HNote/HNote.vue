@@ -9,7 +9,7 @@ import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, next
 import type { Vanillanote, VanillanoteElement, NoteData } from 'vanillanote2'
 import { noteEventProps, noteProps } from './props'
 import { Size } from '../../enums'
-import { extractResponsiveClasses, getSpecificClassNameFromClassList, getHexCodeFromColorText, getUUID, registerReloadable, getIndexSpecificClassNameFromClassList } from '../../utils'
+import { extractResponsiveClasses, getSpecificClassValueFromClassList, getHexCodeFromColorText, getUUID, registerReloadable, getIndexSpecificClassNameFromClassList } from '../../utils'
 import { hison, hisonCloser } from '../..'
 import { useDevice } from '../../core'
 import { HNoteElement } from '../../types'
@@ -27,7 +27,6 @@ export default defineComponent({
     const noteInstance = ref<HNoteElement | null>(null)
     const id = props.id ? props.id : getUUID();
     const reloadId = `hnote:${props.id}`
-    const reloadTrigger = ref(0)
     const required = ref(props.required === 'true')
     const requiredClass = computed(()=>{
       if(required.value) return 'hison-note-required'
@@ -36,11 +35,15 @@ export default defineComponent({
 
     const responsiveClassList = ref<string[]>([])
     const EXCLUDED_KEYS = ['modelValue', 'id', 'class', 'style'] as const
+    const bindAttrsTrigger = ref(0)
+    const forceRecomputeBindAttrs = () => {
+      triggerRef(bindAttrsTrigger)
+    }
     const bindAttrs = computed(() => {
-      reloadTrigger.value
+      bindAttrsTrigger.value
       const classList = extractResponsiveClasses(props.class || '', device.value)
-      const color = getSpecificClassNameFromClassList(classList, 'color')
-      const size = getSpecificClassNameFromClassList(classList, 'size')
+      const color = getSpecificClassValueFromClassList(classList, 'color')
+      const size = getSpecificClassValueFromClassList(classList, 'size')
       if (getIndexSpecificClassNameFromClassList(classList, 'col') === -1) classList.push('hison-col-12')
       responsiveClassList.value = classList
 
@@ -438,7 +441,7 @@ export default defineComponent({
     }
     const reload = () => {
         unmount()
-        triggerRef(reloadTrigger)
+        forceRecomputeBindAttrs()
         nextTick(mount)
     }
     registerReloadable(reloadId, reload)
