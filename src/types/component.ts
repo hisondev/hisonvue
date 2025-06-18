@@ -5,6 +5,22 @@ import { InterfaceDataModel, InterfaceDataWrapper } from "hisonjs"
 
 export type DeviceType = 'mb' | 'tb' | 'pc' | 'wd'
 
+/**
+ * timeFrom: 0 * 60 ~ 24 * 60
+ * timeTo: 0 * 60 ~ 24 * 60
+ */
+export type SpecialTime = {
+  timeFrom: number;
+  timeTo: number;
+}
+
+/**
+ * 0 = Sunday ~ 6 = Saturday
+ */
+export type SpecialTimeMap = {
+  [dayOfWeek: number]: SpecialTime[]  // 0~6까지 배열
+}
+
 export interface HGridColumn {
     id: string
     name?: string
@@ -563,6 +579,7 @@ export interface HInputMethods extends ComponentMethods {
     setModified(modified: boolean): void;
 }
 
+//Focus 기능 필요!!!!!!!!!!!!
 /**
  * Runtime control methods for `HInputGroup` component.
  *
