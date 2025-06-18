@@ -205,3 +205,11 @@ export const applyDefaultColor = (target: any, baseColor: string) => {
   target.emptyTextColor = baseColor;
   target.filledTextColor = getBasicTextColor(baseColor);
 };
+
+//rgba형태 css text값에 opacity만 별도 적용
+export const applyOpacityToRgba = (rgbaString: string, newOpacity: number) => {
+  return rgbaString.replace(
+    /rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([0-9.]+)\s*\)/i,
+    (_, r, g, b) => `rgba(${r},${g},${b},${newOpacity})`
+  );
+}
