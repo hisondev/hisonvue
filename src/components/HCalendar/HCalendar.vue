@@ -117,8 +117,6 @@ export default defineComponent({
         if(hisonCloser.componentStyle.invertColor) {
           el.style.setProperty('--vuecal-empty-back-color', (hisonCloser.componentStyle.emptyInvertColor))
           el.style.setProperty('--vuecal-empty-font-color', (hisonCloser.componentStyle.emptyTextInvertColor))
-          el.style.setProperty('--vuecal-selected-back-color', getInvertColor(todayColor.value))
-          el.style.setProperty('--vuecal-today-back-color', getInvertColor(selectedColor.value))
           if(weekendColor.value) el.style.setProperty('--calendar-weekend-color', getInvertColor(weekendColor.value))
         }
 
