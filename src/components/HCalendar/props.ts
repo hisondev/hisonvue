@@ -1,5 +1,5 @@
 import { PropType } from 'vue'
-import { DataStatus, EditMode } from '../../enums'
+import { SpecialTimeMap } from "../../types";
 
 /**
  * Props for the `HCalendar` component.
@@ -13,63 +13,61 @@ export const calendarProps = {
      * - ⚠️ Duplicate `id` values will throw an error at mount time.
      */
     id: { type: String, required: false },
+    
     /**
-     * Edit mode of the calendar.
-     * - Values: `'editable'`, `'readonly'`, `'disable'`
-     * - `'readonly'` and `'disable'` both prevent interaction but differ in UI style.
+     * Custom class string applied to the calender container.
+     * - You can use `hison-col-*`, `hison-pos-*`, `hison-size-*` and other responsive classes
+     * - These classes will be processed internally for device-specific application
      */
-    editMode: { type: String as PropType<EditMode>, required: false },
+    class: { type: String, required: false },
+
+    style: { type: String, required: false },
+
     /**
-     * Initial status of the calendar.
-     *
-     * Controlled via `DataStatus` enum. This value tracks the data state:
-     * - `'C'`: Created
-     * - `'R'`: Read (default)
-     * - `'U'`: Updated
-     * - `'D'`: Deleted
-     *
-     * Example:
-     * ```ts
-     * const calendar = hison.vue.getCalendar('calendar1');
-     * calendar.setStatus('U');
-     * ```
-     *
-     * @default 'R'
+     * Controls visibility of the calendar.
+     * - Accepts string values: `'true'` or `'false'` (not boolean)
+     * - Defaults to visible if not provided or if value is not `'false'`
      */
-    status: { type: String as PropType<DataStatus>, required: false },
+    visible: { type: Boolean, required: false, default: true },
     /**
-     * List of events to display in the calendar.
-     * - Each event should follow VueCal's event format.
-     * - Reactive updates are supported.
+     * Whether the calendar is disabled.
+     * - Accepts `'true'` or `'false'` as string.
+     * - Affects `disabled` attribute and `hison-disable` class.
+     * - Can be changed at runtime via `HButtonMethods.setDisable(true|false)`
+     * - Default: `'false'`
      */
-    modelValue: {
-    type: Array as PropType<any[]>, // 향후 타입 명확화 가능 (예: CalendarEvent[])
-    required: false
-    },
+    disable : { type: Boolean, required: false, default: false },
+
+    /** css text 
+     * 입력 시 해당 색상이 header의 주말에 표시됨
+    */
+    weekendColor : { type: String, required: false },
+
+    
+    /** css text */
+    todayColor : { type: String, required: false },
+    /** css text */
+    selectedColor : { type: String, required: false },
+
     /**
-     * Current calendar view mode.
-     * - Values: `'month'`, `'week'`, `'day'`, `'year'`, `'custom'`
-     * - Default is `'month'`.
+     * timeFrom: 0 * 60 ~ 24 * 60
+     * timeTo: 0 * 60 ~ 24 * 60
+        export type SpecialTime = {
+            timeFrom: number;
+            timeTo: number;
+        }
+     * 0 = Sunday ~ 6 = Saturday
+        export type SpecialTimeMap = {
+            [dayOfWeek: number]: SpecialTime[]  // 0~6까지 배열
+        }
      */
-    view: {
-    type: String as PropType<'month' | 'week' | 'day' | 'year' | 'custom'>,
-    default: 'month'
-    },
-    /**
-     * The currently selected date.
-     * - Format: ISO 8601 string (e.g., `'2025-06-04'`)
-     * - When changed, updates the calendar’s focus.
-     */
-    selectedDate: {
-    type: String,
-    required: false
-    },
-    /**
-     * Whether to hide the top title bar (month/year navigation).
-     * - Useful for compact or embedded views.
-     */
-    hideTitleBar: {
-    type: Boolean,
-    default: false
-    }
+    specialTime : { type: Object as PropType<SpecialTimeMap>, required: false},
+
+
+
+    invertColor : { type: Boolean, required: false },
+
+    /** px */
+    dateCellMinHeight : { type: Number, required: false },
+    dateCellMaxHeight : { type: Number, required: false },
 }
