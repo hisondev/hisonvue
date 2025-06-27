@@ -15,29 +15,29 @@ export const gridProps = {
     /* The name of the grid. If null, the grid Id is inserted. */
     name: { type: String, required: false },
     /* Indicates whether the cell is editable. If true, the cell cannot be edited. */
-    locked: { type: String as PropType<BoolString>, required: false },
+    locked: { type: Boolean, required: false, default: false },
     /* Indicates whether to display the background color representing the locked state of a locked cell. */
-    lockedColor: { type: String as PropType<BoolString>, required: false },
+    lockedColor: { type: Boolean, required: false, default: true },
     /* Indicates whether the column width can be adjusted by the user with the mouse. */
-    resizable: { type: String as PropType<BoolString>, required: false },
+    resizable: { type: Boolean, required: false, default: true },
     /* Indicates whether the user can use undo and redo shortcuts while editing the grid. */
-    redoable: { type: String as PropType<BoolString>, required: false },
+    redoable: { type: Boolean, required: false, default: true },
     /* The number of times the grid edit state is recorded for undo and redo. */
-    redoCount: { type: String, required: false },
+    redoCount: { type: Number, required: false },
     /* Indicates whether the grid is visible. If false, it will be display none. */
-    visible: { type: String as PropType<BoolString>, required: false },
+    visible: { type: Boolean, required: false, default: true },
     /* Indicates whether the grid header is visible. If false, it will be display none. */
-    headerVisible: { type: String as PropType<BoolString>, required: false },
+    headerVisible: { type: Boolean, required: false, default: true },
     /* Indicates whether to display the row number column (v-g-rownum) on the screen. */
-    rownumVisible: { type: String as PropType<BoolString>, required: false },
+    rownumVisible: { type: Boolean, required: false, default: true },
     /* The width size of the row number column (v-g-rownum). */
     rownumSize: { type: String, required: false },
     /* Indicates whether to display the locked color of the row number column (v-g-rownum). */
-    rownumLockedColor: { type: String as PropType<BoolString>, required: false },
+    rownumLockedColor: { type: Boolean, required: false, default: false },
     /* Indicates whether to display the status column (v-g-status) on the screen. */
-    statusVisible: { type: String as PropType<BoolString>, required: false },
+    statusVisible: { type: Boolean, required: false, default: true },
     /* Indicates whether to display the locked color of the status column (v-g-status). */
-    statusLockedColor: { type: String as PropType<BoolString>, required: false },
+    statusLockedColor: { type: Boolean, required: false, default: false },
     /* The user selection range policy of the grid. 'range': range selection, 'single': single cell selection, 'none': no selection) */
     selectionPolicy: { type: String as PropType<SelectionPolicy>, required: false },
     /* Value representing null in the grid. */
@@ -56,20 +56,20 @@ export const gridProps = {
      */
     monthFormat: { type: String as PropType<GridMonthFormat>, required: false },
     /* Sets the alter-row of the grid (the function that alternates the colors of each row). */
-    alterRow: { type: String as PropType<BoolString>, required: false },
+    alterRow: { type: Boolean, required: false, default: true },
     /**
      * Sets the frozen columns of the grid. The number should be set by calculating the invisible columns as well.
      * (Column 1 is v-g-rownum, and column 2 is v-g-status. The user column starts from at least 3 columns.)
      */
-    frozenColCount: { type: String, required: false },
+    frozenColCount: { type: Number, required: false },
     /* Sets the frozen rows of the grid. */
-    frozenRowCount: { type: String, required: false },
+    frozenRowCount: { type: Number, required: false },
     /* Indicates whether to use the sorting feature of the grid. */
-    sortable: { type: String as PropType<BoolString>, required: false },
+    sortable: { type: Boolean, required: false, default: true },
     /* Indicates whether to use the filtering feature of the grid. */
-    filterable: { type: String as PropType<BoolString>, required: false },
+    filterable: { type: Boolean, required: false, default: true },
     /* Indicates whether to use the feature that checks or unchecks the column checkboxes when double-clicking the header of a checkbox. */
-    allCheckable: { type: String as PropType<BoolString>, required: false },
+    allCheckable: { type: Boolean, required: false, default: true },
     /* The value a checkbox type cell has when checked. */
     checkedValue: { type: String, required: false },
     /* The value a checkbox type cell has when unchecked. */
@@ -83,7 +83,7 @@ export const gridProps = {
     /* The padding of the grid. Insert cssText. */
     padding: { type: String, required: false },
     /* Specifies the size level of the grid. Enter a positive integer. 5 is the standard ratio. */
-    sizeLevel: { type: String, required: false },
+    sizeLevel: { type: Number, required: false },
     /* Sets the default vertical-align of the grid cell. Choose from 'top', 'center', 'bottom'. */
     verticalAlign: { type: String as PropType<GridVerticalAlign>, required: false },
     /* Specifies the default font-size of the grid cell. Enter a css text. The unit is px. */
@@ -91,9 +91,9 @@ export const gridProps = {
     /* Specifies the default min-height of the grid cell. Enter a css text. The unit is px. */
     cellMinHeight: { type: String, required: false },
     /* Sets the horizontal border size of the grid cell. The unit is px. Enter 0 or a positive integer. */
-    horizenBorderSize: { type: String, required: false },
+    horizenBorderSize: { type: Number, required: false },
     /* Sets the vertical border size of the grid cell. The unit is px. Enter 0 or a positive integer. */
-    verticalBorderSize: { type: String, required: false },
+    verticalBorderSize: { type: Number, required: false },
     /* Sets the font-family of the grid cell. Enter the font-family in cssText. */
     gridFontFamily: { type: String, required: false },
     /* Sets the font-family of the grid editor. Enter the font-family in cssText. */
@@ -105,9 +105,9 @@ export const gridProps = {
     /* Sets the white-space of the grid cell. Enter the white-space in cssText. */
     whiteSpace: { type: String, required: false },
     /* Indicates whether to display the underline for link type cells. */
-    linkHasUnderLine: { type: String, required: false },
+    linkHasUnderLine: { type: Boolean, required: false },
     /* Inverts the colors of the grid. */
-    invertColor: { type: String as PropType<BoolString>, required: false },
+    invertColor: { type: Boolean, required: false, default: false },
     /* Sets the main color of the grid. Enter the 16-digit color code in cssText. Ex) '#ffffff' */
     color: { type: String as PropType<Color> || String, required: false },
     /* Sets the border color of the grid. Enter the 16-digit color code in cssText. Ex) '#ffffff' */
