@@ -1,3 +1,9 @@
+<!--
+1. format을 value: any 파라메터, string 출력하도록 하는 메소드로 받는 props 만들기.(getText시 유기적으로 사용 하도록)
+2. checkbox, selector 만들기
+3. 인풋 테두리도 invert할 때 티나게
+-->
+
 <template>
   <input
     ref="inputTextRef"
@@ -85,7 +91,7 @@ import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, w
 import type { HInputMethods } from '../../types'
 import { inputProps } from './props'
 import { DateFormat, hison, hisonCloser, EditMode, InputType, YearMonthFormat } from '../..'
-import { addComponentNameToClass, extractResponsiveClasses, getDigitsOnly, getMaskValue, getUUID, isNullOrUndefined, registerReloadable } from '../../utils'
+import { addComponentNameToClass, extractResponsiveClasses, getDigitsOnly, getMaskValue, getUUID, isNullOrUndefined, registerReloadable, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 import { addInputCssEvent, addInputTextCssEvent, removeInputCssEvent, removeInputTextCssEvent } from '../common/setInputCssEvent'
 
@@ -207,7 +213,7 @@ export default defineComponent({
     const modelValue = ref(computeValue(props.modelValue))
     const inputValue = computed(() => modelValue.value)
     const oldValue = ref(null)
-    const visible = ref(props.visible !== 'false')
+    const visible = ref(props.visible)
     const title = ref(props.title ?? '')
     const inputAttrType = computed(() => {
       switch (inputType.value) {
@@ -231,24 +237,24 @@ export default defineComponent({
     const editModeClass = computed(() => {
       if(editMode.value !== EditMode.editable) return `hison-input-${editMode.value}`
     })
-    const required = ref(props.required === 'true')
+    const required = ref(props.required)
     const requiredClass = computed(()=>{
       if(required.value) return 'hison-input-required'
     })
     const placeholder = ref(props.placeholder ?? '')
-    const fontBold = ref(props.fontBold === 'true')
+    const fontBold = ref(props.fontBold)
     const fontBoldClass = computed(()=>{
       if(fontBold.value) return 'hison-font-bold'
     })
-    const fontItalic = ref(props.fontItalic === 'true')
+    const fontItalic = ref(props.fontItalic)
     const fontItalicClass = computed(()=>{
       if(fontItalic.value) return 'hison-font-italic'
     })
-    const fontThruline = ref(props.fontThruline === 'true')
+    const fontThruline = ref(props.fontThruline)
     const fontThrulineClass = computed(()=>{
       if(fontThruline.value) return 'hison-font-thruline'
     })
-    const fontUnderline = ref(props.fontUnderline === 'true')
+    const fontUnderline = ref(props.fontUnderline)
     const fontUnderlineClass = computed(()=>{
       if(fontUnderline.value) return 'hison-font-underline'
     })
@@ -330,120 +336,113 @@ export default defineComponent({
     }
 
     const mount = () => {
-      if (inputRef.value) {
-        if (hisonCloser.component.inputList[id]) throw new Error(`[Hisonvue] input id attribute was duplicated.`)
-        refleshResponsiveClassList()
-        if(inputTextRef.value) addInputTextCssEvent(inputTextRef.value)
-        addInputCssEvent(inputRef.value)
-        // mount시 value 갱신
-        updateValue(modelValue.value, false)
+      if (hisonCloser.component.inputList[id]) throw new Error(`[Hisonvue] input id attribute was duplicated.`)
+      registerReloadable(reloadId, () => {
+        unmount()
+        nextTick(mount)
+      })
+      if (!inputRef.value) return
 
-        inputMethods.value = {
-          getId : () => id,
-          getType : () => 'input',
-          getText : () => { return spanText.value },
-          getValue : () => { return modelValue.value },
-          setValue : (val: any) => {
-            oldValue.value = modelValue.value
-            modelValue.value = val
-            updateValue(modelValue.value)
-          },
-          getTitle : () => title.value,
-          setTitle : (val: string) => { title.value = val },
-          isVisible : () => window.getComputedStyle(inputRef.value!).display !== 'none',
-          setVisible : (val: boolean) => { visible.value = val },
-          getInputType : () => { return inputType.value },
-          setInputType : (val: keyof typeof InputType) => {
-            inputType.value = InputType[val]
-            oldValue.value = modelValue.value
-            updateValue(modelValue.value)
-          },
-          getFormat : () => { return format.value ?? '' },
-          setFormat : (val: string) => {
-            format.value = val
-            oldValue.value = modelValue.value
-            updateValue(modelValue.value)
-          },
-          getNullText : () => { return nullText.value },
-          setNullText : (val: string) => {
-            nullText.value = val
-            if(isNullOrUndefined(modelValue.value) || modelValue.value === '') spanText.value = computeSpanText(modelValue.value)
-          },
-          getEditMode : () => { return editMode.value },
-          setEditMode : (val: keyof typeof EditMode) => { editMode.value = EditMode[val] },
-          getMaxNumber : () => { return maxNumber.value },
-          setMaxNumber : (val: number) => {
-            if(!hison.utils.isNumeric(val)) return
-            maxNumber.value = val
-            oldValue.value = modelValue.value
-            if(inputType.value === InputType.number) updateValue(modelValue.value)
-          },
-          getMinNumber : () => { return minNumber.value },
-          setMinNumber : (val: number) => {
-            if(!hison.utils.isNumeric(val)) return
-            minNumber.value = val
-            oldValue.value = modelValue.value
-            if(inputType.value === InputType.number) updateValue(modelValue.value)
-          },
-          getRoundNumber : () => { return roundNumber.value },
-          setRoundNumber : (val: number) => {
-            if(!hison.utils.isPositiveInteger(val)
-              && !hison.utils.isNegativeInteger(val)
-              && val !== 0) return
-            roundNumber.value = val
-            oldValue.value = modelValue.value
-            if(inputType.value === InputType.number) updateValue(modelValue.value)
-          },
-          getMaxLength : () => { return maxLength.value },
-          setMaxLength : (val: number) => {
-            if(hison.utils.isPositiveInteger(val)) maxLength.value = val 
-            oldValue.value = modelValue.value
-            updateValue(modelValue.value)
-          },
-          getMaxByte : () => { return maxByte.value },
-          setMaxByte : (val: number) => {
-            if(hison.utils.isPositiveInteger(val)) maxByte.value = val
-            oldValue.value = modelValue.value
-            updateValue(modelValue.value)
-          },
-          getRequired : () => { return required.value },
-          setRequired : (val: boolean) => { required.value = val },
-          getPlaceholder : () => placeholder.value,
-          setPlaceholder : (val: string) => { placeholder.value = val },
-          isFontBold : () => { return fontBold.value },
-          setFontBold : (val: boolean) => { fontBold.value = val },
-          isFontItalic : () => { return fontItalic.value },
-          setFontItalic : (val: boolean) => { fontItalic.value = val },
-          isFontThruline : () => { return fontThruline.value },
-          setFontThruline : (val: boolean) => { fontThruline.value = val },
-          isFontUnderline : () => { return fontUnderline.value },
-          setFontUnderline : (val: boolean) => { fontUnderline.value = val },
-          isModified : () => { return isModified.value },
-          setModified : (val: boolean) => { isModified.value = val},
-        }
-
-        // HInputGroup이 주입한 등록 함수로 자신을 등록
-        if (registerToInputGroup) {
-          registerToInputGroup(id)
-        }
-
-        hisonCloser.component.inputList[id] = inputMethods.value
-        emit('mounted', inputMethods.value)
+      refleshResponsiveClassList()
+      if(inputTextRef.value) addInputTextCssEvent(inputTextRef.value)
+      addInputCssEvent(inputRef.value)
+      updateValue(modelValue.value, false)
+      inputMethods.value = {
+        getId : () => id,
+        getType : () => 'input',
+        getText : () => { return spanText.value },
+        getValue : () => { return modelValue.value },
+        setValue : (val: any) => {
+          oldValue.value = modelValue.value
+          modelValue.value = val
+          updateValue(modelValue.value)
+        },
+        getTitle : () => title.value,
+        setTitle : (val: string) => { title.value = val },
+        isVisible : () => window.getComputedStyle(inputRef.value!).display !== 'none',
+        setVisible : (val: boolean) => { visible.value = val },
+        getInputType : () => { return inputType.value },
+        setInputType : (val: keyof typeof InputType) => {
+          inputType.value = InputType[val]
+          oldValue.value = modelValue.value
+          updateValue(modelValue.value)
+        },
+        getFormat : () => { return format.value ?? '' },
+        setFormat : (val: string) => {
+          format.value = val
+          oldValue.value = modelValue.value
+          updateValue(modelValue.value)
+        },
+        getNullText : () => { return nullText.value },
+        setNullText : (val: string) => {
+          nullText.value = val
+          if(isNullOrUndefined(modelValue.value) || modelValue.value === '') spanText.value = computeSpanText(modelValue.value)
+        },
+        getEditMode : () => { return editMode.value },
+        setEditMode : (val: keyof typeof EditMode) => { editMode.value = EditMode[val] },
+        getMaxNumber : () => { return maxNumber.value },
+        setMaxNumber : (val: number) => {
+          if(!hison.utils.isNumeric(val)) return
+          maxNumber.value = val
+          oldValue.value = modelValue.value
+          if(inputType.value === InputType.number) updateValue(modelValue.value)
+        },
+        getMinNumber : () => { return minNumber.value },
+        setMinNumber : (val: number) => {
+          if(!hison.utils.isNumeric(val)) return
+          minNumber.value = val
+          oldValue.value = modelValue.value
+          if(inputType.value === InputType.number) updateValue(modelValue.value)
+        },
+        getRoundNumber : () => { return roundNumber.value },
+        setRoundNumber : (val: number) => {
+          if(!hison.utils.isPositiveInteger(val)
+            && !hison.utils.isNegativeInteger(val)
+            && val !== 0) return
+          roundNumber.value = val
+          oldValue.value = modelValue.value
+          if(inputType.value === InputType.number) updateValue(modelValue.value)
+        },
+        getMaxLength : () => { return maxLength.value },
+        setMaxLength : (val: number) => {
+          if(hison.utils.isPositiveInteger(val)) maxLength.value = val 
+          oldValue.value = modelValue.value
+          updateValue(modelValue.value)
+        },
+        getMaxByte : () => { return maxByte.value },
+        setMaxByte : (val: number) => {
+          if(hison.utils.isPositiveInteger(val)) maxByte.value = val
+          oldValue.value = modelValue.value
+          updateValue(modelValue.value)
+        },
+        getRequired : () => { return required.value },
+        setRequired : (val: boolean) => { required.value = val },
+        getPlaceholder : () => placeholder.value,
+        setPlaceholder : (val: string) => { placeholder.value = val },
+        isFontBold : () => { return fontBold.value },
+        setFontBold : (val: boolean) => { fontBold.value = val },
+        isFontItalic : () => { return fontItalic.value },
+        setFontItalic : (val: boolean) => { fontItalic.value = val },
+        isFontThruline : () => { return fontThruline.value },
+        setFontThruline : (val: boolean) => { fontThruline.value = val },
+        isFontUnderline : () => { return fontUnderline.value },
+        setFontUnderline : (val: boolean) => { fontUnderline.value = val },
+        isModified : () => { return isModified.value },
+        setModified : (val: boolean) => { isModified.value = val},
       }
+      if (registerToInputGroup) {
+        registerToInputGroup(id)
+      }
+      hisonCloser.component.inputList[id] = inputMethods.value
+      emit('mounted', inputMethods.value)
     }
 
     const unmount = () => {
-      if (inputRef.value) {
-        delete hisonCloser.component.inputList[id]
-        removeInputCssEvent(inputRef.value)
-      }
+      unregisterReloadable(reloadId)
+      delete hisonCloser.component.inputList[id]
+      if(inputRef.value) removeInputCssEvent(inputRef.value)
       if(inputTextRef.value) removeInputTextCssEvent(inputTextRef.value)
     }
-
-    registerReloadable(reloadId, () => {
-      unmount()
-      nextTick(mount)
-    })
 
     onMounted(mount)
     onBeforeUnmount(unmount)
