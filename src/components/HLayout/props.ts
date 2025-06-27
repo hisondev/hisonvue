@@ -1,5 +1,4 @@
 import { CSSProperties, PropType } from "vue";
-import { BoolString } from "../../enums";
 
 export const layoutProps = {
     /**
@@ -25,7 +24,7 @@ export const layoutProps = {
      * - Accepts string values: `'true'` or `'false'` (not boolean)
      * - Defaults to visible if not provided or if value is not `'false'`
      */
-    visible: { type: String as PropType<BoolString>, required: false },
+    visible: { type: Boolean, required: false, default: true },
     /** Background image URL */
     backImageSrc: { type: String, required: false },
     /** Background repeat/cover/contain settings */
