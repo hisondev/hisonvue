@@ -291,7 +291,6 @@ export interface ComponentMethods {
   getType(): string
 }
 
-//visible, editMode
 /**
  * Provides various methods to manipulate and manage a Vanillagrid instance.
  *
