@@ -3,6 +3,7 @@
     <HLayout class="hison-col-12-mb hison-col-12-tb hison-col-6-pc hison-col-6-wd hison-layout-vertical-align-center-mb hison-layout-vertical-align-top-pc">
         <HButton
         @click="goToNoteTest"
+        :disable="true"
         id="b1"
         class="hison-col-2 hison-pos-left hison-size-l-mb hison-size-s-pc hison-color-danger-mb hison-color-warning-pc">
             Go to Note<br>(left-button)
@@ -18,133 +19,209 @@
         <HButton @click="goToGridTest" id="b2" class="hison-col-2 hison-pos-right hison-size-l-mb hison-size-s-pc">Go to Grid<br>(right-button)</HButton>
     </HLayout>
     <br><br>
+    <HLayout>
+        <HNote v-model="noteData1"
+        class="hison-col-12-mb hison-col-6-pc hison-size-m-mb hison-size-s-pc hison-color-primary-mb hison-color-warning-wd"
+        id="note1"
+        :invert-color="true"
+        @mounted="mountNote1"
+        :boldBeforeClick="onBoldBeforeClick"
+        :textareaBeforeFocus="onTextareaBeforeFocus"
+        textarea-height="200px"
+        ></HNote>
+        <HNote v-model="noteData2"
+        class="hison-col-12-mb hison-col-6-pc hison-size-m-mb hison-size-s-pc hison-color-primary-mb hison-color-warning-wd"
+        @mounted="mountNote2"
+        textarea-height="200px"
+        ></HNote>
+    </HLayout>
+    <br><br>
+    <HLayout>
+      <HGrid
+        id="grid01"
+        class="
+        hison-col-12-mb hison-col-6-pc
+        hison-color-primary-mb hison-color-warning-wd
+        hison-size-m-mb hison-size-s-pc
+        "
+        :invert-color="true"
+        :columns="testColumns1"
+        :height="'400px'"
+        :horizenBorderSize="0"
+        @mounted="mountGridTest1"
+      />
+      <HGrid
+        id="grid02"
+        class="
+        hison-col-12-mb hison-col-6-pc
+        hison-color-primary-mb hison-color-warning-wd
+        hison-size-m-mb hison-size-s-pc
+        "
+        :columns="testColumns2"
+        :height="'400px'"
+        @mounted="mountGridTest2"
+      />
+    </HLayout>
+    <br><br>
     <HInputGroup id="inputGroup1">
-        <HLayout class="hison-col-12-tb hison-col-6-pc">
-            <HLayout class="hison-col-12-mb hison-col-6-pc hison-pos-right">
-                <HInput
-                id="input1"
-                class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-muted-pc"
-                style="margin-bottom: 5px;"
-                inputType="date"
-                :format="DateFormat['MMMM dd, yyyy']"
-                v-model="inputValue1"
-                required="true"
-                ></HInput>
-                <HInput
-                id="input2"
-                class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-info-pc"
-                style="margin-bottom: 5px;"
-                :inputType="InputType.month"
-                ref="input2Ref"
-                v-model="inputValue2"
-                required="true"
-                ></HInput>
-                <HInput
-                id="input3"
-                class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-success-pc"
-                style="margin-bottom: 5px;"
-                :inputType="InputType.date"
-                v-model="inputValue3"
-                ></HInput>
-            </HLayout>
-            <HLayout>
-                <HInput
-                id="input4"
-                class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-danger-pc"
-                style="margin-bottom: 5px;"
-                v-model="inputValue4"
-                inputType="number"
-                format="$$ #,###.##"
-                nullText="$$"
-                maxNumber="10000"
-                @input="onInput4"
-                ></HInput>
-                <HInput
-                id="input5"
-                class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
-                style="margin-bottom: 5px;"
-                v-model="inputValue5"
-                inputType="mask"
-                format="AA999"
-                nullText="-"
-                required="true"
-                placeholder="testtest"
-                ></HInput>
-                <HInput
-                id="input6"
-                class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
-                style="margin-bottom: 5px;"
-                v-model="inputValue6"
-                :inputType="InputType.password"
-                placeholder="testtest"
-                maxLength="10"
-                ></HInput>
-            </HLayout>            
-        </HLayout>
+      <HLayout class="hison-col-12-tb hison-col-6-pc">
+          <HLayout class="hison-col-12-mb hison-col-6-pc hison-pos-right">
+              <HInput
+              id="input1"
+              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-muted-pc"
+              style="margin-bottom: 5px;"
+              inputType="date"
+              :format="DateFormat['MMMM dd, yyyy']"
+              v-model="inputValue1"
+              :required="true"
+              ></HInput>
+              <HInput
+              id="input2"
+              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-info-pc"
+              style="margin-bottom: 5px;"
+              :inputType="InputType.month"
+              ref="input2Ref"
+              v-model="inputValue2"
+              :required="true"
+              ></HInput>
+              <HInput
+              id="input3"
+              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-success-pc"
+              style="margin-bottom: 5px;"
+              :inputType="InputType.date"
+              v-model="inputValue3"
+              ></HInput>
+          </HLayout>
+          <HInput
+          id="input4"
+          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-danger-pc"
+          style="margin-bottom: 5px;"
+          v-model="inputValue4"
+          inputType="number"
+          format="$$ #,###.##"
+          nullText="$$"
+          maxNumber="10000"
+          @input="onInput4"
+          ></HInput>
+          <HInput
+          id="input5"
+          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
+          style="margin-bottom: 5px;"
+          v-model="inputValue5"
+          inputType="mask"
+          format="AA999"
+          nullText="-"
+          :required="true"
+          placeholder="testtest"
+          ></HInput>
+          <HInput
+          id="input6"
+          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
+          style="margin-bottom: 5px;"
+          v-model="inputValue6"
+          :inputType="InputType.password"
+          placeholder="testtest"
+          maxLength="10"
+          ></HInput>
+      </HLayout>
     </HInputGroup>
     <br><br>
-    <HLayout class="hison-col-6-pc">
-        <HCalendar
-            id="cal1"
-            class="hison-size-l-mb hison-size-s-pc hison-color-primary-mb hison-color-warning-pc"
-            active-view="week"
-            :events-on-month-view="true"
-            :selected-date="selectedDate"
-            :events="calendarEvents"
-            :locale="'en'"
-            :time-from="9 * 60"
-            :time-to="18 * 60"
-            :weekend-color="'#dd5555'"
-            :start-week-on-sunday="true"
-            :special-hours="specialHours"
-            @cell-click="onCellClick"
-            @view-change="onViewChange"
-            :disable="false"
-            >
-        </HCalendar>
-        <vue-cal
-        :time-from="8 * 60"
-        :time-to="21 * 60"
-        :time-step="2 * 60"
-        :max-date="'2025-06-15'"
-        />
-    </HLayout>
+    <HCalendar
+        id="cal1"
+        class="hison-size-l-mb hison-size-s-pc hison-color-primary-mb hison-color-warning-pc"
+        active-view="week"
+        :events-on-month-view="'short'"
+        :date-cell-max-height="100"
+        :date-cell-min-height="100"
+        v-model:selected-date="selectedDate"
+        v-model:events="calendarEvents"
+        :locale="'en'"
+        :time-step="60"
+        :time-from="9 * 60"
+        :time-to="18 * 60"
+        :twelve-hour="true"
+        :weekend-color="'#dd5555'"
+        :start-week-on-sunday="false"
+        :show-today-color="true"
+        @cell-click="onCellClick"
+        @view-change="onViewChange"
+        :special-time="specialTime"
+        >
+    </HCalendar>
 </template>
 
 <script setup lang="ts">
-// @ts-ignore
-import VueCal from 'vue-cal'
+const noteData1 = ref<NoteData>()
+const noteData2 = ref<NoteData>()
+const mountNote1 = (note: VanillanoteElement) => {
+}
+const mountNote2 = () => {
+}
+const onBoldBeforeClick = (e: Event) => { console.log('onBoldBeforeClick'); return false }
+const onTextareaBeforeFocus = (e: Event) => { console.log('onTextareaBeforeFocus'); return false}
+
+const testColumns1: HGridColumn[] = [
+  { id : "dept", header : "Click the Sigma button to the left of the header;filter1(mask);dept ", dataType : "mask", format : "AAA99", width : "100", rowMerge : true },
+  { id : "f_nm", header : ";filter2(text);first name", dataType : "text", width : "120", align : "center", locked : true },
+  { id : "l_nm", header : ";filter3(text);last name", dataType : "text", width : "120", align : "center", locked : true, colMerge : true },
+  { id : "d_o_j", header : ";filter4(month);DOJ", dataType : "month", format : "yyyy/mm", width : "120", align : "center", locked : true },
+  { id : "e_id", header : "sort1(text);;", dataType : "number", width : "120", align : "center", locked : true, footer : "MAX;MIN;AVG;SUM", roundNumber : -1 },
+  { id : "salary", header : "sort2(number);;salary", dataType : "number", format : "$ #,###.#####", width : "150", footer : "$$MAX;$$MIN;$$AVG;$$SUM" },
+  { id : "status", header : "Please double click;checkbox;status", dataType : "checkbox", width : "80", align : "center", footer : "$$COUNT_CHECK" },
+  { id : "radio", header : "radio", dataType : "radio", width : "80", align : "center", footer : "$$COUNT_CHECK" }
+]
+const mountGridTest1 = (grid: GridMethods) => {
+  grid.load(testData)
+}
+const testColumns2: HGridColumn[] = [
+  { id : "dept", header : "Click the Sigma button to the left of the header;filter1(mask);dept ", dataType : "mask", format : "AAA99", width : "100", rowMerge : true },
+  { id : "f_nm", header : ";filter2(text);first name", dataType : "text", width : "120", align : "center", locked : true },
+  { id : "l_nm", header : ";filter3(text);last name", dataType : "text", width : "120", align : "center", locked : true, colMerge : true },
+  { id : "d_o_j", header : ";filter4(month);DOJ", dataType : "month", format : "yyyy/mm", width : "120", align : "center", locked : true },
+  { id : "e_id", header : "sort1(text);;", dataType : "number", width : "120", align : "center", locked : true, footer : "MAX;MIN;AVG;SUM", roundNumber : -1 },
+  { id : "salary", header : "sort2(number);;salary", dataType : "number", format : "$ #,###.#####", width : "150", footer : "$$MAX;$$MIN;$$AVG;$$SUM" },
+  { id : "status", header : "Please double click;checkbox;status", dataType : "checkbox", width : "80", align : "center", footer : "$$COUNT_CHECK" },
+  { id : "radio", header : "radio", dataType : "radio", width : "80", align : "center", footer : "$$COUNT_CHECK" }
+]
+const mountGridTest2 = (grid: GridMethods) => {
+  grid.load(testData)
+}
+
+
 import 'vue-cal/dist/vuecal.css'
+
+const specialTime = {
+  [DayOfWeek.sun] : [
+    { from: 10 * 60, to: 12 * 60 + 30, className: 'open' },
+    { from: 13 * 60, to: 15 * 60 + 30 }
+  ]
+}
+
+const disableDays = ['2025-06-16','2025-06-17','2025-06-21','2025-06-22']
+
 const onCellClick = (date: Date) => {
-    const day = 
-        String(date.getFullYear()) + '-' +
-        hison.utils.getLpad(String(date.getMonth() + 1), '0', 2) + '-' +
-        hison.utils.getLpad(String(date.getDate()), '0', 2)
-    console.log(day)
-    const input1 = hison.vue.getInput('input1')!
-    input1.setValue(day)
+    console.log('### onCellClick selectedDate.value', selectedDate.value)
+    console.log('### onCellClick typeof selectedDate.value', typeof selectedDate.value)
+    console.log('### onCellClick instanceof selectedDate.value', (selectedDate.value as any) instanceof Date)
 }
 const onViewChange = (e: any) => {
-    console.log(e)
 }
+const selectedDate = ref('20250618')
+let toggle = false
 const onClickCenterButton1 = (e: Event, button: HButtonMethods) => {
-    const cal1 = hison.vue.getCalendar('cal1')
-    console.log(cal1)
-    calendarEvents.value.push({
-        title: 'Project Kickoff',
-        start: new Date(2025, 5, 17, 10, 0),
-        end: new Date(2025, 5, 17, 12, 0),
-        content: 'Initial project meeting with the team',
-        class: 'event-blue',
-    })
+  const cal1 = hison.vue.getCalendar('cal1')!
+  console.log('1',cal1.getDisableViews())
+  console.log(cal1.setDisableViews([HCalenderView.years,HCalenderView.year,HCalenderView.day]))
+  console.log('2',cal1.getDisableViews())
+  toggle = !toggle
 }
 let invertColorToggle = true
 const onClickCenterButton2 = () => {
-    hison.style.setInvertColor(invertColorToggle)
-    invertColorToggle = !invertColorToggle
+  hison.style.setInvertColor(invertColorToggle)
+  invertColorToggle = !invertColorToggle
+  console.log(selectedDate.value)
 }
-
-const selectedDate = ref(new Date(2025, 5, 20))
+['years','year','month','week','day']
 const calendarEvents = ref([
   {
     title: 'Project Kickoff',
@@ -183,28 +260,23 @@ const calendarEvents = ref([
   },
 ])
 
+const calendarEvents2 = ref([
+  {
+    title: 'Dev Sprint Planning 222',
+    start: new Date(2025, 5, 20, 6, 0),
+    end: new Date(2025, 5, 20, 11, 30),
+    content: 'Weekly planning session for developers',
+    class: 'event-purple',
+  },
+  {
+    title: 'Team Lunch 222',
+    start: new Date(2025, 5, 21, 12, 0),
+    end: new Date(2025, 5, 21, 20, 0),
+    content: 'Casual team lunch at the cafeteria',
+    class: 'event-orange',
+  },
+])
 
-const schedules = [
-    {
-        id: 1,
-        class: 'sch1',
-        label: 'user1',
-        hide: false
-    },
-    {
-        id: 1,
-        class: 'sch2',
-        label: 'user1',
-        hide: false
-    },
-]
-
-const specialHours = {
-  mon : [
-    { from: 9 * 60, to: 12 * 60, class: 'open' },
-    { from: 14 * 60, to: 20 * 60, class: 'open' }
-  ]
-}
 
 const events = ref([
   { start: '2025-06-12 09:00', end: '2025-06-12 11:00', title: 'My Event' }
@@ -213,12 +285,11 @@ const isWeekend = (heading: any) => {
     return heading.label === 'Saturday' || heading.label === 'Sunday'
 }
 
-import { DateFormat, EditMode, HButtonMethods, HInputGroupMethods, HInputMethods, hison, InputType } from 'hisonvue'
+import { DateFormat, DayOfWeek, HButtonMethods, HCalenderTimeFormat, HCalenderView, HGridColumn, HInputMethods, hison, InputType, NoteToolPosition } from 'hisonvue'
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
-
-
-let toggle = true
+import { GridMethods } from 'vanillagrid2'
+import { NoteData, NoteModeByDevice, ToolPosition, VanillanoteElement } from 'vanillanote2'
 
 const inputValue1 = ref<any>('20240228');
 const inputValue2 = ref<any>('2025-03')
@@ -230,12 +301,10 @@ const input2Ref = ref<HTMLInputElement | null>(null)
 
 const router = useRouter()
 const onChange1 = (oldValue: any, newValue: any, inputMethods: HInputMethods) => {
-    console.log(oldValue, newValue, inputMethods)
 }
 const onInputMounted1 = (inputMethods: HInputMethods) => {
 }
 const onInput4 = (value: any, ...param: any) => {
-    console.log(...param)
 }
 const goToGridTest = () => {
     router.push('/gridTest')
@@ -265,14 +334,193 @@ const obj = {
     input5: 'dsgb!!',
 }
 
+const testData = [
+  {
+      dept : "AAA01",
+      f_nm : "James",
+      l_nm : "Smith",
+      d_o_j : "201603",
+      e_id : "7",
+      salary : 100000,
+      status : "Y",
+  },
+  {
+      dept : "AAA01",
+      f_nm : "Johnson",
+      l_nm : "Johnson",
+      d_o_j : "200103",
+      e_id : "2",
+      salary : 200000,
+      status : "Y",
+  },
+  {
+      dept : "AAA01",
+      f_nm : "Michael",
+      l_nm : "Williams",
+      d_o_j : "200803",
+      e_id : "4",
+      salary : 150000,
+      status : "N",
+  },
+  {
+      dept : "AAA01",
+      f_nm : "Smith",
+      l_nm : "Smith",
+      d_o_j : "202403",
+      e_id : "46",
+      salary : 50000,
+      status : "Y",
+  },
+  {
+      dept : "AAA01",
+      f_nm : "William",
+      l_nm : "Brown",
+      d_o_j : "202203",
+      e_id : "25",
+      salary : 70000,
+      status : "N",
+  },
+  {
+      dept : "AAA01",
+      f_nm : "Charles",
+      l_nm : "Jones",
+      d_o_j : "202103",
+      e_id : "27",
+      salary : 30000,
+      status : "N",
+  },
+  {
+      dept : "AAA02",
+      f_nm : "David",
+      l_nm : "Smith",
+      d_o_j : "201403",
+      e_id : "12",
+      salary : 180000,
+      status : "N",
+  },
+  {
+      dept : "AAA02",
+      f_nm : "James",
+      l_nm : "Jones",
+      d_o_j : "202303",
+      e_id : "26",
+      salary : 80000,
+      status : "N",
+  },
+  {
+      dept : "AAA02",
+      f_nm : "Richard",
+      l_nm : "Garcia",
+      d_o_j : "202203",
+      e_id : "24",
+      salary : 60000,
+      status : "Y",
+  },
+  {
+      dept : "AAA02",
+      f_nm : "David",
+      l_nm : "Miller",
+      d_o_j : "202403",
+      e_id : "48",
+      salary : 90000,
+      status : "Y",
+  },
+  {
+      dept : "AAA02",
+      f_nm : "Joseph",
+      l_nm : "Davis",
+      d_o_j : "202403",
+      e_id : "34",
+      salary : 40000,
+      status : "Y",
+  },
+  {
+      dept : "AAA02",
+      f_nm : "Richard",
+      l_nm : "Miller",
+      d_o_j : "202303",
+      e_id : "35",
+      salary : 50000,
+      status : "Y",
+  },
+  {
+      dept : "BBB01",
+      f_nm : "Joseph",
+      l_nm : "Davis",
+      d_o_j : "200403",
+      e_id : "3",
+      salary : 140000,
+      status : "Y",
+  },
+  {
+      dept : "BBB01",
+      f_nm : "Thomas",
+      l_nm : "Johnson",
+      d_o_j : "200903",
+      e_id : "9",
+      salary : 110000,
+      status : "N",
+  },
+  {
+      dept : "BBB01",
+      f_nm : "Charles",
+      l_nm : "Brown",
+      d_o_j : "200703",
+      e_id : "11",
+      salary : 130000,
+      status : "Y",
+  },
+  {
+      dept : "BBB01",
+      f_nm : "James",
+      l_nm : "Rodriguez",
+      d_o_j : "201303",
+      e_id : "14",
+      salary : 120000,
+      status : "N",
+  },
+  {
+      dept : "BBB02",
+      f_nm : "Richard",
+      l_nm : "Garcia",
+      d_o_j : "200803",
+      e_id : "10",
+      salary : 190000,
+      status : "Y",
+  },
+  {
+      dept : "BBB02",
+      f_nm : "David",
+      l_nm : "Martinez",
+      d_o_j : "202403",
+      e_id : "37",
+      salary : 60000,
+      status : "Y",
+  },
+  {
+      dept : "BBB02",
+      f_nm : "Robert",
+      l_nm : "Rodriguez",
+      d_o_j : "202303",
+      e_id : "31",
+      salary : 90000,
+      status : "N",
+  },
+  {
+      dept : "BBB02",
+      f_nm : "James",
+      l_nm : "Williams",
+      d_o_j : "202403",
+      e_id : "40",
+      salary : 60000,
+      status : "Y",
+  },
+];
 </script>
 
 <style scoped>
-.open {
-    color: red;
-}
-.vuecal__cell.open {
-    color: red;
+::v-deep(.vuecal__time-column .open) {
+    color: blue;
 }
 .sch1 {
     color: blue;
