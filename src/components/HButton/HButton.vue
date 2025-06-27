@@ -27,7 +27,7 @@ import type { HButtonMethods } from '../../types'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
 import { buttonProps } from './props'
 import { hisonCloser } from '../..'
-import { addComponentNameToClass, extractResponsiveClasses, getUUID, registerReloadable } from '../../utils'
+import { addComponentNameToClass, extractResponsiveClasses, getUUID, registerReloadable, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 
 export default defineComponent({
@@ -43,8 +43,8 @@ export default defineComponent({
     const device = useDevice()
     const slots = useSlots()
 
-    const visible = ref(props.visible !== 'false')
-    const disable = ref(props.disable === true)
+    const visible = ref(props.visible)
+    const disable = ref(props.disable)
     const title = ref(props.title || '')
 
     const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
@@ -64,48 +64,46 @@ export default defineComponent({
     }
 
     const mount = () => {
-      if (buttonRef.value) {
-        if (hisonCloser.component.buttonList[id]) throw new Error(`[Hisonvue] button id attribute was duplicated.`)
-        refleshResponsiveClassList()
-        addButtonCssEvent(buttonRef.value)
-
-        buttonMethods.value = {
-          getId: () => id,
-          getType : () => 'button',
-          getText: () => hasSlot.value ? '' : internalText.value,
-          getTitle: () => title.value,
-          isVisible: () => window.getComputedStyle(buttonRef.value!).display !== 'none',
-          isDisable: () => disable.value,
-          setText: (val: string) => {
-              if (!hasSlot.value) internalText.value = val
-          },
-          setTitle: (val: string) => {
-              title.value = val
-          },
-          setVisible: (val: boolean) => {
-              visible.value = val
-          },
-          setDisable: (val: boolean) => {
-              disable.value = val
-          },
-        }
-
-        hisonCloser.component.buttonList[id] = buttonMethods.value
-        emit('mounted', buttonMethods.value)
+      if (hisonCloser.component.buttonList[id]) throw new Error(`[Hisonvue] button id attribute was duplicated.`)
+      registerReloadable(reloadId, () => {
+        unmount()
+        nextTick(mount)
+      })
+      if (!buttonRef.value) return
+      
+      refleshResponsiveClassList()
+      addButtonCssEvent(buttonRef.value)
+      buttonMethods.value = {
+        getId: () => id,
+        getType : () => 'button',
+        getText: () => hasSlot.value ? '' : internalText.value,
+        getTitle: () => title.value,
+        isVisible: () => window.getComputedStyle(buttonRef.value!).display !== 'none',
+        isDisable: () => disable.value,
+        setText: (val: string) => {
+            if (!hasSlot.value) internalText.value = val
+        },
+        setTitle: (val: string) => {
+            title.value = val
+        },
+        setVisible: (val: boolean) => {
+            visible.value = val
+        },
+        setDisable: (val: boolean) => {
+            disable.value = val
+        },
       }
+      hisonCloser.component.buttonList[id] = buttonMethods.value
+      emit('mounted', buttonMethods.value)
     }
 
     const unmount = () => {
+      unregisterReloadable(reloadId)
+      delete hisonCloser.component.buttonList[id]
       if (buttonRef.value) {
-        delete hisonCloser.component.buttonList[id]
         removeButtonCssEvent(buttonRef.value)
       }
     }
-
-    registerReloadable(reloadId, () => {
-      unmount()
-      nextTick(mount)
-    })
 
     onMounted(mount)
     onBeforeUnmount(unmount)
