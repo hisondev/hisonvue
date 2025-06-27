@@ -1,5 +1,5 @@
 import { CSSProperties, PropType } from "vue";
-import { BoolString, EditMode, InputType } from "../../enums";
+import { EditMode, InputType } from "../../enums";
 
 export const inputProps = {
     /**
@@ -31,7 +31,7 @@ export const inputProps = {
      * - Accepts string values: `'true'` or `'false'`
      * - Default: `'true'` (visible)
      */
-    visible: { type: String as PropType<BoolString>, required: false },
+    visible: { type: Boolean, required: false, default: true },
     /**
      * Tooltip text shown on hover.
      * - Maps to the `title` attribute
@@ -99,29 +99,29 @@ export const inputProps = {
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-input-required` class when `'true'`
      */
-    required: { type: String as PropType<BoolString>, required: false },
+    required: { type: Boolean, required: false, default: false },
     /**
      * Bold font style toggle.
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-font-bold` class when enabled
      */
-    fontBold: { type: String as PropType<BoolString>, required: false },
+    fontBold: { type: Boolean, required: false, default: false },
     /**
      * Italic font style toggle.
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-font-italic` class when enabled
      */
-    fontItalic: { type: String as PropType<BoolString>, required: false },
+    fontItalic: { type: Boolean, required: false, default: false },
     /**
      * Strikethrough font style toggle.
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-font-thruline` class when enabled
      */
-    fontThruline: { type: String as PropType<BoolString>, required: false },
+    fontThruline: { type: Boolean, required: false, default: false },
     /**
      * Underline font style toggle.
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-font-underline` class when enabled
      */
-    fontUnderline: { type: String as PropType<BoolString>, required: false },
+    fontUnderline: { type: Boolean, required: false, default: false },
 }
