@@ -9,7 +9,7 @@ import { defineComponent, computed, onMounted, onBeforeUnmount, ref, nextTick, t
 import type { Vanillagrid } from 'vanillagrid2'
 import type { HGridColumn, HGridMethods } from '../../types'
 import { gridEventProps, gridProps } from './props'
-import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getSpecificClassValueFromClassList, getUUID, registerReloadable } from '../../utils'
+import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getSpecificClassValueFromClassList, getUUID, registerReloadable, unregisterReloadable } from '../../utils'
 import { hison, hisonCloser, Size } from '../..'
 import { useDevice } from '../../core'
 
@@ -61,8 +61,7 @@ setup(props, { emit }) {
         if (attrs.color) {
             attrs.color = getHexCodeFromColorText(attrs.color) ?? attrs.color
         }
-
-        if (attrs['invert-color'] !== 'false' && hisonCloser.componentStyle.invertColor) {
+        if (props.invertColor || hisonCloser.componentStyle.invertColor) {
             attrs['invert-color'] = 'true'
         }
         return attrs
@@ -80,9 +79,13 @@ setup(props, { emit }) {
     }
 
     const mount = () => {
+        registerReloadable(reloadId, () => {
+            unmount()
+            forceRecomputeBindAttrs()
+            nextTick(mount)
+        })
         vg.init()
         if (!editorWrap.value) return
-
         const gridElement = editorWrap.value.querySelector('[data-vanillagrid]') as HTMLElement
         if (!gridElement) return
 
@@ -98,23 +101,18 @@ setup(props, { emit }) {
             }
             gridElement.appendChild(colDiv)
         })
-
         vg.mountGrid(editorWrap.value)
-
         const color = getHexCodeFromColorText(props.color ?? 'primary') ?? props.color
         gridElement.style.border = 'none'
         gridElement.style.boxShadow = `0 0.5px 1px 0.5px ${color}`
-
         const gridMethod: any = vg.getGrid(id)
         if(gridMethod) gridMethod.getId = () => { return id }
         gridInstance.value = gridMethod as HGridMethods
-
         //methods
         if (gridInstance.value) {
             gridInstance.value.getId = () => id
             gridInstance.value.getType = () => 'grid'
         }
-
         //event
         if(gridInstance.value) {
             if (typeof props.activeCell === 'function') gridInstance.value.setOnActiveCell(props.activeCell)
@@ -153,15 +151,11 @@ setup(props, { emit }) {
         emit('mounted', gridInstance.value)
     }
     const unmount = () => {
+        unregisterReloadable(reloadId)
         if (!editorWrap.value) return
         vg.unmountGrid(editorWrap.value)
     }
-    const reload = () => {
-        unmount()
-        forceRecomputeBindAttrs()
-        nextTick(mount)
-    }
-    registerReloadable(reloadId, reload)
+
     onMounted(mount)
     onBeforeUnmount(unmount)
 
@@ -172,7 +166,7 @@ setup(props, { emit }) {
             const color = getSpecificClassValueFromClassList(classList, 'color')
             const size = getSpecificClassValueFromClassList(classList, 'size')
 
-            const sizeLevel = props.sizeLevel && hison.utils.isNumber(props.sizeLevel)
+            const sizeLevel = props.sizeLevel && hison.utils.isNumber(String(props.sizeLevel))
             ? String(Math.min(Math.max(Number(props.sizeLevel), 1), 9))
             : getSizeLevel(5, size)
             grid.setGridSizeLevel(Number(sizeLevel))
@@ -183,7 +177,7 @@ setup(props, { emit }) {
                 hexColor = getHexCodeFromColorText(hexColor) ?? hexColor
                 grid.setGridColor(hexColor)
 
-                if (props.invertColor !== 'false' && hisonCloser.componentStyle.invertColor) {
+                if (props.invertColor || hisonCloser.componentStyle.invertColor) {
                     grid.invertColor(true)
                 }
             }
