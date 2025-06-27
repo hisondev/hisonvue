@@ -37,7 +37,7 @@ setup(props, { emit }) {
     const reloadId = `hlayout:${props.id}`
     const device = useDevice()
 
-    const visible = ref(props.visible !== 'false')  //'false'가 아닌 경우 모두 true
+    const visible = ref(props.visible)  //'false'가 아닌 경우 모두 true
     const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
 
     const computedBackStyle = computed(() => {
@@ -76,84 +76,82 @@ setup(props, { emit }) {
     }
     
     const mount = () => {
-        if (layoutRef.value) {
-            if(hisonCloser.component.layoutList[id]) throw new Error(`[Hisonvue] layout id attribute was duplicated.`)
-            refleshResponsiveClassList()
+        if(hisonCloser.component.layoutList[id]) throw new Error(`[Hisonvue] layout id attribute was duplicated.`)
+        registerReloadable(reloadId, () => {
+            unmount()
+            nextTick(mount)
+        })
+        if (!layoutRef.value) return
 
-            layoutMethods.value = {
-                getId : () => { return id },
-                getType : () => 'layout',
-                isVisible : () => window.getComputedStyle(layoutRef.value!).display !== 'none',
-                setVisible : (val: boolean) => {
-                    visible.value = val
-                },
-                getBackImageSrc: () => props.backImageSrc || '',
-                setBackImageSrc: (val: string) => {
-                    if (layoutRef.value) layoutRef.value.style.backgroundImage = `url(${val})`;
-                },
-                getBackImageRepeat: () => props.backImageStyle || '',
-                setBackImageRepeat: (val: string) => {
-                    if (layoutRef.value) layoutRef.value.style.backgroundRepeat = val;
-                },
-                getBackImageWidth: () => props.backImageWidth || '',
-                setBackImageWidth: (val: string) => {
-                    if (layoutRef.value) layoutRef.value.style.backgroundSize = val;
-                },
-                getBackImageAlign: () => props.backImageAlign || '',
-                setBackImageAlign: (val: string) => {
-                    if (layoutRef.value) {
-                    const currentY = props.backImageVerticalAlign || 'center';
-                    layoutRef.value.style.backgroundPosition = `${val} ${currentY}`;
-                    }
-                },
-                getBackImageVerticalAlign: () => props.backImageVerticalAlign || '',
-                setBackImageVerticalAlign: (val: string) => {
-                    if (layoutRef.value) {
-                    const currentX = props.backImageAlign || 'center';
-                    layoutRef.value.style.backgroundPosition = `${currentX} ${val}`;
-                    }
-                },
-                getBackColor: () => props.backColor || '',
-                setBackColor: (val: string) => {
-                    if (layoutRef.value) {
-                        layoutRef.value.style.backgroundColor = getHexCodeFromColorText(val) || val;
-                    }
-                },
-                getBorderColor: () => props.borderColor || '',
-                setBorderColor: (val: string) => {
-                    if (layoutRef.value) {
-                        layoutRef.value.style.borderColor = getHexCodeFromColorText(val) || val;
-                        layoutRef.value.style.borderStyle = 'solid';
-                    }
-                },
-                getBorderWidth: () => props.borderWidth || '',
-                setBorderWidth: (val: string) => {
-                    if (layoutRef.value) {
-                        layoutRef.value.style.borderWidth = val;
-                        layoutRef.value.style.borderStyle = 'solid';
-                    }
-                },
-                getHeight: () => props.height || '',
-                setHeight: (val: string) => {
-                    if (layoutRef.value) {
-                        layoutRef.value.style.height = val;
-                    }
-                },
-            }
-            hisonCloser.component.layoutList[id] = layoutMethods.value
-            emit('mounted', layoutMethods.value)
+        refleshResponsiveClassList()
+        layoutMethods.value = {
+            getId : () => { return id },
+            getType : () => 'layout',
+            isVisible : () => window.getComputedStyle(layoutRef.value!).display !== 'none',
+            setVisible : (val: boolean) => {
+                visible.value = val
+            },
+            getBackImageSrc: () => props.backImageSrc || '',
+            setBackImageSrc: (val: string) => {
+                if (layoutRef.value) layoutRef.value.style.backgroundImage = `url(${val})`;
+            },
+            getBackImageRepeat: () => props.backImageStyle || '',
+            setBackImageRepeat: (val: string) => {
+                if (layoutRef.value) layoutRef.value.style.backgroundRepeat = val;
+            },
+            getBackImageWidth: () => props.backImageWidth || '',
+            setBackImageWidth: (val: string) => {
+                if (layoutRef.value) layoutRef.value.style.backgroundSize = val;
+            },
+            getBackImageAlign: () => props.backImageAlign || '',
+            setBackImageAlign: (val: string) => {
+                if (layoutRef.value) {
+                const currentY = props.backImageVerticalAlign || 'center';
+                layoutRef.value.style.backgroundPosition = `${val} ${currentY}`;
+                }
+            },
+            getBackImageVerticalAlign: () => props.backImageVerticalAlign || '',
+            setBackImageVerticalAlign: (val: string) => {
+                if (layoutRef.value) {
+                const currentX = props.backImageAlign || 'center';
+                layoutRef.value.style.backgroundPosition = `${currentX} ${val}`;
+                }
+            },
+            getBackColor: () => props.backColor || '',
+            setBackColor: (val: string) => {
+                if (layoutRef.value) {
+                    layoutRef.value.style.backgroundColor = getHexCodeFromColorText(val) || val;
+                }
+            },
+            getBorderColor: () => props.borderColor || '',
+            setBorderColor: (val: string) => {
+                if (layoutRef.value) {
+                    layoutRef.value.style.borderColor = getHexCodeFromColorText(val) || val;
+                    layoutRef.value.style.borderStyle = 'solid';
+                }
+            },
+            getBorderWidth: () => props.borderWidth || '',
+            setBorderWidth: (val: string) => {
+                if (layoutRef.value) {
+                    layoutRef.value.style.borderWidth = val;
+                    layoutRef.value.style.borderStyle = 'solid';
+                }
+            },
+            getHeight: () => props.height || '',
+            setHeight: (val: string) => {
+                if (layoutRef.value) {
+                    layoutRef.value.style.height = val;
+                }
+            },
         }
+        hisonCloser.component.layoutList[id] = layoutMethods.value
+        emit('mounted', layoutMethods.value)
     }
     const unmount = () => {
-        if (layoutRef.value) {
-            delete hisonCloser.component.layoutList[id]
-        }
         unregisterReloadable(reloadId)
+        delete hisonCloser.component.layoutList[id]
     }
-    registerReloadable(reloadId, () => {
-        unmount()
-        nextTick(mount)
-    })
+
     onMounted(mount)
     onBeforeUnmount(unmount)
 
