@@ -1,5 +1,5 @@
 import { CSSProperties, PropType } from "vue";
-import { Color, NoteModeByDevice, NoteToolPosition, BoolString } from "../../enums";
+import { Color, NoteModeByDevice, NoteToolPosition } from "../../enums";
 import { NoteData } from "vanillanote2";
 
 export const noteProps = {
@@ -20,11 +20,11 @@ export const noteProps = {
     /**
     * Toolbar Line Count
     */
-    toolDefaultLine: { type: String, required: false },
+    toolDefaultLine: { type: Number, required: false },
     /**
     * Whether to use the toolbar fold/unfold function
     */
-    toolToggle: { type: String as PropType<BoolString>, required: false },
+    toolToggle: { type: Boolean, required: false, default: false },
     /**
      * - Variables for dynamically setting the size of the textarea
      * - Default width of the textarea. If not set, the value of textarea-width is inserted. Used for dynamically changing the width.
@@ -48,23 +48,23 @@ export const noteProps = {
     /**
      * Whether the user can change the height of the textarea. If true, it can be changed.
      */
-    textareaHeightIsModify: { type: String as PropType<BoolString>, required: false },
+    textareaHeightIsModify: { type: Boolean, required: false, default: false },
     /**
      * - Values related to placeholders. The attribute placeholder- can be used, but using these variables allows dynamic control of placeholders.
      * - `true` : Uses a placeholder.
      * - `false` : Default value. Does not use a placeholder.
      */
-    placeholderIsVisible: { type: String as PropType<BoolString>, required: false },
+    placeholderIsVisible: { type: Boolean, required: false, default: false},
     /**
      * - Values related to placeholders. The attribute placeholder- can be used, but using these variables allows dynamic control of placeholders.
      * - Adjusts the vertical position of the placeholder. Negative values are possible. The unit is px. Default value is 0.
      */
-    placeholderAddTop: { type: String, required: false },
+    placeholderAddTop: { type: Number, required: false },
     /**
      * - Values related to placeholders. The attribute placeholder- can be used, but using these variables allows dynamic control of placeholders.
      * - Adjusts the horizontal position of the placeholder. Negative values are possible. The unit is px. Default value is 0.
      */
-    placeholderAddLeft: { type: String, required: false },
+    placeholderAddLeft: { type: Number, required: false },
     /**
      * - Values related to placeholders. The attribute placeholder- can be used, but using these variables allows dynamic control of placeholders.
      * - Sets the width of the placeholder. The default value is the size of the flexible textarea.
@@ -86,58 +86,44 @@ export const noteProps = {
      * Placeholder body text
      */
     placeholderTextContent: { type: String, required: false },
-    /**
-     * - Variables controlling file attachments.
-     * - Data obtained from note.getNoteData() does not include files deleted by the user from the screen, but .attFiles[idx] contains all files attached by the user.
-     * - File types to block for file attachment. Written in MIME type (ex image/png). Default is [].
+    /**  
+     * Comma-separated list of blocked MIME types (e.g., `'image/gif,text/csv'`).  
+     * Prevents uploading specified file types. Default is `''` (no restriction).  
      */
     attFilePreventTypes: { type: String, required: false },
     /**
-     * - Variables controlling file attachments.
-     * - Data obtained from note.getNoteData() does not include files deleted by the user from the screen, but .attFiles[idx] contains all files attached by the user.
-     * - File types to allow for file attachment. Written in MIME type (ex image/png). Default is []. If present, only those files can be attached.
+     * Comma-separated list of allowed MIME types (e.g., `'image/png,application/pdf'`).  
+     * Only files matching these types can be uploaded. Default is `''` (allow all).  
      */
     attFileAcceptTypes: { type: String, required: false },
     /**
-     * - Variables controlling file attachments.
-     * - Data obtained from note.getNoteData() does not include files deleted by the user from the screen, but .attFiles[idx] contains all files attached by the user.
-     * - Maximum size allowed for file attachment. Default is 20MB.
-     * 
-     * ```typescript
-     * vn.variables.attFileMaxSize[0] = 50 * 1024 * 1024;
-     * ```
+     * Maximum file upload size in bytes (e.g., `10485760` for 10MB).  
+     * Files exceeding this limit will be blocked. Default is `20971520` (20MB).  
      */
-    attFileMaxSize: { type: String, required: false },
+    attFileMaxSize: { type: Number, required: false },
     /**
-     * - Variables controlling image file attachments.
-     * - Data obtained from note.getNoteData() does not include files deleted by the user from the screen, but .attImages[idx] contains all image files attached by the user.
-     * - File types to block for image attachment. Written in MIME type (ex image/png). Default is [].
+     * Comma-separated list of blocked MIME types for images (e.g., `'image/gif,image/svg+xml'`).  
+     * Prevents uploading specified image types. Default is `''` (no restriction).  
      */
     attImagePreventTypes: { type: String, required: false },
     /**
-     * - Variables controlling image file attachments.
-     * - Data obtained from note.getNoteData() does not include files deleted by the user from the screen, but .attImages[idx] contains all image files attached by the user.
-     * - File types to allow for image attachment. Written in MIME type (ex image/png). Default is []. If present, only those files can be attached.
+     * Comma-separated list of allowed image MIME types (e.g., `'image/png,image/jpeg'`).  
+     * Only images matching these types can be uploaded. Default is `''` (allow all).  
      */
     attImageAcceptTypes: { type: String, required: false },
     /**
-     * - Variables controlling image file attachments.
-     * - Data obtained from note.getNoteData() does not include files deleted by the user from the screen, but .attImages[idx] contains all image files attached by the user.
-     * - Maximum size allowed for image attachment. Default is 20MB.
-     * 
-     * ```typescript
-     * vn.variables.attImageMaxSize[0] = 50 * 1024 * 1024;
-     * ```
+     * Maximum upload size for images in bytes (e.g., `10485760` for 10MB).  
+     * Images exceeding this limit will be blocked. Default is `20971520` (20MB).  
      */
-    attImageMaxSize: { type: String, required: false },
+    attImageMaxSize: { type: Number, required: false },
     /**
      * default textarea font-size
      */
-    defaultFontSize: { type: String, required: false },
+    defaultFontSize: { type: Number, required: false },
     /**
      * default textarea line-height
      */
-    defaultLineHeight: { type: String, required: false },
+    defaultLineHeight: { type: Number, required: false },
     /**
      * default textarea font-family
      */
@@ -147,11 +133,14 @@ export const noteProps = {
      */
     defaultToolFontFamily: { type: String, required: false },
     /**
-     * font-family to add
+     * Additional font families to append to the default list (e.g., `'Nanum Gothic,Roboto'`).  
+     * Comma-separated CSS font-family values.  
      */
     addFontFamily: { type: String, required: false },
-        /**
-     * font-family to remove
+    /**
+     * Font families to remove from the default list (e.g., `'Comic Sans MS,Impact'`).  
+     * Comma-separated CSS font-family values.  
+     * Default fonts: `'Arial, Arial Black, Arial Narrow, Comic Sans MS, Courier, Georgia, Impact'`.  
      */
     removeFontFamily: { type: String, required: false },
     /**
@@ -168,11 +157,11 @@ export const noteProps = {
     /**
      * Size (ratio) of note elements on desktop
      */
-    sizeLevelDesktop: { type: String, required: false },
+    sizeLevelDesktop: { type: Number, required: false },
     /**
      * Size (ratio) of note elements on mobile
      */
-    sizeLevelMobile: { type: String, required: false },
+    sizeLevelMobile: { type: Number, required: false },
     /** 
      * Main theme color for the editor
      */
@@ -180,117 +169,117 @@ export const noteProps = {
     /** 
      * Whether to use inverted (dark mode) colors
      */
-    invertColor: { type: String as PropType<BoolString>, required: false },
+    invertColor: { type: Boolean, required: false, default: false },
     /** 
      * Whether to use paragraph style buttons (normal, heading, etc.)
      */
-    usingParagraphStyle: { type: String as PropType<BoolString>, required: false },
+    usingParagraphStyle: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use bold button
      */
-    usingBold: { type: String as PropType<BoolString>, required: false },
+    usingBold: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use underline button
      */
-    usingUnderline: { type: String as PropType<BoolString>, required: false },
+    usingUnderline: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use italic button
      */
-    usingItalic: { type: String as PropType<BoolString>, required: false },
+    usingItalic: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use unordered list (ul) button
      */
-    usingUl: { type: String as PropType<BoolString>, required: false },
+    usingUl: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use ordered list (ol) button
      */
-    usingOl: { type: String as PropType<BoolString>, required: false },
+    usingOl: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use text align buttons (left, center, right)
      */
-    usingTextAlign: { type: String as PropType<BoolString>, required: false },
+    usingTextAlign: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use attach link button
      */
-    usingAttLink: { type: String as PropType<BoolString>, required: false },
+    usingAttLink: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use attach file button
      */
-    usingAttFile: { type: String as PropType<BoolString>, required: false },
+    usingAttFile: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use attach image button
      */
-    usingAttImage: { type: String as PropType<BoolString>, required: false },
+    usingAttImage: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use attach video button
      */
-    usingAttVideo: { type: String as PropType<BoolString>, required: false },
+    usingAttVideo: { type: Boolean, required: false, default: true },
     /** 
      * Whether to allow font size adjustment
      */
-    usingFontSize: { type: String as PropType<BoolString>, required: false },
+    usingFontSize: { type: Boolean, required: false, default: true },
     /** 
      * Whether to allow letter spacing adjustment
      */
-    usingLetterSpacing: { type: String as PropType<BoolString>, required: false },
+    usingLetterSpacing: { type: Boolean, required: false, default: true },
     /** 
      * Whether to allow line height adjustment
      */
-    usingLineHeight: { type: String as PropType<BoolString>, required: false },
+    usingLineHeight: { type: Boolean, required: false, default: true },
     /** 
      * Whether to allow font family change
      */
-    usingFontFamily: { type: String as PropType<BoolString>, required: false },
+    usingFontFamily: { type: Boolean, required: false, default: true },
     /** 
      * Whether to allow text color change
      */
-    usingColorText: { type: String as PropType<BoolString>, required: false },
+    usingColorText: { type: Boolean, required: false, default: true },
     /** 
      * Whether to allow background color change
      */
-    usingColorBack: { type: String as PropType<BoolString>, required: false },
+    usingColorBack: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use format clear (remove styles) button
      */
-    usingFormatClear: { type: String as PropType<BoolString>, required: false },
+    usingFormatClear: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use undo button
      */
-    usingUndo: { type: String as PropType<BoolString>, required: false },
+    usingUndo: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use redo button
      */
-    usingRedo: { type: String as PropType<BoolString>, required: false },
+    usingRedo: { type: Boolean, required: false, default: true },
     /** 
      * Whether to use help (shortcut guide) button
      */
-    usingHelp: { type: String as PropType<BoolString>, required: false },
+    usingHelp: { type: Boolean, required: false, default: true },
     /**
      * Whether to use paragraph style all buttons
      */
-    usingParagraphAllStyle: { type: String as PropType<BoolString>, required: false },
+    usingParagraphAllStyle: { type: Boolean, required: false, default: true },
     /**
      * Whether to use character style all buttons
      */
-    usingCharacterStyle: { type: String as PropType<BoolString>, required: false },
+    usingCharacterStyle: { type: Boolean, required: false, default: true },
     /**
      * Whether to use character size all buttons
      */
-    usingCharacterSize: { type: String as PropType<BoolString>, required: false },
+    usingCharacterSize: { type: Boolean, required: false, default: true },
     /**
      * Whether to use attachment all buttons
      */
-    usingAttachFile: { type: String as PropType<BoolString>, required: false },
+    usingAttachFile: { type: Boolean, required: false, default: true },
     /**
      * Whether to use redo and undo buttons
      */
-    usingDo: { type: String as PropType<BoolString>, required: false },
+    usingDo: { type: Boolean, required: false, default: true },
     /**
      * Whether the note is required.
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-note-required` class when `'true'`
      */
-    required: { type: String as PropType<BoolString>, required: false },
+    required: { type: Boolean, required: false, default: false },
 }
 
 export const noteEventProps = {
