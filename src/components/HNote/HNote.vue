@@ -1,3 +1,15 @@
+<!--
+정리해야함!!!!!!!!!!!!!!!!!!!
+visible false로 하면 틀은 유지하면서 컴포넌트만 사라질 지
+틀까지 사라질지.
+현재
+grid는 visible false를 하면 틀은 유지 컴포넌트만 사라짐
+button은 visible false를 하면 틀까지 사라짐
+==> 틀은 유지하면서 컴포넌트만 사라지는게 좋을거같은데,,,,, 그러면 모든 컴포넌트를 한겹 쌓아야함.
+** 일반적인 방식(부트스트랩 등)은 어떤지.
+** 만약 틀까지 사라지게 하려면 layout으로 감싸도록??
+?? 아니면 반대로 모든 컴포넌트는 visible false시 영역까지 사라지고, layout으로 감싸면 영역은 유지??
+-->
 <template>
   <div ref="editorWrap" :class="['hison-wrap', ...responsiveClassList, requiredClass]" :style="props.style">
     <div data-vanillanote v-bind="bindAttrs"></div>
@@ -34,7 +46,7 @@ export default defineComponent({
     const device = useDevice()
 
     const responsiveClassList = ref<string[]>([])
-    const EXCLUDED_KEYS = ['modelValue', 'id', 'class', 'style'] as const
+    const EXCLUDED_KEYS = ['modelValue', 'id', 'class', 'style', 'visible', 'editMode'] as const
     const bindAttrsTrigger = ref(0)
     const forceRecomputeBindAttrs = () => {
       triggerRef(bindAttrsTrigger)
