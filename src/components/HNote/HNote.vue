@@ -9,7 +9,7 @@ import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, next
 import type { Vanillanote, VanillanoteElement, NoteData } from 'vanillanote2'
 import { noteEventProps, noteProps } from './props'
 import { Size } from '../../enums'
-import { extractResponsiveClasses, getSpecificClassValueFromClassList, getHexCodeFromColorText, getUUID, registerReloadable, getIndexSpecificClassNameFromClassList } from '../../utils'
+import { extractResponsiveClasses, getSpecificClassValueFromClassList, getHexCodeFromColorText, getUUID, registerReloadable, getIndexSpecificClassNameFromClassList, unregisterReloadable } from '../../utils'
 import { hison, hisonCloser } from '../..'
 import { useDevice } from '../../core'
 import { HNoteElement } from '../../types'
@@ -27,7 +27,7 @@ export default defineComponent({
     const noteInstance = ref<HNoteElement | null>(null)
     const id = props.id ? props.id : getUUID();
     const reloadId = `hnote:${props.id}`
-    const required = ref(props.required === 'true')
+    const required = ref(props.required)
     const requiredClass = computed(()=>{
       if(required.value) return 'hison-note-required'
     })
@@ -71,7 +71,7 @@ export default defineComponent({
         delete attrs.color
       }
 
-      if (attrs['invert-color'] !== 'false' && hisonCloser.componentStyle.invertColor) {
+      if (props.invertColor || hisonCloser.componentStyle.invertColor) {
         attrs['invert-color'] = 'true'
       }
 
@@ -123,7 +123,14 @@ export default defineComponent({
       }
     }
 
+    const reload = () => {
+        unmount()
+        forceRecomputeBindAttrs()
+        nextTick(mount)
+    }
+
     const mount = () => {
+      registerReloadable(reloadId, reload)
       vn.init()
       if (!editorWrap.value) return
       vn.mountNote(editorWrap.value)
@@ -435,16 +442,12 @@ export default defineComponent({
       emit('mounted', note)
     }
     const unmount = () => {
+      unregisterReloadable(reloadId)
       if (!editorWrap.value) return
       vn.unmountNote(editorWrap.value)
       mutationObserver.disconnect()
     }
-    const reload = () => {
-        unmount()
-        forceRecomputeBindAttrs()
-        nextTick(mount)
-    }
-    registerReloadable(reloadId, reload)
+
     onMounted(mount)
     onBeforeUnmount(unmount)
     
