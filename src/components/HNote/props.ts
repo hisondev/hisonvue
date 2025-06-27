@@ -1,5 +1,5 @@
 import { CSSProperties, PropType } from "vue";
-import { Color, NoteModeByDevice, NoteToolPosition } from "../../enums";
+import { Color, EditMode, NoteModeByDevice, NoteToolPosition } from "../../enums";
 import { NoteData } from "vanillanote2";
 
 export const noteProps = {
@@ -7,6 +7,18 @@ export const noteProps = {
     modelValue: Object as () => NoteData,
     class: {type: String, required: false },
     style: { type: [String, Object] as PropType<string | CSSProperties>, required: false },
+    /**
+     * Controls visibility of the editor field.
+     * - Accepts string values: `'true'` or `'false'`
+     * - Default: `'true'` (visible)
+     */
+    visible: { type: Boolean, required: false, default: true },
+    /**
+     * Edit mode of the editor.
+     * - Values: `'editable'`, `'readonly'`, `'disable'`
+     * - `'readonly'` and `'disable'` both prevent editing but differ in styling
+     */
+    editMode: { type: String as PropType<EditMode>, required: false },
     /**
      * ADAPTIVE : The composition of notes varies depending on whether the device is a desktop or mobile device.
      * MOBILE : Always recognize as mobile.
