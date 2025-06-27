@@ -11,7 +11,7 @@
 import { defineComponent, ref, onMounted, onBeforeUnmount, watch, provide } from 'vue'
 import type { HInputGroupMethods, HInputMethods } from '../../types'
 import { hisonCloser, EditMode, DataStatus, hison, InputType } from '../..'
-import { getUUID, registerReloadable } from '../../utils'
+import { getUUID, registerReloadable, unregisterReloadable } from '../../utils'
 import { inputGroupProps } from './props'
 import { InterfaceDataModel, InterfaceDataWrapper } from 'hisonjs'
 
@@ -26,6 +26,7 @@ export default defineComponent({
     const inputGroupRef = ref<HTMLFormElement | null>(null)
     const inputGroupMethods = ref<HInputGroupMethods | null>(null)
     const id = props.id ?? getUUID()
+    const reloadId = `hinputGroup:${id}`
     const editMode = ref(props.editMode ?? EditMode.editable)
     const status = ref(props.status ?? DataStatus.R)
 
@@ -51,6 +52,12 @@ export default defineComponent({
     }
 
     const mount = () => {
+      if (hisonCloser.component.inputGroupList[id]) throw new Error(`[Hisonvue] button id attribute was duplicated.`)
+      registerReloadable(reloadId, () => {
+        unmount()
+        setTimeout(mount)
+      })
+
       if (!inputGroupRef.value) return
       inputGroupMethods.value = {
         getId : () => id,
@@ -139,21 +146,14 @@ export default defineComponent({
           })
         },
       }
-      
       hisonCloser.component.inputGroupList[id] = inputGroupMethods.value
       emit('mounted', inputGroupMethods.value)
     }
-
     const unmount = () => {
-      ownedInputIds.value = []
+      unregisterReloadable(reloadId)
       delete hisonCloser.component.inputGroupList[id]
+      ownedInputIds.value = []
     }
-
-    const reloadId = `hinputGroup:${id}`
-    registerReloadable(reloadId, () => {
-      unmount()
-      setTimeout(mount)
-    })
 
     onMounted(mount)
     onBeforeUnmount(unmount)
