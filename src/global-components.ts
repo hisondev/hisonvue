@@ -134,18 +134,18 @@ declare module 'vue' {
      *
      * @prop {NoteModeByDevice} [noteModeByDevice] - Force mobile, desktop, or adaptive mode.
      * @prop {NoteToolPosition} [toolPosition] - Toolbar position (`top` or `bottom`).
-     * @prop {string} [toolDefaultLine] - Default number of lines in the toolbar.
-     * @prop {BoolString} [toolToggle] - Enable fold/unfold toolbar.
+     * @prop {Number} [toolDefaultLine] - Default number of lines in the toolbar.
+     * @prop {Boolean} [toolToggle] - Enable fold/unfold toolbar.
      *
      * @prop {string} [textareaWidth] - Width of the editable area (e.g., `"400px"`).
      * @prop {string} [textareaHeight] - Height of the editable area.
      * @prop {string} [textareaMaxWidth] - Maximum width of the textarea.
      * @prop {string} [textareaMaxHeight] - Maximum height of the textarea.
-     * @prop {BoolString} [textareaHeightIsModify] - Whether users can resize textarea height.
+     * @prop {Boolean} [textareaHeightIsModify] - Whether users can resize textarea height.
      *
-     * @prop {BoolString} [placeholderIsVisible] - Show placeholder or not.
-     * @prop {string} [placeholderAddTop] - Vertical offset for placeholder (e.g., `"-10px"`).
-     * @prop {string} [placeholderAddLeft] - Horizontal offset for placeholder.
+     * @prop {Boolean} [placeholderIsVisible] - Show placeholder or not.
+     * @prop {Number} [placeholderAddTop] - Vertical offset for placeholder (e.g., `"-10px"`).
+     * @prop {Number} [placeholderAddLeft] - Horizontal offset for placeholder.
      * @prop {string} [placeholderWidth] - Placeholder width.
      * @prop {string} [placeholderColor] - Placeholder text color.
      * @prop {string} [placeholderBackgroundColor] - Placeholder background color.
@@ -154,14 +154,14 @@ declare module 'vue' {
      *
      * @prop {string} [attFilePreventTypes] - Comma-separated MIME types to block for file attachments.
      * @prop {string} [attFileAcceptTypes] - Comma-separated MIME types to allow for file attachments.
-     * @prop {string} [attFileMaxSize] - Max file size in bytes.
+     * @prop {Number} [attFileMaxSize] - Max file size in bytes.
      *
      * @prop {string} [attImagePreventTypes] - Comma-separated MIME types to block for image attachments.
      * @prop {string} [attImageAcceptTypes] - Comma-separated MIME types to allow for image attachments.
-     * @prop {string} [attImageMaxSize] - Max image size in bytes.
+     * @prop {Number} [attImageMaxSize] - Max image size in bytes.
      *
-     * @prop {string} [defaultFontSize] - Default font size in px.
-     * @prop {string} [defaultLineHeight] - Default line height.
+     * @prop {Number} [defaultFontSize] - Default font size in px.
+     * @prop {Number} [defaultLineHeight] - Default line height.
      * @prop {string} [defaultFontFamily] - Default font family.
      * @prop {string} [defaultToolFontFamily] - Default toolbar font family.
      * @prop {string} [addFontFamily] - Additional font families to allow (comma-separated).
@@ -169,37 +169,37 @@ declare module 'vue' {
      *
      * @prop {string} [language] - Language key (e.g., `"KOR"`, `"ENG"`).
      * @prop {string} [recodeLimit] - Max undo/redo stack count.
-     * @prop {string} [sizeLevelDesktop] - Editor size ratio for desktop (1–9).
-     * @prop {string} [sizeLevelMobile] - Editor size ratio for mobile (1–9).
+     * @prop {Number} [sizeLevelDesktop] - Editor size ratio for desktop (1–9).
+     * @prop {Number} [sizeLevelMobile] - Editor size ratio for mobile (1–9).
      * @prop {Color|string} [color] - Main theme color.
-     * @prop {BoolString} [invertColor] - Enable dark mode.
+     * @prop {Boolean} [invertColor] - Enable dark mode.
      *
-     * @prop {BoolString} [usingParagraphStyle] - Show paragraph style options.
-     * @prop {BoolString} [usingBold] - Show bold button.
-     * @prop {BoolString} [usingUnderline] - Show underline button.
-     * @prop {BoolString} [usingItalic] - Show italic button.
-     * @prop {BoolString} [usingUl] - Show unordered list button.
-     * @prop {BoolString} [usingOl] - Show ordered list button.
-     * @prop {BoolString} [usingTextAlign] - Show text alignment options.
-     * @prop {BoolString} [usingFontSize] - Show font size control.
-     * @prop {BoolString} [usingLetterSpacing] - Show letter spacing control.
-     * @prop {BoolString} [usingLineHeight] - Show line height control.
-     * @prop {BoolString} [usingFontFamily] - Show font family selector.
-     * @prop {BoolString} [usingColorText] - Show text color options.
-     * @prop {BoolString} [usingColorBack] - Show background color options.
-     * @prop {BoolString} [usingAttLink] - Show attach link button.
-     * @prop {BoolString} [usingAttFile] - Show attach file button.
-     * @prop {BoolString} [usingAttImage] - Show attach image button.
-     * @prop {BoolString} [usingAttVideo] - Show attach video button.
-     * @prop {BoolString} [usingFormatClear] - Show format clear (reset style) button.
-     * @prop {BoolString} [usingUndo] - Show undo button.
-     * @prop {BoolString} [usingRedo] - Show redo button.
-     * @prop {BoolString} [usingHelp] - Show help/shortcut button.
-     * @prop {BoolString} [usingParagraphAllStyle] - Show all paragraph style controls.
-     * @prop {BoolString} [usingCharacterStyle] - Show all character style buttons.
-     * @prop {BoolString} [usingCharacterSize] - Show font size and spacing controls.
-     * @prop {BoolString} [usingAttachFile] - Show all attachment buttons.
-     * @prop {BoolString} [usingDo] - Show both undo and redo.
+     * @prop {Boolean} [usingParagraphStyle] - Show paragraph style options.
+     * @prop {Boolean} [usingBold] - Show bold button.
+     * @prop {Boolean} [usingUnderline] - Show underline button.
+     * @prop {Boolean} [usingItalic] - Show italic button.
+     * @prop {Boolean} [usingUl] - Show unordered list button.
+     * @prop {Boolean} [usingOl] - Show ordered list button.
+     * @prop {Boolean} [usingTextAlign] - Show text alignment options.
+     * @prop {Boolean} [usingFontSize] - Show font size control.
+     * @prop {Boolean} [usingLetterSpacing] - Show letter spacing control.
+     * @prop {Boolean} [usingLineHeight] - Show line height control.
+     * @prop {Boolean} [usingFontFamily] - Show font family selector.
+     * @prop {Boolean} [usingColorText] - Show text color options.
+     * @prop {Boolean} [usingColorBack] - Show background color options.
+     * @prop {Boolean} [usingAttLink] - Show attach link button.
+     * @prop {Boolean} [usingAttFile] - Show attach file button.
+     * @prop {Boolean} [usingAttImage] - Show attach image button.
+     * @prop {Boolean} [usingAttVideo] - Show attach video button.
+     * @prop {Boolean} [usingFormatClear] - Show format clear (reset style) button.
+     * @prop {Boolean} [usingUndo] - Show undo button.
+     * @prop {Boolean} [usingRedo] - Show redo button.
+     * @prop {Boolean} [usingHelp] - Show help/shortcut button.
+     * @prop {Boolean} [usingParagraphAllStyle] - Show all paragraph style controls.
+     * @prop {Boolean} [usingCharacterStyle] - Show all character style buttons.
+     * @prop {Boolean} [usingCharacterSize] - Show font size and spacing controls.
+     * @prop {Boolean} [usingAttachFile] - Show all attachment buttons.
+     * @prop {Boolean} [usingDo] - Show both undo and redo.
      *
      * @event {(note: VanillanoteElement) => void} [mounted] - Called after editor is mounted.
      * @event responsive-change - Emitted on device class change (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
@@ -441,28 +441,28 @@ declare module 'vue' {
      * @prop {HGridColumn[]} columns - Column definition array. Each item defines a column’s id, type, header, and more.
      *
      * @prop {string} [name] - Optional grid name. Defaults to `id` if omitted.
-     * @prop {BoolString} [locked] - If true, disables editing on all cells.
-     * @prop {BoolString} [lockedColor] - Show background color for locked cells.
-     * @prop {BoolString} [resizable] - Whether column widths can be resized by mouse.
-     * @prop {BoolString} [redoable] - Enable undo/redo functionality.
-     * @prop {string} [redoCount] - Number of undo/redo history steps to keep.
-     * @prop {BoolString} [visible] - Show/hide the grid (`display: none`).
-     * @prop {BoolString} [headerVisible] - Show/hide the header.
-     * @prop {BoolString} [rownumVisible] - Show/hide the row number column.
+     * @prop {Boolean} [locked] - If true, disables editing on all cells.
+     * @prop {Boolean} [lockedColor] - Show background color for locked cells.
+     * @prop {Boolean} [resizable] - Whether column widths can be resized by mouse.
+     * @prop {Boolean} [redoable] - Enable undo/redo functionality.
+     * @prop {Number} [redoCount] - Number of undo/redo history steps to keep.
+     * @prop {Boolean} [visible] - Show/hide the grid (`display: none`).
+     * @prop {Boolean} [headerVisible] - Show/hide the header.
+     * @prop {Boolean} [rownumVisible] - Show/hide the row number column.
      * @prop {string} [rownumSize] - Width of the row number column.
-     * @prop {BoolString} [rownumLockedColor] - Show locked color on rownum column.
-     * @prop {BoolString} [statusVisible] - Show/hide status column.
-     * @prop {BoolString} [statusLockedColor] - Show locked color on status column.
+     * @prop {Boolean} [rownumLockedColor] - Show locked color on rownum column.
+     * @prop {Boolean} [statusVisible] - Show/hide status column.
+     * @prop {Boolean} [statusLockedColor] - Show locked color on status column.
      * @prop {SelectionPolicy} [selectionPolicy] - User selection behavior: `range`, `single`, or `none`.
      * @prop {string} [nullValue] - Display value when cell value is `null`.
      * @prop {GridDateFormat} [dateFormat] - Global date format for date-type columns.
      * @prop {GridMonthFormat} [monthFormat] - Global month format for month-type columns.
-     * @prop {BoolString} [alterRow] - Use alternate row background colors.
-     * @prop {string} [frozenColCount] - Number of fixed/frozen columns (including hidden ones).
-     * @prop {string} [frozenRowCount] - Number of fixed/frozen rows.
-     * @prop {BoolString} [sortable] - Enable column sorting.
-     * @prop {BoolString} [filterable] - Enable column filtering.
-     * @prop {BoolString} [allCheckable] - Double-click header to toggle all checkboxes.
+     * @prop {Boolean} [alterRow] - Use alternate row background colors.
+     * @prop {Number} [frozenColCount] - Number of fixed/frozen columns (including hidden ones).
+     * @prop {Number} [frozenRowCount] - Number of fixed/frozen rows.
+     * @prop {Boolean} [sortable] - Enable column sorting.
+     * @prop {Boolean} [filterable] - Enable column filtering.
+     * @prop {Boolean} [allCheckable] - Double-click header to toggle all checkboxes.
      * @prop {string} [checkedValue] - Value representing a checked checkbox.
      * @prop {string} [uncheckedValue] - Value representing an unchecked checkbox.
      *
@@ -470,19 +470,19 @@ declare module 'vue' {
      * @prop {string} [height] - Grid height (CSS text).
      * @prop {string} [margin] - Grid margin (CSS text).
      * @prop {string} [padding] - Grid padding (CSS text).
-     * @prop {string} [sizeLevel] - Relative size of the grid (e.g. 5 is standard).
+     * @prop {Number} [sizeLevel] - Relative size of the grid (e.g. 5 is standard).
      * @prop {GridVerticalAlign} [verticalAlign] - Default vertical alignment: `top`, `center`, `bottom`.
      * @prop {string} [cellFontSize] - Cell font size (CSS px).
      * @prop {string} [cellMinHeight] - Cell minimum height (CSS px).
-     * @prop {string} [horizenBorderSize] - Horizontal border thickness (px).
-     * @prop {string} [verticalBorderSize] - Vertical border thickness (px).
+     * @prop {Number} [horizenBorderSize] - Horizontal border thickness (px).
+     * @prop {Number} [verticalBorderSize] - Vertical border thickness (px).
      * @prop {string} [gridFontFamily] - Font family for cells.
      * @prop {string} [editorFontFamily] - Font family for the editor input.
      * @prop {string} [overflowWrap] - CSS overflow-wrap for cells.
      * @prop {string} [wordBreak] - CSS word-break for cells.
      * @prop {string} [whiteSpace] - CSS white-space for cells.
-     * @prop {string} [linkHasUnderLine] - Whether to underline link cells.
-     * @prop {BoolString} [invertColor] - Enable dark mode.
+     * @prop {Boolean} [linkHasUnderLine] - Whether to underline link cells.
+     * @prop {Boolean} [invertColor] - Enable dark mode.
      * @prop {Color|string} [color] - Main theme color (e.g., `"primary"` or `"#ff0000"`).
      *
      * @prop {string} [gridBorderColor] - Grid outer border color.
@@ -841,6 +841,137 @@ declare module 'vue' {
      */
     HInputGroup: typeof HInputGroup
 
+    /**
+     * Hisonvue custom calendar component.
+     *
+     * ### Built with `vue-cal@^4.10.2` for full compatibility.
+     * `HCalendar` is a fully-featured calendar component built on top of `vue-cal`,
+     * designed for seamless integration with Hison runtime. It supports multiple views,
+     * event scheduling, special time ranges, localization, and dynamic configuration.
+     *
+     * ---
+     *
+     * ### 📅 Features
+     * - Multiple views supported: `'day'`, `'week'`, `'month'`, `'year'`, `'years'`
+     * - Dynamic runtime control via `HCalendarMethods` (`hison.vue.getCalendar(id)`)
+     * - Responsive layout using `hison-col-*`, `hison-pos-*`, `hison-size-*` classes
+     * - Visual customization: weekend colors, special time zones, date highlights
+     * - Event data rendering with full editing options (`deletable`, `resizable`, etc.)
+     * - Device-aware styling and slot passthrough support
+     *
+     * ---
+     *
+     * ### 🔄 Compatibility with vue-cal
+     * `HCalendar` transparently passes any additional `props` and `events` directly to the underlying `vue-cal` instance.
+     * 👉 **If a prop or event is not listed in this documentation, you can still use it exactly as defined in `vue-cal`.**
+     * 📚 For full list of available options, refer to:  
+     * https://antoniandre.github.io/vue-cal
+     *
+     * ---
+     *
+     * ### ⚙️ Usage
+     * ```vue
+     * <HCalendar
+     *   id="calendar1"
+     *   class="hison-col-12"
+     *   :selectedDate="today"
+     *   :events="myEvents"
+     *   :specialTime="highlightedRanges"
+     *   weekendColor="#f55"
+     *   :weekendDays="[0, 6]"
+     *   :showTodayColor="true"
+     *   :hideWeekdays="[2]"
+     *   :disableDays="['2025-06-30']"
+     *   :visible="true"
+     *   :disable="false"
+     *   :startWeekOnSunday="false"
+     *   :locale="'ko'"
+     *   activeView="month"
+     *   :disableViews="['year', 'years']"
+     *   @day-click="handleDayClick"
+     * />
+     * ```
+     *
+     * ---
+     *
+     * ### 🛠 Runtime Usage
+     * Use `hison.vue.getCalendar(id)` to retrieve methods at runtime:
+     *
+     * ```ts
+     * const calendar = hison.vue.getCalendar('calendarId');
+     * calendar.setVisible(false);
+     * calendar.setDisable(true);
+     * calendar.setSelectedDate('2025-07-01');
+     * calendar.setEvents([{ start: '2025-07-02', end: '2025-07-02', title: 'Meeting' }]);
+     * calendar.setTimeFormat('HH:mm');
+     * calendar.setActiveView('week');
+     * ```
+     *
+     * ---
+     *
+     * @prop {string} id - Unique calendar identifier. Enables runtime access via `hison.vue.getCalendar(id)`.
+     * @prop {string} [class] - Additional class string. Supports `hison-*` responsive system.
+     * @prop {string | CSSProperties} [style] - Inline CSS style.
+     * @prop {BoolString} [visible='true'] - Whether the calendar is shown.
+     * @prop {boolean} [disable=false] - Whether the calendar is disabled.
+     * @prop {string | Date} [selectedDate] - Initially selected date.
+     * @prop {HCalendarEvent[]} [events=[]] - List of events to display.
+     * @prop {string} [weekendColor] - CSS color for weekend background.
+     * @prop {number[]} [weekendDays] - Indexes of days (0~6) treated as weekends.
+     * @prop {boolean} [showTodayColor=true] - Highlight today’s date with a background.
+     * @prop {string} [selectedColor] - CSS background for selected date.
+     * @prop {HCalendarSpecialTimeMap} [specialTime] - Map of special time ranges by weekday.
+     * @prop {number} [dateCellMinHeight] - Minimum height of date cell in month view (px).
+     * @prop {number} [dateCellMaxHeight] - Maximum height of date cell in month view (px).
+     * @prop {string[]} [disableDays] - List of dates to disable selection.
+     * @prop {string | boolean} [eventsOnMonthView=false] - Controls event rendering in month view.
+     * @prop {number[]} [hideWeekdays] - Weekdays to hide (0 = Sun, ..., 6 = Sat).
+     * @prop {boolean} [hideWeekends=false] - Whether to hide weekends.
+     * @prop {string} [locale='en'] - Calendar language locale.
+     * @prop {string | Date} [maxDate] - Maximum selectable date.
+     * @prop {string | Date} [minDate] - Minimum selectable date.
+     * @prop {boolean} [startWeekOnSunday=false] - Whether the week starts on Sunday.
+     * @prop {boolean} [time=true] - Whether to show time cells in week/day views.
+     * @prop {number} [timeCellHeight] - Height of each time cell (px).
+     * @prop {HCalenderTimeFormat} [timeFormat] - Format for displaying time cells.
+     * @prop {number} [timeFrom] - Start of time range (minutes from midnight).
+     * @prop {number} [timeStep] - Interval step for time slots (in minutes).
+     * @prop {number} [timeTo] - End of time range (minutes from midnight).
+     * @prop {boolean} [hideTitleBar=false] - Whether to hide the title bar.
+     * @prop {boolean} [twelveHour=false] - Whether to show time in 12-hour format (with am/pm).
+     * @prop {HCalenderView} [activeView] - Initial view (`'day'`, `'week'`, `'month'`, etc.).
+     * @prop {HCalenderView[]} [disableViews] - Views to exclude from navigation.
+     *
+     * ---
+     *
+     * @event ready - Emitted once after initial render. Passes { view, startDate, endDate, week? }.
+     * @event mounted - Emitted when the calendar is mounted.
+     * @event responsive-change - Emitted when responsive device class changes.
+     * @event cell-click - Emitted when an cell is clicked.
+     * @event view-change - Emitted when the calendar view changes.
+     * @event nav-click - Emitted when a navigation arrow is clicked. Passes { direction: 'prev' | 'next' }.
+     * @event title-click - Emitted when the calendar header title is clicked. Passes { date, view }.
+     * @event hour-click - Emitted when an hour slot is clicked in day/week view. Passes { date, view, hour }.
+     * @event time-range-select - Emitted when selecting a time range via drag. Passes { startDate, endDate }.
+     * @event event-click - Emitted when an event is clicked. Passes the event object.
+     * @event event-dblclick - Emitted when an event is double-clicked. Passes the event object.
+     * @event event-create - Emitted after creating a new event. Passes (event, action) where action is 'click' or 'drag'.
+     * @event event-delete - Emitted when an event is deleted. Passes the deleted event object.
+     * @event event-update - Emitted after an event is moved or resized. Passes (event, domEvent?).
+     * @event event-drag-start - Emitted when an event drag starts. Passes the dragged event.
+     * @event event-drag - Emitted continuously during event dragging. Passes the event.
+     * @event event-drag-end - Emitted when dragging ends. Passes the event.
+     * @event event-resize-start - Emitted when event resize starts. Passes the event.
+     * @event event-resize - Emitted continuously during resize. Passes the event.
+     * @event event-resize-end - Emitted when resize ends. Passes the event.
+     * @event event-mouse-enter - Emitted when mouse enters an event block. Passes (event, mouseEvent).
+     * @event event-mouse-leave - Emitted when mouse leaves an event block. Passes (event, mouseEvent).
+     * @event cell-drag-start - Emitted when dragging on empty cell starts. Passes { startDate, endDate, view }.
+     * @event cell-drag - Emitted during drag over cells. Passes { startDate, endDate, view }.
+     * @event cell-drag-end - Emitted when dragging ends. Passes { startDate, endDate, view }.
+     * @event cell-hover-in - Emitted when mouse enters a cell. Passes { date, view }.
+     * @event cell-hover-out - Emitted when mouse leaves a cell. Passes { date, view }.
+     */
     HCalendar: typeof HCalendar
   }
 }
