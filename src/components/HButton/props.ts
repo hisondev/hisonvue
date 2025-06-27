@@ -1,5 +1,4 @@
 import { CSSProperties, PropType } from "vue";
-import { BoolString } from "../../enums";
 
 export const buttonProps = {
     /**
@@ -25,7 +24,7 @@ export const buttonProps = {
      * - Accepts string values: `'true'` or `'false'` (not boolean)
      * - Defaults to visible if not provided or if value is not `'false'`
      */
-    visible: { type: String as PropType<BoolString>, required: false },
+    visible: { type: Boolean, required: false, default: true},
     /**
      * Whether the button is disabled.
      * - Accepts `'true'` or `'false'` as string.
@@ -33,7 +32,7 @@ export const buttonProps = {
      * - Can be changed at runtime via `HButtonMethods.setDisable(true|false)`
      * - Default: `'false'`
      */
-    disable : { type: Boolean, required: false },
+    disable : { type: Boolean, required: false, default: false },
     /**
      * Tooltip text shown when hovering over the button.
      * - Maps to the `title` attribute.
