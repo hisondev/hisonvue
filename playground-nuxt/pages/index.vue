@@ -19,11 +19,95 @@
         <HButton @click="goToGridTest" id="b2" class="hison-col-2 hison-pos-right hison-size-l-mb hison-size-s-pc">Go to Grid<br>(right-button)</HButton>
     </HLayout>
     <br><br>
+    <HChart
+      id="chart1"
+      type="line"
+      class="hison-col-6-pc hison-col-12-mb"
+      v-model="chartData1"
+      :options="chartOptions1"
+      style="height:300px; display: inline-flex; align-items: center; justify-content: center;"
+      :visible="false"
+    />
+    <HChart
+      type="doughnut"
+      class="hison-col-6-pc hison-col-12-mb"
+      v-model="chartData2"
+      :options="chartOptions2"
+      style="height:300px; display: inline-flex; align-items: center; justify-content: center;"
+    />
+    <br><br>
+    <HInputGroup id="inputGroup1">
+      <HLayout class="hison-col-12-tb hison-col-6-pc">
+          <HLayout class="hison-col-12-mb hison-col-6-pc hison-pos-right">
+              <HInput
+              id="input1"
+              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-muted-pc"
+              style="margin-bottom: 5px;"
+              inputType="date"
+              :format="DateFormat['MMMM dd, yyyy']"
+              v-model="inputValue1"
+              :required="true"
+              :editMode="EditMode.disable"
+              ></HInput>
+              <HInput
+              id="input2"
+              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-info-pc"
+              style="margin-bottom: 5px;"
+              :inputType="InputType.month"
+              ref="input2Ref"
+              v-model="inputValue2"
+              :required="true"
+              :editMode="EditMode.disable"
+              ></HInput>
+              <HInput
+              id="input3"
+              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-success-pc"
+              style="margin-bottom: 5px;"
+              :inputType="InputType.date"
+              v-model="inputValue3"
+              ></HInput>
+          </HLayout>
+          <HInput
+          id="input4"
+          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-danger-pc"
+          style="margin-bottom: 5px;"
+          v-model="inputValue4"
+          inputType="number"
+          format="$$ #,###.##"
+          nullText="$$"
+          maxNumber="10000"
+          :editMode="EditMode.editable"
+          @input="onInput4"
+          ></HInput>
+          <HInput
+          id="input5"
+          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
+          style="margin-bottom: 5px;"
+          v-model="inputValue5"
+          inputType="mask"
+          format="AA999"
+          nullText="-"
+          :required="true"
+          :editMode="EditMode.disable"
+          placeholder="testtest"
+          ></HInput>
+          <HInput
+          id="input6"
+          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
+          style="margin-bottom: 5px;"
+          v-model="inputValue6"
+          :inputType="InputType.password"
+          placeholder="testtest"
+          :editMode="EditMode.readonly"
+          maxLength="10"
+          ></HInput>
+      </HLayout>
+    </HInputGroup>
+    <br><br>
     <HLayout>
         <HNote v-model="noteData1"
         class="hison-col-12-mb hison-col-6-pc hison-size-m-mb hison-size-s-pc hison-color-primary-mb hison-color-warning-wd"
         id="note1"
-        :invert-color="true"
         @mounted="mountNote1"
         :boldBeforeClick="onBoldBeforeClick"
         :textareaBeforeFocus="onTextareaBeforeFocus"
@@ -44,7 +128,6 @@
         hison-color-primary-mb hison-color-warning-wd
         hison-size-m-mb hison-size-s-pc
         "
-        :invert-color="true"
         :columns="testColumns1"
         :height="'400px'"
         :horizenBorderSize="0"
@@ -62,69 +145,6 @@
         @mounted="mountGridTest2"
       />
     </HLayout>
-    <br><br>
-    <HInputGroup id="inputGroup1">
-      <HLayout class="hison-col-12-tb hison-col-6-pc">
-          <HLayout class="hison-col-12-mb hison-col-6-pc hison-pos-right">
-              <HInput
-              id="input1"
-              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-muted-pc"
-              style="margin-bottom: 5px;"
-              inputType="date"
-              :format="DateFormat['MMMM dd, yyyy']"
-              v-model="inputValue1"
-              :required="true"
-              ></HInput>
-              <HInput
-              id="input2"
-              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-info-pc"
-              style="margin-bottom: 5px;"
-              :inputType="InputType.month"
-              ref="input2Ref"
-              v-model="inputValue2"
-              :required="true"
-              ></HInput>
-              <HInput
-              id="input3"
-              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-success-pc"
-              style="margin-bottom: 5px;"
-              :inputType="InputType.date"
-              v-model="inputValue3"
-              ></HInput>
-          </HLayout>
-          <HInput
-          id="input4"
-          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-danger-pc"
-          style="margin-bottom: 5px;"
-          v-model="inputValue4"
-          inputType="number"
-          format="$$ #,###.##"
-          nullText="$$"
-          maxNumber="10000"
-          @input="onInput4"
-          ></HInput>
-          <HInput
-          id="input5"
-          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
-          style="margin-bottom: 5px;"
-          v-model="inputValue5"
-          inputType="mask"
-          format="AA999"
-          nullText="-"
-          :required="true"
-          placeholder="testtest"
-          ></HInput>
-          <HInput
-          id="input6"
-          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
-          style="margin-bottom: 5px;"
-          v-model="inputValue6"
-          :inputType="InputType.password"
-          placeholder="testtest"
-          maxLength="10"
-          ></HInput>
-      </HLayout>
-    </HInputGroup>
     <br><br>
     <HCalendar
         id="cal1"
@@ -151,6 +171,135 @@
 </template>
 
 <script setup lang="ts">
+import type { ChartData, ChartOptions } from 'chart.js'
+
+const chartData1 = ref<ChartData>({
+  labels: ['January', 'February', 'March', 'April', 'May'],
+  datasets: [
+    {
+      label: 'Sales',
+      data: [100, 150, 80, 120, 90],
+      borderColor: 'primary',
+      borderWidth: 1,
+      backgroundColor: 'rgba(0, 123, 255, 0.2)',
+      fill: true,
+      tension: 0.4
+    }
+  ]
+})
+const chartData2 = ref<ChartData>({
+  labels: [
+    'A level',
+    'B level',
+    'C level'
+  ],
+  datasets: [{
+    label: 'My First Dataset',
+    data: [300, 50, 100],
+    backgroundColor: [
+      'primary',
+      'warning',
+      'danger'
+    ],
+    hoverOffset: 4
+  }]
+})
+const chartOptions2 = ref<ChartOptions>({
+  responsive: true,
+  layout: {
+    padding: 0  // 또는 { left: 0, right: 0, top: 0, bottom: 0 }
+  },
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top'
+    }
+  }
+})
+
+const chartOptions1 = ref<ChartOptions>({
+  responsive: true,
+  plugins: {
+    title: {
+        display: false,
+        text: '',
+        font: {
+            size: 50,
+            style: 'normal',
+            weight: 'bold',
+            lineHeight: 1.2,
+        },
+    },
+    legend: {
+      position: 'top',
+      labels: {
+        font: {
+          size: 12,
+        }
+      }
+    },
+    tooltip: {
+      enabled: true,
+      titleFont: {
+        size: 12
+      },
+      bodyFont: {
+        size: 10
+      }
+    }
+  },
+  scales: {
+    x: {
+      ticks: {
+        font: {
+          size: 10
+        }
+      }
+    },
+    y: {
+      beginAtZero: true,
+      ticks: {
+        font: {
+          size: 10
+        }
+      }
+    }
+  }
+})
+
+
+let toggle = true
+const onClickCenterButton1 = (e: Event, button: HButtonMethods) => {
+  console.log(chartData2.value)
+  chartData2.value = {
+    labels: [
+      'X level',
+      'Y level',
+      'Z level'
+    ],
+    datasets: [{
+      label: 'My First Dataset',
+      data: [300, 50, 100],
+      backgroundColor: [
+        'rgb(255, 99, 132)',
+        'rgb(54, 162, 235)',
+        'rgb(255, 205, 86)'
+      ],
+      hoverOffset: 4
+    }]
+  }
+}
+let invertColorToggle = true
+const onClickCenterButton2 = () => {
+  const chart1 = hison.vue.getChart('chart1')!
+  console.log('chart1', chart1.data);
+  console.log('chart1', chart1.options);
+  console.log('chart1', chart1.resize);
+  chart1.setVisible(toggle)
+  toggle = !toggle
+  chart1.resize()
+}
+
 const noteData1 = ref<NoteData>()
 const noteData2 = ref<NoteData>()
 const mountNote1 = (note: VanillanoteElement) => {
@@ -162,26 +311,26 @@ const onTextareaBeforeFocus = (e: Event) => { console.log('onTextareaBeforeFocus
 
 const testColumns1: HGridColumn[] = [
   { id : "dept", header : "Click the Sigma button to the left of the header;filter1(mask);dept ", dataType : "mask", format : "AAA99", width : "100", rowMerge : true },
-  { id : "f_nm", header : ";filter2(text);first name", dataType : "text", width : "120", align : "center", locked : true },
-  { id : "l_nm", header : ";filter3(text);last name", dataType : "text", width : "120", align : "center", locked : true, colMerge : true },
-  { id : "d_o_j", header : ";filter4(month);DOJ", dataType : "month", format : "yyyy/mm", width : "120", align : "center", locked : true },
-  { id : "e_id", header : "sort1(text);;", dataType : "number", width : "120", align : "center", locked : true, footer : "MAX;MIN;AVG;SUM", roundNumber : -1 },
+  { id : "f_nm", header : ";filter2(text);first name", dataType : "text", width : "120", align : Align.center, locked : true },
+  { id : "l_nm", header : ";filter3(text);last name", dataType : "text", width : "120", align : Align.center, locked : true, colMerge : true },
+  { id : "d_o_j", header : ";filter4(month);DOJ", dataType : "month", format : "yyyy/mm", width : "120", align : Align.center, locked : true },
+  { id : "e_id", header : "sort1(text);;", dataType : "number", width : "120", align : Align.center, locked : true, footer : "MAX;MIN;AVG;SUM", roundNumber : -1 },
   { id : "salary", header : "sort2(number);;salary", dataType : "number", format : "$ #,###.#####", width : "150", footer : "$$MAX;$$MIN;$$AVG;$$SUM" },
-  { id : "status", header : "Please double click;checkbox;status", dataType : "checkbox", width : "80", align : "center", footer : "$$COUNT_CHECK" },
-  { id : "radio", header : "radio", dataType : "radio", width : "80", align : "center", footer : "$$COUNT_CHECK" }
+  { id : "status", header : "Please double click;checkbox;status", dataType : "checkbox", width : "80", align : Align.center, footer : "$$COUNT_CHECK" },
+  { id : "radio", header : "radio", dataType : "radio", width : "80", align : Align.center, footer : "$$COUNT_CHECK" }
 ]
 const mountGridTest1 = (grid: GridMethods) => {
   grid.load(testData)
 }
 const testColumns2: HGridColumn[] = [
   { id : "dept", header : "Click the Sigma button to the left of the header;filter1(mask);dept ", dataType : "mask", format : "AAA99", width : "100", rowMerge : true },
-  { id : "f_nm", header : ";filter2(text);first name", dataType : "text", width : "120", align : "center", locked : true },
-  { id : "l_nm", header : ";filter3(text);last name", dataType : "text", width : "120", align : "center", locked : true, colMerge : true },
-  { id : "d_o_j", header : ";filter4(month);DOJ", dataType : "month", format : "yyyy/mm", width : "120", align : "center", locked : true },
-  { id : "e_id", header : "sort1(text);;", dataType : "number", width : "120", align : "center", locked : true, footer : "MAX;MIN;AVG;SUM", roundNumber : -1 },
+  { id : "f_nm", header : ";filter2(text);first name", dataType : "text", width : "120", align : Align.center, locked : true },
+  { id : "l_nm", header : ";filter3(text);last name", dataType : "text", width : "120", align : Align.center, locked : true, colMerge : true },
+  { id : "d_o_j", header : ";filter4(month);DOJ", dataType : "month", format : "yyyy/mm", width : "120", align : Align.center, locked : true },
+  { id : "e_id", header : "sort1(text);;", dataType : "number", width : "120", align : Align.center, locked : true, footer : "MAX;MIN;AVG;SUM", roundNumber : -1 },
   { id : "salary", header : "sort2(number);;salary", dataType : "number", format : "$ #,###.#####", width : "150", footer : "$$MAX;$$MIN;$$AVG;$$SUM" },
-  { id : "status", header : "Please double click;checkbox;status", dataType : "checkbox", width : "80", align : "center", footer : "$$COUNT_CHECK" },
-  { id : "radio", header : "radio", dataType : "radio", width : "80", align : "center", footer : "$$COUNT_CHECK" }
+  { id : "status", header : "Please double click;checkbox;status", dataType : "checkbox", width : "80", align : Align.center, footer : "$$COUNT_CHECK" },
+  { id : "radio", header : "radio", dataType : "radio", width : "80", align : Align.center, footer : "$$COUNT_CHECK" }
 ]
 const mountGridTest2 = (grid: GridMethods) => {
   grid.load(testData)
@@ -207,21 +356,7 @@ const onCellClick = (date: Date) => {
 const onViewChange = (e: any) => {
 }
 const selectedDate = ref('20250618')
-let toggle = false
-const onClickCenterButton1 = (e: Event, button: HButtonMethods) => {
-  const cal1 = hison.vue.getCalendar('cal1')!
-  console.log('1',cal1.getDisableViews())
-  console.log(cal1.setDisableViews([HCalenderView.years,HCalenderView.year,HCalenderView.day]))
-  console.log('2',cal1.getDisableViews())
-  toggle = !toggle
-}
-let invertColorToggle = true
-const onClickCenterButton2 = () => {
-  hison.style.setInvertColor(invertColorToggle)
-  invertColorToggle = !invertColorToggle
-  console.log(selectedDate.value)
-}
-['years','year','month','week','day']
+
 const calendarEvents = ref([
   {
     title: 'Project Kickoff',
@@ -285,10 +420,10 @@ const isWeekend = (heading: any) => {
     return heading.label === 'Saturday' || heading.label === 'Sunday'
 }
 
-import { DateFormat, DayOfWeek, HButtonMethods, HCalenderTimeFormat, HCalenderView, HGridColumn, HInputMethods, hison, InputType, NoteToolPosition } from 'hisonvue'
+import { DateFormat, DayOfWeek, EditMode, HButtonMethods, HCalenderTimeFormat, HCalenderView, HGridColumn, HInputMethods, hison, InputType, NoteToolPosition } from 'hisonvue'
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
-import { GridMethods } from 'vanillagrid2'
+import { Align, GridMethods } from 'vanillagrid2'
 import { NoteData, NoteModeByDevice, ToolPosition, VanillanoteElement } from 'vanillanote2'
 
 const inputValue1 = ref<any>('20240228');
