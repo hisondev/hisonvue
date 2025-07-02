@@ -1,3 +1,6 @@
+<!--
+inputGroup과 hison.data.dataModel을 연결???
+-->
 <template>
   <div
     ref="inputGroupRef"
@@ -35,6 +38,7 @@ export default defineComponent({
     provide('registerToInputGroup', (inputId: string) => {
       if (!ownedInputIds.value.includes(inputId)) {
         ownedInputIds.value.push(inputId)
+        ownedInputIds.value.sort((a, b) => a.localeCompare(b));
       }
     })
     provide('notifyInputGroupStatus', () => {
@@ -138,13 +142,22 @@ export default defineComponent({
           return null
         },
         getEditMode : () => { return editMode.value },
-        setEditMode : (val: keyof typeof EditMode) => {
-          editMode.value = EditMode[val]
+        setEditMode : (val: EditMode) => {
+          editMode.value = val
           ownedInputIds.value.forEach((inputId) => {
             const input = hison.vue.getInput(inputId)
             if(input) input.setEditMode(val)
           })
         },
+        focus : () => {
+          for (const inputId of ownedInputIds.value) {
+            const input = hison.vue.getInput(inputId)
+            if(input && input.getEditMode() === EditMode.editable) {
+              input.focus()
+              return
+            }
+          }
+        }
       }
       hisonCloser.component.inputGroupList[id] = inputGroupMethods.value
       emit('mounted', inputGroupMethods.value)
