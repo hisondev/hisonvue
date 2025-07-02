@@ -1,12 +1,11 @@
 <!--
-1. format을 value: any 파라메터, string 출력하도록 하는 메소드로 받는 props 만들기.(getText시 유기적으로 사용 하도록)
-2. checkbox, selector 만들기
-3. 인풋 테두리도 invert할 때 티나게
+1. checkbox, selector 만들기
 -->
-
 <template>
   <input
     ref="inputTextRef"
+    :id="`inputText_${id}`"
+    :name="`inputText_${id}`"
     v-show="!editing"
     :class="[
       'hison-input',
@@ -50,6 +49,8 @@
   <input
     v-show="editing"
     ref="inputRef"
+    :id="`input_${id}`"
+    :name="`input_${id}`"
     :class="[
       'hison-input',
       ...responsiveClassList,
@@ -225,7 +226,7 @@ export default defineComponent({
       }
     })
     const nullText = ref(props.nullText ?? '')
-    const editMode = ref(props.editMode ?? EditMode.editable)
+    const editMode = ref(props.editMode)
     const disable = computed(() => {
       if(editMode.value === EditMode.disable) return true
       return false
@@ -359,7 +360,7 @@ export default defineComponent({
         },
         getTitle : () => title.value,
         setTitle : (val: string) => { title.value = val },
-        isVisible : () => window.getComputedStyle(inputRef.value!).display !== 'none',
+        isVisible : () => visible.value,
         setVisible : (val: boolean) => { visible.value = val },
         getInputType : () => { return inputType.value },
         setInputType : (val: keyof typeof InputType) => {
@@ -379,7 +380,7 @@ export default defineComponent({
           if(isNullOrUndefined(modelValue.value) || modelValue.value === '') spanText.value = computeSpanText(modelValue.value)
         },
         getEditMode : () => { return editMode.value },
-        setEditMode : (val: keyof typeof EditMode) => { editMode.value = EditMode[val] },
+        setEditMode : (val: EditMode) => { editMode.value = val },
         getMaxNumber : () => { return maxNumber.value },
         setMaxNumber : (val: number) => {
           if(!hison.utils.isNumeric(val)) return
@@ -429,6 +430,7 @@ export default defineComponent({
         setFontUnderline : (val: boolean) => { fontUnderline.value = val },
         isModified : () => { return isModified.value },
         setModified : (val: boolean) => { isModified.value = val},
+        focus : () => { inputTextRef.value?.focus() }
       }
       if (registerToInputGroup) {
         registerToInputGroup(id)
@@ -463,6 +465,7 @@ export default defineComponent({
         inputValue,
         editing,
         props,
+        id,
         responsiveClassList,
         visibleClass,
         editModeClass,
