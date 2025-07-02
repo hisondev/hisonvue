@@ -1,5 +1,8 @@
+<!--
+HGRid와 hison.data.dataModel을 연결???까지 아니더라도 getDataSet정도?
+-->
 <template>
-    <div ref="editorWrap" :class="['hison-wrap', ...responsiveClassList]" :style="props.style">
+    <div ref="editorWrap" :class="['hison-grid', 'hison-wrap', ...responsiveClassList, visibleClass]" :style="props.style">
       <div data-vanillagrid v-bind="bindAttrs"></div>
     </div>
 </template>
@@ -27,10 +30,12 @@ setup(props, { emit }) {
     const id = props.id ? props.id : getUUID();
     const reloadId = `hgrid:${props.id}`
     const device = useDevice()
+    const visible = ref(props.visible)
+    const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
 
     const responsiveClassList = ref<string[]>([])
 
-    const EXCLUDED_KEYS = ['columns', 'id', 'class', 'style'] as const
+    const EXCLUDED_KEYS = ['columns', 'id', 'class', 'style', 'visible'] as const
     const bindAttrsTrigger = ref(0)
     const forceRecomputeBindAttrs = () => {
         triggerRef(bindAttrsTrigger)
@@ -112,6 +117,14 @@ setup(props, { emit }) {
         if (gridInstance.value) {
             gridInstance.value.getId = () => id
             gridInstance.value.getType = () => 'grid'
+            if ('isGridVisible' in gridInstance.value) {
+            delete (gridInstance.value as any).isGridVisible;
+            }
+            if ('setGridVisible' in gridInstance.value) {
+            delete (gridInstance.value as any).setGridVisible;
+            }
+            gridInstance.value.isVisible = () => visible.value,
+            gridInstance.value.setVisible = (val: boolean) => { visible.value = val }
         }
         //event
         if(gridInstance.value) {
@@ -189,7 +202,8 @@ setup(props, { emit }) {
         editorWrap,
         props,
         bindAttrs,
-        responsiveClassList
+        responsiveClassList,
+        visibleClass
     }
 }
 })
