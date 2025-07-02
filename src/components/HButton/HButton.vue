@@ -78,20 +78,23 @@ export default defineComponent({
         getType : () => 'button',
         getText: () => hasSlot.value ? '' : internalText.value,
         getTitle: () => title.value,
-        isVisible: () => window.getComputedStyle(buttonRef.value!).display !== 'none',
+        isVisible: () => visible.value,
         isDisable: () => disable.value,
         setText: (val: string) => {
-            if (!hasSlot.value) internalText.value = val
+          if (!hasSlot.value) internalText.value = val
         },
         setTitle: (val: string) => {
-            title.value = val
+          title.value = val
         },
         setVisible: (val: boolean) => {
-            visible.value = val
+          visible.value = val
         },
         setDisable: (val: boolean) => {
-            disable.value = val
+          disable.value = val
         },
+        focus: () => {
+          buttonRef.value?.focus();
+        }
       }
       hisonCloser.component.buttonList[id] = buttonMethods.value
       emit('mounted', buttonMethods.value)
