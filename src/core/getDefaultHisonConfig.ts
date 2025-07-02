@@ -4,6 +4,7 @@ import { DateFormat, DateTimeFormat, DayFormat, DayOfWeekFormat, HourFormat, Hou
 import { getVanillanoteConfig } from "vanillanote2";
 import { getVanillagridConfig } from "vanillagrid2";
 import { hison } from "..";
+import { Chart } from "chart.js";
 
 export const primaryColorRGBA = 'rgba(208,232,242,1)'
 export const mutedColorRGBA = 'rgba(158,158,158,1)'
@@ -89,6 +90,9 @@ export const getDefaultHisonConfig = () => {
     }
   }
 
+  //set chart config
+  const chartConfig = Chart.defaults
+
   const hisonConfig: HisonConfig = {
     //utils
     dateFormat : DateFormat['yyyy-MM-dd'],
@@ -149,6 +153,7 @@ export const getDefaultHisonConfig = () => {
     component : {
       note : vanillanoteConfig,
       grid : vanillagridConfig,
+      chart : chartConfig,
     },
     componentStyle : {
       size: Size.m,
