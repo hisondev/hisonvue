@@ -2,6 +2,7 @@ import { GridMethods } from "vanillagrid2"
 import { GridAlign, GridVerticalAlign, EditMode, InputType, DataStatus, DayOfWeek, HCalenderView, HCalenderTimeFormat } from "../enums"
 import { VanillanoteElement } from "vanillanote2"
 import { InterfaceDataModel, InterfaceDataWrapper } from "hisonjs"
+import { Chart, ChartData, ChartOptions } from "chart.js"
 
 export type DeviceType = 'mb' | 'tb' | 'pc' | 'wd'
 
@@ -233,11 +234,11 @@ export interface HGridColumn {
    * Sets the align of the column. Choose from 'left', 'center', 'right'. If no value is specified, the default align follows the data-type.
    * text, mask: left, number: right, date, month, code, select, checkbox, button, link: center.
    */
-  align?: keyof typeof GridAlign
+  align?: GridAlign
   /**
    * Sets the default vertical-align of the column. Choose from 'top', 'center', 'bottom'. If no value is specified, it defaults to center.
    */
-  verticalAlign?: keyof typeof GridVerticalAlign
+  verticalAlign?: GridVerticalAlign
   /**
    * Sets the default overflow-wrap of the column. Enter the overflow-wrap in cssText.
    */
@@ -314,15 +315,24 @@ export interface ComponentMethods {
  * grid.setCellValue(1, 'col1', 'Updated Value');
  * ```
  */
-export interface HGridMethods extends ComponentMethods, GridMethods{
+export interface HGridMethods extends ComponentMethods, Omit<GridMethods, 'isGridVisible' | 'setGridVisible'>{
   /**
    * Returns the type of the grid.
    */
   getType(): 'grid'
+  /**
+   * Returns whether the grid is currently visible.
+   * - `false` means `display: none` is applied.
+   */
+  isVisible(): boolean;
+  /**
+   * Shows or hides the grid.
+   * - `true` makes the grid visible.
+   * - `false` applies `display: none`.
+   */
+  setVisible(visible: boolean): void;
 }
 
-//Focus 기능 필요!!!!!!!!!!!!
-//visible, editMode
 /**
  * Represents a single editable Vanillanote instance within the DOM.
  *
@@ -373,17 +383,53 @@ export interface HNoteElement extends ComponentMethods, VanillanoteElement {
    */
   getType(): 'note'
   /**
-   * Gets whether the input is currently required.
-   * - If `true`, the input will show a visual required style.
+   * Gets whether the note is currently required.
+   * - If `true`, the note will show a visual required style.
    */
   getRequired(): boolean;
   /**
-   * Sets the required state of the input.
+   * Sets the required state of the note.
    */
   setRequired(required: boolean): void;
+  /**
+   * Returns whether the note is currently visible.
+   * - `false` means `display: none` is applied.
+   */
+  isVisible(): boolean;
+  /**
+   * Shows or hides the note.
+   * - `true` makes the note visible.
+   * - `false` applies `display: none`.
+   */
+  setVisible(visible: boolean): void;
+  /**
+   * Gets the current edit mode.
+   * - Possible values: `'editable'`, `'readonly'`, `'disable'`
+   */
+  getEditMode(): EditMode;
+  /**
+   * Sets the edit mode of the note.
+   * - `'readonly'` and `'disable'` both prevent editing but differ in style.
+   */
+  setEditMode(mode: EditMode): void;
+  /**
+   * Returns whether any note inside the group has been modified by user interaction.
+   * 
+   * @returns `true` if at least one note is marked as modified.
+   */
+  isModified(): boolean;
+  /**
+   * Resets the modification status of all notes in the group.
+   * 
+   * Typically called after saving or loading new data.
+   */
+  initModified(): void;
+  /**
+   * Focus on the note.
+   */
+  focus(): void;
 }
 
-//Focus 기능 필요!!!!!!!!!!!!
 /**
  * Runtime control methods for `HButton` component.
  *
@@ -455,6 +501,10 @@ export interface HButtonMethods extends ComponentMethods {
    * - `false` applies `display: none`.
    */
   setVisible(visible: boolean): void;
+  /**
+   * Focus on the button.
+   */
+  focus(): void;
 }
 
 /**
@@ -583,7 +633,6 @@ export interface HLayoutMethods extends ComponentMethods {
   setHeight(cssText: string): void;
 }
 
-//Focus 기능 필요!!!!!!!!!!!!
 /**
  * Runtime control methods for `HInput` component.
  *
@@ -633,12 +682,12 @@ export interface HInputMethods extends ComponentMethods {
    * Gets the current input type.
    * - Matches the `InputType` enum (e.g., `'text'`, `'date'`, `'number'`, etc.)
    */
-  getInputType(): keyof typeof InputType;
+  getInputType(): InputType;
   /**
    * Sets the input type.
    * - Automatically adjusts formatting/rendering logic.
    */
-  setInputType(type: keyof typeof InputType): void;
+  setInputType(type: InputType): void;
   /**
    * Gets the format string used to format the value.
    * - Affects `'number'`, `'mask'`, `'date'`, `'month'` types.
@@ -681,12 +730,12 @@ export interface HInputMethods extends ComponentMethods {
    * Gets the current edit mode.
    * - Possible values: `'editable'`, `'readonly'`, `'disable'`
    */
-  getEditMode(): keyof typeof EditMode;
+  getEditMode(): EditMode;
   /**
    * Sets the edit mode of the input.
    * - `'readonly'` and `'disable'` both prevent editing but differ in style.
    */
-  setEditMode(mode: keyof typeof EditMode): void;
+  setEditMode(mode: EditMode): void;
   /**
    * Gets the maximum allowed numeric value (if applicable).
    * - Only applies when `type === 'number'`
@@ -797,9 +846,12 @@ export interface HInputMethods extends ComponentMethods {
    * @param modified A boolean indicating whether the input should be marked as modified.
    */
   setModified(modified: boolean): void;
+  /**
+   * Focus on the input.
+   */
+  focus(): void;
 }
 
-//Focus 기능 필요!!!!!!!!!!!!
 /**
  * Runtime control methods for `HInputGroup` component.
  *
@@ -874,7 +926,7 @@ export interface HInputGroupMethods extends ComponentMethods {
    * - `U`: Updated
    * - `D`: Deleted
    */
-  getStatus(): keyof typeof DataStatus;
+  getStatus(): DataStatus;
   /**
    * Sets the status of the input group.
    *
@@ -882,7 +934,7 @@ export interface HInputGroupMethods extends ComponentMethods {
    * 
    * @param status A valid `DataStatus` value (`R`, `C`, `U`, `D`).
    */
-  setStatus(status: keyof typeof DataStatus): void;
+  setStatus(status: DataStatus): void;
   /**
    * Returns whether any input inside the group has been modified by user interaction.
    * 
@@ -911,13 +963,20 @@ export interface HInputGroupMethods extends ComponentMethods {
    * - `'readonly'`: Inputs are readonly (visually different)
    * - `'disable'`: Inputs are disabled (fully blocked)
    */
-  getEditMode(): keyof typeof EditMode;
+  getEditMode(): EditMode;
   /**
    * Sets the edit mode for all inputs in the group.
    *
    * @param mode One of: `'editable'`, `'readonly'`, `'disable'`
    */
-  setEditMode(mode: keyof typeof EditMode): void;
+  setEditMode(mode: EditMode): void;
+  /**
+   * Focus on the first input that is editable.
+   *
+   * - The order of input components in the view may not follow the rendered DOM order due to Vue's mounting behavior.
+   * - Therefore, the inputs are sorted alphabetically by their assigned string `id` before applying focus.
+   */
+  focus(): void;
 }
 
 /**
@@ -1236,4 +1295,68 @@ export interface HCalendarMethods extends ComponentMethods {
    * @param disableViews Array of view modes to disable
    */
   setDisableViews(disableViews: HCalenderView[]): void;
+}
+
+/**
+ * Runtime control interface for the `HChart` component.
+ *
+ * This interface is returned by `hison.vue.getChart(id)` and allows full programmatic control of the chart.
+ *
+ * ---
+ *
+ * ### 📊 Example Usage
+ * ```ts
+ * const chart = hison.vue.getChart('salesChart')
+ * if (chart) {
+ *   chart.setVisible(true)
+ *   chart.data.labels = ['Jan', 'Feb', 'Mar']
+ *   chart.data.datasets[0].data = [10, 20, 30]
+ *   chart.update()
+ * }
+ * ```
+ *
+ * ---
+ *
+ * ### ⚙️ Chart.js Integration
+ * - `HChartInstance` extends [`Chart`](https://www.chartjs.org/docs/latest/api/chart) from Chart.js.
+ * - This means **you can directly use all Chart.js instance methods**, such as:
+ *   - `.update()`
+ *   - `.resize()`
+ *   - `.destroy()`
+ *   - `.reset()`
+ *   - `.render()`
+ *   - `.stop()`
+ *   - `.toBase64Image()`
+ *   - `.getElementsAtEventForMode()`
+ * - You also have full access to mutable properties like:
+ *   - `chart.data`
+ *   - `chart.options`
+ *   - `chart.canvas`
+ *   - `chart.config`
+ *   - `chart.scales`, etc.
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - `getChartInstance()` is no longer needed; the entire Chart instance is exposed directly.
+ * - `setData()` and `setOptions()` helpers are unnecessary—just mutate `data` or `options` and call `.update()`.
+ */
+export interface HChartInstance extends ComponentMethods, Chart {
+  /**
+   * Returns the type identifier.
+   * Always returns `'chart'`.
+   */
+  getType(): 'chart';
+  /**
+   * Returns whether the chart is currently visible.
+   * - `false` means `display: none` is applied.
+   */
+  isVisible(): boolean;
+  /**
+   * Shows or hides the chart.
+   * - `true` makes the chart visible.
+   * - `false` applies `display: none`.
+   * @param visible
+   */
+  setVisible(visible: boolean): void;
 }
