@@ -18,7 +18,7 @@ export const noteProps = {
      * - Values: `'editable'`, `'readonly'`, `'disable'`
      * - `'readonly'` and `'disable'` both prevent editing but differ in styling
      */
-    editMode: { type: String as PropType<EditMode>, required: false },
+    editMode: { type: String as PropType<EditMode>, required: false, default: EditMode.editable },
     /**
      * ADAPTIVE : The composition of notes varies depending on whether the device is a desktop or mobile device.
      * MOBILE : Always recognize as mobile.
