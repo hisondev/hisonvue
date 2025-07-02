@@ -172,6 +172,28 @@
     background-color: var(--hison-warning-hoverColor) !important;
 }
 
+.hison-note-readonly * {
+    pointer-events: none;
+    outline: none;
+}
+.hison-note-readonly vanillanote-textarea {
+    pointer-events: auto;
+    user-select: text;
+    outline: none;
+}
+.hison-note-disable {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.hison-note-disable * {
+    pointer-events: none;
+    outline: none;
+}
+.hison-note-disable vanillanote-textarea {
+    user-select: text;
+    outline: none;
+}
+
 /* HInput */
 .hison-input {
     display: inline-block;
@@ -179,7 +201,15 @@
     border-radius: 2px;
     font-family: var(--hison-font-family);
 }
-.hison-input-disable { opacity: 0.5; cursor: not-allowed; }
+.hison-input-disable {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.hison-input-disable * {
+    pointer-events: none;
+    user-select: none;
+    outline: none;
+}
 .hison-input-readonly { box-shadow: none !important; }
 .hison-input:hover,
 .hison-input:focus,
@@ -303,7 +333,7 @@
 .hison-font-underline { text-decoration: underline; }
 
 /* display helpers */
-.hison-display-none { display: none; }
+.hison-display-none { display: none !important; }
 
 /* disable */
 .hison-disable { opacity: 0.5; cursor: not-allowed; }
