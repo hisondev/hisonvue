@@ -1,6 +1,6 @@
 import type { HisonConfig } from "../types"
 import { hisonCloser } from ".."
-import { getVg, getVn } from "../plugins"
+import { configureChartDefaults, getVg, getVn } from "../plugins"
 
 export const createHisonCloser = (hisonConfig: HisonConfig) => {
   // 이벤트 설정
@@ -119,6 +119,7 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
   const vg = getVg(hisonConfig)
   hisonCloser.note = vn
   hisonCloser.grid = vg
+  configureChartDefaults(hisonConfig)
 
   // 컴포넌트 리스트 생성
   hisonCloser.component = {
@@ -127,5 +128,6 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
     inputList: {},
     inputGroupList: {},
     calendarList: {},
+    chartList: {},
   }
 }
