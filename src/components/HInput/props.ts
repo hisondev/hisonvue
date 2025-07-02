@@ -93,7 +93,7 @@ export const inputProps = {
      * - Values: `'editable'`, `'readonly'`, `'disable'`
      * - `'readonly'` and `'disable'` both prevent editing but differ in styling
      */
-    editMode: { type: String as PropType<EditMode>, required: false },
+    editMode: { type: String as PropType<EditMode>, required: false, default: EditMode.editable },
     /**
      * Whether the input is required.
      * - Accepts `'true'` or `'false'`
