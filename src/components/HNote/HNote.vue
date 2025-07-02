@@ -1,18 +1,16 @@
 <!--
-정리해야함!!!!!!!!!!!!!!!!!!!
-visible false로 하면 틀은 유지하면서 컴포넌트만 사라질 지
-틀까지 사라질지.
-현재
-grid는 visible false를 하면 틀은 유지 컴포넌트만 사라짐
-button은 visible false를 하면 틀까지 사라짐
-==> 틀은 유지하면서 컴포넌트만 사라지는게 좋을거같은데,,,,, 그러면 모든 컴포넌트를 한겹 쌓아야함.
-** 일반적인 방식(부트스트랩 등)은 어떤지.
-** 만약 틀까지 사라지게 하려면 layout으로 감싸도록??
-?? 아니면 반대로 모든 컴포넌트는 visible false시 영역까지 사라지고, layout으로 감싸면 영역은 유지??
+HNote와 hison.data.dataModel을 연결???까지 아니더라도 getDataSet정도?
 -->
 <template>
-  <div ref="editorWrap" :class="['hison-wrap', ...responsiveClassList, requiredClass]" :style="props.style">
-    <div data-vanillanote v-bind="bindAttrs"></div>
+  <div
+    ref="editorWrap"
+    :class="['hison-note', 'hison-wrap', ...responsiveClassList, visibleClass, requiredClass, editModeClass]"
+    :style="props.style"
+    >
+    <div
+    data-vanillanote
+    v-bind="bindAttrs"
+    ></div>
   </div>
 </template>
 
@@ -20,7 +18,7 @@ button은 visible false를 하면 틀까지 사라짐
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, nextTick, triggerRef } from 'vue'
 import type { Vanillanote, VanillanoteElement, NoteData } from 'vanillanote2'
 import { noteEventProps, noteProps } from './props'
-import { Size } from '../../enums'
+import { EditMode, Size } from '../../enums'
 import { extractResponsiveClasses, getSpecificClassValueFromClassList, getHexCodeFromColorText, getUUID, registerReloadable, getIndexSpecificClassNameFromClassList, unregisterReloadable } from '../../utils'
 import { hison, hisonCloser } from '../..'
 import { useDevice } from '../../core'
@@ -44,6 +42,68 @@ export default defineComponent({
       if(required.value) return 'hison-note-required'
     })
     const device = useDevice()
+    const visible = ref(props.visible)
+    const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
+    const editMode = ref(props.editMode)
+    const editModeClass = computed(() => {
+      if(editMode.value !== EditMode.editable) return `hison-note-${editMode.value}`
+    })
+    const isModified = ref(false)
+
+    const updateTabbableChildren = (rootEl: HTMLElement, disable: boolean) => {
+      if (!rootEl) return
+
+      // Define list of focusable selectors
+      const focusableSelectors = [
+        'a[href]',
+        'area[href]',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        'button:not([disabled])',
+        'iframe',
+        'object',
+        'embed',
+        '[contenteditable]',
+        '[tabindex]'
+      ].join(',')
+
+      const elements = rootEl.querySelectorAll<HTMLElement>(focusableSelectors)
+
+      elements.forEach((el) => {
+        if (disable) {
+          el.setAttribute('tabindex', '-1')
+        } else {
+          // Only remove tabindex if we set it ourselves before
+          if (el.getAttribute('tabindex') === '-1') {
+            el.removeAttribute('tabindex')
+          }
+        }
+      })
+    }
+
+    const applyEditMode = () => {
+      const note = noteInstance.value
+      if(!note) return
+      const textarea = note._elements.textarea
+      
+      if(editMode.value !== EditMode.editable) {
+        textarea.removeAttribute('contenteditable')
+        textarea.removeAttribute('role')
+        textarea.removeAttribute('aria-multiline')
+        textarea.removeAttribute('spellcheck')
+        textarea.removeAttribute('autocorrect')
+        updateTabbableChildren(note, true)
+      }
+      else {
+        textarea.setAttribute('contenteditable', 'true')
+        textarea.setAttribute('role', 'textbox')
+        textarea.setAttribute('aria-multiline', 'true')
+        textarea.setAttribute('spellcheck', 'true')
+        textarea.setAttribute('autocorrect', 'true')
+        updateTabbableChildren(note, false)
+      }
+    }
 
     const responsiveClassList = ref<string[]>([])
     const EXCLUDED_KEYS = ['modelValue', 'id', 'class', 'style', 'visible', 'editMode'] as const
@@ -131,6 +191,7 @@ export default defineComponent({
     }
     const syncNoteData = () => {
       if (noteInstance.value) {
+        isModified.value = true
         emit('update:modelValue', noteInstance.value.getNoteData())
       }
     }
@@ -162,6 +223,16 @@ export default defineComponent({
         note.getType = () => 'note'
         note.getRequired = () => required.value
         note.setRequired = (val: boolean) => { required.value = val }
+        note.isVisible = () => visible.value,
+        note.setVisible = (val: boolean) => { visible.value = val }
+        note.getEditMode = () => editMode.value
+        note.setEditMode = (val: EditMode) => {
+          editMode.value = val
+          applyEditMode()
+        }
+        note.isModified = () => isModified.value
+        note.initModified = () => isModified.value = false
+        note.focus = () => { note._elements?.textarea?.focus() }
       }
 
       //v-model
@@ -451,6 +522,7 @@ export default defineComponent({
         if (typeof props.placeholderAfterClick === 'function') note._elementEvents.placeholder_onAfterClick = props.placeholderAfterClick
       }
 
+      applyEditMode()
       emit('mounted', note)
     }
     const unmount = () => {
@@ -481,7 +553,9 @@ export default defineComponent({
       props,
       bindAttrs,
       responsiveClassList,
-      requiredClass
+      visibleClass,
+      requiredClass,
+      editModeClass,
     }
   }
 })
