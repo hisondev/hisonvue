@@ -6,6 +6,7 @@ import type {
   HInput,
   HInputGroup,
   HCalendar,
+  HChart,
 } from './index'
 
 declare module 'vue' {
@@ -131,6 +132,8 @@ declare module 'vue' {
      * 
      * `noteProps` supported.
      * @prop {string} id - Required unique identifier of the editor instance.
+     * @prop {Boolean} visible - Controls visibility of the editor field.
+     * @prop {EditMode} editMode - Edit mode of the editor.
      *
      * @prop {NoteModeByDevice} [noteModeByDevice] - Force mobile, desktop, or adaptive mode.
      * @prop {NoteToolPosition} [toolPosition] - Toolbar position (`top` or `bottom`).
@@ -973,5 +976,84 @@ declare module 'vue' {
      * @event cell-hover-out - Emitted when mouse leaves a cell. Passes { date, view }.
      */
     HCalendar: typeof HCalendar
+
+    /**
+     * Hisonvue chart component powered by Chart.js.
+     *
+     * ### Built with `chart.js@^4.5.0`
+     * `HChart` is a lightweight wrapper around [Chart.js](https://www.chartjs.org/),  
+     * offering full compatibility with all standard chart types, configuration options, and runtime methods.
+     *
+     * Internally, the following components are pre-registered:
+     *
+     * - 📊 **Controllers**: `BarController`, `LineController`, `RadarController`, `PieController`,  
+     *   `DoughnutController`, `BubbleController`, `ScatterController`
+     * - 🧩 **Elements**: `ArcElement`, `LineElement`, `BarElement`, `PointElement`
+     * - 📏 **Scales**: `CategoryScale`, `LinearScale`, `RadialLinearScale`
+     * - 🧰 **Plugins**: `Tooltip`, `Legend`, `Filler`
+     *
+     * ---
+     *
+     * ### 📈 Features
+     * - Supports all built-in Chart.js chart types (`'bar'`, `'line'`, `'pie'`, `'doughnut'`, etc.)
+     * - Preserves all Chart.js props, config options, events, and methods
+     * - Runtime access via `HChartInstance` (`hison.vue.getChart(id)`)
+     * - Minimal styling applied (`hison-col-*`, `display: none` when hidden)
+     * - Automatic color string parsing (e.g., `'red.500'` → rgba format)
+     * - Full access to underlying `Chart` instance (`update()`, `resize()`, etc.)
+     *
+     * ---
+     *
+     * ### 📦 Chart.js Compatibility
+     * `HChart` passes your `modelValue` and `options` directly to the native Chart.js engine.  
+     * There is **no rewriting or abstraction** of Chart.js behavior.
+     *
+     * 👉 You may refer to the official Chart.js documentation for full API usage:
+     * - [ChartData](https://www.chartjs.org/docs/4.5.0/general/data-structures.html)
+     * - [ChartOptions](https://www.chartjs.org/docs/4.5.0/configuration/)
+     * - [Chart Methods](https://www.chartjs.org/docs/4.5.0/developers/api.html)
+     *
+     * ---
+     *
+     * ### ⚙️ Usage
+     * ```vue
+     * <HChart
+     *   id="myChart"
+     *   type="doughnut"
+     *   class="hison-col-6"
+     *   :modelValue="chartData"
+     *   :options="chartOptions"
+     * />
+     * ```
+     *
+     * ---
+     *
+     * ### 🛠 Runtime Usage
+     * Use `hison.vue.getChart(id)` to retrieve the Chart.js instance:
+     *
+     * ```ts
+     * const chart = hison.vue.getChart('myChart')
+     * chart.data.datasets[0].data = [10, 20, 30]
+     * chart.options.plugins.legend.display = false
+     * chart.update()
+     * chart.setVisible(false)
+     * ```
+     *
+     * ---
+     *
+     * @prop {string} id - Unique chart identifier. Enables runtime access via `hison.vue.getChart(id)`.
+     * @prop {ChartType} type - Chart.js chart type (e.g., `'line'`, `'bar'`, `'pie'`).
+     * @prop {ChartData} modelValue - Chart.js data object (used with `v-model`).
+     * @prop {ChartOptions} [options] - Optional Chart.js configuration object.
+     * @prop {string} [class] - Additional responsive class string (e.g., `hison-col-6`).
+     * @prop {string | CSSProperties} [style] - Inline CSS styles.
+     * @prop {boolean} [visible=true] - Whether the chart is visible.
+     *
+     * ---
+     *
+     * @event mounted - Emitted when the chart instance is initialized.
+     * @event responsive-change - Emitted when responsive class changes due to device detection.
+     */
+    HChart: typeof HChart
   }
 }
