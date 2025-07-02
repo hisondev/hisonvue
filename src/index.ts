@@ -32,6 +32,10 @@ const HCalendar = createSSRClientOnly<typeof import('./components/HCalendar/HCal
   () => import('./components/HCalendar/HCalendar.vue'),
   'HCalendar'
 )
+const HChart = createSSRClientOnly<typeof import('./components/HChart/HChart.vue').default>(
+  () => import('./components/HChart/HChart.vue'),
+  'HChart'
+)
 
 export const hisonCloser = {
   event : { cssEvent: {} }
@@ -71,6 +75,7 @@ export const hisonvue = {
     app.component('HInput', HInput)
     app.component('HInputGroup', HInputGroup)
     app.component('HCalendar', HCalendar)
+    app.component('HChart', HChart)
   }
 }
 
@@ -82,6 +87,7 @@ export {
   HInput,
   HInputGroup,
   HCalendar,
+  HChart,
   getDefaultHisonConfig,
 }
 export type {
@@ -95,5 +101,6 @@ export type {
   HInputMethods,
   HInputGroupMethods,
   HCalendarMethods,
+  HChartInstance,
 } from './types'
 export * from './enums'
