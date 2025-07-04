@@ -19,6 +19,103 @@
         <HButton @click="goToGridTest" id="b2" class="hison-col-2 hison-pos-right hison-size-l-mb hison-size-s-pc">Go to Grid<br>(right-button)</HButton>
     </HLayout>
     <br><br>
+    <input id="test1" type="text" value="TEST" readonly/>
+    <input id="test2" type="checkbox" checked readonly/>
+    <br><br>
+    <HInputGroup id="inputGroup1">
+      <HLayout class="hison-col-12-tb hison-col-6-pc">
+        <HInput
+        id="textarea"
+        class="hison-col-12 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-primary-mb hison-color-success-pc"
+        style="margin-bottom: 5px;"
+        inputType="textarea"
+        placeholder="please insert text here."
+        ></HInput>
+        <HInput
+        id="checkbox"
+        class="hison-col-6 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-danger-mb hison-color-warning-pc"
+        style="margin-bottom: 5px;"
+        inputType="checkbox"
+        v-model="checkboxValue"
+        ></HInput>
+        <HInput
+        id="select"
+        class="hison-col-6 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-danger-mb hison-color-warning-pc"
+        style="margin-bottom: 5px;"
+        inputType="select"
+        v-model="selectValue"
+        :options="option1"
+        ></HInput>
+      </HLayout>
+      <HLayout class="hison-col-12-tb hison-col-6-pc">
+          <HLayout class="hison-col-12-mb hison-col-6-pc hison-pos-right">
+            <HInput
+            id="input1"
+            class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-muted-pc"
+            style="margin-bottom: 5px;"
+            inputType="date"
+            :format="DateFormat['MMMM dd, yyyy']"
+            v-model="inputValue1"
+            :required="true"
+            :editMode="EditMode.readonly"
+            ></HInput>
+            <HInput
+            id="input2"
+            class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-info-pc"
+            style="margin-bottom: 5px;"
+            :inputType="InputType.text"
+            placeholder="please insert text here."
+            ref="input2Ref"
+            :required="true"
+            :editMode="EditMode.editable"
+            ></HInput>
+            <HInput
+            id="input3"
+            class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-success-pc"
+            style="margin-bottom: 5px;"
+            :inputType="InputType.date"
+            v-model="inputValue3"
+            ></HInput>
+          </HLayout>
+          <HLayout>
+            <HInput
+            id="input4"
+            class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-danger-pc"
+            style="margin-bottom: 5px;"
+            v-model="inputValue4"
+            inputType="number"
+            format="$$ #,###.##"
+            nullText="$$"
+            maxNumber="10000"
+            :editMode="EditMode.editable"
+            @input="onInput4"
+            ></HInput>
+            <HInput
+            id="input5"
+            class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
+            style="margin-bottom: 5px;"
+            v-model="inputValue5"
+            inputType="mask"
+            format="AA999"
+            nullText="-"
+            :required="true"
+            :editMode="EditMode.disable"
+            placeholder="testtest"
+            ></HInput>
+            <HInput
+            id="input6"
+            class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
+            style="margin-bottom: 5px;"
+            v-model="inputValue6"
+            :inputType="InputType.password"
+            placeholder="testtest"
+            :editMode="EditMode.readonly"
+            maxLength="10"
+            ></HInput>
+          </HLayout>
+      </HLayout>
+    </HInputGroup>
+    <br><br>
     <HChart
       id="chart1"
       type="line"
@@ -35,74 +132,6 @@
       :options="chartOptions2"
       style="height:300px; display: inline-flex; align-items: center; justify-content: center;"
     />
-    <br><br>
-    <HInputGroup id="inputGroup1">
-      <HLayout class="hison-col-12-tb hison-col-6-pc">
-          <HLayout class="hison-col-12-mb hison-col-6-pc hison-pos-right">
-              <HInput
-              id="input1"
-              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-muted-pc"
-              style="margin-bottom: 5px;"
-              inputType="date"
-              :format="DateFormat['MMMM dd, yyyy']"
-              v-model="inputValue1"
-              :required="true"
-              :editMode="EditMode.disable"
-              ></HInput>
-              <HInput
-              id="input2"
-              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-info-pc"
-              style="margin-bottom: 5px;"
-              :inputType="InputType.month"
-              ref="input2Ref"
-              v-model="inputValue2"
-              :required="true"
-              :editMode="EditMode.disable"
-              ></HInput>
-              <HInput
-              id="input3"
-              class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-success-pc"
-              style="margin-bottom: 5px;"
-              :inputType="InputType.date"
-              v-model="inputValue3"
-              ></HInput>
-          </HLayout>
-          <HInput
-          id="input4"
-          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-danger-pc"
-          style="margin-bottom: 5px;"
-          v-model="inputValue4"
-          inputType="number"
-          format="$$ #,###.##"
-          nullText="$$"
-          maxNumber="10000"
-          :editMode="EditMode.editable"
-          @input="onInput4"
-          ></HInput>
-          <HInput
-          id="input5"
-          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
-          style="margin-bottom: 5px;"
-          v-model="inputValue5"
-          inputType="mask"
-          format="AA999"
-          nullText="-"
-          :required="true"
-          :editMode="EditMode.disable"
-          placeholder="testtest"
-          ></HInput>
-          <HInput
-          id="input6"
-          class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
-          style="margin-bottom: 5px;"
-          v-model="inputValue6"
-          :inputType="InputType.password"
-          placeholder="testtest"
-          :editMode="EditMode.readonly"
-          maxLength="10"
-          ></HInput>
-      </HLayout>
-    </HInputGroup>
     <br><br>
     <HLayout>
         <HNote v-model="noteData1"
@@ -171,6 +200,36 @@
 </template>
 
 <script setup lang="ts">
+const textareaValue = ref('TEST')
+const checkboxValue = ref(true)
+const selectValue = ref('value2')
+const option1 = [
+  { text: 'text1', value: 'value1' },
+  { text: 'text2', value: 'value2' },
+  { text: 'text3', value: 'value3' },
+  { text: 'text4', value: 'value4' },
+  { text: 'text5', value: 'value5' },
+]
+let toggle = true
+const onClickCenterButton1 = (e: Event, button: HButtonMethods) => {
+  const checkbox = hison.vue.getInput('checkbox')
+  checkbox?.setEditMode(EditMode.disable)
+  const select = hison.vue.getInput('select')
+  select?.setEditMode(EditMode.disable)
+  toggle = !toggle
+  //console.log()
+}
+let invertColorToggle = true
+const onClickCenterButton2 = () => {
+  const checkbox = hison.vue.getInput('checkbox')
+  checkbox?.setEditMode(EditMode.readonly)
+  const select = hison.vue.getInput('select')
+  select?.setEditMode(EditMode.readonly)
+  console.log(select?.getText())
+  //hison.style.setInvertColor(invertColorToggle)
+  //invertColorToggle = !invertColorToggle
+}
+
 import type { ChartData, ChartOptions } from 'chart.js'
 
 const chartData1 = ref<ChartData>({
@@ -268,37 +327,6 @@ const chartOptions1 = ref<ChartOptions>({
 })
 
 
-let toggle = true
-const onClickCenterButton1 = (e: Event, button: HButtonMethods) => {
-  console.log(chartData2.value)
-  chartData2.value = {
-    labels: [
-      'X level',
-      'Y level',
-      'Z level'
-    ],
-    datasets: [{
-      label: 'My First Dataset',
-      data: [300, 50, 100],
-      backgroundColor: [
-        'rgb(255, 99, 132)',
-        'rgb(54, 162, 235)',
-        'rgb(255, 205, 86)'
-      ],
-      hoverOffset: 4
-    }]
-  }
-}
-let invertColorToggle = true
-const onClickCenterButton2 = () => {
-  const chart1 = hison.vue.getChart('chart1')!
-  console.log('chart1', chart1.data);
-  console.log('chart1', chart1.options);
-  console.log('chart1', chart1.resize);
-  chart1.setVisible(toggle)
-  toggle = !toggle
-  chart1.resize()
-}
 
 const noteData1 = ref<NoteData>()
 const noteData2 = ref<NoteData>()
