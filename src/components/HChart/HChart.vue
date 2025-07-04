@@ -15,7 +15,8 @@ import {
     onBeforeUnmount,
     watch,
     computed,
-    toRaw
+    toRaw,
+    nextTick
 } from 'vue'
 import {
     Chart,
@@ -82,6 +83,13 @@ export default defineComponent({
         }
 
         const mount = () => {
+            if (hisonCloser.component.chartList[id]) throw new Error(`[Hisonvue] chart id attribute was duplicated.`)
+            registerReloadable(reloadId, () => {
+                unmount()
+                nextTick(mount)
+            })
+            refreshResponsiveClassList()
+
             if (chartInstance.value) chartInstance.value.destroy()
             if (!canvasRef.value) return
 
@@ -98,30 +106,20 @@ export default defineComponent({
             hChartInstance.setVisible = (val: boolean) => { visible.value = val }
 
             hisonCloser.component.chartList[id] = hChartInstance
-
-            registerReloadable(reloadId, () => {
-                unmount()
-                mount()
-            })
-
             emit('mounted', hisonCloser.component.chartList[id])
         }
 
         const unmount = () => {
             unregisterReloadable(reloadId)
-            chartInstance.value?.destroy()
-            chartInstance.value = null
             delete hisonCloser.component.chartList[id]
+            if(chartInstance.value) {
+                chartInstance.value?.destroy()
+                chartInstance.value = null
+            }
         }
 
-        onMounted(() => {
-            refreshResponsiveClassList()
-            mount()
-        })
-
-        onBeforeUnmount(() => {
-            unmount()
-        })
+        onMounted(mount)
+        onBeforeUnmount(unmount)
 
         watch(device, () => {
             refreshResponsiveClassList()
