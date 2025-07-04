@@ -366,6 +366,13 @@
     accent-color: var(--hison-warning-buttonColor);
 }
 
+.hison-input-textarea {
+  resize: none;
+  height: 200px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 /* HInputGroup */
 .hison-data-group {
     all: unset;
