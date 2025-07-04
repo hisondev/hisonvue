@@ -836,7 +836,7 @@ export interface HInputMethods extends ComponentMethods {
   setFontUnderline(underline: boolean): void;
   /**
    * Returns whether the input value has been modified since initial load or last reset.
-   * - Modification is only tracked via user interactions (`onInput`, `onBlur`).
+   * - Modification is only tracked via user interactions (`onInput`, `onBlur`, `onChange`).
    * - This is used by parent components like `HInputGroup` to determine group-level state.
    */
   isModified(): boolean;
