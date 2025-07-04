@@ -1,31 +1,92 @@
 <!--
 1. checkbox, selector 만들기
+textarea(별도 요소(textarea))
+range(별도 요소)
+color(별도 요소)
+datetime-local(타입)
+time(타입)
+file(타입 - 별도 컴포넌트! fileSet)
 -->
 <template>
-  <input
-    ref="inputTextRef"
-    :id="`inputText_${id}`"
-    :name="`inputText_${id}`"
-    v-show="!editing"
+  <div
+  v-if="inputType === 'checkbox'"
+  :class="[
+    'hison-input',
+    'hison-input-checkbox-div',
+    ...responsiveClassList,
+    visibleClass,
+  ]"
+  :style="props.style"
+  >
+    <input
+      ref="inputRef"
+      :id="`input_${id}`"
+      :name="`input_${id}`"
+      type="checkbox"
+      :class="[
+        `hison-input-${inputType}`,
+        ...editModeClassList,
+        ...requiredClassList,
+      ]"
+      :disabled="disable"
+      :readonly="readonly"
+      :checked="modelValue === true"
+      :title="title || undefined"
+      @change="onCheckboxChange"
+      @focus="onFocus"
+      @blur="onBlur"
+      @keydown="onKeydown"
+
+      @click="$emit('click', $event, inputMethods)"
+      @dblclick="$emit('dblclick', $event, inputMethods)"
+      @mousedown="$emit('mousedown', $event, inputMethods)"
+      @mouseup="$emit('mouseup', $event, inputMethods)"
+      @mouseenter="$emit('mouseenter', $event, inputMethods)"
+      @mouseleave="$emit('mouseleave', $event, inputMethods)"
+      @mouseover="$emit('mouseover', $event, inputMethods)"
+      @mouseout="$emit('mouseout', $event, inputMethods)"
+
+      @pointerdown="$emit('pointerdown', $event, inputMethods)"
+      @pointerup="$emit('pointerup', $event, inputMethods)"
+      @pointermove="$emit('pointermove', $event, inputMethods)"
+      @pointerenter="$emit('pointerenter', $event, inputMethods)"
+      @pointerleave="$emit('pointerleave', $event, inputMethods)"
+
+      @touchstart="$emit('touchstart', $event, inputMethods)"
+      @touchend="$emit('touchend', $event, inputMethods)"
+      @touchmove="$emit('touchmove', $event, inputMethods)"
+      @touchcancel="$emit('touchcancel', $event, inputMethods)"
+
+      @contextmenu="$emit('contextmenu', $event, inputMethods)"
+    />
+  </div>
+
+  <select
+    v-else-if="inputType === 'select'"
+    ref="inputRef"
+    :id="`select_${id}`"
+    :name="`select_${id}`"
     :class="[
       'hison-input',
+      `hison-input-${inputType}`,
       ...responsiveClassList,
       visibleClass,
-      editModeClass,
-      requiredClass,
+      ...editModeClassList,
+      ...requiredClassList,
       fontBoldClass,
       fontItalicClass,
       fontThrulineClass,
       fontUnderlineClass,
     ]"
-    type="text"
-    :value="spanText"
     :style="props.style"
     :disabled="disable"
     :readonly="readonly"
     :title="title || undefined"
-    :placeholder="placeholder || undefined"
-    @focus="onTextInputFocus"
+    @change="onSelectChange"
+    @focus="onFocus"
+    @blur="onBlur"
+    @keydown="onKeydown"
+
     @click="$emit('click', $event, inputMethods)"
     @dblclick="$emit('dblclick', $event, inputMethods)"
     @mousedown="$emit('mousedown', $event, inputMethods)"
@@ -34,56 +95,142 @@
     @mouseleave="$emit('mouseleave', $event, inputMethods)"
     @mouseover="$emit('mouseover', $event, inputMethods)"
     @mouseout="$emit('mouseout', $event, inputMethods)"
-    @mousemove="$emit('mousemove', $event, inputMethods)"
 
     @pointerdown="$emit('pointerdown', $event, inputMethods)"
     @pointerup="$emit('pointerup', $event, inputMethods)"
     @pointermove="$emit('pointermove', $event, inputMethods)"
     @pointerenter="$emit('pointerenter', $event, inputMethods)"
     @pointerleave="$emit('pointerleave', $event, inputMethods)"
+
     @touchstart="$emit('touchstart', $event, inputMethods)"
     @touchend="$emit('touchend', $event, inputMethods)"
     @touchmove="$emit('touchmove', $event, inputMethods)"
     @touchcancel="$emit('touchcancel', $event, inputMethods)"
-  />
-  <input
-    v-show="editing"
+
+    @contextmenu="$emit('contextmenu', $event, inputMethods)"
+  >
+    <option
+      v-for="opt in props.options"
+      :key="opt.value"
+      :value="opt.value"
+    >{{ opt.text }}</option>
+  </select>
+
+  <!-- ✅ textarea: 항상 렌더링 -->
+  <textarea
+    v-else-if="inputType === 'textarea'"
     ref="inputRef"
     :id="`input_${id}`"
     :name="`input_${id}`"
     :class="[
       'hison-input',
+      `hison-input-${inputType}`,
       ...responsiveClassList,
       visibleClass,
-      editModeClass,
+      ...editModeClassList,
+      ...requiredClassList,
+      fontBoldClass,
+      fontItalicClass,
+      fontThrulineClass,
+      fontUnderlineClass,
     ]"
-    :value="inputValue"
     :style="props.style"
     :disabled="disable"
     :readonly="readonly"
-    :type="inputType"
-    :title="title || undefined"
     :placeholder="placeholder || undefined"
-    :max="maxNumber || undefined"
-    :min="minNumber || undefined"
+    :title="title || undefined"
+    :maxlength="maxLength || undefined"
+    @input="onInput"
     @focus="onFocus"
     @blur="onBlur"
-    @input="onInput"
-    @compositionstart="$emit('compositionstart', $event, inputMethods)"
-    @compositionupdate="$emit('compositionupdate', $event, inputMethods)"
-    @compositionend="$emit('compositionend', $event, inputMethods)"
-    @keydown="$emit('keydown', $event, inputMethods)"
-    @keyup="$emit('keyup', $event, inputMethods)"
-    @dragstart="$emit('dragstart', $event, inputMethods)"
-    @dragend="$emit('dragend', $event, inputMethods)"
-    @drag="$emit('drag', $event, inputMethods)"
-    @drop="$emit('drop', $event, inputMethods)"
-    @copy="$emit('copy', $event, inputMethods)"
-    @cut="$emit('cut', $event, inputMethods)"
-    @paste="$emit('paste', $event, inputMethods)"
-    @wheel="$emit('wheel', $event, inputMethods)"
-    @contextmenu="$emit('contextmenu', $event, inputMethods)"
-  />
+  >{{ modelValue }}</textarea>
+
+  <template v-else>
+    <input
+      ref="inputTextRef"
+      :id="`inputText_${id}`"
+      :name="`inputText_${id}`"
+      v-show="!editing"
+      :class="[
+        'hison-input',
+        `hison-input-text-${inputType}`,
+        ...responsiveClassList,
+        visibleClass,
+        ...editModeClassList,
+        ...requiredClassList,
+        fontBoldClass,
+        fontItalicClass,
+        fontThrulineClass,
+        fontUnderlineClass,
+      ]"
+      type="text"
+      :value="spanText"
+      :style="props.style"
+      :disabled="disable"
+      :readonly="readonly"
+      :title="title || undefined"
+      :placeholder="placeholder || undefined"
+      @focus="onTextInputFocus"
+      @click="$emit('click', $event, inputMethods)"
+      @dblclick="$emit('dblclick', $event, inputMethods)"
+      @mousedown="$emit('mousedown', $event, inputMethods)"
+      @mouseup="$emit('mouseup', $event, inputMethods)"
+      @mouseenter="$emit('mouseenter', $event, inputMethods)"
+      @mouseleave="$emit('mouseleave', $event, inputMethods)"
+      @mouseover="$emit('mouseover', $event, inputMethods)"
+      @mouseout="$emit('mouseout', $event, inputMethods)"
+      @mousemove="$emit('mousemove', $event, inputMethods)"
+  
+      @pointerdown="$emit('pointerdown', $event, inputMethods)"
+      @pointerup="$emit('pointerup', $event, inputMethods)"
+      @pointermove="$emit('pointermove', $event, inputMethods)"
+      @pointerenter="$emit('pointerenter', $event, inputMethods)"
+      @pointerleave="$emit('pointerleave', $event, inputMethods)"
+      @touchstart="$emit('touchstart', $event, inputMethods)"
+      @touchend="$emit('touchend', $event, inputMethods)"
+      @touchmove="$emit('touchmove', $event, inputMethods)"
+      @touchcancel="$emit('touchcancel', $event, inputMethods)"
+    />
+    <input
+      v-show="editing"
+      ref="inputRef"
+      :id="`input_${id}`"
+      :name="`input_${id}`"
+      :class="[
+        'hison-input',
+        `hison-input-${inputType}`,
+        ...responsiveClassList,
+        visibleClass,
+        ...editModeClassList,
+      ]"
+      :value="inputValue"
+      :style="props.style"
+      :disabled="disable"
+      :readonly="readonly"
+      :type="inputType"
+      :title="title || undefined"
+      :placeholder="placeholder || undefined"
+      :max="maxNumber || undefined"
+      :min="minNumber || undefined"
+      @focus="onFocus"
+      @blur="onBlur"
+      @input="onInput"
+      @compositionstart="$emit('compositionstart', $event, inputMethods)"
+      @compositionupdate="$emit('compositionupdate', $event, inputMethods)"
+      @compositionend="$emit('compositionend', $event, inputMethods)"
+      @keydown="$emit('keydown', $event, inputMethods)"
+      @keyup="$emit('keyup', $event, inputMethods)"
+      @dragstart="$emit('dragstart', $event, inputMethods)"
+      @dragend="$emit('dragend', $event, inputMethods)"
+      @drag="$emit('drag', $event, inputMethods)"
+      @drop="$emit('drop', $event, inputMethods)"
+      @copy="$emit('copy', $event, inputMethods)"
+      @cut="$emit('cut', $event, inputMethods)"
+      @paste="$emit('paste', $event, inputMethods)"
+      @wheel="$emit('wheel', $event, inputMethods)"
+      @contextmenu="$emit('contextmenu', $event, inputMethods)"
+    />
+  </template>
 </template>
 
 <script lang="ts">
@@ -145,7 +292,7 @@ export default defineComponent({
     'contextmenu',
   ],
   setup(props, { emit }) {
-    const inputRef = ref<HTMLInputElement | null>(null)
+    const inputRef = ref<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null>(null)
     const inputTextRef = ref<HTMLInputElement | null>(null)
     const inputMethods = ref<HInputMethods | null>(null)
     const id = props.id ? props.id : getUUID()
@@ -160,6 +307,31 @@ export default defineComponent({
     }
 
     const inputType = ref(props.inputType ?? InputType.text)
+    const inputExpressionType = computed(() => {
+      switch (inputType.value) {
+        case InputType.checkbox:
+          return 'checkbox'
+        case InputType.select:
+          return 'select'
+        case InputType.range:
+          return 'range'
+        case InputType.color:
+          return 'color'
+        default:
+          return 'text'
+      }
+    })
+    const inputAttrType = computed(() => {
+      switch (inputType.value) {
+        case InputType.mask:
+        case InputType.digit:
+          return 'text'
+        default:
+          return inputType.value
+      }
+    })
+
+
     const format = ref(props.format ?? null)
     const maxNumber = ref(hison.utils.isNumeric(props.maxNumber) ? Number(props.maxNumber) : null)
     const minNumber = ref(hison.utils.isNumeric(props.minNumber) ? Number(props.minNumber) : null)
@@ -216,15 +388,6 @@ export default defineComponent({
     const oldValue = ref(null)
     const visible = ref(props.visible)
     const title = ref(props.title ?? '')
-    const inputAttrType = computed(() => {
-      switch (inputType.value) {
-        case InputType.mask:
-        case InputType.digit:
-          return 'text'
-        default:
-          return inputType.value
-      }
-    })
     const nullText = ref(props.nullText ?? '')
     const editMode = ref(props.editMode)
     const disable = computed(() => {
@@ -235,12 +398,14 @@ export default defineComponent({
       if(editMode.value === EditMode.readonly) return true
       return false
     })
-    const editModeClass = computed(() => {
-      if(editMode.value !== EditMode.editable) return `hison-input-${editMode.value}`
+    const editModeClassList = computed(() => {
+      if(editMode.value !== EditMode.editable) return [`hison-input-${editMode.value}`, `hison-input-${inputExpressionType.value}-${editMode.value}`]
+      else return []
     })
     const required = ref(props.required)
-    const requiredClass = computed(()=>{
-      if(required.value) return 'hison-input-required'
+    const requiredClassList = computed(()=>{
+      if(required.value) return [`hison-input-required`, `hison-input-${inputExpressionType.value}-required`]
+      else return []
     })
     const placeholder = ref(props.placeholder ?? '')
     const fontBold = ref(props.fontBold)
@@ -285,6 +450,14 @@ export default defineComponent({
           case InputType.month:
             text = hison.utils.getDateWithFormat(value, format.value ?? hison.getYearMonthFormat())
             break;
+          case InputType.checkbox:
+            text = modelValue.value ? props.checkedText : props.uncheckedText
+            break;
+          case InputType.select:
+            const selectEl = inputRef.value as HTMLSelectElement
+            const selectedIndex = selectEl.selectedIndex
+            text = selectedIndex >= 0 ? selectEl.options[selectedIndex].text : ''
+            break;
         }
       } catch (e) {
         console.warn('[HInput] Failed to format value', value, e)
@@ -321,19 +494,57 @@ export default defineComponent({
       emit('focus', e, inputMethods.value)
     }
     const onBlur = (e: Event) => {
-      editing.value = false
-      updateValue(modelValue.value, true, true)
       if(oldValue.value !== modelValue.value) {
+        updateValue(modelValue.value, true, true)
         isModified.value = true
         notifyInputGroupStatus?.()
       }
+      editing.value = false
       emit('blur', e, inputMethods.value)
     }
     const updateValue = (value: any, doComputeValue = true, doCallChangeEmit = false) => {
       if(doComputeValue) modelValue.value = computeValue(value)
+      else modelValue.value = value
       inputRef.value!.value = modelValue.value
       spanText.value = computeSpanText(modelValue.value)
+
+      switch (inputType.value) {
+        case InputType.checkbox:
+          (inputRef.value as HTMLInputElement).checked = modelValue.value
+          break;
+      
+        default:
+          break;
+      }
+
       if(doCallChangeEmit) emit('change', oldValue.value, modelValue.value, inputMethods.value)
+    }
+
+    const onCheckboxChange = (e: Event) => {
+      console.log('### onCheckboxChange')
+      const target = e.target as HTMLInputElement
+      updateValue(target.checked, false, true)
+
+      isModified.value = true
+      notifyInputGroupStatus?.()
+    }
+    const onSelectChange = (e: Event) => {
+      console.log('### onSelectChange')
+      const target = e.target as HTMLSelectElement
+      console.log('target.value',target.value)
+      updateValue(target.value, false, true)
+
+      isModified.value = true
+      notifyInputGroupStatus?.()
+    }
+    const onKeydown = (e: KeyboardEvent) => {
+      console.log('### onKeydown')
+      if (readonly.value && (e.code === 'Space' || e.code === 'Enter')) {
+        e.preventDefault()
+        e.stopPropagation()
+        return
+      }
+      emit('keydown', e, inputMethods.value)
     }
 
     const mount = () => {
@@ -346,7 +557,11 @@ export default defineComponent({
 
       refleshResponsiveClassList()
       if(inputTextRef.value) addInputTextCssEvent(inputTextRef.value)
-      addInputCssEvent(inputRef.value)
+      if(inputType.value !== InputType.checkbox
+        && inputType.value !== InputType.range
+        && inputType.value !== InputType.color
+      ) addInputCssEvent(inputRef.value!)
+
       updateValue(modelValue.value, false)
       inputMethods.value = {
         getId : () => id,
@@ -430,7 +645,10 @@ export default defineComponent({
         setFontUnderline : (val: boolean) => { fontUnderline.value = val },
         isModified : () => { return isModified.value },
         setModified : (val: boolean) => { isModified.value = val},
-        focus : () => { inputTextRef.value?.focus() }
+        focus : () => {
+          if(inputTextRef.value) inputTextRef.value.focus()
+          else inputRef.value?.focus()
+        }
       }
       if (registerToInputGroup) {
         registerToInputGroup(id)
@@ -442,7 +660,10 @@ export default defineComponent({
     const unmount = () => {
       unregisterReloadable(reloadId)
       delete hisonCloser.component.inputList[id]
-      if(inputRef.value) removeInputCssEvent(inputRef.value)
+      if(inputType.value !== InputType.checkbox
+        && inputType.value !== InputType.range
+        && inputType.value !== InputType.color
+      ) removeInputCssEvent(inputRef.value!)
       if(inputTextRef.value) removeInputTextCssEvent(inputTextRef.value)
     }
 
@@ -468,8 +689,8 @@ export default defineComponent({
         id,
         responsiveClassList,
         visibleClass,
-        editModeClass,
-        requiredClass,
+        editModeClassList,
+        requiredClassList,
         fontBoldClass,
         fontItalicClass,
         fontThrulineClass,
@@ -477,6 +698,7 @@ export default defineComponent({
         disable,
         readonly,
         inputType,
+        inputExpressionType,
         inputAttrType,
         title,
         placeholder,
@@ -487,6 +709,9 @@ export default defineComponent({
         onTextInputFocus,
         onFocus,
         onBlur,
+        onCheckboxChange,
+        onSelectChange,
+        onKeydown,
     }
   }
 })
