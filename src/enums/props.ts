@@ -12,6 +12,12 @@ export enum InputType {
     month = 'month',
     email = 'email',
     password = 'password',
+
+    checkbox = 'checkbox',
+    select = 'select',
+    textarea = 'textarea',
+    range = 'range',
+    color = 'color',
 }
 
 export enum EditMode {
