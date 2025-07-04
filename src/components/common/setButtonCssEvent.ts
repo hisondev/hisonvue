@@ -30,8 +30,9 @@ const onClick = (e: MouseEvent) => {
     }
     target.classList.add(getColorClass(target, 'button', 'on-active'))
     setTimeout(() => {
-      target.classList.remove(getColorClass(target, 'button', 'on-active'))
-      hisonCloser.event.cssEvent.button_onAfterClick(e)
+        target.classList.remove(getColorClass(target, 'button', 'on-active'))
+        target.classList.remove(getColorClass(target, 'button', 'on-focus'))
+        hisonCloser.event.cssEvent.button_onAfterClick(e)
     }, 100)
 }
 const onMouseover = (e: MouseEvent) => {
