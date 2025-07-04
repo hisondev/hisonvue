@@ -1,25 +1,25 @@
 import { hisonCloser } from "../.."
 import { getColorClass } from "../../utils"
 
-const onFocus = (e: FocusEvent) => {
-    const target = e.currentTarget as HTMLInputElement
-    if (hisonCloser.event.cssEvent.input_onBeforeFocus(e) === false) {
+const onFocus = (e: Event) => {
+    const target = e.currentTarget as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    if (hisonCloser.event.cssEvent.input_onBeforeFocus(e as FocusEvent) === false) {
         e.stopPropagation()
         e.preventDefault()
         return
     }
     target.classList.add(getColorClass(target, 'input', 'on-active'))
-    hisonCloser.event.cssEvent.input_onAfterFocus(e)
+    hisonCloser.event.cssEvent.input_onAfterFocus(e as FocusEvent)
 }
-const onBlur = (e: FocusEvent) => {
-    const target = e.currentTarget as HTMLInputElement
-    if (hisonCloser.event.cssEvent.input_onBeforeBlur(e) === false) {
+const onBlur = (e: Event) => {
+    const target = e.currentTarget as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    if (hisonCloser.event.cssEvent.input_onBeforeBlur(e as FocusEvent) === false) {
         e.stopPropagation()
         e.preventDefault()
         return
     }
     target.classList.remove(getColorClass(target, 'input', 'on-active'))
-    hisonCloser.event.cssEvent.input_onAfterBlur(e)
+    hisonCloser.event.cssEvent.input_onAfterBlur(e as FocusEvent)
 }
 const onMouseover = (e: MouseEvent) => {
     const target = e.currentTarget as HTMLInputElement
@@ -78,11 +78,11 @@ export const removeInputTextCssEvent = (el: HTMLInputElement) => {
     el.removeEventListener('touchstart', onTouchstart)
     el.removeEventListener('touchend', onTouchend)
 }
-export const addInputCssEvent = (el: HTMLInputElement) => {
+export const addInputCssEvent = (el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => {
     el.addEventListener('focus', onFocus)
     el.addEventListener('blur', onBlur)
 }
-export const removeInputCssEvent = (el: HTMLInputElement) => {
+export const removeInputCssEvent = (el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => {
     el.removeEventListener('focus', onFocus)
     el.removeEventListener('blur', onBlur)
 }
