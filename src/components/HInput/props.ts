@@ -10,10 +10,17 @@ export const inputProps = {
     id: { type: String, required: false },
     /**
      * Bound value for the input field.
-     * - This is controlled via `v-model`
-     * - Internally processed and formatted based on `type` and `format`
+     * - Controlled via `v-model`
+     * - Supports multiple types depending on `inputType`:
+     *    - `text`, `email`, `mask`, `digit` → `string`
+     *    - `number` → `number`
+     *    - `checkbox` → `boolean`
+     *    - `select` → `string | number | boolean`
+     *    - `date`, `month` → `string` or `Date`
+     *    - `textarea` → `string`
+     * - Internally processed and formatted based on `inputType` and `format`
      */
-    modelValue: { type: String, required: false },
+    modelValue: { type: [String, Number, Boolean, Object, Array, Date] as PropType<any>, required: false, default: null },
     /**
      * Custom class string applied to the input container.
      * - Supports responsive classes like `hison-col-*`, `hison-pos-*`, `hison-size-*`
@@ -53,7 +60,7 @@ export const inputProps = {
      * Placeholder text to show when value is null or empty.
      * - Used as a display fallback in span mode
      */
-    nullText: { type: String, required: false },
+    nullText: { type: String, required: false, default: '' },
     /**
      * Maximum numeric value.
      * - Only applicable when `type` is `'number'`
@@ -124,4 +131,21 @@ export const inputProps = {
      * - Adds `hison-font-underline` class when enabled
      */
     fontUnderline: { type: Boolean, required: false, default: false },
+
+    /**
+     * For select input type.
+     * - Used to populate dropdown options.
+     */
+    options: {
+        type: Array as PropType<{ text: string; value: any }[]>,
+        required: false,
+        default: () => [],
+    },
+
+    checkedText: { type: String, required: false, default: 'Y' },
+    uncheckedText: { type: String, required: false, default: 'N' },
+
+
+
+
 }
