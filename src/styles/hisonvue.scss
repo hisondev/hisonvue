@@ -112,61 +112,61 @@
 }
 /* Button Css Event */
 .hison-color-primary-button-on-focus {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-primary-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-primary-shadowColor) !important;
 }
 .hison-color-primary-button-on-active {
     background-color: var(--hison-primary-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-primary-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-primary-shadowColor) !important;
 }
 .hison-color-primary-button-on-mouseover {
     background-color: var(--hison-primary-hoverColor) !important;
 }
 .hison-color-muted-button-on-focus {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-muted-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-muted-shadowColor) !important;
 }
 .hison-color-muted-button-on-active {
     background-color: var(--hison-muted-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-muted-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-muted-shadowColor) !important;
 }
 .hison-color-muted-button-on-mouseover {
     background-color: var(--hison-muted-hoverColor) !important;
 }
 .hison-color-info-button-on-focus {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-info-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-info-shadowColor) !important;
 }
 .hison-color-info-button-on-active {
     background-color: var(--hison-info-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-info-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-info-shadowColor) !important;
 }
 .hison-color-info-button-on-mouseover {
     background-color: var(--hison-info-hoverColor) !important;
 }
 .hison-color-success-button-on-focus {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-success-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-success-shadowColor) !important;
 }
 .hison-color-success-button-on-active {
     background-color: var(--hison-success-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-success-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-success-shadowColor) !important;
 }
 .hison-color-success-button-on-mouseover {
     background-color: var(--hison-success-hoverColor) !important;
 }
 .hison-color-danger-button-on-focus {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-danger-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-danger-shadowColor) !important;
 }
 .hison-color-danger-button-on-active {
     background-color: var(--hison-danger-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-danger-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-danger-shadowColor) !important;
 }
 .hison-color-danger-button-on-mouseover {
     background-color: var(--hison-danger-hoverColor) !important;
 }
 .hison-color-warning-button-on-focus {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-warning-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-warning-shadowColor) !important;
 }
 .hison-color-warning-button-on-active {
     background-color: var(--hison-warning-activeColor) !important;
-    box-shadow: 0.25px 0.25px 0.25px 0.25px var(--hison-warning-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-warning-shadowColor) !important;
 }
 .hison-color-warning-button-on-mouseover {
     background-color: var(--hison-warning-hoverColor) !important;
@@ -203,14 +203,28 @@
 }
 .hison-input-disable {
     opacity: 0.5;
-    cursor: not-allowed;
+    cursor: not-allowed !important;
 }
 .hison-input-disable * {
     pointer-events: none;
     user-select: none;
     outline: none;
 }
-.hison-input-readonly { box-shadow: none !important; }
+.hison-input-readonly {
+    box-shadow: none !important;
+}
+.hison-input-select-readonly {
+    pointer-events: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+}
+.hison-input-checkbox-readonly {
+    pointer-events: none;
+    outline: none;
+}
+
 .hison-input:hover,
 .hison-input:focus,
 .hison-input:active {
@@ -264,40 +278,92 @@
 }
 /* Input Css Event */
 .hison-color-primary-input-on-active {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-primary-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-primary-shadowColor)
 }
 .hison-color-primary-input-on-mouseover {
-    box-shadow: 1px 1px 3px 1px var(--hison-primary-shadowColor) !important;
+    box-shadow: 0.5px 0.5px 2px 0.5px var(--hison-primary-shadowColor)
 }
 .hison-color-muted-input-on-active {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-muted-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-muted-shadowColor)
 }
 .hison-color-muted-input-on-mouseover {
-    box-shadow: 1px 1px 3px 1px var(--hison-muted-shadowColor) !important;
+    box-shadow: 0.5px 0.5px 2px 0.5px var(--hison-muted-shadowColor)
 }
 .hison-color-info-input-on-active {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-info-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-info-shadowColor)
 }
 .hison-color-info-input-on-mouseover {
-    box-shadow: 1px 1px 3px 1px var(--hison-info-shadowColor) !important;
+    box-shadow: 0.5px 0.5px 2px 0.5px var(--hison-info-shadowColor)
 }
 .hison-color-success-input-on-active {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-success-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-success-shadowColor)
 }
 .hison-color-success-input-on-mouseover {
-    box-shadow: 1px 1px 3px 1px var(--hison-success-shadowColor) !important;
+    box-shadow: 0.5px 0.5px 2px 0.5px var(--hison-success-shadowColor)
 }
 .hison-color-danger-input-on-active {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-danger-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-danger-shadowColor)
 }
 .hison-color-danger-input-on-mouseover {
-    box-shadow: 1px 1px 3px 1px var(--hison-danger-shadowColor) !important;
+    box-shadow: 0.5px 0.5px 2px 0.5px var(--hison-danger-shadowColor)
 }
 .hison-color-warning-input-on-active {
-    box-shadow: 1.5px 1.5px 3px 1.5px var(--hison-warning-shadowColor) !important;
+    box-shadow: 1px 1px 2px 1px var(--hison-warning-shadowColor)
 }
 .hison-color-warning-input-on-mouseover {
-    box-shadow: 1px 1px 3px 1px var(--hison-warning-shadowColor) !important;
+    box-shadow: 0.5px 0.5px 2px 0.5px var(--hison-warning-shadowColor)
+}
+
+.hison-input-checkbox-div {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: none !important;
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
+}
+.hison-size-s-input input[type="checkbox"]:focus {
+    outline: none;
+    transform: scale(1.2);
+}
+.hison-size-m-input input[type="checkbox"] { transform: scale(1.2); }
+.hison-size-m-input input[type="checkbox"]:focus {
+    outline: none;
+    transform: scale(1.4);
+}
+.hison-size-l-input input[type="checkbox"] { transform: scale(1.4); }
+.hison-size-l-input input[type="checkbox"]:focus {
+    outline: none;
+    transform: scale(1.6);
+}
+.hison-size-xl-input input[type="checkbox"] { transform: scale(1.6); }
+.hison-size-xl-input input[type="checkbox"]:focus {
+    outline: none;
+    transform: scale(1.8);
+}
+.hison-color-primary-input input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: var(--hison-primary-buttonColor);
+}
+.hison-color-muted-input input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: var(--hison-muted-buttonColor);
+}
+.hison-color-info-input input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: var(--hison-info-buttonColor);
+}
+.hison-color-success-input input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: var(--hison-success-buttonColor);
+}
+.hison-color-danger-input input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: var(--hison-danger-buttonColor);
+}
+.hison-color-warning-input input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: var(--hison-warning-buttonColor);
 }
 
 /* HInputGroup */
@@ -313,10 +379,17 @@
     display: inline-flex;
     flex-wrap: wrap;
     justify-content: flex-start;
+    padding: 2px;
 }
 .hison-layout > * {
-  margin: 0;
+    margin: 0;
 }
+
+/* HChart */
+.hison-chart {
+    background-color: var(--hison-emptyColor);
+}
+
 /* 수평 정렬 클래스 */
 .hison-pos-left { margin-right: auto; }
 .hison-pos-center { margin-left: auto; margin-right: auto; }
