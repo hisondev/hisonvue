@@ -1,6 +1,3 @@
-<!--
-inputGroup과 hison.data.dataModel을 연결???
--->
 <template>
   <div
     ref="inputGroupRef"
@@ -11,12 +8,12 @@ inputGroup과 hison.data.dataModel을 연결???
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, onBeforeUnmount, watch, provide } from 'vue'
-import type { HInputGroupMethods, HInputMethods } from '../../types'
-import { hisonCloser, EditMode, DataStatus, hison, InputType } from '../..'
-import { getUUID, registerReloadable, unregisterReloadable } from '../../utils'
+import { defineComponent, ref, onMounted, onBeforeUnmount, provide, watch } from 'vue'
+import type { HInputGroupMethods } from '../../types'
+import { hisonCloser, EditMode, DataStatus, hison } from '../..'
+import { getUUID, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
 import { inputGroupProps } from './props'
-import { InterfaceDataModel, InterfaceDataWrapper } from 'hisonjs'
+import { InterfaceDataModel } from 'hisonjs'
 
 export default defineComponent({
   name: 'HInputGroup',
@@ -39,10 +36,20 @@ export default defineComponent({
       if (!ownedInputIds.value.includes(inputId)) {
         ownedInputIds.value.push(inputId)
         ownedInputIds.value.sort((a, b) => a.localeCompare(b));
+
+        const model = props.modelValue ?? {}
+        if (model && Object.prototype.hasOwnProperty.call(model, inputId)) {
+          hison.vue.getInput(inputId)?.setValue?.(model[inputId])
+        }
       }
     })
-    provide('notifyInputGroupStatus', () => {
+    provide('notifyInputGroupStatus', (inputId: string, newVal: any) => {
       if (status.value !== DataStatus.U) status.value = DataStatus.U
+      const updated = {
+        ...props.modelValue,
+        [inputId]: newVal,
+      }
+      emit('update:modelValue', updated)
     })
 
     const _getDataObject = () => {
@@ -53,6 +60,16 @@ export default defineComponent({
         if(input )obj[key] = input.getValue()
       })
       return obj
+    }
+    const _setDataObject = (dataObject: Record<string, any>) => {
+      if (!dataObject || typeof dataObject !== 'object') return
+      Object.keys(dataObject).forEach((key) => {
+        if (ownedInputIds.value.includes(key)) {
+          const value = dataObject[key]
+          const input = hison.vue.getInput(key)
+          if (input) input.setValue(value)
+        }
+      })
     }
 
     const mount = () => {
@@ -76,45 +93,23 @@ export default defineComponent({
           }
         },
         getDataModel : () => { return new hison.data.DataModel(_getDataObject()) },
-        getDataWrapper : () => { return new hison.data.DataWrapper(_getDataObject()) },
+        setDataModel : <T extends Record<string, any>>(dataModel: InterfaceDataModel<T>) => {
+          if(dataModel.getRowCount() > 0) return _setDataObject(dataModel.getRow(0))
+        },
         getDataObject : () => {
           return _getDataObject()
         },
-        load : (data: Record<string, any> | InterfaceDataModel | InterfaceDataWrapper, autoSetStatus = true) => {
+        setDataObject : (dataObject: Record<string, any>) => {
+          return _setDataObject(dataObject)
+        },
+        load : <T extends Record<string, any>>(data: Record<string, any> | InterfaceDataModel<T>) => {
           if (data && (data as InterfaceDataModel).getIsDataModel && (data as InterfaceDataModel).getIsDataModel()) {
             const dataModel: InterfaceDataModel = data as InterfaceDataModel
             if(dataModel.getColumnCount() === 0 || dataModel.getRowCount() === 0) return
-            const keySet = dataModel.getColumns()
-            keySet.forEach((key: string) => {
-              if(ownedInputIds.value.includes(key)) {
-                const value = dataModel.getValue(0, key)
-                const input = hison.vue.getInput(key)
-                if(input) input.setValue(value)
-              }
-            })
-          } else if (data && (data as InterfaceDataWrapper).getIsDataWrapper && (data as InterfaceDataWrapper).getIsDataWrapper()) {
-            const dataWrapper: InterfaceDataWrapper = data as InterfaceDataWrapper
-            const keySet = dataWrapper.keys()
-            keySet.forEach((key: string) => {
-              if(ownedInputIds.value.includes(key)) {
-                const value = dataWrapper.get(key)
-                const input = hison.vue.getInput(key)
-                if(input) input.setValue(value)
-              }
-            })
+            _setDataObject(dataModel.getRow(0))
           } else if (data && typeof data === 'object') {
             const dataObject: Record<string, any> = data
-            const keySet = Object.keys(data)
-            keySet.forEach((key) => {
-              if(ownedInputIds.value.includes(key)) {
-                const value = dataObject[key]
-                const input = hison.vue.getInput(key)
-                if(input) input.setValue(value)
-              }
-            })
-          }
-          if (autoSetStatus) {
-            status.value = DataStatus.R
+            _setDataObject(dataObject)
           }
         },
         getStatus : () => { return status.value },
@@ -149,15 +144,16 @@ export default defineComponent({
             if(input) input.setEditMode(val)
           })
         },
-        focus : () => {
+        focus : (inputId?: string) => {
+          if (inputId) return hison.vue.getInput(inputId)?.focus()
           for (const inputId of ownedInputIds.value) {
             const input = hison.vue.getInput(inputId)
             if(input && input.getEditMode() === EditMode.editable) {
-              input.focus()
-              return
+              return input.focus()
             }
           }
-        }
+        },
+        reload: () => reloadHisonComponent(reloadId)
       }
       hisonCloser.component.inputGroupList[id] = inputGroupMethods.value
       emit('mounted', inputGroupMethods.value)
@@ -170,6 +166,10 @@ export default defineComponent({
 
     onMounted(mount)
     onBeforeUnmount(unmount)
+
+    watch(() => props.modelValue, (newVal) => {
+      _setDataObject(newVal)
+    }, { deep: true })
 
     return {
       inputGroupRef,
