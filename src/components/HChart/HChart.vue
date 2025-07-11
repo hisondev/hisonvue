@@ -25,7 +25,7 @@ import {
     type ChartOptions
 } from 'chart.js'
 import { chartProps } from './props'
-import { getUUID, extractResponsiveClasses, registerReloadable, unregisterReloadable, getIndexSpecificClassNameFromClassList, addComponentNameToClass, getSpecificClassValueFromClassList, getRGBAFromColorText, deepMerge } from '../../utils'
+import { getUUID, extractResponsiveClasses, registerReloadable, unregisterReloadable, getIndexSpecificClassNameFromClassList, getRGBAFromColorText, reloadHisonComponent } from '../../utils'
 import { useDevice } from '../../core'
 import { HChartInstance, hisonCloser } from '../..'
 
@@ -104,6 +104,7 @@ export default defineComponent({
             hChartInstance.getType = () => 'chart'
             hChartInstance.isVisible = () => visible.value
             hChartInstance.setVisible = (val: boolean) => { visible.value = val }
+            hChartInstance.reload = () => reloadHisonComponent(reloadId)
 
             hisonCloser.component.chartList[id] = hChartInstance
             emit('mounted', hisonCloser.component.chartList[id])
