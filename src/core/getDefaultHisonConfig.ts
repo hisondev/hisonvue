@@ -96,8 +96,8 @@ export const getDefaultHisonConfig = () => {
   const hisonConfig: HisonConfig = {
     //utils
     dateFormat : DateFormat['yyyy-MM-dd'],
-    timeFormat : TimeFormat['hh:mm:ss'],
-    datetimeFormat : DateTimeFormat['yyyy-MM-dd hh:mm:ss'],
+    timeFormat : TimeFormat['HH:mm:ss'],
+    datetimeFormat : DateTimeFormat['yyyy-MM-dd HH:mm:ss'],
     yearFormat : YearFormat.yyyy,
     monthFormat : MonthFormat.M,
     yearMonthFormat : YearMonthFormat['yyyy-MM'],
