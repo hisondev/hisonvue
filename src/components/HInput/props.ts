@@ -131,21 +131,71 @@ export const inputProps = {
      * - Adds `hison-font-underline` class when enabled
      */
     fontUnderline: { type: Boolean, required: false, default: false },
-
     /**
-     * For select input type.
-     * - Used to populate dropdown options.
+     * List of selectable options for `inputType: 'select'`.
+     * - Each option should be an object with `text` (label shown to the user) and `value` (actual value to bind).
+     * - Used only when `inputType === 'select'`.
+     * example
+     * options: [
+     *   { text: 'Active', value: 'A' },
+     *   { text: 'Inactive', value: 'I' }
+     * ]
      */
     options: {
         type: Array as PropType<{ text: string; value: any }[]>,
         required: false,
         default: () => [],
     },
-
+    /**
+     * Output value when checkbox is checked (used in display mode).
+     * - Used only when `inputType === 'checkbox'`.
+     * - Affects the display text returned by `getText()` and the span view when not editing.
+     */
     checkedText: { type: String, required: false, default: 'Y' },
+    /**
+     * Output value when checkbox is unchecked (used in display mode).
+     * - Used only when `inputType === 'checkbox'`.
+     * - Affects the display text returned by `getText()` and the span view when not editing.
+     */
     uncheckedText: { type: String, required: false, default: 'N' },
-
-
-
-
+    /**
+     * Custom formatter function for display text (span text) of the input component.
+     *
+     * It overrides the default formatting logic based on `inputType`, allowing full control
+     * over the rendered text content of the input.
+     *
+     * If this prop is provided, it takes priority over any built-in format logic
+     * such as number/date formatting, checkbox label mapping, or select label resolution.
+     *
+     * @example
+     * // 1. Formatting numbers as currency
+     * <HInput
+     *   v-model="form.price"
+     *   inputTextdHandler={(val) => `$${Number(val).toLocaleString()}`}
+     * />
+     * // modelValue = 1200 => "$1,200"
+     *
+     * @example
+     * // 2. Showing 'Yes' or 'No' instead of true/false
+     * <HInput
+     *   v-model="form.enabled"
+     *   inputType="checkbox"
+     *   inputTextdHandler={(val) => val ? 'Yes' : 'No'}
+     * />
+     * // modelValue = true => "Yes"
+     *
+     * @example
+     * // 3. Applying custom date formatting
+     * <HInput
+     *   v-model="form.hireDate"
+     *   inputType="date"
+     *   inputTextdHandler={(val) => dayjs(val).format('MMMM D, YYYY')}
+     * />
+     * // modelValue = '2025-07-03' => "July 3, 2025"
+     *
+     * @remarks
+     * This only affects the `spanText` used in display mode. It does **not** modify the actual value
+     * bound via `v-model`, nor the value shown in the actual input box when in editing mode.
+     */
+    inputTextdHandler: { type: Function as PropType<(value: any) => string>, default: undefined },
 }
