@@ -3,6 +3,7 @@ import type {
   HLayout,
   HNote,
   HGrid,
+  HFileSet,
   HInput,
   HInputGroup,
   HCalendar,
@@ -24,8 +25,9 @@ declare module 'vue' {
      * - Dynamic visibility and disabled state (`visible`, `disable` props)
      * - Runtime method control (`setText`, `setDisable`, `setVisible`, etc.)
      * - Supports both slot-based and `text` prop-based content:
-     *   - If slot is present, it overrides `text`
+     *   - If default slot is present, it overrides `text`
      *   - Otherwise, `text` is rendered inside the button
+     * - Optional `#icon` slot allows prepending a custom icon or element before the text
      * - Tooltip support via `title` prop and dynamic `setTitle` method
      * - Automatically emits full runtime method object on DOM events (e.g. `@click="(_, btn) => btn.setDisable(true)"`)
      * - Device-aware responsive reload (`@responsive-change`)
@@ -36,21 +38,27 @@ declare module 'vue' {
      *
      * ### ⚙️ Usage
      * ```vue
+     * <!-- Text-based button -->
      * <HButton
      *   id="btn01"
      *   class="hison-col-6 hison-color-primary"
      *   text="Click Me"
      *   title="Tooltip text"
-     *   disable="false"
-     *   visible="true"
+     *   :disable="false"
+     *   :visible="true"
      *   @click="(_, btn) => btn.setDisable(true)"
-     *   @mounted="btn => console.log(btn.getId())"
      * />
-     * ```
-     * Or with slot:
-     * ```vue
+     *
+     * <!-- Default slot content -->
      * <HButton id="btn02">
      *   <strong>Custom Slot</strong>
+     * </HButton>
+     *
+     * <!-- With icon slot -->
+     * <HButton id="btn03" text="Download">
+     *   <template #icon>
+     *     <i class="fa fa-download" style="margin-right: 4px" />
+     *   </template>
      * </HButton>
      * ```
      *
@@ -71,11 +79,16 @@ declare module 'vue' {
      *
      * @prop {string} id - Unique button identifier. Enables runtime access via `hison.vue.getButton(id)`.
      * @prop {string} [class] - Additional class string. Supports `hison-*` responsive system.
-     * @prop {string} [style] - Inline CSS style string.
+     * @prop {string | CSSProperties} [style] - Inline CSS style.
      * @prop {BoolString} [visible] - Whether the button is shown (`'true'` or `'false'`). Default: `'true'`.
      * @prop {BoolString} [disable] - Whether the button is disabled. Default: `'false'`.
-     * @prop {string} [text] - Fallback label text if no slot is provided. Can be updated at runtime.
+     * @prop {string} [text] - Fallback label text if no default slot is provided. Can be updated at runtime.
      * @prop {string} [title] - Tooltip text. Can be updated via `setTitle()`.
+     *
+     * ---
+     *
+     * @slot default - Default content inside the button. Overrides `text` prop if present.
+     * @slot icon - Optional icon or prefix element rendered before the button label.
      *
      * ---
      *
@@ -649,57 +662,56 @@ declare module 'vue' {
     HLayout: typeof HLayout
 
     /**
+     * fileSet
+     */
+    HFileSet: typeof HFileSet
+
+    /**
      * Hisonvue custom input component.
      *
-     * `HInput` is a versatile and reactive input component that supports multiple input types,
-     * rich formatting, and runtime state control. It features a dual-mode structure (editable input vs. readonly span),
-     * and is integrated with `hisonCloser` for global runtime access.
+     * `HInput` is a versatile and reactive input component that supports various HTML input types,
+     * runtime state control, and full styling support. It features a dual-mode display (editable input or readonly span),
+     * and provides complete integration with `hisonCloser` for runtime interaction.
      *
      * ---
      *
      * ### 🎯 Features
-     * - Supports multiple input types: `'text'`, `'number'`, `'date'`, `'month'`, `'mask'`, `'digit'`, `'email'`, `'password'`
-     * - Custom formatting via `format` prop (`#,##0.00`, date patterns, masks, etc.)
-     * - Value truncation using `maxLength`, `maxByte`, `maxNumber`, `minNumber`, and `roundNumber`
-     * - Editable or non-editable via `editMode` (`editable`, `readonly`, `disable`)
-     * - Fully style-controllable via `required`, `fontBold`, `fontItalic`, `fontThruline`, `fontUnderline`
-     * - Shows span text or input element depending on focus/editing state
-     * - Responsive styling (`hison-col-*`, `hison-size-*`, etc.)
-     * - All DOM events emit full `HInputMethods` for reactive access
-     * - Runtime method control via `hison.vue.getInput(id)`
+     * - Supports various `inputType` values:
+     *   - **Text-based**: `'text'`, `'number'`, `'email'`, `'password'`, `'digit'`, `'mask'`
+     *   - **Date/time**: `'date'`, `'month'`
+     *   - **Visual/UI**: `'color'`, `'range'`, `'textarea'`
+     *   - **Selection**: `'checkbox'`, `'select'`
+     * - Custom formatting via `format` (e.g., `#,##0.00`, date mask)
+     * - Numeric constraints with `maxNumber`, `minNumber`, `roundNumber`
+     * - Input length limits via `maxLength`, `maxByte`
+     * - UI control via `editMode`, `visible`, `required`, and font styles
+     * - Reactive span view when not in editing mode
+     * - All DOM events emit full `HInputMethods` for runtime control
+     * - Integrated with `hison.vue.getInput(id)` for external control
      *
      * ---
      *
      * ### ⚙️ Usage
      * ```vue
      * <HInput
-     *   id="myInput"
-     *   class="hison-col-6"
-     *   inputType="number"
-     *   format="#,##0.00"
-     *   :modelValue="price"
-     *   :maxNumber="10000"
-     *   :roundNumber="0"
-     *   visible="true"
-     *   editMode="editable"
-     *   placeholder="Enter value"
-     *   @input="(_, input, value) => console.log(value)"
-     *   @mounted="input => console.log(input.getId())"
+     *   id="userStatus"
+     *   inputType="select"
+     *   :options="[
+     *     { text: 'Active', value: 'A' },
+     *     { text: 'Inactive', value: 'I' }
+     *   ]"
+     *   :modelValue="status"
      * />
      * ```
      *
      * ---
      *
      * ### 🛠 Runtime Usage
-     * Use `hison.vue.getInput(id)` to retrieve control methods at runtime:
-     *
      * ```ts
-     * const input = hison.vue.getInput('myInput');
-     * input.setValue('123456');
-     * input.setFormat('#,##0');
-     * input.setVisible(false);
-     * input.setEditMode('readonly');
-     * input.setFontBold(true);
+     * const input = hison.vue.getInput('userStatus')
+     * input.setValue('A')
+     * input.setVisible(true)
+     * input.setEditMode('editable')
      * ```
      *
      * ---
@@ -708,71 +720,53 @@ declare module 'vue' {
      * @prop {string} [class] - Additional class string. Supports `hison-*` responsive system.
      * @prop {string | CSSProperties} [style] - Inline CSS style.
      * @prop {BoolString} [visible='true'] - Whether the input is shown (`'true'` or `'false'`).
-     * @prop {string} [modelValue] - Bound value. Controlled via `v-model`.
-     * @prop {string} [inputType='text'] - Input type (`text`, `number`, `date`, `month`, `email`, etc.).
-     * @prop {string} [format] - Format string for numeric/date/mask formatting.
-     * @prop {string} [nullText] - Placeholder text when value is empty in readonly mode.
-     * @prop {string} [maxNumber] - Maximum numeric value. Only applies to `inputType='number'`.
-     * @prop {string} [minNumber] - Minimum numeric value. Only applies to `inputType='number'`.
-     * @prop {string} [roundNumber] - Rounding precision for numeric values.
-     * @prop {string} [maxLength] - Maximum number of characters allowed.
-     * @prop {string} [maxByte] - Maximum number of bytes (UTF-8).
-     * @prop {string} [placeholder] - Placeholder string shown inside the input.
-     * @prop {EditMode} [editMode='editable'] - Edit mode: `'editable'`, `'readonly'`, `'disable'`.
+     * @prop {any} [modelValue] - Bound value for the input. Controlled via `v-model`.
+     * @prop {string} [inputType='text'] - Input type. Supports:
+     *   `'text'`, `'number'`, `'date'`, `'month'`, `'email'`, `'password'`, `'mask'`, `'digit'`,
+     *   `'checkbox'`, `'select'`, `'textarea'`, `'range'`, `'color'`
+     * @prop {string} [format] - Format string for numeric, date, or masked values.
+     * @prop {string} [nullText] - Text to show when value is empty in readonly mode.
+     * @prop {string} [maxNumber] - Maximum value for numeric input.
+     * @prop {string} [minNumber] - Minimum value for numeric input.
+     * @prop {string} [roundNumber] - Decimal rounding precision.
+     * @prop {string} [maxLength] - Max number of characters.
+     * @prop {string} [maxByte] - Max number of bytes (UTF-8).
+     * @prop {string} [placeholder] - Placeholder shown in input when empty.
+     * @prop {EditMode} [editMode='editable'] - Edit state: `'editable'`, `'readonly'`, `'disable'`.
      * @prop {BoolString} [required='false'] - Whether the input is required.
-     * @prop {BoolString} [fontBold='false'] - Whether the span text is bold.
-     * @prop {BoolString} [fontItalic='false'] - Whether the span text is italic.
-     * @prop {BoolString} [fontThruline='false'] - Whether the span text is strikethrough.
-     * @prop {BoolString} [fontUnderline='false'] - Whether the span text is underlined.
-     * @prop {string} [title] - Tooltip text. Can be updated via `setTitle()`.
+     * @prop {BoolString} [fontBold='false'] - Whether span text is bold.
+     * @prop {BoolString} [fontItalic='false'] - Whether span text is italic.
+     * @prop {BoolString} [fontThruline='false'] - Whether span text is strikethrough.
+     * @prop {BoolString} [fontUnderline='false'] - Whether span text is underlined.
+     * @prop {string} [title] - Tooltip text (HTML `title` attribute).
      *
+     * @prop {{ text: string; value: any }[]} [options=[]] - Selectable items for `inputType='select'`.
+     * @prop {string} [checkedText='Y'] - Display text for `true` value in `checkbox` (readonly mode).
+     * @prop {string} [uncheckedText='N'] - Display text for `false` value in `checkbox` (readonly mode).
+     * @prop {(value: any) => string} [inputTextdHandler] Custom formatter function for display text (span text) of the input component.
+     * 
      * ---
      *
-     * @event mounted - Emitted after mounting. Passes `HInputMethods` instance.
-     * @event responsive-change - Emitted when device class changes (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
+     * @event mounted - Emitted on component mount. Passes `HInputMethods`.
+     * @event responsive-change - Emitted on device class change (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
      * @event update:modelValue - Emitted when the bound value changes.
      *
-     * @event input - Emitted on input. Passes `(Event, HInputMethods, newValue)`.
-     * @event change - Emitted on blur with `(oldValue, newValue, HInputMethods)`.
-     * @event focus - Emitted on input focus. Passes `(FocusEvent, HInputMethods)`.
-     * @event blur - Emitted on input blur. Passes `(Event, HInputMethods)`.
+     * @event input - Emitted during input. `(Event, HInputMethods, value)`
+     * @event change - Emitted on blur or checkbox/select change. `(oldValue, newValue, HInputMethods)`
+     * @event focus - Emitted on focus. `(FocusEvent, HInputMethods)`
+     * @event blur - Emitted on blur. `(Event, HInputMethods)`
      *
-     * @event click - Emitted on readonly span click. Passes `(MouseEvent, HInputMethods)`.
-     * @event dblclick - Emitted on double click. Passes `(MouseEvent, HInputMethods)`.
-     * @event mousedown - Emitted on mouse button press. Passes `(MouseEvent, HInputMethods)`.
-     * @event mouseup - Emitted on mouse button release. Passes `(MouseEvent, HInputMethods)`.
-     * @event mouseenter - Emitted when mouse enters the element. Passes `(MouseEvent, HInputMethods)`.
-     * @event mouseleave - Emitted when mouse leaves the element. Passes `(MouseEvent, HInputMethods)`.
-     * @event mouseover - Emitted on mouse over. Passes `(MouseEvent, HInputMethods)`.
-     * @event mouseout - Emitted on mouse out. Passes `(MouseEvent, HInputMethods)`.
-     * @event mousemove - Emitted on mouse move. Passes `(MouseEvent, HInputMethods)`.
-     *
-     * @event pointerdown - Emitted on pointer press. Passes `(PointerEvent, HInputMethods)`.
-     * @event pointerup - Emitted on pointer release. Passes `(PointerEvent, HInputMethods)`.
-     * @event pointermove - Emitted on pointer move. Passes `(PointerEvent, HInputMethods)`.
-     * @event pointerenter - Emitted when pointer enters. Passes `(PointerEvent, HInputMethods)`.
-     * @event pointerleave - Emitted when pointer leaves. Passes `(PointerEvent, HInputMethods)`.
-     *
-     * @event touchstart - Emitted on touch start. Passes `(TouchEvent, HInputMethods)`.
-     * @event touchend - Emitted on touch end. Passes `(TouchEvent, HInputMethods)`.
-     * @event touchmove - Emitted on touch move. Passes `(TouchEvent, HInputMethods)`.
-     * @event touchcancel - Emitted when touch is canceled. Passes `(TouchEvent, HInputMethods)`.
-     *
-     * @event keydown - Emitted on key press. Passes `(KeyboardEvent, HInputMethods)`.
-     * @event keyup - Emitted on key release. Passes `(KeyboardEvent, HInputMethods)`.
-     * @event compositionstart - Emitted when IME composition starts. Passes `(CompositionEvent, HInputMethods)`.
-     * @event compositionupdate - Emitted during IME composition. Passes `(CompositionEvent, HInputMethods)`.
-     * @event compositionend - Emitted when IME composition ends. Passes `(CompositionEvent, HInputMethods)`.
-     *
-     * @event dragstart - Emitted when drag starts. Passes `(DragEvent, HInputMethods)`.
-     * @event dragend - Emitted when drag ends. Passes `(DragEvent, HInputMethods)`.
-     * @event drag - Emitted during dragging. Passes `(DragEvent, HInputMethods)`.
-     * @event drop - Emitted on drop. Passes `(DragEvent, HInputMethods)`.
-     * @event copy - Emitted on copy. Passes `(ClipboardEvent, HInputMethods)`.
-     * @event cut - Emitted on cut. Passes `(ClipboardEvent, HInputMethods)`.
-     * @event paste - Emitted on paste. Passes `(ClipboardEvent, HInputMethods)`.
-     * @event wheel - Emitted on wheel scroll. Passes `(WheelEvent, HInputMethods)`.
-     * @event contextmenu - Emitted on right-click context menu. Passes `(MouseEvent, HInputMethods)`.
+     * @event click - Emitted on readonly span click. `(MouseEvent, HInputMethods)`
+     * @event dblclick - Emitted on double-click. `(MouseEvent, HInputMethods)`
+     * @event mousedown / mouseup / mouseenter / mouseleave / mouseover / mouseout / mousemove - Standard mouse events
+     * @event pointerdown / pointerup / pointermove / pointerenter / pointerleave - Pointer events
+     * @event touchstart / touchend / touchmove / touchcancel - Touchscreen events
+     * @event keydown / keyup - Keyboard events
+     * @event compositionstart / compositionupdate / compositionend - IME composition events
+     * @event dragstart / dragend / drag / drop - Drag-and-drop events
+     * @event copy / cut / paste - Clipboard interaction events
+     * @event wheel - Mouse wheel scroll event
+     * @event contextmenu - Right-click context menu event
      */
     HInput: typeof HInput
     
@@ -795,6 +789,7 @@ declare module 'vue' {
      *   - `Record<string, any>`
      *   - `InterfaceDataWrapper`
      *   - `InterfaceDataModel`
+     * - Two-way binding with `v-model` for full-form data as `Record<string, any>`
      * - Can reset all owned inputs via `.clear()`
      * - Tracks whether any child `HInput` is modified via `.isModified()`
      * - Applies or retrieves form-wide status (`C`, `R`, `U`, `D`) via `.getStatus()` and `.setStatus()`
@@ -806,13 +801,13 @@ declare module 'vue' {
      *
      * ### ⚙️ Usage
      * ```vue
-     * <HInputGroup id="group1" :editMode="'editable'" @mounted="group => group.load(myData)">
+     * <HInputGroup id="group1" v-model="formData" :editMode="'editable'">
      *   <HInput id="userid" inputType="text" required />
      *   <HInput id="email" inputType="email" />
      * </HInputGroup>
      * ```
      *
-     * --- 
+     * ---
      *
      * ### 🛠 Runtime Usage
      * Use `hison.vue.getInputGroup(id)` to access and control the group:
@@ -822,25 +817,28 @@ declare module 'vue' {
      * group.clear();
      * group.setStatus('U');
      * group.setEditMode('readonly');
-     * const data = group.getDataWrapper();
+     * const dataModel = group.getDataModel(); // hison.data.dataModel
      * const changed = group.isModified();
      * ```
      *
      * ---
      *
      * ### 🔒 Notes
-     * - `v-model` is not supported. You must use `.load()` to apply external data.
-     * - Modification tracking is internally managed and reflects only user-triggered changes.
-     * - Child `<HInput>` components must use the same `id` as the data key for mapping to work.
-     * - Grouped `HInput` instances register themselves on mount via `provide('registerToInputGroup')`.
+     * - `v-model` is now fully supported and emits changes when any child `HInput` is modified.
+     * - Child `HInput` components must have an `id` matching the corresponding data key.
+     * - Inputs auto-sync their values from `v-model` on registration and emit changes upward.
+     * - Modification tracking reflects user-triggered changes only.
+     * - Grouped `HInput` instances register themselves via `provide('registerToInputGroup')`.
      *
      * ---
      *
      * @prop {string} id - Unique group identifier. Enables runtime access via `hison.vue.getInputGroup(id)`.
      * @prop {EditMode} [editMode='editable'] - Edit mode: `'editable'`, `'readonly'`, `'disable'`.
      * @prop {DataStatus} [status='R'] - Data status: `'C'`, `'R'`, `'U'`, `'D'`. Managed via `.getStatus()` / `.setStatus()`.
+     * @prop {Record<string, any>} [modelValue] - Used with `v-model` for two-way binding of grouped input values.
      *
      * @event mounted - Emitted after mount with `HInputGroupMethods` instance.
+     * @event update:modelValue - Emitted when any child `HInput` changes, propagating the updated object.
      */
     HInputGroup: typeof HInputGroup
 
