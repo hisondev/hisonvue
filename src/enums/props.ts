@@ -10,14 +10,14 @@ export enum InputType {
     digit = 'digit',
     date = 'date',
     month = 'month',
+    time = 'time',
     email = 'email',
     password = 'password',
-
     checkbox = 'checkbox',
-    select = 'select',
-    textarea = 'textarea',
     range = 'range',
     color = 'color',
+    textarea = 'textarea',
+    select = 'select',
 }
 
 export enum EditMode {
