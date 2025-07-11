@@ -1,6 +1,3 @@
-<!--
-HGRid와 hison.data.dataModel을 연결???까지 아니더라도 getDataSet정도?
--->
 <template>
     <div ref="editorWrap" :class="['hison-grid', 'hison-wrap', ...responsiveClassList, visibleClass]" :style="props.style">
       <div data-vanillagrid v-bind="bindAttrs"></div>
@@ -12,9 +9,10 @@ import { defineComponent, computed, onMounted, onBeforeUnmount, ref, nextTick, t
 import type { Vanillagrid } from 'vanillagrid2'
 import type { HGridColumn, HGridMethods } from '../../types'
 import { gridEventProps, gridProps } from './props'
-import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getSpecificClassValueFromClassList, getUUID, registerReloadable, unregisterReloadable } from '../../utils'
+import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getSpecificClassValueFromClassList, getUUID, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
 import { hison, hisonCloser, Size } from '../..'
 import { useDevice } from '../../core'
+import { InterfaceDataModel } from 'hisonjs'
 
 export default defineComponent({
 name: 'HGrid',
@@ -28,7 +26,7 @@ setup(props, { emit }) {
     const editorWrap = ref<HTMLElement | null>(null)
     const gridInstance = ref<HGridMethods | null>(null)
     const id = props.id ? props.id : getUUID();
-    const reloadId = `hgrid:${props.id}`
+    const reloadId = `hgrid:${id}`
     const device = useDevice()
     const visible = ref(props.visible)
     const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
@@ -118,13 +116,29 @@ setup(props, { emit }) {
             gridInstance.value.getId = () => id
             gridInstance.value.getType = () => 'grid'
             if ('isGridVisible' in gridInstance.value) {
-            delete (gridInstance.value as any).isGridVisible;
+                delete (gridInstance.value as any).isGridVisible;
             }
             if ('setGridVisible' in gridInstance.value) {
-            delete (gridInstance.value as any).setGridVisible;
+                delete (gridInstance.value as any).setGridVisible;
             }
             gridInstance.value.isVisible = () => visible.value,
             gridInstance.value.setVisible = (val: boolean) => { visible.value = val }
+            gridInstance.value.getDataModel = () => {
+                return new hison.data.DataModel(gridInstance.value!.getValues())
+            }
+            gridInstance.value.setDataModel = <T extends Record<string, any>>(dataModel: InterfaceDataModel<T>) => {
+                if(!dataModel || dataModel.getRowCount() == 0) return 
+                return gridInstance.value!.load(dataModel)
+            }
+            gridInstance.value.reload = () => reloadHisonComponent(reloadId)
+            const originGridMethodLoad = gridInstance.value.load.bind(gridInstance.value);
+            gridInstance.value.load = <T extends Record<string, any>>(keyValueOrDatas: Record<string, any> | Record<string, any>[] | InterfaceDataModel<T>) => {
+                if (keyValueOrDatas && (keyValueOrDatas as InterfaceDataModel).getIsDataModel && (keyValueOrDatas as InterfaceDataModel).getIsDataModel()) {
+                    return originGridMethodLoad((keyValueOrDatas as InterfaceDataModel<T>).getRows())
+                } else {
+                    return originGridMethodLoad(keyValueOrDatas)
+                }
+            }
         }
         //event
         if(gridInstance.value) {
