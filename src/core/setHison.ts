@@ -84,6 +84,7 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
     hison.vue.getGrid = (gridId: string) => { return hisonCloser.grid.getGrid(gridId) as HGridMethods | null }
     hison.vue.getButton = (buttonId: string) => { return hisonCloser.component.buttonList[buttonId] }
     hison.vue.getLayout = (layoutId: string) => { return hisonCloser.component.layoutList[layoutId] }
+    hison.vue.getFileSet = (fileSetId: string) => { return hisonCloser.component.fileSetList[fileSetId] }
     hison.vue.getInput = (inputId: string) => { return hisonCloser.component.inputList[inputId] }
     hison.vue.getInputGroup = (inputGroupId: string) => { return hisonCloser.component.inputGroupList[inputGroupId] }
     hison.vue.getCalendar = (calendarId: string) => { return hisonCloser.component.calendarList[calendarId] }
