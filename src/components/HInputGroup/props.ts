@@ -36,5 +36,40 @@ export const inputGroupProps = {
      * @default 'R'
      */
     status: { type: String as PropType<DataStatus>, required: false },
-
+    /**
+     * Two-way binding value for the input group.
+     *
+     * Enables `v-model` support for grouped form data represented as a plain object (`Record<string, any>`),
+     * where each property key corresponds to an `<HInput>` component’s `id`.
+     *
+     * When used, `HInputGroup` will automatically:
+     * - Initialize child inputs' values based on this object during registration (`registerToInputGroup`)
+     * - Emit `update:modelValue` whenever any input’s value is modified, including the updated object
+     * - Maintain modification state and status tracking (`C`, `R`, `U`, `D`) as values change
+     *
+     * ---  
+     *
+     * ### Example
+     * ```vue
+     * <HInputGroup v-model="form" id="group1">
+     *   <HInput id="name" inputType="text" />
+     *   <HInput id="age" inputType="number" />
+     * </HInputGroup>
+     *
+     * <script setup lang="ts">
+     * const form = ref({ name: 'John', age: 26 })
+     * </script>
+     * ```
+     *
+     * ---
+     *
+     * ### Notes
+     * - Any input must define an `id` that matches a key in this object to be bound correctly
+     * - The object is shallow-merged on each child change to preserve reactivity
+     * - This binding is fully compatible with manual `.load()` and `.getDataObject()` usage
+     *
+     * @prop {Record<string, any>} modelValue - Bound value object for all child inputs. Supports `v-model` binding.
+     * @default {}
+     */
+    modelValue: { type: Object as PropType<Record<string, any>>, required: false, default: () => ({}), },
 }
