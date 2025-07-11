@@ -1,15 +1,113 @@
-<!--
-1. checkbox, selector 만들기
-textarea(별도 요소(textarea))
-range(별도 요소)
-color(별도 요소)
-datetime-local(타입)
-time(타입)
-file(타입 - 별도 컴포넌트! fileSet)
--->
 <template>
   <div
-  v-if="inputType === 'checkbox'"
+  v-if="inputType === 'range'"
+  :class="[
+    'hison-input',
+    'hison-input-range-div',
+    ...responsiveClassList,
+    visibleClass,
+  ]"
+  :style="props.style"
+  >
+    <input
+      ref="inputRef"
+      :id="`hison_input_${id}`"
+      :name="`hison_input_${id}`"
+      type="range"
+      :class="[
+        `hison-input-${inputType}`,
+        ...editModeClassList,
+        ...requiredClassList,
+      ]"
+      :value="inputValue"
+      :disabled="disable"
+      :readonly="readonly"
+      :title="title || undefined"
+      @change="onRangeChange"
+      @focus="onFocus"
+      @blur="onBlur"
+      @keydown="onKeydown"
+
+      @click="$emit('click', $event, inputMethods)"
+      @dblclick="$emit('dblclick', $event, inputMethods)"
+      @mousedown="$emit('mousedown', $event, inputMethods)"
+      @mouseup="$emit('mouseup', $event, inputMethods)"
+      @mouseenter="$emit('mouseenter', $event, inputMethods)"
+      @mouseleave="$emit('mouseleave', $event, inputMethods)"
+      @mouseover="$emit('mouseover', $event, inputMethods)"
+      @mouseout="$emit('mouseout', $event, inputMethods)"
+
+      @pointerdown="$emit('pointerdown', $event, inputMethods)"
+      @pointerup="$emit('pointerup', $event, inputMethods)"
+      @pointermove="$emit('pointermove', $event, inputMethods)"
+      @pointerenter="$emit('pointerenter', $event, inputMethods)"
+      @pointerleave="$emit('pointerleave', $event, inputMethods)"
+
+      @touchstart="$emit('touchstart', $event, inputMethods)"
+      @touchend="$emit('touchend', $event, inputMethods)"
+      @touchmove="$emit('touchmove', $event, inputMethods)"
+      @touchcancel="$emit('touchcancel', $event, inputMethods)"
+
+      @contextmenu="$emit('contextmenu', $event, inputMethods)"
+    />
+  </div>
+
+  <div
+  v-else-if="inputType === 'color'"
+  :class="[
+    'hison-input',
+    'hison-input-color-div',
+    ...responsiveClassList,
+    visibleClass,
+  ]"
+  :style="props.style"
+  >
+    <input
+      ref="inputRef"
+      :id="`hison_input_${id}`"
+      :name="`hison_input_${id}`"
+      type="color"
+      :class="[
+        `hison-input-${inputType}`,
+        ...editModeClassList,
+        ...requiredClassList,
+      ]"
+      :value="inputValue"
+      :disabled="disable"
+      :readonly="readonly"
+      :checked="inputValue === true"
+      :title="title || undefined"
+      @change="onColorChange"
+      @focus="onFocus"
+      @blur="onBlur"
+      @keydown="onKeydown"
+
+      @click="$emit('click', $event, inputMethods)"
+      @dblclick="$emit('dblclick', $event, inputMethods)"
+      @mousedown="$emit('mousedown', $event, inputMethods)"
+      @mouseup="$emit('mouseup', $event, inputMethods)"
+      @mouseenter="$emit('mouseenter', $event, inputMethods)"
+      @mouseleave="$emit('mouseleave', $event, inputMethods)"
+      @mouseover="$emit('mouseover', $event, inputMethods)"
+      @mouseout="$emit('mouseout', $event, inputMethods)"
+
+      @pointerdown="$emit('pointerdown', $event, inputMethods)"
+      @pointerup="$emit('pointerup', $event, inputMethods)"
+      @pointermove="$emit('pointermove', $event, inputMethods)"
+      @pointerenter="$emit('pointerenter', $event, inputMethods)"
+      @pointerleave="$emit('pointerleave', $event, inputMethods)"
+
+      @touchstart="$emit('touchstart', $event, inputMethods)"
+      @touchend="$emit('touchend', $event, inputMethods)"
+      @touchmove="$emit('touchmove', $event, inputMethods)"
+      @touchcancel="$emit('touchcancel', $event, inputMethods)"
+
+      @contextmenu="$emit('contextmenu', $event, inputMethods)"
+    />
+  </div>
+
+  <div
+  v-else-if="inputType === 'checkbox'"
   :class="[
     'hison-input',
     'hison-input-checkbox-div',
@@ -20,8 +118,8 @@ file(타입 - 별도 컴포넌트! fileSet)
   >
     <input
       ref="inputRef"
-      :id="`input_${id}`"
-      :name="`input_${id}`"
+      :id="`hison_input_${id}`"
+      :name="`hison_input_${id}`"
       type="checkbox"
       :class="[
         `hison-input-${inputType}`,
@@ -30,7 +128,7 @@ file(타입 - 별도 컴포넌트! fileSet)
       ]"
       :disabled="disable"
       :readonly="readonly"
-      :checked="modelValue === true"
+      :checked="inputValue === true"
       :title="title || undefined"
       @change="onCheckboxChange"
       @focus="onFocus"
@@ -66,6 +164,7 @@ file(타입 - 별도 컴포넌트! fileSet)
     ref="inputRef"
     :id="`select_${id}`"
     :name="`select_${id}`"
+    :style="props.style"
     :class="[
       'hison-input',
       `hison-input-${inputType}`,
@@ -78,7 +177,7 @@ file(타입 - 별도 컴포넌트! fileSet)
       fontThrulineClass,
       fontUnderlineClass,
     ]"
-    :style="props.style"
+    :value="inputValue"
     :disabled="disable"
     :readonly="readonly"
     :title="title || undefined"
@@ -120,8 +219,8 @@ file(타입 - 별도 컴포넌트! fileSet)
   <textarea
     v-else-if="inputType === 'textarea'"
     ref="inputRef"
-    :id="`input_${id}`"
-    :name="`input_${id}`"
+    :id="`hison_input_${id}`"
+    :name="`hison_input_${id}`"
     :class="[
       'hison-input',
       `hison-input-${inputType}`,
@@ -134,6 +233,7 @@ file(타입 - 별도 컴포넌트! fileSet)
       fontThrulineClass,
       fontUnderlineClass,
     ]"
+    :value="inputValue"
     :style="props.style"
     :disabled="disable"
     :readonly="readonly"
@@ -143,7 +243,7 @@ file(타입 - 별도 컴포넌트! fileSet)
     @input="onInput"
     @focus="onFocus"
     @blur="onBlur"
-  >{{ modelValue }}</textarea>
+  >{{ inputValue }}</textarea>
 
   <template v-else>
     <input
@@ -194,8 +294,8 @@ file(타입 - 별도 컴포넌트! fileSet)
     <input
       v-show="editing"
       ref="inputRef"
-      :id="`input_${id}`"
-      :name="`input_${id}`"
+      :id="`hison_input_${id}`"
+      :name="`hison_input_${id}`"
       :class="[
         'hison-input',
         `hison-input-${inputType}`,
@@ -238,8 +338,8 @@ file(타입 - 별도 컴포넌트! fileSet)
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, unref, inject } from 'vue'
 import type { HInputMethods } from '../../types'
 import { inputProps } from './props'
-import { DateFormat, hison, hisonCloser, EditMode, InputType, YearMonthFormat } from '../..'
-import { addComponentNameToClass, extractResponsiveClasses, getDigitsOnly, getMaskValue, getUUID, isNullOrUndefined, registerReloadable, unregisterReloadable } from '../../utils'
+import { DateFormat, hison, hisonCloser, EditMode, InputType, YearMonthFormat, TimeFormat } from '../..'
+import { addComponentNameToClass, extractResponsiveClasses, getDigitsOnly, getMaskValue, getUUID, isNullOrUndefined, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 import { addInputCssEvent, addInputTextCssEvent, removeInputCssEvent, removeInputTextCssEvent } from '../common/setInputCssEvent'
 
@@ -296,7 +396,7 @@ export default defineComponent({
     const inputTextRef = ref<HTMLInputElement | null>(null)
     const inputMethods = ref<HInputMethods | null>(null)
     const id = props.id ? props.id : getUUID()
-    const reloadId = `hinput:${props.id}`
+    const reloadId = `hinput:${id}`
     const device = useDevice()
 
     const responsiveClassList = ref<string[]>([])
@@ -331,7 +431,6 @@ export default defineComponent({
       }
     })
 
-
     const format = ref(props.format ?? null)
     const maxNumber = ref(hison.utils.isNumeric(props.maxNumber) ? Number(props.maxNumber) : null)
     const minNumber = ref(hison.utils.isNumeric(props.minNumber) ? Number(props.minNumber) : null)
@@ -361,6 +460,7 @@ export default defineComponent({
           case InputType.email:
           case InputType.mask:
           case InputType.digit:
+          case InputType.textarea:
             if (inputType.value === InputType.mask) value = getMaskValue(value, format.value ?? '')
             if (inputType.value === InputType.digit) value = getDigitsOnly(value)
             value = getCutLengthString(value)
@@ -373,6 +473,9 @@ export default defineComponent({
             break
           case InputType.month:
             if(value) value = hison.utils.getDateWithFormat(value, YearMonthFormat['yyyy-MM'])
+            break
+          case InputType.time:
+            if(value) value = hison.utils.getDateWithFormat(value, TimeFormat['HH:mm:ss'])
             break
           default:
             break
@@ -431,10 +534,13 @@ export default defineComponent({
 
     //HInputGroup에 주입
     const registerToInputGroup = inject('registerToInputGroup') as ((inputId: string) => void) | undefined
-    const notifyInputGroupStatus = inject<() => void>('notifyInputGroupStatus')
+    const notifyInputGroupStatus = inject<(inputId: string, newVal: any) => void>('notifyInputGroupStatus')
 
     const computeSpanText = (value: any) => {
       if (isNullOrUndefined(value) || value === '') return nullText.value ?? ''
+      if (props.inputTextdHandler) {
+        return props.inputTextdHandler(value)
+      }
       let text = String(value)
       try {
         switch (inputType.value) {
@@ -449,6 +555,9 @@ export default defineComponent({
             break;
           case InputType.month:
             text = hison.utils.getDateWithFormat(value, format.value ?? hison.getYearMonthFormat())
+            break;
+          case InputType.time:
+            text = hison.utils.getDateWithFormat(value, format.value ?? hison.getTimeFormat())
             break;
           case InputType.checkbox:
             text = modelValue.value ? props.checkedText : props.uncheckedText
@@ -479,6 +588,7 @@ export default defineComponent({
           && (inputType.value === InputType.text
             || inputType.value === InputType.email
             || inputType.value === InputType.password
+            || inputType.value === InputType.textarea
           ))
       ) {
         value = computeValue(value)
@@ -486,7 +596,7 @@ export default defineComponent({
       }
       modelValue.value = value
       isModified.value = true
-      notifyInputGroupStatus?.()
+      notifyInputGroupStatus?.(id, modelValue.value)
       emit('input', e, inputMethods.value, modelValue.value)
     }
     const onFocus = (e: FocusEvent) => {
@@ -497,7 +607,7 @@ export default defineComponent({
       if(oldValue.value !== modelValue.value) {
         updateValue(modelValue.value, true, true)
         isModified.value = true
-        notifyInputGroupStatus?.()
+        notifyInputGroupStatus?.(id, modelValue.value)
       }
       editing.value = false
       emit('blur', e, inputMethods.value)
@@ -520,25 +630,34 @@ export default defineComponent({
       if(doCallChangeEmit) emit('change', oldValue.value, modelValue.value, inputMethods.value)
     }
 
+    const onRangeChange = (e: Event) => {
+      const target = e.target as HTMLSelectElement
+      updateValue(target.value, false, true)
+      isModified.value = true
+      notifyInputGroupStatus?.(id, modelValue.value)
+    }
+    const onColorChange = (e: Event) => {
+      const target = e.target as HTMLSelectElement
+      updateValue(target.value, false, true)
+      console.log('target.value',target.value)
+      console.log('modelValue.value',modelValue.value)
+      console.log('inputValue.value',inputValue.value)
+      isModified.value = true
+      notifyInputGroupStatus?.(id, modelValue.value)
+    }
     const onCheckboxChange = (e: Event) => {
-      console.log('### onCheckboxChange')
       const target = e.target as HTMLInputElement
       updateValue(target.checked, false, true)
-
       isModified.value = true
-      notifyInputGroupStatus?.()
+      notifyInputGroupStatus?.(id, modelValue.value)
     }
     const onSelectChange = (e: Event) => {
-      console.log('### onSelectChange')
       const target = e.target as HTMLSelectElement
-      console.log('target.value',target.value)
       updateValue(target.value, false, true)
-
       isModified.value = true
-      notifyInputGroupStatus?.()
+      notifyInputGroupStatus?.(id, modelValue.value)
     }
     const onKeydown = (e: KeyboardEvent) => {
-      console.log('### onKeydown')
       if (readonly.value && (e.code === 'Space' || e.code === 'Enter')) {
         e.preventDefault()
         e.stopPropagation()
@@ -648,12 +767,13 @@ export default defineComponent({
         focus : () => {
           if(inputTextRef.value) inputTextRef.value.focus()
           else inputRef.value?.focus()
-        }
+        },
+        reload: () => reloadHisonComponent(reloadId)
       }
+      hisonCloser.component.inputList[id] = inputMethods.value
       if (registerToInputGroup) {
         registerToInputGroup(id)
       }
-      hisonCloser.component.inputList[id] = inputMethods.value
       emit('mounted', inputMethods.value)
     }
 
@@ -709,6 +829,8 @@ export default defineComponent({
         onTextInputFocus,
         onFocus,
         onBlur,
+        onRangeChange,
+        onColorChange,
         onCheckboxChange,
         onSelectChange,
         onKeydown,
