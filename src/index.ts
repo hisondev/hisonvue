@@ -20,6 +20,10 @@ const HLayout = createSSRClientOnly<typeof import('./components/HLayout/HLayout.
   () => import('./components/HLayout/HLayout.vue'),
   'HLayout'
 )
+const HFileSet = createSSRClientOnly<typeof import('./components/HFileSet/HFileSet.vue').default>(
+  () => import('./components/HFileSet/HFileSet.vue'),
+  'HFileSet'
+)
 const HInput = createSSRClientOnly<typeof import('./components/HInput/HInput.vue').default>(
   () => import('./components/HInput/HInput.vue'),
   'HInput'
@@ -72,6 +76,7 @@ export const hisonvue = {
     app.component('HGrid', HGrid)
     app.component('HButton', HButton)
     app.component('HLayout', HLayout)
+    app.component('HFileSet', HFileSet)
     app.component('HInput', HInput)
     app.component('HInputGroup', HInputGroup)
     app.component('HCalendar', HCalendar)
@@ -84,6 +89,7 @@ export {
   HLayout,
   HNote,
   HGrid,
+  HFileSet,
   HInput,
   HInputGroup,
   HCalendar,
@@ -93,11 +99,18 @@ export {
 export type {
   Hison,
   HisonConfig,
+  DeviceType,
+  AttachedFileItem,
+  HCalendarSpecialTime,
+  HCalendarSpecialTimeMap,
+  HCalendarEvent,
   HGridColumn,
-  HNoteElement,
+  ComponentMethods,
   HGridMethods,
+  HNoteElement,
   HButtonMethods,
   HLayoutMethods,
+  HFileSetMethods,
   HInputMethods,
   HInputGroupMethods,
   HCalendarMethods,
