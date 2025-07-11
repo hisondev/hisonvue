@@ -1,6 +1,3 @@
-<!--
-HNote와 hison.data.dataModel을 연결???까지 아니더라도 getDataSet정도?
--->
 <template>
   <div
     ref="editorWrap"
@@ -19,10 +16,11 @@ import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, next
 import type { Vanillanote, VanillanoteElement, NoteData } from 'vanillanote2'
 import { noteEventProps, noteProps } from './props'
 import { EditMode, Size } from '../../enums'
-import { extractResponsiveClasses, getSpecificClassValueFromClassList, getHexCodeFromColorText, getUUID, registerReloadable, getIndexSpecificClassNameFromClassList, unregisterReloadable } from '../../utils'
+import { extractResponsiveClasses, getSpecificClassValueFromClassList, getHexCodeFromColorText, getUUID, registerReloadable, getIndexSpecificClassNameFromClassList, unregisterReloadable, reloadHisonComponent } from '../../utils'
 import { hison, hisonCloser } from '../..'
 import { useDevice } from '../../core'
 import { HNoteElement } from '../../types'
+import { InterfaceDataModel } from 'hisonjs'
 
 export default defineComponent({
   name: 'HNote',
@@ -36,7 +34,7 @@ export default defineComponent({
     const editorWrap = ref<HTMLElement | null>(null)
     const noteInstance = ref<HNoteElement | null>(null)
     const id = props.id ? props.id : getUUID();
-    const reloadId = `hnote:${props.id}`
+    const reloadId = `hnote:${id}`
     const required = ref(props.required)
     const requiredClass = computed(()=>{
       if(required.value) return 'hison-note-required'
@@ -161,7 +159,6 @@ export default defineComponent({
       return String(Math.min(Math.max(sizeLevel, 1), 9))
     }
 
-    //v-model note data
     const mutationObserver = new MutationObserver((mutations) => {
       const el = mutations[0]?.target
       if (!el) return
@@ -217,7 +214,6 @@ export default defineComponent({
         note.setNoteData(props.modelValue)
       }
 
-      //methods
       if (note) {
         note.getId = () => id
         note.getType = () => 'note'
@@ -233,6 +229,32 @@ export default defineComponent({
         note.isModified = () => isModified.value
         note.initModified = () => isModified.value = false
         note.focus = () => { note._elements?.textarea?.focus() }
+        note.getDataModel = () => {
+          const noteData = note.getNoteData()
+          return new hison.data.DataModel(noteData)
+        }
+        note.setDataModel = <T extends Record<string, any>>(dataModel: InterfaceDataModel<T>) => {
+          if(!dataModel || dataModel.getRowCount() == 0) return 
+          const noteData: NoteData = {
+            html: dataModel.hasColumn('html') ? dataModel.getValue<'html'>(0, 'html') : '',
+            plainText: dataModel.hasColumn('plainText') ? dataModel.getValue<'plainText'>(0, 'plainText') : '',
+            links: dataModel.hasColumn('links') ? dataModel.getValue<'links'>(0, 'links') : [],
+            files: dataModel.hasColumn('files') ? dataModel.getValue<'files'>(0, 'files') : [],
+            images: dataModel.hasColumn('images') ? dataModel.getValue<'images'>(0, 'images') : [],
+            videos: dataModel.hasColumn('videos') ? dataModel.getValue<'videos'>(0, 'videos') : [],
+            fileObjects: dataModel.hasColumn('fileObjects') ? dataModel.getValue<'fileObjects'>(0, 'fileObjects') : {},
+            imageObjects: dataModel.hasColumn('imageObjects') ? dataModel.getValue<'imageObjects'>(0, 'imageObjects') : {},
+          }
+          return note.setNoteData(noteData)
+        }
+        note.load = <T extends Record<string, any>>(data: NoteData | Record<string, any> | InterfaceDataModel<T>) => {
+          if (data && (data as InterfaceDataModel).getIsDataModel && (data as InterfaceDataModel).getIsDataModel()) {
+            note.setDataModel(data as InterfaceDataModel)
+          } else {
+            note.setNoteData(data as NoteData)
+          }
+        }
+        note.reload = () => reloadHisonComponent(reloadId)
       }
 
       //v-model
