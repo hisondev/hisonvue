@@ -1,6 +1,6 @@
 import { Vanillagrid } from "vanillagrid2"
 import { Vanillanote } from "vanillanote2"
-import { HButtonMethods, HCalendarMethods, HInputGroupMethods, HInputMethods, HLayoutMethods } from "./component"
+import { HButtonMethods, HCalendarMethods, HChartInstance, HFileSetMethods, HInputGroupMethods, HInputMethods, HLayoutMethods } from "./component"
 import { ComponentStyleConfig, HisonvueEvent } from "./hisonConfig"
 
 export interface ComponentColor {
@@ -81,8 +81,10 @@ export interface HisonCloser {
         buttonList: Record<string, HButtonMethods>
         layoutList: Record<string, HLayoutMethods>
         inputList: Record<string, HInputMethods>
+        fileSetList: Record<string, HFileSetMethods>
         inputGroupList: Record<string, HInputGroupMethods>
         calendarList: Record<string, HCalendarMethods>
+        chartList: Record<string, HChartInstance>
     }
     event: HisonvueEvent
     componentStyle: ComponentStyle
