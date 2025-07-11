@@ -1,10 +1,24 @@
 import { GridMethods } from "vanillagrid2"
 import { GridAlign, GridVerticalAlign, EditMode, InputType, DataStatus, DayOfWeek, HCalenderView, HCalenderTimeFormat } from "../enums"
-import { VanillanoteElement } from "vanillanote2"
-import { InterfaceDataModel, InterfaceDataWrapper } from "hisonjs"
-import { Chart, ChartData, ChartOptions } from "chart.js"
+import { NoteData, VanillanoteElement } from "vanillanote2"
+import { InterfaceDataModel } from "hisonjs"
+import { Chart } from "chart.js"
 
 export type DeviceType = 'mb' | 'tb' | 'pc' | 'wd'
+
+/**
+ * 
+ */
+export interface AttachedFileItem {
+    fileId?: string;          // DB에서 내려온 파일의 식별자
+    fileName: string;         // 파일명
+    fileSize?: number;        // 크기 (byte)
+    filePath?: string;        // 서버 파일 저장 경로
+    extension?: string;       // 확장자
+    file?: File;              // 새로 업로드한 경우 File 객체
+    isNew?: boolean;          // 신규 업로드 여부
+    isDeleted?: boolean;      // 삭제 처리 여부
+}
 
 /**
  * Defines a special time block on a specific day.
@@ -290,6 +304,25 @@ export interface ComponentMethods {
    * Returns the type of the component.
    */
   getType(): string
+  /**
+   * Returns whether this component is currently visible.
+   * - `false` means `display: none` is applied.
+   */
+  isVisible(): boolean;
+  /**
+   * Shows or hides this component.
+   * - `true` makes this component visible.
+   * - `false` applies `display: none`.
+   */
+  setVisible(visible: boolean): void;
+  /**
+   * Forces this component to re-render by unmounting and remounting internally.
+   * 
+   * This is useful when you want to apply dynamic style or class changes
+   * (such as responsive styles or visibility) that are not automatically reflected
+   * through reactive props alone.
+   */
+  reload(): void;
 }
 
 /**
@@ -321,16 +354,59 @@ export interface HGridMethods extends ComponentMethods, Omit<GridMethods, 'isGri
    */
   getType(): 'grid'
   /**
-   * Returns whether the grid is currently visible.
-   * - `false` means `display: none` is applied.
+   * Extracts the current grid content as a `DataModel` instance.
+   *
+   * - Converts all current grid rows into a `DataModel`.
+   * - Each row becomes a record in the `DataModel`.
+   * - Columns are inferred automatically from the grid's structure or cell values.
+   *
+   * @returns A `DataModel` instance representing the current grid content.
    */
-  isVisible(): boolean;
+  getDataModel(): InterfaceDataModel<Record<string, any>>;
   /**
-   * Shows or hides the grid.
-   * - `true` makes the grid visible.
-   * - `false` applies `display: none`.
+   * Loads data into the grid using a `DataModel` instance.
+   *
+   * - Converts the first `getRowCount()` rows of the provided `DataModel` into key-value records.
+   * - These records are then inserted into the grid.
+   * - Grid is cleared before new data is loaded.
+   *
+   * @param dataModel A `DataModel` object representing the rows to load into the grid.
    */
-  setVisible(visible: boolean): void;
+  setDataModel<T extends Record<string, any>>(dataModel: InterfaceDataModel<T>): void;
+  /**
+   * Loads data into the grid.
+   *
+   * - Supports three different data formats:
+   *   1. **Key-Value Format**: An array of objects where each object represents a row with column-value pairs.
+   *   2. **Datas Format**: A 2D array of cell objects, each containing `{ colId, value }`.
+   *   3. **DataModel Format**: A `DataModel` instance whose rows are inserted into the grid.
+   * - Before loading, the grid is automatically cleared.
+   *
+   * ### Example Usage:
+   * ```ts
+   * // 1. Key-Value Format
+   * grid.load([
+   *   { col1: 'value1-1', col2: 'value1-2' },
+   *   { col1: 'value2-1', col2: 'value2-2' }
+   * ]);
+   *
+   * // 2. Datas Format
+   * grid.load([
+   *   [{ colId: 'col1', value: 'value1-1' }, { colId: 'col2', value: 'value1-2' }],
+   *   [{ colId: 'col1', value: 'value2-1' }, { colId: 'col2', value: 'value2-2' }]
+   * ]);
+   *
+   * // 3. DataModel Format
+   * const model = new hison.data.DataModel();
+   * model.setColumns(['col1', 'col2']);
+   * model.addRow({ col1: 'value1-1', col2: 'value1-2' });
+   * grid.load(model);
+   * ```
+   *
+   * @param keyValueOrDatas The data to load into the grid.
+   * @returns `true` if the data was successfully loaded.
+   */
+  load<T extends Record<string, any>>(keyValueOrDatas: Record<string, any> | Record<string, any>[] | InterfaceDataModel<T>): boolean;
 }
 
 /**
@@ -392,17 +468,6 @@ export interface HNoteElement extends ComponentMethods, VanillanoteElement {
    */
   setRequired(required: boolean): void;
   /**
-   * Returns whether the note is currently visible.
-   * - `false` means `display: none` is applied.
-   */
-  isVisible(): boolean;
-  /**
-   * Shows or hides the note.
-   * - `true` makes the note visible.
-   * - `false` applies `display: none`.
-   */
-  setVisible(visible: boolean): void;
-  /**
    * Gets the current edit mode.
    * - Possible values: `'editable'`, `'readonly'`, `'disable'`
    */
@@ -428,6 +493,33 @@ export interface HNoteElement extends ComponentMethods, VanillanoteElement {
    * Focus on the note.
    */
   focus(): void;
+  /**
+   * Converts the current editor content into a `DataModel` instance.
+   *
+   * - Returns a new `DataModel` where each property of `NoteData` (like `html`, `links`, `files`, etc.)
+   *   becomes a column, and a single row represents the editor state.
+   *
+   * @returns A `DataModel<NoteData>` containing the editor's current data.
+   */
+  getDataModel(): InterfaceDataModel<NoteData>;
+  /**
+   * Populates the editor using a `DataModel` instance.
+   *
+   * - Extracts values from the first row of the `DataModel`, if available.
+   * - Uses the values from columns like `html`, `plainText`, `links`, etc. to restore editor content.
+   *
+   * @param dataModel A `DataModel` whose first row maps to `NoteData` structure.
+   */
+  setDataModel<T extends Record<string, any>>(dataModel: InterfaceDataModel<T>): void;
+  /**
+   * Loads editor content from either a `NoteData` object or a compatible `DataModel`.
+   *
+   * - Accepts plain `NoteData`, raw object, or `DataModel`.
+   * - Automatically determines how to process the input and restores the editor accordingly.
+   *
+   * @param data Editor content to load, in `NoteData` or `DataModel` form.
+   */
+  load<T extends Record<string, any>>(data: NoteData | Record<string, any> | InterfaceDataModel<T>): void;
 }
 
 /**
@@ -475,11 +567,6 @@ export interface HButtonMethods extends ComponentMethods {
    */
   isDisable(): boolean;
   /**
-   * Returns whether the button is currently visible.
-   * - `false` means `display: none` is applied.
-   */
-  isVisible(): boolean;
-  /**
    * Sets the button text (only if no slot is used).
    * - If a slot is used, this has no effect.
    * - Updates internal reactive `text` state.
@@ -495,12 +582,6 @@ export interface HButtonMethods extends ComponentMethods {
    * - When disabled, button is grayed out and not clickable.
    */
   setDisable(disable: boolean): void;
-  /**
-   * Shows or hides the button.
-   * - `true` makes the button visible.
-   * - `false` applies `display: none`.
-   */
-  setVisible(visible: boolean): void;
   /**
    * Focus on the button.
    */
@@ -536,17 +617,6 @@ export interface HLayoutMethods extends ComponentMethods {
    * Returns the type of the layout.
    */
   getType(): 'layout'
-  /**
-   * Returns whether the layout is currently visible.
-   * `false` means `display: none` is applied.
-   */
-  isVisible(): boolean;
-  /**
-   * Shows or hides the layout.
-   * - `true` makes it visible.
-   * - `false` sets `display: none`.
-   */
-  setVisible(visible: boolean): void;
   /**
    * Gets the current background image URL (`background-image`).
    */
@@ -633,6 +703,50 @@ export interface HLayoutMethods extends ComponentMethods {
   setHeight(cssText: string): void;
 }
 
+export interface HFileSetMethods extends ComponentMethods {
+  /**
+   * Returns the type of the fileSet.
+   */
+  getType(): 'fileSet'
+  /**
+   * Returns whether the fileSet is currently visible.
+   * - `false` means `display: none` is applied.
+   */
+  isVisible(): boolean;
+  /**
+   * Shows or hides the fileSet.
+   * - `true` makes the fileSet visible.
+   * - `false` hides it using `display: none`.
+   */
+  setVisible(visible: boolean): void;
+  /**
+   * Gets the current edit mode.
+   * - Possible values: `'editable'`, `'readonly'`, `'disable'`
+   */
+  getEditMode(): EditMode;
+  /**
+   * Sets the edit mode of the fileSet.
+   * - `'readonly'` and `'disable'` both prevent editing but differ in style.
+   */
+  setEditMode(mode: EditMode): void;
+  /**
+   * Gets the current placeholder text.
+   */
+  getPlaceholder(): string;
+  /**
+   * Sets the placeholder text.
+   * - Maps to the native `placeholder` attribute.
+   */
+  setPlaceholder(placeholder: string): void;
+  isModified(): boolean;
+  setModified(modified: boolean): void;
+  /**
+   * Focus on the fileSet.
+   */
+  focus(): void;
+  
+}
+
 /**
  * Runtime control methods for `HInput` component.
  *
@@ -698,17 +812,6 @@ export interface HInputMethods extends ComponentMethods {
    * - Uses `hison.utils.getDateWithFormat`, `getNumberFormat`, etc.
    */
   setFormat(format: string): void;
-  /**
-   * Returns whether the input is currently visible.
-   * - `false` means `display: none` is applied.
-   */
-  isVisible(): boolean;
-  /**
-   * Shows or hides the input.
-   * - `true` makes the input visible.
-   * - `false` hides it using `display: none`.
-   */
-  setVisible(visible: boolean): void;
   /**
    * Gets the tooltip (title attribute) of the input.
    */
@@ -879,7 +982,7 @@ export interface HInputMethods extends ComponentMethods {
  * - Modification is automatically tracked when any child input emits a user-driven change.
  * - Supports runtime edit mode toggle and required-field validation.
  */
-export interface HInputGroupMethods extends ComponentMethods {
+export interface HInputGroupMethods extends Omit<ComponentMethods, 'isVisible' | 'setVisible'> {
   /**
    * Returns the type identifier for the component.
    * Always returns `'inputGroup'`.
@@ -892,17 +995,28 @@ export interface HInputGroupMethods extends ComponentMethods {
    */
   clear(autoSetStatus?: boolean): void;
   /**
-   * Retrieves the current input values as a `DataWrapper` instance.
-   * 
-   * @returns A `DataWrapper` object that holds key-value pairs of group input values.
-   */
-  getDataWrapper(): InterfaceDataWrapper;
-  /**
    * Retrieves the current input values as a `DataModel` instance.
    * 
    * @returns A `DataModel` object representing the group data as a table (1 row).
    */
-  getDataModel(): InterfaceDataModel;
+  getDataModel<T extends Record<string, any>>(): InterfaceDataModel<T>;
+  /**
+   * Applies a `DataModel` instance to the input group.
+   * 
+   * This will populate each child input using the first row of the provided `DataModel`.
+   * Keys in the row must match input `id`s within the group.
+   * 
+   * ---
+   * 
+   * ### ⚠️ Notes
+   * - Only the **first row** of the `DataModel` is used.
+   * - If a key is not registered as an input `id`, its value is ignored.
+   * - Automatically sets `status` to `'R'` unless suppressed using `load(..., false)`
+   *
+   * @template T - The shape of the row object in the `DataModel`.
+   * @param dataModel A `DataModel` instance containing one or more rows.
+   */
+  setDataModel<T extends Record<string, any>>(dataModel: InterfaceDataModel<T>): void;
   /**
    * Retrieves the current input values as a plain JavaScript object.
    * 
@@ -910,14 +1024,33 @@ export interface HInputGroupMethods extends ComponentMethods {
    */
   getDataObject(): Record<string, any>;
   /**
+   * Populates the input group with values from a plain JavaScript object.
+   * 
+   * This is equivalent to assigning values directly to each input.
+   * Keys in the object must match input `id`s in the group.
+   * 
+   * ---
+   * 
+   * ### ✅ Example
+   * ```ts
+   * inputGroup.setDataObject({
+   *   userId: 'hison',
+   *   email: 'a@b.com',
+   *   age: 30,
+   * });
+   * ```
+   * 
+   * @param dataObject An object with keys matching input IDs and values to apply.
+   */
+  setDataObject(dataObject: Record<string, any>): void;
+  /**
    * Loads data into the group’s inputs.
    * 
    * Supports `Record<string, any>`, `DataModel`, or `DataWrapper` as source.
    *
    * @param data The data source to apply to the group inputs.
-   * @param autoSetStatus If `true`, resets status to `'R'` (read) and clears modification state.
    */
-  load(data: Record<string, any> | InterfaceDataModel | InterfaceDataWrapper, autoSetStatus?: boolean): void;
+  load<T extends Record<string, any>>(data: Record<string, any> | InterfaceDataModel<T>): void;
   /**
    * Returns the current status of the input group.
    *
@@ -971,12 +1104,16 @@ export interface HInputGroupMethods extends ComponentMethods {
    */
   setEditMode(mode: EditMode): void;
   /**
-   * Focus on the first input that is editable.
+   * Focus on the first input that is editable, or a specific input if `inputId` is provided.
    *
-   * - The order of input components in the view may not follow the rendered DOM order due to Vue's mounting behavior.
-   * - Therefore, the inputs are sorted alphabetically by their assigned string `id` before applying focus.
+   * - If `inputId` is specified, it directly focuses on the corresponding input component within the group (if found).
+   * - If `inputId` is omitted, the method will iterate over all registered input IDs in alphabetical order
+   *   and focus on the first one whose edit mode is `'editable'`.
+   * - The sorting ensures consistent focus behavior regardless of DOM render timing or Vue's mount order.
+   *
+   * @param inputId - Optional ID of the specific input to focus. If omitted, the first editable input is focused.
    */
-  focus(): void;
+  focus(inputId?: string): void;
 }
 
 /**
@@ -1025,18 +1162,6 @@ export interface HCalendarMethods extends ComponentMethods {
    * @param disable
    */
   setDisable(disable: boolean): void;
-  /**
-   * Returns whether the calendar is currently visible.
-   * - `false` means `display: none` is applied.
-   */
-  isVisible(): boolean;
-  /**
-   * Shows or hides the calendar.
-   * - `true` makes the calendar visible.
-   * - `false` applies `display: none`.
-   * @param visible
-   */
-  setVisible(visible: boolean): void;
   /**
    * Returns the currently selected date.
    * @param getDateType If `true`, returns a `Date` object; otherwise returns a formatted string.
@@ -1347,16 +1472,4 @@ export interface HChartInstance extends ComponentMethods, Chart {
    * Always returns `'chart'`.
    */
   getType(): 'chart';
-  /**
-   * Returns whether the chart is currently visible.
-   * - `false` means `display: none` is applied.
-   */
-  isVisible(): boolean;
-  /**
-   * Shows or hides the chart.
-   * - `true` makes the chart visible.
-   * - `false` applies `display: none`.
-   * @param visible
-   */
-  setVisible(visible: boolean): void;
 }
