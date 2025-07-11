@@ -2,6 +2,7 @@
   <div
     :class="[
       'hison-calendar',
+      'hison-wrap',
       ...responsiveClassList,
       visibleClass,
       disableClass
@@ -60,6 +61,7 @@ import {
   getRGBAFromColorText,
   getInvertColor,
   unregisterReloadable,
+  reloadHisonComponent,
 } from '../../utils'
 import { useDevice } from '../../core'
 import { HCalenderView, hison, hisonCloser, Size } from '../..'
@@ -471,7 +473,8 @@ export default defineComponent({
             const filtered = ['years', 'year', 'month', 'week', 'day'].filter(view => !val.includes(view as HCalenderView))
             calendarRef.value.switchView(filtered[0])
           }
-        }
+        },
+        reload: () => reloadHisonComponent(reloadId)
       }
       hisonCloser.component.calendarList[id] = calendarMethods.value
       emit('mounted', calendarMethods.value)
