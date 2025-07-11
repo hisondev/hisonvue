@@ -16,6 +16,9 @@
     @mouseover="$emit('mouseover', $event, buttonMethods)"
     @mouseout="$emit('mouseout', $event, buttonMethods)"
   >
+    <template v-if="$slots.icon">
+      <slot name="icon" />
+    </template>
     <slot v-if="hasSlot" />
     <span v-else v-html="internalTextHtml"></span>
   </button>
@@ -27,7 +30,7 @@ import type { HButtonMethods } from '../../types'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
 import { buttonProps } from './props'
 import { hisonCloser } from '../..'
-import { addComponentNameToClass, extractResponsiveClasses, getUUID, registerReloadable, unregisterReloadable } from '../../utils'
+import { addComponentNameToClass, extractResponsiveClasses, getUUID, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 
 export default defineComponent({
@@ -39,7 +42,7 @@ export default defineComponent({
     const buttonRef = ref<HTMLButtonElement | null>(null)
     const buttonMethods = ref<HButtonMethods | null>(null)
     const id = props.id ? props.id : getUUID()
-    const reloadId = `hbutton:${props.id}`
+    const reloadId = `hbutton:${id}`
     const device = useDevice()
     const slots = useSlots()
 
@@ -94,7 +97,8 @@ export default defineComponent({
         },
         focus: () => {
           buttonRef.value?.focus();
-        }
+        },
+        reload: () => reloadHisonComponent(reloadId)
       }
       hisonCloser.component.buttonList[id] = buttonMethods.value
       emit('mounted', buttonMethods.value)
