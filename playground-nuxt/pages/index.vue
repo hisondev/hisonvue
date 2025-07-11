@@ -1,118 +1,128 @@
 <template>
     <h1>Home Page</h1>
-    <HLayout class="hison-col-12-mb hison-col-12-tb hison-col-6-pc hison-col-6-wd hison-layout-vertical-align-center-mb hison-layout-vertical-align-top-pc">
+    <HLayout class="hison-col-12-mb hison-col-12-tb hison-col-12-pc hison-col-12-wd hison-layout-vertical-align-center-mb hison-layout-vertical-align-top-pc">
         <HButton
-        @click="goToNoteTest"
-        :disable="true"
-        id="b1"
-        class="hison-col-2 hison-pos-left hison-size-l-mb hison-size-s-pc hison-color-danger-mb hison-color-warning-pc">
-            Go to Note<br>(left-button)
+          @click="goToNoteTest"
+          :disable="true"
+          id="b1"
+          class="hison-col-2 hison-pos-left hison-size-l-mb hison-size-s-pc hison-color-danger-mb hison-color-warning-pc">
+          Go to Note<br>(left-button)
         </HButton>
-        <div class="hison-col-5 hison-pos-center" style="text-align: center;">
+        <HLayout class="hison-col-5 hison-pos-center" style="text-align: center;">
             <HButton
             @click="onClickCenterButton1"
             class="hison-col-6 hison-size-l-mb hison-size-s-pc"
             text="center button1"
             ></HButton>
             <HButton @click="onClickCenterButton2" id="b4" class="hison-col-6 hison-size-l-mb hison-size-s-pc" text="center button2"></HButton>
-        </div>
+        </HLayout>
         <HButton @click="goToGridTest" id="b2" class="hison-col-2 hison-pos-right hison-size-l-mb hison-size-s-pc">Go to Grid<br>(right-button)</HButton>
     </HLayout>
-    <br><br>
-    <input id="test1" type="text" value="TEST" readonly/>
-    <input id="test2" type="checkbox" checked readonly/>
-    <br><br>
-    <HInputGroup id="inputGroup1">
-      <HLayout class="hison-col-12-tb hison-col-6-pc">
+    <HInputGroup id="inputGroup1" v-model="dataObject">
+      <HLayout id="layout1" class="hison-col-12-tb hison-col-6-pc" style="height: 500px;">
+        <HFileSet
+        id="fileSet"
+        class="hison-col-12 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-primary-mb hison-color-success-pc"
+        v-model="files"
+        :multiCols="true"
+        :placeholder="'저장된 파일이 없습니다.'"
+        :addButtonText="'추가'"
+        :removeButtonText="'삭제'"
+        :enableDrop="true"
+        :visible="true"
+        :editMode="EditMode.editable"
+        style="height: 200px; margin-bottom: 5px;"
+        ></HFileSet>
         <HInput
-        id="textarea"
+        id="range"
         class="hison-col-12 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-primary-mb hison-color-success-pc"
         style="margin-bottom: 5px;"
-        inputType="textarea"
-        placeholder="please insert text here."
+        inputType="range"
+        @mounted="inputMount"
+        ></HInput>
+        <HInput
+        id="color"
+        class="hison-col-3 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-primary-mb hison-color-success-pc"
+        style="margin-bottom: 5px;"
+        inputType="color"
+        @mounted="inputMount"
         ></HInput>
         <HInput
         id="checkbox"
-        class="hison-col-6 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-danger-mb hison-color-warning-pc"
+        class="hison-col-3 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-danger-mb hison-color-warning-pc"
         style="margin-bottom: 5px;"
         inputType="checkbox"
-        v-model="checkboxValue"
+        @mounted="inputMount"
         ></HInput>
         <HInput
         id="select"
         class="hison-col-6 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-danger-mb hison-color-warning-pc"
         style="margin-bottom: 5px;"
         inputType="select"
-        v-model="selectValue"
         :options="option1"
+        @mounted="inputMount"
         ></HInput>
       </HLayout>
-      <HLayout class="hison-col-12-tb hison-col-6-pc">
-          <HLayout class="hison-col-12-mb hison-col-6-pc hison-pos-right">
-            <HInput
-            id="input1"
-            class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-muted-pc"
-            style="margin-bottom: 5px;"
-            inputType="date"
-            :format="DateFormat['MMMM dd, yyyy']"
-            v-model="inputValue1"
-            :required="true"
-            :editMode="EditMode.readonly"
-            ></HInput>
-            <HInput
-            id="input2"
-            class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-info-pc"
-            style="margin-bottom: 5px;"
-            :inputType="InputType.text"
-            placeholder="please insert text here."
-            ref="input2Ref"
-            :required="true"
-            :editMode="EditMode.editable"
-            ></HInput>
-            <HInput
-            id="input3"
-            class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-success-pc"
-            style="margin-bottom: 5px;"
-            :inputType="InputType.date"
-            v-model="inputValue3"
-            ></HInput>
-          </HLayout>
-          <HLayout>
-            <HInput
-            id="input4"
-            class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-danger-pc"
-            style="margin-bottom: 5px;"
-            v-model="inputValue4"
-            inputType="number"
-            format="$$ #,###.##"
-            nullText="$$"
-            maxNumber="10000"
-            :editMode="EditMode.editable"
-            @input="onInput4"
-            ></HInput>
-            <HInput
-            id="input5"
-            class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
-            style="margin-bottom: 5px;"
-            v-model="inputValue5"
-            inputType="mask"
-            format="AA999"
-            nullText="-"
-            :required="true"
-            :editMode="EditMode.disable"
-            placeholder="testtest"
-            ></HInput>
-            <HInput
-            id="input6"
-            class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
-            style="margin-bottom: 5px;"
-            v-model="inputValue6"
-            :inputType="InputType.password"
-            placeholder="testtest"
-            :editMode="EditMode.readonly"
-            maxLength="10"
-            ></HInput>
-          </HLayout>
+      <HLayout id="layout2" class="hison-col-12-tb hison-col-6-pc" style="height: 500px;">
+        <HInput
+        id="input1"
+        class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-muted-pc"
+        style="margin-bottom: 5px;"
+        inputType="date"
+        :format="DateFormat['MMMM dd, yyyy']"
+        :required="true"
+        :editMode="EditMode.readonly"
+        ></HInput>
+        <HInput
+        id="input2"
+        class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-info-pc"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.text"
+        placeholder="please insert text here."
+        ref="input2Ref"
+        :required="true"
+        :editMode="EditMode.editable"
+        ></HInput>
+        <HInput
+        id="input3"
+        class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-success-pc"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.date"
+        ></HInput>
+        <HInput
+        id="input4"
+        class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-danger-pc"
+        style="margin-bottom: 5px;"
+        v-model="inputValue4"
+        inputType="number"
+        format="$$ #,###.##"
+        nullText="$$"
+        maxNumber="10000"
+        :editMode="EditMode.editable"
+        @input="onInput4"
+        ></HInput>
+        <HInput
+        id="input5"
+        class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
+        style="margin-bottom: 5px;"
+        v-model="inputValue5"
+        inputType="mask"
+        format="AA999"
+        nullText="-"
+        :required="true"
+        :editMode="EditMode.disable"
+        placeholder="testtest"
+        ></HInput>
+        <HInput
+        id="input6"
+        class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
+        style="margin-bottom: 5px;"
+        v-model="inputValue6"
+        :inputType="InputType.password"
+        placeholder="testtest"
+        :editMode="EditMode.readonly"
+        maxLength="10"
+        ></HInput>
       </HLayout>
     </HInputGroup>
     <br><br>
@@ -133,21 +143,28 @@
       style="height:300px; display: inline-flex; align-items: center; justify-content: center;"
     />
     <br><br>
-    <HLayout>
-        <HNote v-model="noteData1"
-        class="hison-col-12-mb hison-col-6-pc hison-size-m-mb hison-size-s-pc hison-color-primary-mb hison-color-warning-wd"
-        id="note1"
-        @mounted="mountNote1"
-        :boldBeforeClick="onBoldBeforeClick"
-        :textareaBeforeFocus="onTextareaBeforeFocus"
-        textarea-height="200px"
-        ></HNote>
-        <HNote v-model="noteData2"
-        class="hison-col-12-mb hison-col-6-pc hison-size-m-mb hison-size-s-pc hison-color-primary-mb hison-color-warning-wd"
-        @mounted="mountNote2"
-        textarea-height="200px"
-        ></HNote>
-    </HLayout>
+    <HCalendar
+        id="cal1"
+        class="hison-size-l-mb hison-size-s-pc hison-color-primary-mb hison-color-warning-pc"
+        active-view="week"
+        :events-on-month-view="'short'"
+        :date-cell-max-height="100"
+        :date-cell-min-height="100"
+        v-model:selected-date="selectedDate"
+        v-model:events="calendarEvents"
+        :locale="'en'"
+        :time-step="60"
+        :time-from="9 * 60"
+        :time-to="18 * 60"
+        :twelve-hour="true"
+        :weekend-color="'#dd5555'"
+        :start-week-on-sunday="false"
+        :show-today-color="true"
+        @cell-click="onCellClick"
+        @view-change="onViewChange"
+        :special-time="specialTime"
+        >
+    </HCalendar>
     <br><br>
     <HLayout>
       <HGrid
@@ -175,60 +192,69 @@
       />
     </HLayout>
     <br><br>
-    <HCalendar
-        id="cal1"
-        class="hison-size-l-mb hison-size-s-pc hison-color-primary-mb hison-color-warning-pc"
-        active-view="week"
-        :events-on-month-view="'short'"
-        :date-cell-max-height="100"
-        :date-cell-min-height="100"
-        v-model:selected-date="selectedDate"
-        v-model:events="calendarEvents"
-        :locale="'en'"
-        :time-step="60"
-        :time-from="9 * 60"
-        :time-to="18 * 60"
-        :twelve-hour="true"
-        :weekend-color="'#dd5555'"
-        :start-week-on-sunday="false"
-        :show-today-color="true"
-        @cell-click="onCellClick"
-        @view-change="onViewChange"
-        :special-time="specialTime"
-        >
-    </HCalendar>
+    <HLayout>
+        <HNote v-model="noteData1"
+        class="hison-col-12-mb hison-col-6-pc hison-size-m-mb hison-size-s-pc hison-color-primary-mb hison-color-warning-wd"
+        id="note1"
+        @mounted="mountNote1"
+        :boldBeforeClick="onBoldBeforeClick"
+        :textareaBeforeFocus="onTextareaBeforeFocus"
+        textarea-height="200px"
+        ></HNote>
+        <HNote v-model="noteData2"
+        id="note2"
+        class="hison-col-12-mb hison-col-6-pc hison-size-m-mb hison-size-s-pc hison-color-primary-mb hison-color-warning-wd"
+        @mounted="mountNote2"
+        textarea-height="200px"
+        ></HNote>
+    </HLayout>
 </template>
 
 <script setup lang="ts">
-const textareaValue = ref('TEST')
+const files = ref<AttachedFileItem[]>([])
+const inputMount = (input: HInputMethods) => {
+  console.log(input.getId())
+}
+
+let toggle = true
+let data, dataModel, dataWrapper
+let invertColorToggle = true
+const noteData1 = ref<NoteData>()
+const noteData2 = ref<NoteData>()
+const onClickCenterButton1 = (e: Event, button: HButtonMethods) => {
+  const inputGroup1 = hison.vue.getInputGroup('inputGroup1')
+  inputGroup1?.reload()
+  console.log(files.value)
+}
+const onClickCenterButton2 = () => {
+  const fileSet = hison.vue.getFileSet('fileSet')
+  fileSet?.setEditMode(EditMode.readonly)
+  console.log(fileSet?.getEditMode())
+  files.value.splice(1)
+}
+const colorValue = ref('#f4ed25')
+const rangeValue = ref(100)
 const checkboxValue = ref(true)
 const selectValue = ref('value2')
 const option1 = [
-  { text: 'text1', value: 'value1' },
-  { text: 'text2', value: 'value2' },
+  { text: '가나다1', value: 'value1' },
+  { text: '가나다2', value: 'value2' },
   { text: 'text3', value: 'value3' },
   { text: 'text4', value: 'value4' },
   { text: 'text5', value: 'value5' },
 ]
-let toggle = true
-const onClickCenterButton1 = (e: Event, button: HButtonMethods) => {
-  const checkbox = hison.vue.getInput('checkbox')
-  checkbox?.setEditMode(EditMode.disable)
-  const select = hison.vue.getInput('select')
-  select?.setEditMode(EditMode.disable)
-  toggle = !toggle
-  //console.log()
-}
-let invertColorToggle = true
-const onClickCenterButton2 = () => {
-  const checkbox = hison.vue.getInput('checkbox')
-  checkbox?.setEditMode(EditMode.readonly)
-  const select = hison.vue.getInput('select')
-  select?.setEditMode(EditMode.readonly)
-  console.log(select?.getText())
-  //hison.style.setInvertColor(invertColorToggle)
-  //invertColorToggle = !invertColorToggle
-}
+let dataObject = ref({
+  checkbox : true,
+  color : "#128483",
+  input1 : "2025-11-28",
+  input2 : '',
+  input3 : "2025-11-19",
+  input4 : 4321.4231,
+  input5 : "FA123",
+  input6 : "15sdfxzcv1",
+  range : 70,
+  select : "value4",
+})
 
 import type { ChartData, ChartOptions } from 'chart.js'
 
@@ -326,10 +352,6 @@ const chartOptions1 = ref<ChartOptions>({
   }
 })
 
-
-
-const noteData1 = ref<NoteData>()
-const noteData2 = ref<NoteData>()
 const mountNote1 = (note: VanillanoteElement) => {
 }
 const mountNote2 = () => {
@@ -448,11 +470,13 @@ const isWeekend = (heading: any) => {
     return heading.label === 'Saturday' || heading.label === 'Sunday'
 }
 
-import { DateFormat, DayOfWeek, EditMode, HButtonMethods, HCalenderTimeFormat, HCalenderView, HGridColumn, HInputMethods, hison, InputType, NoteToolPosition } from 'hisonvue'
+import { AttachedFileItem, DateFormat, DayOfWeek, EditMode, HButtonMethods, HCalenderTimeFormat, HCalenderView, HGridColumn, HInputMethods, hison, InputType, NoteToolPosition } from 'hisonvue'
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
 import { Align, GridMethods } from 'vanillagrid2'
 import { NoteData, NoteModeByDevice, ToolPosition, VanillanoteElement } from 'vanillanote2'
+import { sassTrue } from 'sass-embedded'
+import { InterfaceDataModel } from 'hisonjs'
 
 const inputValue1 = ref<any>('20240228');
 const inputValue2 = ref<any>('2025-03')
