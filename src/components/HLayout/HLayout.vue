@@ -13,6 +13,7 @@
         @mouseover="$emit('mouseover', $event, layoutMethods)"
         @mouseout="$emit('mouseout', $event, layoutMethods)"
     >
+        <div class="hison-layout-frame-adjust"></div>
         <slot>Hison Layout</slot>
     </div>
 </template>
@@ -22,7 +23,7 @@ import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, next
 import type { HLayoutMethods } from '../../types'
 import { layoutProps } from './props'
 import { hisonCloser } from '../..'
-import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getUUID, registerReloadable, unregisterReloadable } from '../../utils'
+import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getUUID, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 
 export default defineComponent({
@@ -34,10 +35,10 @@ setup(props, { emit }) {
     const layoutRef = ref<HTMLDivElement | null>(null)
     const layoutMethods = ref<HLayoutMethods | null>(null)
     const id = props.id ? props.id : getUUID();
-    const reloadId = `hlayout:${props.id}`
+    const reloadId = `hlayout:${id}`
     const device = useDevice()
 
-    const visible = ref(props.visible)  //'false'가 아닌 경우 모두 true
+    const visible = ref(props.visible)
     const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
 
     const computedBackStyle = computed(() => {
@@ -87,7 +88,7 @@ setup(props, { emit }) {
         layoutMethods.value = {
             getId : () => { return id },
             getType : () => 'layout',
-            isVisible : () => window.getComputedStyle(layoutRef.value!).display !== 'none',
+            isVisible : () => visible.value,
             setVisible : (val: boolean) => {
                 visible.value = val
             },
@@ -143,6 +144,7 @@ setup(props, { emit }) {
                     layoutRef.value.style.height = val;
                 }
             },
+            reload: () => reloadHisonComponent(reloadId)
         }
         hisonCloser.component.layoutList[id] = layoutMethods.value
         emit('mounted', layoutMethods.value)
