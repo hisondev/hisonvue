@@ -3,7 +3,7 @@ import { CSSProperties, PropType } from "vue";
 export const layoutProps = {
     /**
      * Unique identifier for the layout.
-     * - You can later retrieve its methods via `hison.vue.getLayout(id)`
+     * - You can later retrieve its methods via `hison.component.getLayout(id)`
      * - ⚠️ Duplicate `id` values will throw an error at mount time
      */
     id: { type: String, required: false },
@@ -24,7 +24,7 @@ export const layoutProps = {
      * - Accepts string values: `'true'` or `'false'` (not boolean)
      * - Defaults to visible if not provided or if value is not `'false'`
      */
-    visible: { type: Boolean, required: false, default: true },
+    visible: { type: Boolean, default: true },
     /** Background image URL */
     backImageSrc: { type: String, required: false },
     /** Background repeat/cover/contain settings */
