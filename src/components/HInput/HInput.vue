@@ -162,8 +162,8 @@
   <select
     v-else-if="inputType === 'select'"
     ref="inputRef"
-    :id="`select_${id}`"
-    :name="`select_${id}`"
+    :id="`hison_select_${id}`"
+    :name="`hison_select_${id}`"
     :style="props.style"
     :class="[
       'hison-input',
@@ -248,8 +248,8 @@
   <template v-else>
     <input
       ref="inputTextRef"
-      :id="`inputText_${id}`"
-      :name="`inputText_${id}`"
+      :id="`hison_input_text_${id}`"
+      :name="`hison_input_text_${id}`"
       v-show="!editing"
       :class="[
         'hison-input',
@@ -339,7 +339,7 @@ import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, w
 import type { HInputMethods } from '../../types'
 import { inputProps } from './props'
 import { DateFormat, hison, hisonCloser, EditMode, InputType, YearMonthFormat, TimeFormat } from '../..'
-import { addComponentNameToClass, extractResponsiveClasses, getDigitsOnly, getMaskValue, getUUID, isNullOrUndefined, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
+import { addComponentNameToClass, extractResponsiveClasses, getDigitsOnly, getIndexSpecificClassNameFromClassList, getMaskValue, getUUID, isNullOrUndefined, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 import { addInputCssEvent, addInputTextCssEvent, removeInputCssEvent, removeInputTextCssEvent } from '../common/setInputCssEvent'
 
@@ -402,6 +402,7 @@ export default defineComponent({
     const responsiveClassList = ref<string[]>([])
     const refleshResponsiveClassList = () => {
       responsiveClassList.value = extractResponsiveClasses(props.class || '', device.value)
+      if (getIndexSpecificClassNameFromClassList(responsiveClassList.value, 'col') === -1) responsiveClassList.value.push('hison-col-12')
       addComponentNameToClass(responsiveClassList.value, 'size', 'input', hisonCloser.componentStyle.size)
       addComponentNameToClass(responsiveClassList.value, 'color', 'input', 'primary')
     }
