@@ -24,6 +24,10 @@ const HFileSet = createSSRClientOnly<typeof import('./components/HFileSet/HFileS
   () => import('./components/HFileSet/HFileSet.vue'),
   'HFileSet'
 )
+const HImageBox = createSSRClientOnly<typeof import('./components/HImageBox/HImageBox.vue').default>(
+  () => import('./components/HImageBox/HImageBox.vue'),
+  'HImageBox'
+)
 const HInput = createSSRClientOnly<typeof import('./components/HInput/HInput.vue').default>(
   () => import('./components/HInput/HInput.vue'),
   'HInput'
@@ -77,6 +81,7 @@ export const hisonvue = {
     app.component('HButton', HButton)
     app.component('HLayout', HLayout)
     app.component('HFileSet', HFileSet)
+    app.component('HImageBox', HImageBox)
     app.component('HInput', HInput)
     app.component('HInputGroup', HInputGroup)
     app.component('HCalendar', HCalendar)
@@ -90,6 +95,7 @@ export {
   HNote,
   HGrid,
   HFileSet,
+  HImageBox,
   HInput,
   HInputGroup,
   HCalendar,
@@ -111,6 +117,7 @@ export type {
   HButtonMethods,
   HLayoutMethods,
   HFileSetMethods,
+  HImageBoxMethods,
   HInputMethods,
   HInputGroupMethods,
   HCalendarMethods,
