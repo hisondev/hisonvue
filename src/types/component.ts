@@ -1,5 +1,5 @@
 import { GridMethods } from "vanillagrid2"
-import { GridAlign, GridVerticalAlign, EditMode, InputType, DataStatus, DayOfWeek, HCalenderView, HCalenderTimeFormat } from "../enums"
+import { GridAlign, GridVerticalAlign, EditMode, InputType, DataStatus, DayOfWeek, HCalenderView, HCalenderTimeFormat, BackgroundType } from "../enums"
 import { NoteData, VanillanoteElement } from "vanillanote2"
 import { InterfaceDataModel } from "hisonjs"
 import { Chart } from "chart.js"
@@ -7,17 +7,49 @@ import { Chart } from "chart.js"
 export type DeviceType = 'mb' | 'tb' | 'pc' | 'wd'
 
 /**
+ * Represents a file item attached to the HFileSet component.
  * 
+ * This interface is used to describe both server-provided files (already uploaded)
+ * and new files selected via input or drag-and-drop.
  */
 export interface AttachedFileItem {
-    fileId?: string;          // DB에서 내려온 파일의 식별자
-    fileName: string;         // 파일명
-    fileSize?: number;        // 크기 (byte)
-    filePath?: string;        // 서버 파일 저장 경로
-    extension?: string;       // 확장자
-    file?: File;              // 새로 업로드한 경우 File 객체
-    isNew?: boolean;          // 신규 업로드 여부
-    isDeleted?: boolean;      // 삭제 처리 여부
+  /**
+   * Unique identifier of the file from the server.
+   * Used to distinguish pre-existing files stored in the DB.
+   */
+  fileId?: string;
+  /**
+   * Display name of the file (including extension).
+   */
+  fileName: string;
+  /**
+   * Size of the file in bytes.
+   * This may be undefined for server-loaded files unless provided.
+   */
+  fileSize?: number;
+  /**
+   * Path or URL to download the file from the server.
+   */
+  filePath?: string;
+  /**
+   * File extension, such as `pdf`, `jpg`, `docx`.
+   * This is automatically extracted from `fileName` if not provided.
+   */
+  extension?: string;
+  /**
+   * Native File object (from input or drag-and-drop).
+   * Exists only for newly uploaded files.
+   */
+  file?: File;
+  /**
+   * Indicates whether this file was newly added by the user.
+   */
+  isNew?: boolean;
+  /**
+   * Indicates whether this file has been marked for deletion.
+   * Deleted files will not appear in the visible file list.
+   */
+  isDeleted?: boolean;
 }
 
 /**
@@ -54,9 +86,7 @@ export type HCalendarSpecialTime = {
  *   5: [ { from: 1080, to: 1140 } ]                             // Friday 18:00–19:00
  * }
  */
-export type HCalendarSpecialTimeMap =  {
-  [key in DayOfWeek]?: HCalendarSpecialTime[]
-}
+export type HCalendarSpecialTimeMap =  { [key in DayOfWeek]?: HCalendarSpecialTime[] }
 
 /**
  * Defines a calendar event shown on the calendar.
@@ -510,7 +540,7 @@ export interface HNoteElement extends ComponentMethods, VanillanoteElement {
    *
    * @param dataModel A `DataModel` whose first row maps to `NoteData` structure.
    */
-  setDataModel<T extends Record<string, any>>(dataModel: InterfaceDataModel<T>): void;
+  setDataModel<T extends NoteData>(dataModel: InterfaceDataModel<T>): void;
   /**
    * Loads editor content from either a `NoteData` object or a compatible `DataModel`.
    *
@@ -519,20 +549,20 @@ export interface HNoteElement extends ComponentMethods, VanillanoteElement {
    *
    * @param data Editor content to load, in `NoteData` or `DataModel` form.
    */
-  load<T extends Record<string, any>>(data: NoteData | Record<string, any> | InterfaceDataModel<T>): void;
+  load<T extends NoteData>(data: NoteData | Record<string, any> | InterfaceDataModel<T>): void;
 }
 
 /**
  * Runtime control methods for `HButton` component.
  *
- * This interface defines methods that can be accessed via `hison.vue.getButton(id)`.
+ * This interface defines methods that can be accessed via `hison.component.getButton(id)`.
  * Use these methods to manipulate button state programmatically at runtime.
  *
  * ---
  *
  * ### 🔧 Example Usage
  * ```ts
- * const btn = hison.vue.getButton('btn01');
+ * const btn = hison.component.getButton('btn01');
  * btn.setVisible(false);
  * btn.setDisable(true);
  * btn.setText('Loading...');
@@ -583,9 +613,88 @@ export interface HButtonMethods extends ComponentMethods {
    */
   setDisable(disable: boolean): void;
   /**
+   * Gets the current background type of the button.
+   * Returns 'filled', 'empty', or 'transparent' according to the applied style.
+   * See BackgroundType enum for all possible values.
+   */
+  getBackgroundType(): BackgroundType
+  /**
+   * Changes the button's background type at runtime.
+   * Accepts 'filled', 'empty', or 'transparent' (see BackgroundType).
+   * Triggers re-render and updates the button's CSS class immediately.
+   * @param type - New background type to apply.
+   */
+  setBackgroundType(type: BackgroundType): void
+  /**
+   * Unlocks the button, allowing it to be clicked again after a manual lock.
+   *
+   * This method is used to release the "pending" (locked) state of the button,
+   * which is automatically enabled to prevent double submission while the `click` handler is running.
+   *
+   * - If your `@click` handler performs asynchronous logic (such as API requests or timeouts)
+   *   and you want to allow another click only after a certain condition or callback, use this method.
+   *
+   * ---
+   *
+   * ### 🛠 Usage Example
+   * ```vue
+   * <HButton
+   *   @click="async (e, btn) => {
+   *     btn.setDisable(true)
+   *     await apiRequest()
+   *     btn.setDisable(false)
+   *     btn.unlock() // unlocks the button for the next click
+   *   }"
+   * />
+   *
+   * <HButton
+   *   @click="(e, btn) => {
+   *     btn.setDisable(true)
+   *     setTimeout(() => {
+   *       btn.setDisable(false)
+   *       btn.unlock() // unlocks after timeout
+   *     }, 2000)
+   *   }"
+   * />
+   * ```
+   */
+  unlock(): void
+  /**
+   * Returns the current minimum interval (in milliseconds) required between button clicks.
+   * - When set, the button cannot be clicked again until the specified time has passed since the last accepted click.
+   *
+   * @returns {number} The interval in milliseconds. `0` means no interval limit.
+   *
+   * ---
+   *
+   * ### 🛠 Usage Example
+   * ```ts
+   * const btn = hison.component.getButton('myBtn')
+   * const interval = btn.getClickInterval()
+   * // e.g., interval === 500 (for a 0.5s interval)
+   * ```
+   */
+  getClickInterval(): number
+  /**
+   * Sets the minimum interval (in milliseconds) between button clicks.
+   * - When set, any clicks that occur before the interval has passed since the last click will be ignored.
+   * - This is independent of the isPending (pending/locked) state.
+   *
+   * @param {number} ms - The interval in milliseconds (e.g., `500` for 0.5 seconds).
+   *
+   * ---
+   *
+   * ### 🛠 Usage Example
+   * ```ts
+   * const btn = hison.component.getButton('myBtn')
+   * btn.setClickInterval(1500) // Now only one click is allowed every 1.5 seconds.
+   * ```
+   */
+  setClickInterval(ms: number): void
+  /**
    * Focus on the button.
    */
-  focus(): void;
+  focus(): void
 }
 
 /**
@@ -593,13 +702,13 @@ export interface HButtonMethods extends ComponentMethods {
  *
  * This interface defines programmatic access to a layout's visibility,
  * background, border, and layout styling. You can retrieve an instance
- * using `hison.vue.getLayout(id)`.
+ * using `hison.component.getLayout(id)`.
  *
  * ---
  *
  * ### 🔧 Example Usage
  * ```ts
- * const layout = hison.vue.getLayout('layout01');
+ * const layout = hison.component.getLayout('layout01');
  * layout.setVisible(true);
  * layout.setBackColor('primary');
  * layout.setBackImageSrc('/assets/bg.jpg');
@@ -703,61 +812,684 @@ export interface HLayoutMethods extends ComponentMethods {
   setHeight(cssText: string): void;
 }
 
-export interface HFileSetMethods extends ComponentMethods {
+/**
+ * Interface for runtime control of `<HImageBox>` component.
+ *
+ * This interface provides a complete set of methods for dynamically controlling and querying the state
+ * of an HImageBox instance in hisonvue. All methods are accessible via `hison.vue.getInput(id)` or
+ * on the instance emitted via the `mounted` event.
+ *
+ * **Typical use cases include:**
+ * - Changing edit mode, button text, allowed file types, or drag-and-drop support at runtime
+ * - Setting the image programmatically (e.g., for editing or resetting forms)
+ * - Integrating with backend logic to preload, update, or clear the image state
+ * - Customizing validation or error handling logic for file type or file size checks
+ * - Dynamically updating UI text such as placeholder or button labels in response to user actions
+ * - Managing attachment group IDs for file association with backend records
+ *
+ * :::example
+ * ```ts
+ * // Get runtime methods from hison.vue
+ * const imageBox = hison.vue.getInput('avatarBox') as HImageBoxMethods
+ *
+ * // Make the component readonly
+ * imageBox.setEditMode('readonly')
+ *
+ * // Set allowed file types to PNG only
+ * imageBox.setAllowedTypes(['image/png'])
+ *
+ * // Change add button label at runtime
+ * imageBox.setAddButtonText('Upload Photo')
+ *
+ * // Replace the image with a new uploaded file
+ * imageBox.setValue({
+ *   fileName: 'profile.png',
+ *   file: someFileObj,
+ *   fileSize: someFileObj.size,
+ *   extension: 'png',
+ *   isNew: true
+ * })
+ *
+ * // Attach a custom handler for max file size exceeded
+ * imageBox.setOnMaxFileSizeExceeded((file, size, max) => {
+ *   alert(`File too large! Max allowed: ${max} bytes`)
+ * })
+ *
+ * // Programmatically focus the add button
+ * imageBox.focus()
+ * ```
+ * :::
+ *
+ * **Method groups:**
+ * - **Edit Mode & Visibility**: Control user interaction and UI state
+ * - **Image Value**: Get or set the attached image file (including clearing or preloading)
+ * - **File Upload Options**: Allowed/disallowed types, file size, drag-and-drop, validation handlers
+ * - **UI Labels & Placeholders**: Set button labels or placeholder dynamically
+ * - **Attachment Grouping**: Manage `attId` for backend association
+ * - **State Query**: Check if the image box has been modified
+ *
+ * All setters update the internal state and UI instantly.
+ */
+export interface HImageBoxMethods extends ComponentMethods {
   /**
-   * Returns the type of the fileSet.
+   * Returns the type of this component instance.
+   * Always returns `'imageBox'` for `<HImageBox>`.
    */
-  getType(): 'fileSet'
+  getType(): 'imageBox'
   /**
-   * Returns whether the fileSet is currently visible.
-   * - `false` means `display: none` is applied.
-   */
-  isVisible(): boolean;
-  /**
-   * Shows or hides the fileSet.
-   * - `true` makes the fileSet visible.
-   * - `false` hides it using `display: none`.
-   */
-  setVisible(visible: boolean): void;
-  /**
-   * Gets the current edit mode.
-   * - Possible values: `'editable'`, `'readonly'`, `'disable'`
+   * Gets the current edit mode of the image box.
+   * 
+   * - `'editable'`: Full editing (add/delete) enabled
+   * - `'readonly'`: View only, image file actions hidden
+   * - `'disable'`: Completely disabled, grayed out
    */
   getEditMode(): EditMode;
   /**
-   * Sets the edit mode of the fileSet.
-   * - `'readonly'` and `'disable'` both prevent editing but differ in style.
+   * Sets the edit mode of the image box.
+   * 
+   * - `'editable'`: Allows adding/removing image file
+   * - `'readonly'`: Disables all image file operations but keeps UI visible
+   * - `'disable'`: Fully disables the UI (input, buttons)
+   * 
+   * @param mode - The new edit mode
    */
   setEditMode(mode: EditMode): void;
   /**
-   * Gets the current placeholder text.
+   * Returns the current (visible, not deleted) image file.
+   * 
+   * file is an object conforming to `AttachedFileItem`.
+   * Files marked `isDeleted: true` are excluded.
+   * 
+   * @returns The current list of image file.
+   */
+  getValue(): AttachedFileItem | null;
+  /**
+   * Sets the internal image file to the provided value.
+   * 
+   * - The list will be displayed immediately and emitted via `update:modelValue`.
+   * - Use this to reset, replace, or synchronize the image file with backend data.
+   * 
+   * @param attachedFileItem - The new image file.
+   */
+  setValue(attachedFileItem: AttachedFileItem): void;
+  /**
+   * Converts the current editor content into a `DataModel` instance.
+   *
+   * - Returns a new `DataModel` where each property of `AttachedFileItem`
+   *   becomes a column, and a single row represents the editor state.
+   *
+   * @returns A `DataModel<AttachedFileItem>` containing the editor's current data.
+   */
+  getDataModel(): InterfaceDataModel<AttachedFileItem> | null;
+  /**
+   * Populates the editor using a `DataModel` instance.
+   *
+   * - Extracts values from the first row of the `DataModel`, if available.
+   * - Uses the values from columns like `html`, `plainText`, `links`, etc. to restore editor content.
+   *
+   * @param dataModel A `DataModel` whose first row maps to `AttachedFileItem` structure.
+   */
+  setDataModel<T extends AttachedFileItem>(dataModel: InterfaceDataModel<T>): void;
+  /**
+   * Loads editor content from either a `AttachedFileItem` object or a compatible `DataModel`.
+   *
+   * - Accepts plain `AttachedFileItem`, raw object, or `DataModel`.
+   * - Automatically determines how to process the input and restores the editor accordingly.
+   *
+   * @param data Editor content to load, in `AttachedFileItem` or `DataModel` form.
+   */
+  load<T extends Record<string, any>>(data: AttachedFileItem | Record<string, any> | InterfaceDataModel<T>): void;
+  /**
+   * Returns the current `attId` (attachment group ID).
+   * 
+   * Used to group image file logically, often for backend APIs.
+   */
+  getAttId(): string;
+  /**
+   * Sets the `attId` (attachment group ID).
+   * 
+   * - Use to associate this image box with a different group in your backend.
+   * - Has no effect on UI, but is included in emitted file info.
+   * 
+   * @param attId - The new attachment group ID.
+   */
+  setAttId(attId: string): void;
+  /**
+   * Gets the text content currently shown on the add/upload button.
+   * 
+   * - Corresponds to `addButtonText` prop.
+   */
+  getAddButtonText(): string;
+  /**
+   * Sets the text shown on the add/upload button.
+   * 
+   * - Supports multiline via `\n` (rendered as `<br>`).
+   * - If an `add-button` slot is used, this will have no effect.
+   * 
+   * @param addButtonText - New button text
+   */
+  setAddButtonText(addButtonText: string): void;
+  /**
+   * Gets the text content currently shown on the remove/delete button.
+   * 
+   * - Corresponds to `removeButtonText` prop.
+   */
+  getRemoveButtonText(): string;
+  /**
+   * Sets the text shown on the remove/delete button.
+   * 
+   * - Supports multiline via `\n` (rendered as `<br>`).
+   * - If a `remove-button` slot is used, this will have no effect.
+   * 
+   * @param removeButtonText - New button text
+   */
+  setRemoveButtonText(removeButtonText: string): void;
+  /**
+   * Gets the current placeholder text (empty state message).
+   * 
+   * - Shown when there is no image in the image box.
+   * - Corresponds to the `placeholder` prop.
    */
   getPlaceholder(): string;
   /**
-   * Sets the placeholder text.
-   * - Maps to the native `placeholder` attribute.
+   * Sets the placeholder text (empty state message).
+   * 
+   * - Updates UI immediately.
+   * 
+   * @param placeholder - New placeholder text
    */
   setPlaceholder(placeholder: string): void;
+  /**
+   * Returns whether drag-and-drop uploading is currently enabled.
+   * 
+   * - Controlled by the `enableDrop` prop.
+   */
+  isEnableDrop(): boolean;
+  /**
+   * Enables or disables drag-and-drop image file uploading.
+   * 
+   * @param enableDrop - `true` to allow drag-and-drop, `false` to block it.
+   */
+  setEnableDrop(enableDrop: boolean): void;
+  /**
+   * Gets the current list of allowed image file types/extensions.
+   * 
+   * - Controlled by the `allowedTypes` prop.
+   * - MIME types or extensions (e.g. `.pdf`, `image/png`).
+   */
+  getAllowedTypes(): string[];
+  /**
+   * Sets the allowed file types/extensions.
+   * 
+   * - Accepts an array of MIME types or file extensions.
+   * - Updates the file input's accept filter and internal validation.
+   * 
+   * @param allowedTypes - Array of allowed types/extensions.
+   */
+  setAllowedTypes(allowedTypes: string[]): void;
+  /**
+   * Gets the current list of disallowed file types/extensions.
+   * 
+   * - Controlled by the `disallowedTypes` prop.
+   * - MIME types or extensions (e.g. `.exe`, `application/x-msdownload`).
+   */
+  getDisallowedTypes(): string[];
+  /**
+   * Sets the disallowed file types/extensions.
+   * 
+   * - Accepts an array of MIME types or file extensions.
+   * - Any file matching these types/extensions will be rejected.
+   * 
+   * @param disallowedTypes - Array of disallowed types/extensions.
+   */
+  setDisallowedTypes(disallowedTypes: string[]): void;
+  /**
+   * Gets the current maximum allowed file size (per file, bytes).
+   * 
+   * - Controlled by the `maxFileSize` prop.
+   */
+  getMaxFileSize(): number;
+  /**
+   * Sets the maximum allowed file size (per file, bytes).
+   * 
+   * - Files exceeding this size are rejected on upload.
+   * 
+   * @param maxFileSize - Maximum size in bytes
+   */
+  setMaxFileSize(maxFileSize: number): void;
+  /**
+   * Sets a custom callback when a file has a disallowed type/extension.
+   * 
+   * - Called during file selection/drag if a file fails allowed/disallowed check.
+   * - Use for custom alerts, validation UI, logging, etc.
+   * 
+   * @param onDisallowedType - Callback with the file, allowedTypes, disallowedTypes.
+   */
+  setOnDisallowedType(
+    onDisallowedType: (
+      currentCheckFile: File,
+      allowedTypes: string[] | null,
+      disallowedTypes: string[] | null
+    ) => void
+  ): void;
+  /**
+   * Sets a custom callback when a file exceeds the maximum file size.
+   * 
+   * - Use to alert the user or log the event.
+   * 
+   * @param onMaxFileSizeExceeded - Callback with file, file size, and limit.
+   */
+  setOnMaxFileSizeExceeded(
+    onMaxFileSizeExceeded: (
+      currentCheckFile: File,
+      currentFileSize: number,
+      maxFileSizeAllowed: number
+    ) => void
+  ): void;
+  /**
+   * Returns whether the file list has been modified since the last set/reset.
+   * 
+   * - Adding or removing files, or changing file info, sets this to true.
+   */
   isModified(): boolean;
+  /**
+   * Sets the "modified" state of the image box.
+   * 
+   * - Use to manually reset the modified flag (e.g., after save).
+   * 
+   * @param modified - `true` to mark as modified, `false` to reset.
+   */
   setModified(modified: boolean): void;
   /**
-   * Focus on the fileSet.
+   * Focuses the add image file button.
+   * 
+   * - Useful for accessibility or guiding user attention programmatically.
    */
   focus(): void;
-  
+}
+
+/**
+ * Interface for runtime control of `<HFileSet>` component.
+ *
+ * This interface exposes a full set of methods for dynamically controlling and querying the state
+ * of an HFileSet instance registered with hisonvue. All methods are available via `hison.vue.getInput(id)` or
+ * on the instance exposed in the `mounted` event.
+ *
+ * **Typical use cases include:**
+ * - Programmatically changing edit mode, file upload rules, button labels, and placeholders
+ * - Updating allowed/disallowed file types, file size/count limits, and drag-and-drop settings at runtime
+ * - Assigning custom file download logic (e.g., S3, access control)
+ * - Replacing or reading the list of attached files (including marking deletions or restoring files)
+ * - Integrating with server or parent logic to control the file set from outside the component
+ *
+ * :::example
+ * ```ts
+ * // Get runtime methods from hison.vue
+ * const fileSet = hison.vue.getInput('myFileSet') as HFileSetMethods
+ * 
+ * // Change edit mode to readonly
+ * fileSet.setEditMode('readonly')
+ * 
+ * // Limit to only 2 files and only PDFs
+ * fileSet.setMaxFileCount(2)
+ * fileSet.setAllowedTypes(['.pdf'])
+ * 
+ * // Change add button label dynamically
+ * fileSet.setAddButtonText('파일 추가')
+ * 
+ * // Replace all files with new ones
+ * fileSet.setValue([
+ *   { fileName: 'newfile.pdf', fileSize: 100000, extension: 'pdf', isNew: true, file: someFileObj }
+ * ])
+ *
+ * // Focus add button programmatically
+ * fileSet.focus()
+ * ```
+ * :::
+ *
+ * **Method groups:**
+ * - **Edit Mode & Visibility**: Control when/how the user can add/delete files
+ * - **File List**: Get/set all attached files, reflecting deletion or restoration
+ * - **File Upload Options**: Allowed/disallowed types, size, count, drag-and-drop, multi-column
+ * - **UI Labels & Placeholders**: Set button texts and empty message dynamically
+ * - **Custom Handlers**: Assign custom download or validation error logic
+ * - **State Query**: Check for modification, get attachment group ID, etc.
+ *
+ * All setters immediately update the internal state and UI.
+ */
+export interface HFileSetMethods extends ComponentMethods {
+  /**
+   * Returns the type of this component instance.
+   * Always returns `'fileSet'` for `<HFileSet>`.
+   */
+  getType(): 'fileSet'
+  /**
+   * Gets the current edit mode of the file set.
+   * 
+   * - `'editable'`: Full editing (add/delete) enabled
+   * - `'readonly'`: View only, file actions hidden
+   * - `'disable'`: Completely disabled, grayed out
+   */
+  getEditMode(): EditMode;
+  /**
+   * Sets the edit mode of the file set.
+   * 
+   * - `'editable'`: Allows adding/removing files
+   * - `'readonly'`: Disables all file operations but keeps UI visible
+   * - `'disable'`: Fully disables the UI (input, buttons)
+   * 
+   * @param mode - The new edit mode
+   */
+  setEditMode(mode: EditMode): void;
+  /**
+   * Returns the current (visible, not deleted) file list.
+   * 
+   * Each file is an object conforming to `AttachedFileItem`.
+   * Files marked `isDeleted: true` are excluded.
+   * 
+   * @returns The current list of files.
+   */
+  getValue(): AttachedFileItem[] | null;
+  /**
+   * Sets the internal file list to the provided value.
+   * 
+   * - The list will be displayed immediately and emitted via `update:modelValue`.
+   * - Use this to reset, replace, or synchronize the files with backend data.
+   * 
+   * @param attachedFileItem - The new file list.
+   */
+  setValue(attachedFileItem: AttachedFileItem[]): void;
+  /**
+   * Converts the current editor content into a `DataModel` instance.
+   *
+   * - Returns a new `DataModel` where each property of `AttachedFileItem` (like `html`, `links`, `files`, etc.)
+   *   becomes a column, and a single row represents the editor state.
+   *
+   * @returns A `DataModel<AttachedFileItem>` containing the editor's current data.
+   */
+  getDataModel(): InterfaceDataModel<AttachedFileItem> | null;
+  /**
+   * Populates the editor using a `DataModel` instance.
+   *
+   * - Extracts values from the first row of the `DataModel`, if available.
+   * - Uses the values from columns like `html`, `plainText`, `links`, etc. to restore editor content.
+   *
+   * @param dataModel A `DataModel` whose first row maps to `AttachedFileItem` structure.
+   */
+  setDataModel<T extends AttachedFileItem>(dataModel: InterfaceDataModel<T>): void;
+  /**
+   * Loads editor content from either a `AttachedFileItem` object or a compatible `DataModel`.
+   *
+   * - Accepts plain `AttachedFileItem`, raw object, or `DataModel`.
+   * - Automatically determines how to process the input and restores the editor accordingly.
+   *
+   * @param data Editor content to load, in `AttachedFileItem` or `DataModel` form.
+   */
+  load<T extends Record<string, any>>(data: AttachedFileItem | Record<string, any> | InterfaceDataModel<T>): void;
+  /**
+   * Returns the current `attId` (attachment group ID).
+   * 
+   * Used to group files logically, often for backend APIs.
+   */
+  getAttId(): string;
+  /**
+   * Sets the `attId` (attachment group ID).
+   * 
+   * - Use to associate this file set with a different group in your backend.
+   * - Has no effect on UI, but is included in emitted file info.
+   * 
+   * @param attId - The new attachment group ID.
+   */
+  setAttId(attId: string): void;
+  /**
+   * Gets the text content currently shown on the add/upload button.
+   * 
+   * - Corresponds to `addButtonText` prop.
+   */
+  getAddButtonText(): string;
+  /**
+   * Sets the text shown on the add/upload button.
+   * 
+   * - Supports multiline via `\n` (rendered as `<br>`).
+   * - If an `add-button` slot is used, this will have no effect.
+   * 
+   * @param addButtonText - New button text
+   */
+  setAddButtonText(addButtonText: string): void;
+  /**
+   * Gets the text content currently shown on the remove/delete button.
+   * 
+   * - Corresponds to `removeButtonText` prop.
+   */
+  getRemoveButtonText(): string;
+  /**
+   * Sets the text shown on the remove/delete button.
+   * 
+   * - Supports multiline via `\n` (rendered as `<br>`).
+   * - If a `remove-button` slot is used, this will have no effect.
+   * 
+   * @param removeButtonText - New button text
+   */
+  setRemoveButtonText(removeButtonText: string): void;
+  /**
+   * Gets the current placeholder text (empty state message).
+   * 
+   * - Shown when there are no files in the file set.
+   * - Corresponds to the `placeholder` prop.
+   */
+  getPlaceholder(): string;
+  /**
+   * Sets the placeholder text (empty state message).
+   * 
+   * - Updates UI immediately.
+   * 
+   * @param placeholder - New placeholder text
+   */
+  setPlaceholder(placeholder: string): void;
+  /**
+   * Returns whether drag-and-drop uploading is currently enabled.
+   * 
+   * - Controlled by the `enableDrop` prop.
+   */
+  isEnableDrop(): boolean;
+  /**
+   * Enables or disables drag-and-drop file uploading.
+   * 
+   * @param enableDrop - `true` to allow drag-and-drop, `false` to block it.
+   */
+  setEnableDrop(enableDrop: boolean): void;
+  /**
+   * Sets a custom download handler function for files.
+   * 
+   * - If set, this function is called when a file is downloaded (clicked).
+   * - Use for custom logic, e.g. auth, S3, signed URL, access logging, etc.
+   * - Overrides default file download behavior.
+   * 
+   * @param downloadHandler - Function called with the file to download
+   */
+  setDownloadHandler(downloadHandler: (file: AttachedFileItem) => void): void;
+  /**
+   * Returns whether the file list is currently displayed in multiple columns.
+   * 
+   * - Controlled by the `multiCols` prop.
+   */
+  isMultiCols(): boolean;
+  /**
+   * Enables or disables multi-column display of the file list.
+   * 
+   * - When enabled, files wrap into multiple rows/columns for easier viewing.
+   * 
+   * @param multiCols - `true` to enable, `false` to disable.
+   */
+  setMultiCols(multiCols: boolean): void;
+  /**
+   * Returns whether multiple file selection is currently allowed.
+   * 
+   * - Controlled by the `multiple` prop.
+   * - If false, only one file can be uploaded at a time (new files replace previous).
+   */
+  isMultiple(): boolean;
+  /**
+   * Enables or disables multiple file selection.
+   * 
+   * - If set to `false`, adding new files replaces the existing one.
+   * - If set to `true`, users can add up to `maxFileCount` files.
+   * 
+   * @param multiple - `true` to allow multiple, `false` for single file only.
+   */
+  setMultiple(multiple: boolean): void;
+  /**
+   * Gets the current list of allowed file types/extensions.
+   * 
+   * - Controlled by the `allowedTypes` prop.
+   * - MIME types or extensions (e.g. `.pdf`, `image/png`).
+   */
+  getAllowedTypes(): string[];
+  /**
+   * Sets the allowed file types/extensions.
+   * 
+   * - Accepts an array of MIME types or file extensions.
+   * - Updates the file input's accept filter and internal validation.
+   * 
+   * @param allowedTypes - Array of allowed types/extensions.
+   */
+  setAllowedTypes(allowedTypes: string[]): void;
+  /**
+   * Gets the current list of disallowed file types/extensions.
+   * 
+   * - Controlled by the `disallowedTypes` prop.
+   * - MIME types or extensions (e.g. `.exe`, `application/x-msdownload`).
+   */
+  getDisallowedTypes(): string[];
+  /**
+   * Sets the disallowed file types/extensions.
+   * 
+   * - Accepts an array of MIME types or file extensions.
+   * - Any file matching these types/extensions will be rejected.
+   * 
+   * @param disallowedTypes - Array of disallowed types/extensions.
+   */
+  setDisallowedTypes(disallowedTypes: string[]): void;
+  /**
+   * Gets the current maximum allowed file size (per file, bytes).
+   * 
+   * - Controlled by the `maxFileSize` prop.
+   */
+  getMaxFileSize(): number;
+  /**
+   * Sets the maximum allowed file size (per file, bytes).
+   * 
+   * - Files exceeding this size are rejected on upload.
+   * 
+   * @param maxFileSize - Maximum size in bytes
+   */
+  setMaxFileSize(maxFileSize: number): void;
+  /**
+   * Gets the current maximum allowed total file size (all files, bytes).
+   * 
+   * - Controlled by the `maxTotalFileSize` prop.
+   */
+  getMaxTotalFileSize(): number;
+  /**
+   * Sets the maximum allowed total file size (all files, bytes).
+   * 
+   * - The sum of all attached files (including new and existing).
+   * - Files causing the total to exceed this value will be rejected.
+   * 
+   * @param maxTotalFileSize - Maximum combined size in bytes
+   */
+  setMaxTotalFileSize(maxTotalFileSize: number): void;
+  /**
+   * Gets the current maximum number of files that can be uploaded.
+   * 
+   * - Controlled by the `maxFileCount` prop.
+   * - `0` means unlimited.
+   */
+  getMaxFileCount(): number;
+  /**
+   * Sets the maximum number of files that can be uploaded.
+   * 
+   * - When exceeded, older files are removed/replaced automatically.
+   * 
+   * @param maxFileCount - Maximum file count (0 for unlimited)
+   */
+  setMaxFileCount(maxFileCount: number): void;
+  /**
+   * Sets a custom callback when a file has a disallowed type/extension.
+   * 
+   * - Called during file selection/drag if a file fails allowed/disallowed check.
+   * - Use for custom alerts, validation UI, logging, etc.
+   * 
+   * @param onDisallowedType - Callback with the file, allowedTypes, disallowedTypes.
+   */
+  setOnDisallowedType(
+    onDisallowedType: (
+      currentCheckFile: File,
+      allowedTypes: string[] | null,
+      disallowedTypes: string[] | null
+    ) => void
+  ): void;
+  /**
+   * Sets a custom callback when a file exceeds the maximum file size.
+   * 
+   * - Use to alert the user or log the event.
+   * 
+   * @param onMaxFileSizeExceeded - Callback with file, file size, and limit.
+   */
+  setOnMaxFileSizeExceeded(
+    onMaxFileSizeExceeded: (
+      currentCheckFile: File,
+      currentFileSize: number,
+      maxFileSizeAllowed: number
+    ) => void
+  ): void;
+  /**
+   * Sets a custom callback when the total file size exceeds the maximum allowed.
+   * 
+   * - Called before adding a file that would overflow the total allowed size.
+   * 
+   * @param onMaxTotalSizeExceeded - Callback with file, projected total, and limit.
+   */
+  setOnMaxTotalSizeExceeded(
+    onMaxTotalSizeExceeded: (
+      currentCheckFile: File,
+      currentTotalFileSize: number,
+      maxTotalFileSizeAllowed: number
+    ) => void
+  ): void;
+  /**
+   * Returns whether the file list has been modified since the last set/reset.
+   * 
+   * - Adding or removing files, or changing file info, sets this to true.
+   */
+  isModified(): boolean;
+  /**
+   * Sets the "modified" state of the file set.
+   * 
+   * - Use to manually reset the modified flag (e.g., after save).
+   * 
+   * @param modified - `true` to mark as modified, `false` to reset.
+   */
+  setModified(modified: boolean): void;
+  /**
+   * Focuses the add file button.
+   * 
+   * - Useful for accessibility or guiding user attention programmatically.
+   */
+  focus(): void;
 }
 
 /**
  * Runtime control methods for `HInput` component.
  *
- * This interface defines methods accessible via `hison.vue.getInput(id)`.
+ * This interface defines methods accessible via `hison.component.getInput(id)`.
  * It enables full runtime control over the input’s value, style, state, and formatting.
  *
  * ---
  *
  * ### 🔧 Example Usage
  * ```ts
- * const input = hison.vue.getInput('input01');
+ * const input = hison.component.getInput('input01');
  * input.setValue('123456');
  * input.setVisible(true);
  * input.setFormat('###-###');
@@ -959,14 +1691,14 @@ export interface HInputMethods extends ComponentMethods {
  * Runtime control methods for `HInputGroup` component.
  *
  * This interface defines the available methods on `HInputGroup`,
- * accessible via `hison.vue.getInputGroup(id)`, to programmatically control
+ * accessible via `hison.component.getInputGroup(id)`, to programmatically control
  * input group behaviors, state tracking, and data retrieval.
  *
  * ---
  *
  * ### 🔧 Example Usage
  * ```ts
- * const group = hison.vue.getInputGroup('inputGroup1');
+ * const group = hison.component.getInputGroup('inputGroup1');
  * group.load({ userid: 'hison', email: 'a@b.com' });
  * group.setStatus('U');
  * if (group.isModified()) {
@@ -1120,14 +1852,14 @@ export interface HInputGroupMethods extends Omit<ComponentMethods, 'isVisible' |
  * Runtime control methods for `HCalendar` component.
  *
  * This interface defines the available methods on `HCalendar`,
- * accessible via `hison.vue.getCalendar(id)`, to programmatically control
+ * accessible via `hison.component.getCalendar(id)`, to programmatically control
  * calendar state, selected date, events, and display configuration.
  *
  * ---
  *
  * ### 🔧 Example Usage
  * ```ts
- * const calendar = hison.vue.getCalendar('cal1');
+ * const calendar = hison.component.getCalendar('cal1');
  * calendar.setSelectedDate('2025-07-01');
  * calendar.setDisable(true);
  * calendar.setVisible(false);
@@ -1139,7 +1871,7 @@ export interface HInputGroupMethods extends Omit<ComponentMethods, 'isVisible' |
  * ---
  *
  * ### ⚠️ Notes
- * - Each `HCalendar` instance is automatically registered by `id` via `hison.vue.getCalendar(id)`.
+ * - Each `HCalendar` instance is automatically registered by `id` via `hison.component.getCalendar(id)`.
  * - Style-related changes (e.g. `weekendColor`, `selectedColor`) are applied via dynamic CSS variables.
  * - Date/time options use minutes (0~1440) where applicable (e.g. `timeFrom`, `timeTo`).
  * - Some properties like view mode (`setActiveView`) or locale (`setLocale`) can be changed live without re-render.
@@ -1425,13 +2157,13 @@ export interface HCalendarMethods extends ComponentMethods {
 /**
  * Runtime control interface for the `HChart` component.
  *
- * This interface is returned by `hison.vue.getChart(id)` and allows full programmatic control of the chart.
+ * This interface is returned by `hison.component.getChart(id)` and allows full programmatic control of the chart.
  *
  * ---
  *
  * ### 📊 Example Usage
  * ```ts
- * const chart = hison.vue.getChart('salesChart')
+ * const chart = hison.component.getChart('salesChart')
  * if (chart) {
  *   chart.setVisible(true)
  *   chart.data.labels = ['Jan', 'Feb', 'Mar']
@@ -1472,4 +2204,26 @@ export interface HChartInstance extends ComponentMethods, Chart {
    * Always returns `'chart'`.
    */
   getType(): 'chart';
+  /**
+   * Get the current reload delay (ms) used for re-creating the chart after unmount.
+   *
+   * @returns {number} The delay in milliseconds.
+   *
+   * @example
+   * const chart = hison.component.getChart('chart1');
+   * const delay = chart.getLoadDelay();
+   * console.log('Current delay:', delay);
+   */
+  getLoadDelay(): number;
+  /**
+   * Set the reload delay (ms) to wait before re-creating the chart after unmount.
+   * Useful for adjusting the debounce period for rapid reloads.
+   *
+   * @param {number} ms - The delay in milliseconds to use for subsequent reloads.
+   *
+   * @example
+   * const chart = hison.component.getChart('chart1');
+   * chart.setLoadDelay(1000); // Sets delay to 1 second for reloads
+   */
+  setLoadDelay(ms: number): void;
 }
