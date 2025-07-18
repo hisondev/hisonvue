@@ -39,7 +39,7 @@ export default defineComponent({
 
         const model = props.modelValue ?? {}
         if (model && Object.prototype.hasOwnProperty.call(model, inputId)) {
-          hison.vue.getInput(inputId)?.setValue?.(model[inputId])
+          hison.component.getInput(inputId)?.setValue?.(model[inputId])
         }
       }
     })
@@ -56,7 +56,7 @@ export default defineComponent({
       const obj: Record<string, any> = {}
       if(!ownedInputIds.value) return obj
       ownedInputIds.value.forEach((key)=>{
-        const input = hison.vue.getInput(key)
+        const input = hison.component.getInput(key)
         if(input )obj[key] = input.getValue()
       })
       return obj
@@ -66,7 +66,7 @@ export default defineComponent({
       Object.keys(dataObject).forEach((key) => {
         if (ownedInputIds.value.includes(key)) {
           const value = dataObject[key]
-          const input = hison.vue.getInput(key)
+          const input = hison.component.getInput(key)
           if (input) input.setValue(value)
         }
       })
@@ -85,7 +85,7 @@ export default defineComponent({
         getType : () => 'inputGroup',
         clear : (autoSetStatus = true) => {
           ownedInputIds.value.forEach((inputId) => {
-            const input = hison.vue.getInput(inputId)
+            const input = hison.component.getInput(inputId)
             if(input) input.setValue(null)
           })
           if (autoSetStatus) {
@@ -116,20 +116,20 @@ export default defineComponent({
         setStatus : (val: keyof typeof DataStatus) => { status.value = DataStatus[val] },
         isModified : () => {
           for (const inputId of ownedInputIds.value) {
-            const input = hison.vue.getInput(inputId)
+            const input = hison.component.getInput(inputId)
             if(input && input.isModified()) return true
           }
           return false
         },
         initModified : () => {
           ownedInputIds.value.forEach((inputId) => {
-            const input = hison.vue.getInput(inputId)
+            const input = hison.component.getInput(inputId)
             if(input) input.setModified(false)
           })
         },
         checkRequired: () => {
           for (const inputId of ownedInputIds.value) {
-            const input = hison.vue.getInput(inputId)
+            const input = hison.component.getInput(inputId)
             if (input?.getRequired?.() && !input.getValue?.()) {
               return input
             }
@@ -140,14 +140,14 @@ export default defineComponent({
         setEditMode : (val: EditMode) => {
           editMode.value = val
           ownedInputIds.value.forEach((inputId) => {
-            const input = hison.vue.getInput(inputId)
+            const input = hison.component.getInput(inputId)
             if(input) input.setEditMode(val)
           })
         },
         focus : (inputId?: string) => {
-          if (inputId) return hison.vue.getInput(inputId)?.focus()
+          if (inputId) return hison.component.getInput(inputId)?.focus()
           for (const inputId of ownedInputIds.value) {
-            const input = hison.vue.getInput(inputId)
+            const input = hison.component.getInput(inputId)
             if(input && input.getEditMode() === EditMode.editable) {
               return input.focus()
             }
