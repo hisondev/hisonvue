@@ -4,7 +4,7 @@ import type { ChartType, ChartData, ChartOptions } from 'chart.js'
 export const chartProps = {
     /**
      * Unique identifier for the chart instance.
-     * - Use `hison.vue.getChart(id)` to access chart methods at runtime.
+     * - Use `hison.component.getChart(id)` to access chart methods at runtime.
      * - ⚠️ Duplicate `id` values will throw an error at mount time.
      * - If omitted, a UUID will be auto-generated internally.
      */
@@ -50,5 +50,12 @@ export const chartProps = {
      * - Default: `true`
      * - Runtime control available via `HChartInstance.setVisible(true|false)`
      */
-    visible: { type: Boolean, required: false, default: true },
+    visible: { type: Boolean, default: true },
+    /**
+     * The delay (in milliseconds) to wait before reloading the chart after unmounting the previous instance.
+     * - Prevents errors from rapid reloads by ensuring the DOM is ready before creating a new Chart.js instance.
+     * - Default: `500`
+     * - You can control this dynamically via `HChartInstance.getReloadDelay()` and `HChartInstance.setReloadDelay(ms)`.
+     */
+    loadDelay: { type: Number, default: 500 },
 }
