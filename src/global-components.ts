@@ -4,6 +4,7 @@ import type {
   HNote,
   HGrid,
   HFileSet,
+  HImageBox,
   HInput,
   HInputGroup,
   HCalendar,
@@ -22,6 +23,13 @@ declare module 'vue' {
      *
      * ### 🎯 Features
      * - Theme-aware styling via responsive class system (`hison-size-*`, `hison-color-*`, etc.)
+     * - **Flexible background type control via `backgroundType` prop or methods**  
+     *   (supports `"filled"` (default), `"empty"`, and `"transparent"` backgrounds, always preserving button's color scheme)
+     * - **Automatic prevention of double-clicks:**  
+     *   - Blocks additional clicks while the click handler is running (using pending lock).
+     *   - Provides `unlock()` method for manual unlock in advanced use cases.
+     * - **Physical click interval limiting:**  
+     *   - `clickInterval` prop and methods let you enforce a minimum time between button clicks (e.g. 500ms).
      * - Dynamic visibility and disabled state (`visible`, `disable` props)
      * - Runtime method control (`setText`, `setDisable`, `setVisible`, etc.)
      * - Supports both slot-based and `text` prop-based content:
@@ -38,15 +46,21 @@ declare module 'vue' {
      *
      * ### ⚙️ Usage
      * ```vue
-     * <!-- Text-based button -->
+     * <!-- Text-based button with custom background and click interval -->
      * <HButton
      *   id="btn01"
      *   class="hison-col-6 hison-color-primary"
      *   text="Click Me"
      *   title="Tooltip text"
+     *   background-type="empty"
+     *   :click-interval="500"
      *   :disable="false"
      *   :visible="true"
-     *   @click="(_, btn) => btn.setDisable(true)"
+     *   @click="async (_, btn) => {
+     *     // Your async logic
+     *     await doSomething();
+     *     btn.unlock(); // (optional) manually unlock if needed
+     *   }"
      * />
      *
      * <!-- Default slot content -->
@@ -65,25 +79,30 @@ declare module 'vue' {
      * ---
      *
      * ### 🛠 Runtime Usage
-     * Use `hison.vue.getButton(id)` to retrieve control methods at runtime:
+     * Use `hison.component.getButton(id)` to retrieve control methods at runtime:
      *
      * ```ts
-     * const btn = hison.vue.getButton('btn01');
+     * const btn = hison.component.getButton('btn01');
      * btn.setText('Updated');
      * btn.setDisable(true);
      * btn.setVisible(false);
      * btn.setTitle('Updated tooltip');
+     * btn.setBackgroundType('transparent'); // change to transparent background
+     * btn.setClickInterval(1000); // set to allow clicks every 1 second
+     * btn.unlock(); // manually unlock if you want to allow another click before async handler resolves
      * ```
      *
      * ---
      *
-     * @prop {string} id - Unique button identifier. Enables runtime access via `hison.vue.getButton(id)`.
+     * @prop {string} id - Unique button identifier. Enables runtime access via `hison.component.getButton(id)`.
      * @prop {string} [class] - Additional class string. Supports `hison-*` responsive system.
      * @prop {string | CSSProperties} [style] - Inline CSS style.
-     * @prop {BoolString} [visible] - Whether the button is shown (`'true'` or `'false'`). Default: `'true'`.
-     * @prop {BoolString} [disable] - Whether the button is disabled. Default: `'false'`.
+     * @prop {boolean} [visible] - Whether the button is shown (`'true'` or `'false'`). Default: `'true'`.
+     * @prop {boolean} [disable] - Whether the button is disabled. Default: `'false'`.
      * @prop {string} [text] - Fallback label text if no default slot is provided. Can be updated at runtime.
      * @prop {string} [title] - Tooltip text. Can be updated via `setTitle()`.
+     * @prop {('filled'|'empty'|'transparent')} [backgroundType] - Background style. `'filled'` (default), `'empty'`, or `'transparent'`. Can be changed at runtime via methods.
+     * @prop {number} [clickInterval] - Minimum interval (in ms) between allowed clicks. Prevents repeated clicks within the specified time. Can be changed at runtime.
      *
      * ---
      *
@@ -133,10 +152,10 @@ declare module 'vue' {
      * ---
      *
      * ### 🛠 Access Instance
-     * Use `hison.vue.getNote(noteId)` to get the `VanillanoteElement` instance.
+     * Use `hison.component.getNote(noteId)` to get the `VanillanoteElement` instance.
      *
      * ```ts
-     * const note = hison.vue.getNote('note1');
+     * const note = hison.component.getNote('note1');
      * note.setNoteData({ html: '<p>Hello World</p>' });
      * ```
      *
@@ -439,12 +458,12 @@ declare module 'vue' {
      *
      * ### 🛠 Data Handling
      * Unlike other components like `HNote`, `HGrid` **does not use `v-model`**.
-     * To control the grid’s data, use the `hison.vue.getGrid(id)` method to retrieve the `GridMethods` instance.
+     * To control the grid’s data, use the `hison.component.getGrid(id)` method to retrieve the `GridMethods` instance.
      *
      * You can then call methods such as `load()`, `getRowData()`, `setCellValue()` and more to control the grid programmatically.
      *
      * ```ts
-     * const grid = hison.vue.getGrid('grid01');
+     * const grid = hison.component.getGrid('grid01');
      * grid.load([
      *   { col1: 'A', col2: 'B', col3: 'C' },
      *   { col1: 'X', col2: 'Y', col3: 'Z' },
@@ -587,7 +606,7 @@ declare module 'vue' {
      *
      * ### 🎯 Features
      * - Responsive design via `hison-col-*`, `hison-pos-*`, and device-aware class extraction
-     * - Runtime registration using unique `id`, accessible via `hison.vue.getLayout(id)`
+     * - Runtime registration using unique `id`, accessible via `hison.component.getLayout(id)`
      * - Background image configuration (source, repeat, size, alignment)
      * - Background color supports CSS and keyword themes (e.g., `'primary'`, `'danger'`)
      * - Dynamic border configuration (color, width)
@@ -621,10 +640,10 @@ declare module 'vue' {
      * ---
      *
      * ### 🛠 Runtime Usage
-     * Access the layout programmatically using `hison.vue.getLayout(id)`:
+     * Access the layout programmatically using `hison.component.getLayout(id)`:
      *
      * ```ts
-     * const layout = hison.vue.getLayout('mainLayout');
+     * const layout = hison.component.getLayout('mainLayout');
      * layout.setVisible(false);
      * layout.setBackColor('#f0f0f0');
      * layout.setHeight('100vh');
@@ -633,10 +652,10 @@ declare module 'vue' {
      *
      * ---
      *
-     * @prop {string} id - Unique layout identifier for method registration (`hison.vue.getLayout(id)`).
+     * @prop {string} id - Unique layout identifier for method registration (`hison.component.getLayout(id)`).
      * @prop {string} [class] - Responsive and custom classes (e.g., `hison-col-12-mb`, `hison-pos-center`).
      * @prop {string} [style] - Inline CSS style string merged with internal background/border styles.
-     * @prop {BoolString} [visible] - Layout visibility as `'true'` or `'false'`. Default is visible.
+     * @prop {boolean} [visible] - Layout visibility as `'true'` or `'false'`. Default is visible.
      *
      * @prop {string} [backImageSrc] - Background image URL.
      * @prop {string} [backImageStyle] - Background repeat or size mode (`'cover'`, `'repeat'`, etc.).
@@ -662,7 +681,289 @@ declare module 'vue' {
     HLayout: typeof HLayout
 
     /**
-     * fileSet
+     * Hisonvue single image upload & preview component.
+     *
+     * `HImageBox` provides a complete single-image upload solution with preview, drag-and-drop, and runtime API for business apps.
+     * It supports both preloaded (server) images and newly uploaded files, with validation, placeholder, and slot customization.
+     * Integrates with `hison.vue.getInput(id)` for programmatic control and fully supports dynamic runtime usage.
+     *
+     * ---
+     *
+     * ### 🎯 Features
+     * - **Single image upload** with preview and deletion (both soft and hard delete supported)
+     * - **Drag-and-drop** support (can be enabled/disabled via `enableDrop`)
+     * - **Type/extension and file size validation** with user callbacks for errors
+     * - **Fully customizable UI**: add/remove button text, placeholder, and slot-based button/empty state override
+     * - **Responsive layout**: fully stylable with hisonvue’s responsive class system
+     * - **Runtime API**: Access and control via `HImageBoxMethods` instance
+     * - **Server file (soft-delete) vs. new upload (removal)**: handles both
+     * - **DataModel integration** and seamless v-model syncing
+     * - **Slot support**: `empty`, `add-button`, `remove-button`
+     *
+     * ---
+     *
+     * ### ⚙️ Usage Example
+     * ```vue
+     * <HImageBox
+     *   id="profileImage"
+     *   class="hison-col-6-pc hison-col-12-mb hison-size-l-mb"
+     *   v-model="image"
+     *   :attId="'P001'"
+     *   :addButtonText="'UPLOAD'"
+     *   :removeButtonText="'DELETE'"
+     *   :placeholder="'Drag or upload your image.'"
+     *   :enableDrop="true"
+     *   :visible="true"
+     *   :editMode="EditMode.editable"
+     *   :allowedTypes="['.jpg', '.png', 'image/*']"
+     *   :imgStyle="{ borderRadius: '12px', border: '1px solid #e0e0e0' }"
+     *   style="height: 250px;"
+     *   @add="onAdd"
+     *   @remove="onRemove"
+     * >
+     *   <!-- Custom empty slot -->
+     *   <template #empty>
+     *     <div class="custom-empty">
+     *       <span>Drag an image here or click 'Add'</span>
+     *     </div>
+     *   </template>
+     *   <!-- Custom add button content -->
+     *   <template #add-button="{ add }">
+     *     <span><i class="fa fa-plus"></i> Add Image</span>
+     *   </template>
+     *   <!-- Custom remove button content -->
+     *   <template #remove-button="{ remove }">
+     *     <span><i class="fa fa-trash"></i> Delete</span>
+     *   </template>
+     * </HImageBox>
+     * ```
+     *
+     * ---
+     *
+     * ### 🛠 Runtime API Usage
+     * ```ts
+     * const imageBox = hison.vue.getInput('profileImage')
+     * imageBox.setEditMode('readonly')
+     * imageBox.setAllowedTypes(['.jpg'])
+     * imageBox.setMaxFileSize(1024 * 1024)
+     * imageBox.setValue({ fileName: 'avatar.jpg', ... })
+     * imageBox.focus()
+     * ```
+     *
+     * ---
+     *
+     * @prop {string} [id] Unique identifier for the image box. Enables runtime access via `hison.vue.getInput(id)`. Duplicate IDs will throw an error.
+     * @prop {string} [class] Extra class string. Supports all hisonvue responsive, color, and size classes.
+     * @prop {string|CSSProperties} [style] Inline CSS style for the container.
+     * @prop {string|CSSProperties} [imgStyle] CSS style or string for the `<img>` element (image preview).
+     * @prop {boolean} [visible=true] Controls component visibility.
+     * @prop {EditMode} [editMode='editable'] Edit mode: `'editable'`, `'readonly'`, or `'disable'`.
+     * @prop {AttachedFileItem|null} [modelValue=null] The current image file object (preloaded or new). Controlled via `v-model`.
+     * @prop {string} [attId=''] Group ID for backend image association.
+     * @prop {string} [addButtonText='Add'] Label for the add/upload button (if not using the `add-button` slot).
+     * @prop {string} [removeButtonText='Remove'] Label for the remove button (if not using the `remove-button` slot).
+     * @prop {string} [placeholder='There is no image'] Message shown when no image is present (shows in the empty slot unless overridden).
+     * @prop {boolean} [enableDrop=true] Enables drag-and-drop image upload area.
+     * @prop {string|string[]} [allowedTypes] Allowed MIME types or extensions (array or comma-separated string).
+     * @prop {string|string[]} [disallowedTypes] Disallowed MIME types or extensions (array or comma-separated string).
+     * @prop {number} [maxFileSize=Infinity] Maximum file size (bytes) for the image. Files larger than this are rejected.
+     * @prop {(file: File, allowed: string[]|null, disallowed: string[]|null) => void} [onDisallowedType] Callback when file type/extension is not allowed.
+     * @prop {(file: File, size: number, max: number) => void} [onMaxFileSizeExceeded] Callback when a file is too large.
+     *
+     * ---
+     *
+     * @event mounted Emitted on mount. Passes the `HImageBoxMethods` instance.
+     * @event responsive-change Emitted when device class changes (mobile/tablet/pc/wide).
+     * @event update:modelValue Emitted when the image changes (add, remove, delete, etc).
+     * @event add Emitted when an image is added. Arguments: `(file: AttachedFileItem, methods: HImageBoxMethods)`
+     * @event remove Emitted when an image is removed. Arguments: `(file: AttachedFileItem, methods: HImageBoxMethods)`
+     * @event change Emitted whenever the image is changed. Arguments: `(newValue: AttachedFileItem|null, methods: HImageBoxMethods)`
+     * @event focus Emitted when the add button or file input receives focus.
+     * @event blur Emitted when the image box loses focus.
+     *
+     * ---
+     *
+     * @slot empty
+     * Customizes the "no image" placeholder.  
+     * Default: placeholder text.
+     *
+     * @example
+     * <HImageBox>
+     *   <template #empty>
+     *     <div style="color:#ccc;">📷 No Image Selected</div>
+     *   </template>
+     * </HImageBox>
+     *
+     * @slot add-button
+     * Customizes the **inside** of the add button (`HButton`). Replaces only the button's content, not the button itself.
+     * Scoped props:
+     *   - `add: () => void` (opens file dialog)
+     *
+     * @example
+     * <HImageBox>
+     *   <template #add-button="{ add }">
+     *     <span><i class="fa fa-plus"></i> Add Image</span>
+     *   </template>
+     * </HImageBox>
+     *
+     * @slot remove-button
+     * Customizes the **inside** of the remove button (`HButton`). Replaces only the button's content, not the button itself.
+     * Scoped props:
+     *   - `remove: () => void` (removes the current image)
+     *
+     * @example
+     * <HImageBox>
+     *   <template #remove-button="{ remove }">
+     *     <span><i class="fa fa-trash"></i> Delete</span>
+     *   </template>
+     * </HImageBox>
+     */
+    HImageBox: typeof HImageBox
+
+    /**
+     * Hisonvue file attachment component.
+     *
+     * `HFileSet` is a fully reactive, feature-rich file upload and management UI for Vue 3.
+     * Designed for business and enterprise projects, it supports multi-file handling, drag-and-drop,
+     * advanced validation, and complete runtime API integration.
+     * Provides a highly customizable interface with support for custom icons, buttons, and download logic.
+     * Integrates tightly with `hison.vue.getInput(id)` for programmatic control.
+     *
+     * ---
+     *
+     * ### 🎯 Features
+     * - **Multi-file upload** (or single file mode) with preview, removal, and preloaded value sync.
+     * - **Drag-and-drop** support with visual feedback and restriction controls.
+     * - **Per-file & total file size limits**, with rejection and event/callback notification.
+     * - **Allowed/disallowed types** by MIME or extension, with callbacks and slot customization.
+     * - **Customizable UI**: Add/remove button labels, placeholder, and slot-based icon/button overrides.
+     * - **Responsive layout**: Fully stylable using hisonvue's responsive class utilities.
+     * - **Runtime API**: Access and control everything at runtime using `HFileSetMethods`.
+     * - **Custom download**: Secure and extend download via custom handler.
+     * - **Integration**: Programmatic access via `hison.vue.getInput(id)`.
+     * - **Full slot support**: Custom icons, add/remove button, even drag-drop interaction.
+     *
+     * ---
+     *
+     * ### ⚙️ Usage Example
+     * ```vue
+     * <HFileSet
+     *   id="fileSet"
+     *   class="hison-col-12 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-primary-mb hison-color-success-pc"
+     *   v-model="files"
+     *   :multiCols="true"
+     *   :placeholder="'No files.'"
+     *   :addButtonText="'UPLOAD'"
+     *   :removeButtonText="'DELETE'"
+     *   :enableDrop="true"
+     *   :visible="true"
+     *   :editMode="EditMode.editable"
+     *   :multiple="true"
+     *   :maxFileCount="3"
+     *   :allowedTypes="['.pdf', '.jpg', '.png']"
+     *   style="height: 200px; margin-bottom: 5px;"
+     * >
+     *   <template #file-icon="{ file }">
+     *     <span v-if="file.extension === 'pdf'">📕</span>
+     *     <span v-else-if="file.extension === 'jpg'">🖼️</span>
+     *     <span v-else>📄</span>
+     *   </template>
+     *   <template #add-button="{ add, disable }">
+     *     <span>📁 Add files</span>
+     *   </template>
+     * </HFileSet>
+     * ```
+     *
+     * ---
+     *
+     * ### 🛠 Runtime API Usage
+     * ```ts
+     * const fileSet = hison.vue.getInput('fileSet')
+     * fileSet.setEditMode('readonly')
+     * fileSet.setAllowedTypes(['.pdf'])
+     * fileSet.setMaxFileCount(2)
+     * fileSet.setValue([{ fileName: 'final.pdf', ... }])
+     * fileSet.focus()
+     * ```
+     *
+     * ---
+     *
+     * @prop {string} [id] Unique identifier for the file set. Enables runtime access via `hison.vue.getInput(id)`. Duplicate IDs will throw an error.
+     * @prop {string} [class] Additional class string. Supports all hisonvue responsive, color, and size classes.
+     * @prop {string|CSSProperties} [style] Inline CSS style for the container.
+     * @prop {boolean} [visible=true] Controls component visibility.
+     * @prop {EditMode} [editMode='editable'] Edit state: `'editable'`, `'readonly'`, or `'disable'`.
+     * @prop {AttachedFileItem[]} [modelValue=[]] File list (preloaded or new). Controlled via `v-model`.
+     * @prop {string} [attId=''] Group ID for backend file association.
+     * @prop {string} [addButtonText='Add'] Label for the add/upload button (if not using the `add-button` slot).
+     * @prop {string} [removeButtonText='x'] Label for the remove button (if not using the `remove-button` slot).
+     * @prop {string} [placeholder='drop your files.'] Message shown when file list is empty.
+     * @prop {boolean} [enableDrop=true] Enables drag-and-drop file upload area.
+     * @prop {(file: AttachedFileItem) => void} [downloadHandler] Custom download handler. Overrides default download logic.
+     * @prop {boolean} [multiCols=false] Display files in multiple columns (two-row layout).
+     * @prop {boolean} [multiple=true] Allow multiple file selection/upload.
+     * @prop {string|string[]} [allowedTypes] Allowed MIME types or extensions. Accepts array or comma-separated string.
+     * @prop {string|string[]} [disallowedTypes] Disallowed MIME types or extensions. Accepts array or comma-separated string.
+     * @prop {number} [maxFileSize=Infinity] Maximum file size (bytes) per file. Exceeding files are rejected.
+     * @prop {number} [maxTotalFileSize=Infinity] Maximum total size (bytes) for all files combined.
+     * @prop {number} [maxFileCount=0] Maximum number of files allowed (0: unlimited).
+     * @prop {(file: File, allowed: string[]|null, disallowed: string[]|null) => void} [onDisallowedType] Callback when file type/extension is not allowed.
+     * @prop {(file: File, size: number, max: number) => void} [onMaxFileSizeExceeded] Callback when a file is too large.
+     * @prop {(file: File, total: number, max: number) => void} [onMaxTotalSizeExceeded] Callback when total file size limit is exceeded.
+     *
+     * ---
+     *
+     * @event mounted Emitted on mount. Passes `HFileSetMethods` instance.
+     * @event responsive-change Emitted on device class change (mobile/tablet/pc/wide).
+     * @event update:modelValue Emitted when the file list changes (add, remove, delete, etc).
+     * @event add Emitted when a file is added. Arguments: `(file: AttachedFileItem, methods: HFileSetMethods)`
+     * @event remove Emitted when a file is removed. Arguments: `(file: AttachedFileItem, methods: HFileSetMethods)`
+     * @event change Emitted whenever the file list is changed. Arguments: `(newList: AttachedFileItem[], oldList: AttachedFileItem[], methods: HFileSetMethods)`
+     * @event download Emitted when a download is triggered. Arguments: `(file: AttachedFileItem, methods: HFileSetMethods)`
+     * @event focus Emitted when the add button or file input receives focus.
+     * @event blur Emitted when the file input or file set loses focus.
+     *
+     * ---
+     *
+     * @slot file-icon
+     * Custom icon or markup to be shown before each file name. Receives the `file` object as a scoped prop.
+     *
+     * @example
+     * <HFileSet v-model="files">
+     *   <template #file-icon="{ file }">
+     *     <span v-if="file.extension === 'pdf'">📕</span>
+     *     <span v-else-if="file.extension === 'jpg'">🖼️</span>
+     *     <span v-else>📄</span>
+     *   </template>
+     * </HFileSet>
+     *
+     * @slot remove-button
+     * Custom slot for rendering the remove button beside each file (overrides default).
+     * Scoped props:
+     *   - `file: AttachedFileItem`
+     *   - `index: number`
+     *   - `remove: () => void`
+     *   - `disable: boolean`
+     *
+     * @example
+     * <HFileSet v-model="files">
+     *   <template #remove-button="{ file, index, remove, disable }">
+     *     <span class="custom-remove-btn" :disabled="disable" @click="remove" style="cursor: pointer;">❌</span>
+     *   </template>
+     * </HFileSet>
+     *
+     * @slot add-button
+     * Custom slot for the contents **inside** the add button (`HButton`). Only replaces the button's content, not the button itself.
+     * Scoped props:
+     *   - `add: () => void` (opens file dialog)
+     *   - `disable: boolean`
+     *
+     * @example
+     * <HFileSet v-model="files">
+     *   <template #add-button="{ add, disable }">
+     *     <span>📁 Select Files</span>
+     *   </template>
+     * </HFileSet>
      */
     HFileSet: typeof HFileSet
 
@@ -687,7 +988,7 @@ declare module 'vue' {
      * - UI control via `editMode`, `visible`, `required`, and font styles
      * - Reactive span view when not in editing mode
      * - All DOM events emit full `HInputMethods` for runtime control
-     * - Integrated with `hison.vue.getInput(id)` for external control
+     * - Integrated with `hison.component.getInput(id)` for external control
      *
      * ---
      *
@@ -708,7 +1009,7 @@ declare module 'vue' {
      *
      * ### 🛠 Runtime Usage
      * ```ts
-     * const input = hison.vue.getInput('userStatus')
+     * const input = hison.component.getInput('userStatus')
      * input.setValue('A')
      * input.setVisible(true)
      * input.setEditMode('editable')
@@ -716,10 +1017,10 @@ declare module 'vue' {
      *
      * ---
      *
-     * @prop {string} id - Unique input identifier. Enables runtime access via `hison.vue.getInput(id)`.
+     * @prop {string} id - Unique input identifier. Enables runtime access via `hison.component.getInput(id)`.
      * @prop {string} [class] - Additional class string. Supports `hison-*` responsive system.
      * @prop {string | CSSProperties} [style] - Inline CSS style.
-     * @prop {BoolString} [visible='true'] - Whether the input is shown (`'true'` or `'false'`).
+     * @prop {boolean} [visible='true'] - Whether the input is shown (`'true'` or `'false'`).
      * @prop {any} [modelValue] - Bound value for the input. Controlled via `v-model`.
      * @prop {string} [inputType='text'] - Input type. Supports:
      *   `'text'`, `'number'`, `'date'`, `'month'`, `'email'`, `'password'`, `'mask'`, `'digit'`,
@@ -733,11 +1034,11 @@ declare module 'vue' {
      * @prop {string} [maxByte] - Max number of bytes (UTF-8).
      * @prop {string} [placeholder] - Placeholder shown in input when empty.
      * @prop {EditMode} [editMode='editable'] - Edit state: `'editable'`, `'readonly'`, `'disable'`.
-     * @prop {BoolString} [required='false'] - Whether the input is required.
-     * @prop {BoolString} [fontBold='false'] - Whether span text is bold.
-     * @prop {BoolString} [fontItalic='false'] - Whether span text is italic.
-     * @prop {BoolString} [fontThruline='false'] - Whether span text is strikethrough.
-     * @prop {BoolString} [fontUnderline='false'] - Whether span text is underlined.
+     * @prop {boolean} [required='false'] - Whether the input is required.
+     * @prop {boolean} [fontBold='false'] - Whether span text is bold.
+     * @prop {boolean} [fontItalic='false'] - Whether span text is italic.
+     * @prop {boolean} [fontThruline='false'] - Whether span text is strikethrough.
+     * @prop {boolean} [fontUnderline='false'] - Whether span text is underlined.
      * @prop {string} [title] - Tooltip text (HTML `title` attribute).
      *
      * @prop {{ text: string; value: any }[]} [options=[]] - Selectable items for `inputType='select'`.
@@ -778,7 +1079,7 @@ declare module 'vue' {
      * validating required fields, and checking modification state.
      *
      * It is especially useful when working with structured form data, such as
-     * `Record<string, any>`, `DataWrapper`, or `DataModel`, and integrates with `hison.vue.getInputGroup(id)`
+     * `Record<string, any>`, `DataWrapper`, or `DataModel`, and integrates with `hison.component.getInputGroup(id)`
      * to expose runtime control methods like `.load()`, `.clear()`, `.getDataObject()` and more.
      *
      * ---
@@ -795,7 +1096,7 @@ declare module 'vue' {
      * - Applies or retrieves form-wide status (`C`, `R`, `U`, `D`) via `.getStatus()` and `.setStatus()`
      * - Applies global edit mode to all child inputs (`editable`, `readonly`, `disable`)
      * - Supports required field validation via `.checkRequired()`
-     * - Runtime methods available via `hison.vue.getInputGroup(id)`
+     * - Runtime methods available via `hison.component.getInputGroup(id)`
      *
      * ---
      *
@@ -810,9 +1111,9 @@ declare module 'vue' {
      * ---
      *
      * ### 🛠 Runtime Usage
-     * Use `hison.vue.getInputGroup(id)` to access and control the group:
+     * Use `hison.component.getInputGroup(id)` to access and control the group:
      * ```ts
-     * const group = hison.vue.getInputGroup('group1');
+     * const group = hison.component.getInputGroup('group1');
      * group.load({ userid: 'abc', email: 'test@example.com' });
      * group.clear();
      * group.setStatus('U');
@@ -832,7 +1133,7 @@ declare module 'vue' {
      *
      * ---
      *
-     * @prop {string} id - Unique group identifier. Enables runtime access via `hison.vue.getInputGroup(id)`.
+     * @prop {string} id - Unique group identifier. Enables runtime access via `hison.component.getInputGroup(id)`.
      * @prop {EditMode} [editMode='editable'] - Edit mode: `'editable'`, `'readonly'`, `'disable'`.
      * @prop {DataStatus} [status='R'] - Data status: `'C'`, `'R'`, `'U'`, `'D'`. Managed via `.getStatus()` / `.setStatus()`.
      * @prop {Record<string, any>} [modelValue] - Used with `v-model` for two-way binding of grouped input values.
@@ -854,7 +1155,7 @@ declare module 'vue' {
      *
      * ### 📅 Features
      * - Multiple views supported: `'day'`, `'week'`, `'month'`, `'year'`, `'years'`
-     * - Dynamic runtime control via `HCalendarMethods` (`hison.vue.getCalendar(id)`)
+     * - Dynamic runtime control via `HCalendarMethods` (`hison.component.getCalendar(id)`)
      * - Responsive layout using `hison-col-*`, `hison-pos-*`, `hison-size-*` classes
      * - Visual customization: weekend colors, special time zones, date highlights
      * - Event data rendering with full editing options (`deletable`, `resizable`, etc.)
@@ -896,10 +1197,10 @@ declare module 'vue' {
      * ---
      *
      * ### 🛠 Runtime Usage
-     * Use `hison.vue.getCalendar(id)` to retrieve methods at runtime:
+     * Use `hison.component.getCalendar(id)` to retrieve methods at runtime:
      *
      * ```ts
-     * const calendar = hison.vue.getCalendar('calendarId');
+     * const calendar = hison.component.getCalendar('calendarId');
      * calendar.setVisible(false);
      * calendar.setDisable(true);
      * calendar.setSelectedDate('2025-07-01');
@@ -910,10 +1211,10 @@ declare module 'vue' {
      *
      * ---
      *
-     * @prop {string} id - Unique calendar identifier. Enables runtime access via `hison.vue.getCalendar(id)`.
+     * @prop {string} id - Unique calendar identifier. Enables runtime access via `hison.component.getCalendar(id)`.
      * @prop {string} [class] - Additional class string. Supports `hison-*` responsive system.
      * @prop {string | CSSProperties} [style] - Inline CSS style.
-     * @prop {BoolString} [visible='true'] - Whether the calendar is shown.
+     * @prop {boolean} [visible='true'] - Whether the calendar is shown.
      * @prop {boolean} [disable=false] - Whether the calendar is disabled.
      * @prop {string | Date} [selectedDate] - Initially selected date.
      * @prop {HCalendarEvent[]} [events=[]] - List of events to display.
@@ -979,31 +1280,35 @@ declare module 'vue' {
      * Hisonvue chart component powered by Chart.js.
      *
      * ### Built with `chart.js@^4.5.0`
-     * `HChart` is a lightweight wrapper around [Chart.js](https://www.chartjs.org/),  
+     * `HChart` is a lightweight wrapper around [Chart.js](https://www.chartjs.org/),
      * offering full compatibility with all standard chart types, configuration options, and runtime methods.
      *
-     * Internally, the following components are pre-registered:
+     * ---
      *
-     * - 📊 **Controllers**: `BarController`, `LineController`, `RadarController`, `PieController`,  
-     *   `DoughnutController`, `BubbleController`, `ScatterController`
-     * - 🧩 **Elements**: `ArcElement`, `LineElement`, `BarElement`, `PointElement`
-     * - 📏 **Scales**: `CategoryScale`, `LinearScale`, `RadialLinearScale`
-     * - 🧰 **Plugins**: `Tooltip`, `Legend`, `Filler`
+     * #### ⚡️ Robust Chart Instance Lifecycle
+     * - **Race-condition safe**: Internal logic guarantees Chart.js `destroy()` and re-creation never overlap,
+     *   preventing plugin/DOM errors during rapid reloads, SSR hydration, or hot re-renders.
+     * - **DOM-flush guaranteed**: On reload or unmount, the `<canvas>` element is physically removed from the DOM (`v-if="!isPending"`),
+     *   and re-created after a flush delay. This ensures Chart.js always operates on a stable, isolated DOM context.
+     * - **Configurable reload delay**: The `loadDelay` prop (default: `500ms`) can be adjusted to tune the time between destroy/re-mount.
+     *   - Change at runtime via `chartInstance.setLoadDelay(ms)`.
+     * - **Single source of chart creation**: The chart creation logic is encapsulated in a single internal function and reused for all lifecycle events.
      *
      * ---
      *
-     * ### 📈 Features
+     * ### Features
      * - Supports all built-in Chart.js chart types (`'bar'`, `'line'`, `'pie'`, `'doughnut'`, etc.)
-     * - Preserves all Chart.js props, config options, events, and methods
-     * - Runtime access via `HChartInstance` (`hison.vue.getChart(id)`)
-     * - Minimal styling applied (`hison-col-*`, `display: none` when hidden)
+     * - **Full runtime access** via `HChartInstance` (`hison.component.getChart(id)`)
+     * - Minimal hisonvue-only styling (`hison-col-*`, `display: none` when hidden)
      * - Automatic color string parsing (e.g., `'red.500'` → rgba format)
-     * - Full access to underlying `Chart` instance (`update()`, `resize()`, etc.)
+     * - Reactive support: Any change to `modelValue`/`options` automatically triggers chart update.
+     * - **Direct control of visibility** (`visible` prop, `.setVisible()`)
+     * - **Robust hot reload support**: Frequent destroy/recreate cycles are fully safe.
      *
      * ---
      *
-     * ### 📦 Chart.js Compatibility
-     * `HChart` passes your `modelValue` and `options` directly to the native Chart.js engine.  
+     * ### Chart.js Compatibility
+     * `HChart` passes your `modelValue` and `options` directly to the native Chart.js engine.
      * There is **no rewriting or abstraction** of Chart.js behavior.
      *
      * 👉 You may refer to the official Chart.js documentation for full API usage:
@@ -1013,7 +1318,7 @@ declare module 'vue' {
      *
      * ---
      *
-     * ### ⚙️ Usage
+     * ### Usage Example
      * ```vue
      * <HChart
      *   id="myChart"
@@ -1021,34 +1326,41 @@ declare module 'vue' {
      *   class="hison-col-6"
      *   :modelValue="chartData"
      *   :options="chartOptions"
+     *   :loadDelay="800"
      * />
      * ```
      *
      * ---
      *
-     * ### 🛠 Runtime Usage
-     * Use `hison.vue.getChart(id)` to retrieve the Chart.js instance:
+     * ### 🛠 Runtime Usage & Methods
+     * Use `hison.component.getChart(id)` to retrieve the extended Chart.js instance:
      *
      * ```ts
-     * const chart = hison.vue.getChart('myChart')
+     * const chart = hison.component.getChart('myChart')
      * chart.data.datasets[0].data = [10, 20, 30]
      * chart.options.plugins.legend.display = false
      * chart.update()
      * chart.setVisible(false)
+     * chart.setLoadDelay(1000)  // Change reload delay at runtime
+     * chart.reload()            // Safe reload (will never cause plugin/DOM errors)
      * ```
      *
      * ---
      *
-     * @prop {string} id - Unique chart identifier. Enables runtime access via `hison.vue.getChart(id)`.
+     * ### Props
+     * @prop {string} id - Unique chart identifier. Enables runtime access via `hison.component.getChart(id)`.
      * @prop {ChartType} type - Chart.js chart type (e.g., `'line'`, `'bar'`, `'pie'`).
      * @prop {ChartData} modelValue - Chart.js data object (used with `v-model`).
      * @prop {ChartOptions} [options] - Optional Chart.js configuration object.
      * @prop {string} [class] - Additional responsive class string (e.g., `hison-col-6`).
      * @prop {string | CSSProperties} [style] - Inline CSS styles.
      * @prop {boolean} [visible=true] - Whether the chart is visible.
+     * @prop {number} [loadDelay=500] - (ms) Delay between destroy and re-mount on reload. Prevents plugin/DOM race-conditions.  
+     *    Can be changed at runtime via `chartInstance.setLoadDelay()`.
      *
      * ---
      *
+     * ### Events
      * @event mounted - Emitted when the chart instance is initialized.
      * @event responsive-change - Emitted when responsive class changes due to device detection.
      */
