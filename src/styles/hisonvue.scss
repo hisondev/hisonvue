@@ -48,9 +48,33 @@
     --hison-font-family: 'Arial, sans-serif';
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 /* HNote, HGrid */
 .hison-wrap { display: inline-block; }
+/* HNote */
+.hison-note-readonly * {
+    pointer-events: none;
+    outline: none;
+}
+.hison-note-readonly vanillanote-textarea {
+    pointer-events: auto;
+    user-select: text;
+    outline: none;
+}
+.hison-note-disable {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.hison-note-disable * {
+    pointer-events: none;
+    outline: none;
+}
+.hison-note-disable vanillanote-textarea {
+    user-select: text;
+    outline: none;
+}
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 /* HButton */
 .hison-button {
     display: inline-block;
@@ -96,7 +120,144 @@
     background-color: var(--hison-warning-buttonColor);
     color: var(--hison-warning-filledTextColor);
 }
-/* Button Css Event */
+
+.hison-color-primary-button.hison-bg-empty {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-primary-buttonColor) !important;
+}
+.hison-color-muted-button.hison-bg-empty {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-muted-buttonColor) !important;
+}
+.hison-color-info-button.hison-bg-empty {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-info-buttonColor) !important;
+}
+.hison-color-success-button.hison-bg-empty {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-success-buttonColor) !important;
+}
+.hison-color-danger-button.hison-bg-empty {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-danger-buttonColor) !important;
+}
+.hison-color-warning-button.hison-bg-empty {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-warning-buttonColor) !important;
+}
+.hison-color-primary-button.hison-bg-transparent {
+    background-color: transparent !important;
+    color: var(--hison-primary-buttonColor) !important;
+}
+.hison-color-muted-button.hison-bg-transparent {
+    background-color: transparent !important;
+    color: var(--hison-muted-buttonColor) !important;
+}
+.hison-color-info-button.hison-bg-transparent {
+    background-color: transparent !important;
+    color: var(--hison-info-buttonColor) !important;
+}
+.hison-color-success-button.hison-bg-transparent {
+    background-color: transparent !important;
+    color: var(--hison-success-buttonColor) !important;
+}
+.hison-color-danger-button.hison-bg-transparent {
+    background-color: transparent !important;
+    color: var(--hison-danger-buttonColor) !important;
+}
+.hison-color-warning-button.hison-bg-transparent {
+    background-color: transparent !important;
+    color: var(--hison-warning-buttonColor) !important;
+}
+
+.hison-color-primary-button.hison-bg-empty.hison-color-primary-button-on-active {
+    background-color: var(--hison-emptyColor) !important;
+}
+.hison-color-muted-button.hison-bg-empty.hison-color-muted-button-on-active {
+    background-color: var(--hison-emptyColor) !important;
+}
+.hison-color-info-button.hison-bg-empty.hison-color-info-button-on-active {
+    background-color: var(--hison-emptyColor) !important;
+}
+.hison-color-success-button.hison-bg-empty.hison-color-success-button-on-active {
+    background-color: var(--hison-emptyColor) !important;
+}
+.hison-color-danger-button.hison-bg-empty.hison-color-danger-button-on-active {
+    background-color: var(--hison-emptyColor) !important;
+}
+.hison-color-warning-button.hison-bg-empty.hison-color-warning-button-on-active {
+    background-color: var(--hison-emptyColor) !important;
+}
+
+.hison-color-primary-button.hison-bg-empty.hison-color-primary-button-on-mouseover {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-primary-hoverColor) !important;
+}
+.hison-color-muted-button.hison-bg-empty.hison-color-muted-button-on-mouseover {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-muted-hoverColor) !important;
+}
+.hison-color-info-button.hison-bg-empty.hison-color-info-button-on-mouseover {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-info-hoverColor) !important;
+}
+.hison-color-success-button.hison-bg-empty.hison-color-success-button-on-mouseover {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-success-hoverColor) !important;
+}
+.hison-color-danger-button.hison-bg-empty.hison-color-danger-button-on-mouseover {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-danger-hoverColor) !important;
+}
+.hison-color-warning-button.hison-bg-empty.hison-color-warning-button-on-mouseover {
+    background-color: var(--hison-emptyColor) !important;
+    color: var(--hison-warning-hoverColor) !important;
+}
+
+.hison-color-primary-button.hison-bg-transparent.hison-color-primary-button-on-active {
+    background-color: transparent !important;
+}
+.hison-color-muted-button.hison-bg-transparent.hison-color-muted-button-on-active {
+    background-color: transparent !important;
+}
+.hison-color-info-button.hison-bg-transparent.hison-color-info-button-on-active {
+    background-color: transparent !important;
+}
+.hison-color-success-button.hison-bg-transparent.hison-color-success-button-on-active {
+    background-color: transparent !important;
+}
+.hison-color-danger-button.hison-bg-transparent.hison-color-danger-button-on-active {
+    background-color: transparent !important;
+}
+.hison-color-warning-button.hison-bg-transparent.hison-color-warning-button-on-active {
+    background-color: transparent !important;
+}
+
+.hison-color-primary-button.hison-bg-transparent.hison-color-primary-button-on-mouseover {
+    background-color: transparent !important;
+    color: var(--hison-primary-hoverColor) !important;
+}
+.hison-color-muted-button.hison-bg-transparent.hison-color-muted-button-on-mouseover {
+    background-color: transparent !important;
+    color: var(--hison-muted-hoverColor) !important;
+}
+.hison-color-info-button.hison-bg-transparent.hison-color-info-button-on-mouseover {
+    background-color: transparent !important;
+    color: var(--hison-info-hoverColor) !important;
+}
+.hison-color-success-button.hison-bg-transparent.hison-color-success-button-on-mouseover {
+    background-color: transparent !important;
+    color: var(--hison-success-hoverColor) !important;
+}
+.hison-color-danger-button.hison-bg-transparent.hison-color-danger-button-on-mouseover {
+    background-color: transparent !important;
+    color: var(--hison-danger-hoverColor) !important;
+}
+.hison-color-warning-button.hison-bg-transparent.hison-color-warning-button-on-mouseover {
+    background-color: transparent !important;
+    color: var(--hison-warning-hoverColor) !important;
+}
+
 .hison-color-primary-button-on-focus { box-shadow: 1px 1px 2px 1px var(--hison-primary-shadowColor) !important; }
 .hison-color-primary-button-on-active {
     background-color: var(--hison-primary-activeColor) !important;
@@ -134,33 +295,93 @@
 }
 .hison-color-warning-button-on-mouseover { background-color: var(--hison-warning-hoverColor) !important; }
 
-.hison-note-readonly * {
-    pointer-events: none;
-    outline: none;
+////////////////////////////////////////////////////////////////////////////////////////////////
+/* HImageBox */
+.hison-imagebox {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    height: auto;
+    overflow: hidden;
 }
-.hison-note-readonly vanillanote-textarea {
-    pointer-events: auto;
-    user-select: text;
-    outline: none;
+.hison-size-s-imagebox { font-size: 0.65rem; }
+.hison-size-m-imagebox { font-size: 0.8rem; }
+.hison-size-l-imagebox { font-size: 0.9rem; }
+.hison-size-xl-imagebox { font-size: 1rem; }
+.hison-color-primary-imagebox {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-primary-shadowColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
 }
-.hison-note-disable {
-    opacity: 0.5;
-    cursor: not-allowed;
+.hison-color-muted-imagebox {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-muted-shadowColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
 }
-.hison-note-disable * {
-    pointer-events: none;
-    outline: none;
+.hison-color-info-imagebox {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-info-shadowColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
 }
-.hison-note-disable vanillanote-textarea {
-    user-select: text;
-    outline: none;
+.hison-color-success-imagebox {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-success-shadowColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
+}
+.hison-color-danger-imagebox {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-danger-shadowColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
+}
+.hison-color-warning-imagebox {
+    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-warning-shadowColor);
+    background-color: var(--hison-emptyColor);
+    color: var(--hison-emptyTextColor);
+}
+.img-preview {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 60px;
+    min-height: 60px;
+    background: var(--hison-emptyColor, #f4f4f4);
+    overflow: hidden;
+}
+.img-preview.drag-over {
+    border: 1px dashed var(--hison-border-color, #999);
+    background-color: #f9f9f9;
+}
+.imgbox-btn-row {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    z-index: 2;
+}
+.preview-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.img-placeholder {
+    width: 100%;
+    height: 90%;
+    color: #bbb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: inherit;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 /* HFileSet */
 .hison-fileset {
     display: inline-flex;
     flex-direction: column;
-    width: 100%;
     height: 100px;
     position: relative;
     background-color: var(--hison-emptyColor);
@@ -227,30 +448,6 @@
 .hison-fileset .file-name.clickable {
     cursor: pointer;
 }
-.hison-color-primary-fileset .file-item {
-    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-primary-shadowColor);
-    color: var(--hison-emptyTextColor);
-}
-.hison-color-muted-fileset .file-item {
-    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-muted-shadowColor);
-    color: var(--hison-emptyTextColor);
-}
-.hison-color-info-fileset .file-item {
-    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-info-shadowColor);
-    color: var(--hison-emptyTextColor);
-}
-.hison-color-success-fileset .file-item {
-    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-success-shadowColor);
-    color: var(--hison-emptyTextColor);
-}
-.hison-color-danger-fileset .file-item {
-    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-danger-shadowColor);
-    color: var(--hison-emptyTextColor);
-}
-.hison-color-warning-fileset .file-item {
-    box-shadow: 0.25px 0.25px 2px 0.25px var(--hison-warning-shadowColor);
-    color: var(--hison-emptyTextColor);
-}
 .hison-fileset .file-list.multi-cols .file-item {
     width: calc(50% - 6px);
 }
@@ -279,7 +476,6 @@
     left: 50%;
     transform: translate(-50%, -50%);
     color: #aaa;
-    font-size: 14px;
     pointer-events: none;
     font-size: inherit;
 }
@@ -305,6 +501,7 @@
 .hison-size-l-fileset .add-btn-container { height: 50px; }
 .hison-size-xl-fileset .add-btn-container { height: 55px; }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 /* HInput */
 .hison-input {
     display: inline-block;
@@ -312,7 +509,6 @@
     border-radius: 2px;
     font-family: var(--hison-font-family);
     padding: 0.3rem;
-    width: 100%
 }
 .hison-input-disable {
     opacity: 0.5;
@@ -397,6 +593,7 @@
     background-color: var(--hison-emptyColor);
     color: var(--hison-emptyTextColor);
 }
+
 /* Input Css Event */
 .hison-color-primary-input-on-active { box-shadow: 1px 1px 2px 1px var(--hison-primary-shadowColor) }
 .hison-color-primary-input-on-mouseover { box-shadow: 0.5px 0.5px 2px 0.5px var(--hison-primary-shadowColor) }
@@ -532,31 +729,36 @@
   word-break: break-word;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 /* HInputGroup */
 .hison-data-group {
     all: unset;
     display: inline;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 /* HLayout */
 .hison-layout {
     display: inline-flex;
     flex-wrap: wrap;
     align-content: flex-start;
     align-items: flex-start; 
-    padding: 0 1px;
+    padding: 0 1px 1px 1px;
     background-color: var(--hison-emptyColor);
     color: var(--hison-emptyTextColor);
-    border: 1px solid black;
+    overflow: auto;
+    //border: 1px solid black;
 }
-.hison-layout-frame-adjust { height: 0; width: 100%; }
+.hison-layout-frame-adjust { height: 1px; width: 100%; }
 .hison-layout > * { align-self: flex-start; margin: 0; }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 /* HChart */
 .hison-chart {
     background-color: var(--hison-emptyColor);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 /* 수평 정렬 클래스 */
 .hison-pos-left { margin-right: auto; }
 .hison-pos-center { margin-left: auto; margin-right: auto; }
