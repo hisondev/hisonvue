@@ -1,5 +1,5 @@
 import type { Hison as Hisonjs } from "hisonjs";
-import { HButtonMethods, HInputGroupMethods, HGridMethods, HInputMethods, HLayoutMethods, HNoteElement, HCalendarMethods, HChartInstance, HFileSetMethods } from "./component";
+import { HButtonMethods, HInputGroupMethods, HGridMethods, HInputMethods, HLayoutMethods, HNoteElement, HCalendarMethods, HChartInstance, HFileSetMethods, HImageBoxMethods } from "./component";
 import { Size } from "../enums";
 
 /**
@@ -110,6 +110,10 @@ import { Size } from "../enums";
  * allowing you to develop robust, scalable, and highly modular applications.
  */
 export interface Hison extends Hisonjs {
+  setMaxFileSetTotalSize(fileSize: number): void
+  setMaxFileSetSize(fileTotalSize: number): void
+  getMaxFileSetTotalSize(): number
+  getMaxFileSetSize(): number
   cssEvent: {
     setButtonOnBefoerClick(func: ((e: MouseEvent) => boolean)): void
     setButtonOnAfterClick(func: ((e: MouseEvent) => void)): void
@@ -122,12 +126,13 @@ export interface Hison extends Hisonjs {
     setButtonOnBeforeTouchend(func: ((e: TouchEvent) => boolean)): void
     setButtonOnAfterTouchend(func: ((e: TouchEvent) => void)): void
   }
-  vue: {
+  component: {
     getNote(noteId: string): HNoteElement | null
     getGrid(gridId: string): HGridMethods | null
     getButton(buttonId: string): HButtonMethods | null
     getLayout(layoutId: string): HLayoutMethods | null
     getFileSet(fileSetId: string): HFileSetMethods | null
+    getImageBox(imageBoxId: string): HImageBoxMethods | null
     getInput(inputId: string): HInputMethods | null
     getInputGroup(inputGroupId: string): HInputGroupMethods | null
     getCalendar(calendarId: string): HCalendarMethods | null
