@@ -5,7 +5,7 @@ import { HCalenderTimeFormat, HCalenderView } from '../../enums';
 export const calendarProps = {
     /**
      * Unique identifier for the calendar component.
-     * - Use `hison.vue.getCalendar(id)` to access methods at runtime.
+     * - Use `hison.component.getCalendar(id)` to access methods at runtime.
      * - ⚠️ Duplicate `id` values will throw an error at mount time.
      */
     id: { type: String, required: false },
@@ -28,28 +28,28 @@ export const calendarProps = {
      * - Default: `true`
      * - Runtime method: `HCalendarMethods.setVisible(true|false)`
      */
-    visible: { type: Boolean, required: false, default: true },
+    visible: { type: Boolean, default: true },
     /**
      * Whether the calendar is disabled.
      * - When `true`, date selection is disabled and style is dimmed
      * - Default: `false`
      * - Runtime method: `HCalendarMethods.setDisable(true|false)`
      */
-    disable : { type: Boolean, required: false, default: false },
+    disable : { type: Boolean, default: false },
     /**
      * Initially selected date.
      * - Accepts a string or JS Date object
      * - Default: `new Date()`
      * - Runtime method: `HCalendarMethods.setSelectedDate(date)`
      */
-    selectedDate : { type: [String, Date], required: false, default: new Date() },
+    selectedDate : { type: [String, Date], default: new Date() },
     /**
      * Array of calendar events to display.
      * - Each event includes start/end time and optional metadata
      * - Default: `[]`
      * - Runtime method: `HCalendarMethods.setEvents(events)`
      */
-    events : { type: Array as PropType<HCalendarEvent[]>, required: false, default: [] },
+    events : { type: Array as PropType<HCalendarEvent[]>, default: [] },
     /**
      * Background color for weekend headers.
      * - Accepts CSS color (e.g., '#ff0000' or 'rgba(255,0,0,0.2)')
@@ -70,7 +70,7 @@ export const calendarProps = {
      * - Default: `true`
      * - Runtime method: `HCalendarMethods.setShowTodayColor(true|false)`
      */
-    showTodayColor : { type: Boolean, required: false, default: true },
+    showTodayColor : { type: Boolean, default: true },
     /**
      * Background color for the selected date cell.
      * - Accepts CSS color string
@@ -113,7 +113,7 @@ export const calendarProps = {
      * - `true` or other string: show full event details
      * - Runtime method: `HCalendarMethods.setEventsOnMonthView(value)`
      */
-    eventsOnMonthView : { type: [String, Boolean], required: false, default: false },
+    eventsOnMonthView : { type: [String, Boolean], default: false },
     /**
      * Weekday indexes to hide from the calendar.
      * - Format: number array from 0 (Sunday) to 6 (Saturday)
@@ -126,7 +126,7 @@ export const calendarProps = {
      * - Default: `false`
      * - Runtime method: `HCalendarMethods.setHideWeekends(true|false)`
      */
-    hideWeekends : { type: Boolean, required: false, default: false },
+    hideWeekends : { type: Boolean, default: false },
     /**
      * Language of the calendar interface.
      * - Examples: `'en'`, `'ko'`, `'fr'`
@@ -134,7 +134,7 @@ export const calendarProps = {
      * - See vue-cal docs for full list of locales
      * - Runtime method: `HCalendarMethods.setLocale(locale)`
      */
-    locale : { type: String, required: false, default: 'en' },
+    locale : { type: String, default: 'en' },
     /**
      * Maximum selectable date.
      * - Accepts string (e.g., `'2025-12-31'`) or JS Date object
@@ -155,14 +155,14 @@ export const calendarProps = {
      * - Affects weekday order and logic for weekend coloring
      * - Runtime method: `HCalendarMethods.setStartWeekOnSunday(true|false)`
      */
-    startWeekOnSunday : { type: Boolean, required: false, default: false  },
+    startWeekOnSunday : { type: Boolean, default: false  },
     /**
      * Whether to display time cells in 'week' and 'day' views.
      * - Default: `true`
      * - Disabling this hides the vertical time axis
      * - Runtime method: `HCalendarMethods.setShowTimeCell(true|false)`
      */
-    time : { type: Boolean, required: false, default: true },
+    time : { type: Boolean, default: true },
     /**
      * Height (in pixels) of each time cell in 'week' and 'day' views.
      * - For example, `timeCellHeight = 40` means each hour block is 40px high
@@ -201,14 +201,14 @@ export const calendarProps = {
      * - Default: `false`
      * - Runtime method: `HCalendarMethods.setHideTitleBar(true|false)`
      */
-    hideTitleBar : { type: Boolean, required: false, default: false },
+    hideTitleBar : { type: Boolean, default: false },
     /**
      * Whether to use 12-hour format with AM/PM labels.
      * - Default: `false`
      * - Ignored if `timeFormat` is explicitly set
      * - Runtime method: `HCalendarMethods.setTwelveHour(true|false)`
      */
-    twelveHour : { type: Boolean, required: false, default: false },
+    twelveHour : { type: Boolean, default: false },
     /**
      * Initial view mode of the calendar.
      * - Accepts values from `HCalenderView` enum:
