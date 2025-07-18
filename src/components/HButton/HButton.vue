@@ -5,12 +5,13 @@
       'hison-button',
       ...responsiveClassList,
       visibleClass,
-      disableClass
+      disableClass,
+      backgroundTypeClass
     ]"
     :style="props.style"
     :disabled="disable"
     :title="title || undefined"
-    @click="$emit('click', $event, buttonMethods)"
+    @click="onClick"
     @mousedown="$emit('mousedown', $event, buttonMethods)"
     @mouseup="$emit('mouseup', $event, buttonMethods)"
     @mouseover="$emit('mouseover', $event, buttonMethods)"
@@ -29,8 +30,8 @@ import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, w
 import type { HButtonMethods } from '../../types'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
 import { buttonProps } from './props'
-import { hisonCloser } from '../..'
-import { addComponentNameToClass, extractResponsiveClasses, getUUID, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
+import { BackgroundType, hisonCloser } from '../..'
+import { addComponentNameToClass, extractResponsiveClasses, getSpecificClassValueFromClassList, getUUID, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 
 export default defineComponent({
@@ -45,6 +46,9 @@ export default defineComponent({
     const reloadId = `hbutton:${id}`
     const device = useDevice()
     const slots = useSlots()
+    const isPending = ref(false)
+    const clickInterval = ref(props.clickInterval || 0) // ref로 내부에서만 관리
+    const lastClickTime = ref(0)
 
     const visible = ref(props.visible)
     const disable = ref(props.disable)
@@ -52,6 +56,17 @@ export default defineComponent({
 
     const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
     const disableClass = computed(() => disable.value ? 'hison-disable' : '')
+    const backgroundType = ref(props.backgroundType || BackgroundType.filled)
+    const backgroundTypeClass = computed(() => {
+      switch (backgroundType.value) {
+        case BackgroundType.empty:
+          return 'hison-bg-empty'
+        case BackgroundType.transparent:
+          return 'hison-bg-transparent'
+        default:
+          return ''
+      }
+    })
 
     const hasSlot = computed(() => !!slots.default)
     const internalText = ref(props.text || '')
@@ -64,6 +79,25 @@ export default defineComponent({
       responsiveClassList.value = extractResponsiveClasses(props.class || '', device.value)
       addComponentNameToClass(responsiveClassList.value, 'size', 'button', hisonCloser.componentStyle.size)
       addComponentNameToClass(responsiveClassList.value, 'color', 'button', 'primary')
+    }
+
+    const onClick = async (e: MouseEvent) => {
+      const now = Date.now()
+      if (isPending.value) return
+      if (clickInterval.value > 0 && now - lastClickTime.value < clickInterval.value) return
+      lastClickTime.value = now
+      isPending.value = true
+      try {
+        const results = emit('click', e, buttonMethods.value!)
+        const resultArray = Array.isArray(results) ? results : []
+        await Promise.all(
+          resultArray
+            .filter(res => res && typeof res.then === 'function')
+            .map(res => res as Promise<any>)
+        )
+      } finally {
+        isPending.value = false
+      }
     }
 
     const mount = () => {
@@ -83,21 +117,19 @@ export default defineComponent({
         getTitle: () => title.value,
         isVisible: () => visible.value,
         isDisable: () => disable.value,
-        setText: (val: string) => {
-          if (!hasSlot.value) internalText.value = val
+        setText: (val: string) => { if (!hasSlot.value) internalText.value = val },
+        setTitle: (val: string) => { title.value = val },
+        setVisible: (val: boolean) => { visible.value = val },
+        setDisable: (val: boolean) => { disable.value = val },
+        getBackgroundType: () => backgroundType.value,
+        setBackgroundType: (type: BackgroundType) => { backgroundType.value = type },
+        unlock: () => { isPending.value = false },
+        getClickInterval: () => clickInterval.value,
+        setClickInterval: (ms: number) => {
+          clickInterval.value = ms
+          lastClickTime.value = 0 // 즉시 클릭 가능하게 초기화 (선택)
         },
-        setTitle: (val: string) => {
-          title.value = val
-        },
-        setVisible: (val: boolean) => {
-          visible.value = val
-        },
-        setDisable: (val: boolean) => {
-          disable.value = val
-        },
-        focus: () => {
-          buttonRef.value?.focus();
-        },
+        focus: () => { buttonRef.value?.focus(); },
         reload: () => reloadHisonComponent(reloadId)
       }
       hisonCloser.component.buttonList[id] = buttonMethods.value
@@ -127,11 +159,13 @@ export default defineComponent({
         visibleClass,
         disable,
         disableClass,
+        backgroundTypeClass,
         title,
         responsiveClassList,
         internalText,
         internalTextHtml,
         hasSlot,
+        onClick,
     }
   }
 })
