@@ -2,6 +2,7 @@ import type { InterfaceDataWrapper } from "hisonjs";
 import { DateFormat, DateTimeFormat, DayFormat, DayOfWeekFormat, HourFormat, HourMinuteFormat, MinuteFormat, MonthFormat, SecondFormat, Size, TimeFormat, YearFormat, YearMonthFormat } from "../enums";
 import { VanillanoteConfig } from "vanillanote2";
 import { VanillagridConfig } from "vanillagrid2";
+import { Defaults } from "chart.js";
 
 interface UtilsConfig {
   /**
@@ -680,6 +681,19 @@ export interface ComponentConfig {
    * The component's style follows HisonConfig's componentStyle property, so there may be properties in vanillagrid that are ignored.
    */
   grid: VanillagridConfig;
+  /**
+   * Use npm chart.js. ^4.5.0.  See chartjs's specification.
+   * chart.js default properties
+   */
+  chart: Defaults;
+  /**
+   * The maximum size of all uploaded files that the fileSet component will have by default.
+   */
+  fileSetTotalSize: number
+  /**
+   * The maximum size per upload file that the fileSet component will have by default.
+   */
+  fileSetSize: number
 }
 
 /**
