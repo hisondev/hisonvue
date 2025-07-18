@@ -7,6 +7,11 @@ import { hisonCloser } from "..";
 
 export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
     setHisonFromHisonConfig(hison, hisonConfig)
+
+    hison.setMaxFileSetSize = (fileSize: number) => { hisonCloser.componentConfig.fileSetSize = fileSize };
+    hison.setMaxFileSetTotalSize = (fileTotalSize: number) => { hisonCloser.componentConfig.fileSetTotalSize = fileTotalSize };
+    hison.getMaxFileSetSize = () => { return hisonCloser.componentConfig.fileSetSize };
+    hison.getMaxFileSetTotalSize = () => { return hisonCloser.componentConfig.fileSetTotalSize };
   
     hison.cssEvent = {
       setButtonOnBefoerClick(func: ((e: MouseEvent) => boolean)) {hisonCloser.event.cssEvent.button_onBeforeClick = func},
@@ -79,14 +84,15 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
         },
     };
     
-    (hison as any).vue = {}
-    hison.vue.getNote = (noteId: string) => { return hisonCloser.note.getNote(noteId) as HNoteElement | null }
-    hison.vue.getGrid = (gridId: string) => { return hisonCloser.grid.getGrid(gridId) as HGridMethods | null }
-    hison.vue.getButton = (buttonId: string) => { return hisonCloser.component.buttonList[buttonId] }
-    hison.vue.getLayout = (layoutId: string) => { return hisonCloser.component.layoutList[layoutId] }
-    hison.vue.getFileSet = (fileSetId: string) => { return hisonCloser.component.fileSetList[fileSetId] }
-    hison.vue.getInput = (inputId: string) => { return hisonCloser.component.inputList[inputId] }
-    hison.vue.getInputGroup = (inputGroupId: string) => { return hisonCloser.component.inputGroupList[inputGroupId] }
-    hison.vue.getCalendar = (calendarId: string) => { return hisonCloser.component.calendarList[calendarId] }
-    hison.vue.getChart = (chartId: string) => { return hisonCloser.component.chartList[chartId] }
+    (hison as any).component = {}
+    hison.component.getNote = (noteId: string) => { return hisonCloser.note.getNote(noteId) as HNoteElement | null }
+    hison.component.getGrid = (gridId: string) => { return hisonCloser.grid.getGrid(gridId) as HGridMethods | null }
+    hison.component.getButton = (buttonId: string) => { return hisonCloser.component.buttonList[buttonId] }
+    hison.component.getLayout = (layoutId: string) => { return hisonCloser.component.layoutList[layoutId] }
+    hison.component.getFileSet = (fileSetId: string) => { return hisonCloser.component.fileSetList[fileSetId] }
+    hison.component.getImageBox = (imageBoxId: string) => { return hisonCloser.component.imageBoxList[imageBoxId] }
+    hison.component.getInput = (inputId: string) => { return hisonCloser.component.inputList[inputId] }
+    hison.component.getInputGroup = (inputGroupId: string) => { return hisonCloser.component.inputGroupList[inputGroupId] }
+    hison.component.getCalendar = (calendarId: string) => { return hisonCloser.component.calendarList[calendarId] }
+    hison.component.getChart = (chartId: string) => { return hisonCloser.component.chartList[chartId] }
 }
