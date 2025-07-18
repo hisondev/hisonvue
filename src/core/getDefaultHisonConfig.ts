@@ -48,8 +48,8 @@ export const getDefaultHisonConfig = () => {
         //cell이 선택된 상태에서 'Enter' key가 눌리면 해당 cell의 value를 "Y"로 변경한다.
         onSelectedAndKeyDown : function (event, gridId, data) {
             if(event.key === 'Enter' || event.key === ' ') {
-                hison.vue.getGrid(gridId)!.setColSameValue(data.colId, "N", true);
-                hison.vue.getGrid(gridId)!.setCellValue(data.rowIndex, data.colId, "Y", true);
+                hison.component.getGrid(gridId)!.setColSameValue(data.colId, "N", true);
+                hison.component.getGrid(gridId)!.setCellValue(data.rowIndex, data.colId, "Y", true);
                 event.stopPropagation();
                 event.preventDefault();
                 return false;
@@ -58,8 +58,8 @@ export const getDefaultHisonConfig = () => {
         },
         //cell을 마우스로 선택하면 cell의 value를 "Y"로 변경한다.
         onClick : function (event, gridId, data) {
-            hison.vue.getGrid(gridId)!.setColSameValue(data.colId, "N", true);
-            hison.vue.getGrid(gridId)!.setCellValue(data.rowIndex, data.colId, "Y", true);
+            hison.component.getGrid(gridId)!.setColSameValue(data.colId, "N", true);
+            hison.component.getGrid(gridId)!.setCellValue(data.rowIndex, data.colId, "Y", true);
         },
         //value를 그대로 반환한다.
         getValue: function (gridId, value) {
@@ -154,6 +154,8 @@ export const getDefaultHisonConfig = () => {
       note : vanillanoteConfig,
       grid : vanillagridConfig,
       chart : chartConfig,
+      fileSetTotalSize: Infinity,
+      fileSetSize: Infinity,
     },
     componentStyle : {
       size: Size.m,
