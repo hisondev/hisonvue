@@ -9,13 +9,16 @@ const app = createApp(App)
 const hisonConfig: HisonConfig = getDefaultHisonConfig()
 //hisonConfig.componentStyle.primaryColor = '#217346'
 hisonConfig.componentStyle.size = Size.s
+hisonConfig.componentStyle.primaryColor = '#123456'
+
+console.log('### hisonConfig',hisonConfig);
 
 const iconSpan = document.createElement('span')
 iconSpan.classList.add('material-symbols-rounded')
 iconSpan.textContent = 'auto_fix_high'
 hisonConfig.component.note.iconSpanElement.boldButtonIcon = iconSpan
 
-hisonConfig.event.cssEvent.button_onBeforeMouseover = () => {
+hisonConfig.event.cssEvent.input_onAfterBlur = (e) => {
     return true;
 }
 
