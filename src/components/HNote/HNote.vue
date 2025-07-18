@@ -233,7 +233,7 @@ export default defineComponent({
           const noteData = note.getNoteData()
           return new hison.data.DataModel(noteData)
         }
-        note.setDataModel = <T extends Record<string, any>>(dataModel: InterfaceDataModel<T>) => {
+        note.setDataModel = <T extends NoteData>(dataModel: InterfaceDataModel<T>) => {
           if(!dataModel || dataModel.getRowCount() == 0) return 
           const noteData: NoteData = {
             html: dataModel.hasColumn('html') ? dataModel.getValue<'html'>(0, 'html') : '',
@@ -247,9 +247,9 @@ export default defineComponent({
           }
           return note.setNoteData(noteData)
         }
-        note.load = <T extends Record<string, any>>(data: NoteData | Record<string, any> | InterfaceDataModel<T>) => {
+        note.load = <T extends NoteData>(data: NoteData | Record<string, any> | InterfaceDataModel<T>) => {
           if (data && (data as InterfaceDataModel).getIsDataModel && (data as InterfaceDataModel).getIsDataModel()) {
-            note.setDataModel(data as InterfaceDataModel)
+            note.setDataModel(data as InterfaceDataModel<T>)
           } else {
             note.setNoteData(data as NoteData)
           }
