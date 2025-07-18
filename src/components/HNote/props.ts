@@ -12,13 +12,13 @@ export const noteProps = {
      * - Accepts string values: `'true'` or `'false'`
      * - Default: `'true'` (visible)
      */
-    visible: { type: Boolean, required: false, default: true },
+    visible: { type: Boolean, default: true },
     /**
      * Edit mode of the editor.
      * - Values: `'editable'`, `'readonly'`, `'disable'`
      * - `'readonly'` and `'disable'` both prevent editing but differ in styling
      */
-    editMode: { type: String as PropType<EditMode>, required: false, default: EditMode.editable },
+    editMode: { type: String as PropType<EditMode>, default: EditMode.editable },
     /**
      * ADAPTIVE : The composition of notes varies depending on whether the device is a desktop or mobile device.
      * MOBILE : Always recognize as mobile.
@@ -36,7 +36,7 @@ export const noteProps = {
     /**
     * Whether to use the toolbar fold/unfold function
     */
-    toolToggle: { type: Boolean, required: false, default: false },
+    toolToggle: { type: Boolean, default: false },
     /**
      * - Variables for dynamically setting the size of the textarea
      * - Default width of the textarea. If not set, the value of textarea-width is inserted. Used for dynamically changing the width.
@@ -60,13 +60,13 @@ export const noteProps = {
     /**
      * Whether the user can change the height of the textarea. If true, it can be changed.
      */
-    textareaHeightIsModify: { type: Boolean, required: false, default: false },
+    textareaHeightIsModify: { type: Boolean, default: false },
     /**
      * - Values related to placeholders. The attribute placeholder- can be used, but using these variables allows dynamic control of placeholders.
      * - `true` : Uses a placeholder.
      * - `false` : Default value. Does not use a placeholder.
      */
-    placeholderIsVisible: { type: Boolean, required: false, default: false},
+    placeholderIsVisible: { type: Boolean, default: false},
     /**
      * - Values related to placeholders. The attribute placeholder- can be used, but using these variables allows dynamic control of placeholders.
      * - Adjusts the vertical position of the placeholder. Negative values are possible. The unit is px. Default value is 0.
@@ -181,117 +181,117 @@ export const noteProps = {
     /** 
      * Whether to use inverted (dark mode) colors
      */
-    invertColor: { type: Boolean, required: false, default: false },
+    invertColor: { type: Boolean, default: false },
     /** 
      * Whether to use paragraph style buttons (normal, heading, etc.)
      */
-    usingParagraphStyle: { type: Boolean, required: false, default: true },
+    usingParagraphStyle: { type: Boolean, default: true },
     /** 
      * Whether to use bold button
      */
-    usingBold: { type: Boolean, required: false, default: true },
+    usingBold: { type: Boolean, default: true },
     /** 
      * Whether to use underline button
      */
-    usingUnderline: { type: Boolean, required: false, default: true },
+    usingUnderline: { type: Boolean, default: true },
     /** 
      * Whether to use italic button
      */
-    usingItalic: { type: Boolean, required: false, default: true },
+    usingItalic: { type: Boolean, default: true },
     /** 
      * Whether to use unordered list (ul) button
      */
-    usingUl: { type: Boolean, required: false, default: true },
+    usingUl: { type: Boolean, default: true },
     /** 
      * Whether to use ordered list (ol) button
      */
-    usingOl: { type: Boolean, required: false, default: true },
+    usingOl: { type: Boolean, default: true },
     /** 
      * Whether to use text align buttons (left, center, right)
      */
-    usingTextAlign: { type: Boolean, required: false, default: true },
+    usingTextAlign: { type: Boolean, default: true },
     /** 
      * Whether to use attach link button
      */
-    usingAttLink: { type: Boolean, required: false, default: true },
+    usingAttLink: { type: Boolean, default: true },
     /** 
      * Whether to use attach file button
      */
-    usingAttFile: { type: Boolean, required: false, default: true },
+    usingAttFile: { type: Boolean, default: true },
     /** 
      * Whether to use attach image button
      */
-    usingAttImage: { type: Boolean, required: false, default: true },
+    usingAttImage: { type: Boolean, default: true },
     /** 
      * Whether to use attach video button
      */
-    usingAttVideo: { type: Boolean, required: false, default: true },
+    usingAttVideo: { type: Boolean, default: true },
     /** 
      * Whether to allow font size adjustment
      */
-    usingFontSize: { type: Boolean, required: false, default: true },
+    usingFontSize: { type: Boolean, default: true },
     /** 
      * Whether to allow letter spacing adjustment
      */
-    usingLetterSpacing: { type: Boolean, required: false, default: true },
+    usingLetterSpacing: { type: Boolean, default: true },
     /** 
      * Whether to allow line height adjustment
      */
-    usingLineHeight: { type: Boolean, required: false, default: true },
+    usingLineHeight: { type: Boolean, default: true },
     /** 
      * Whether to allow font family change
      */
-    usingFontFamily: { type: Boolean, required: false, default: true },
+    usingFontFamily: { type: Boolean, default: true },
     /** 
      * Whether to allow text color change
      */
-    usingColorText: { type: Boolean, required: false, default: true },
+    usingColorText: { type: Boolean, default: true },
     /** 
      * Whether to allow background color change
      */
-    usingColorBack: { type: Boolean, required: false, default: true },
+    usingColorBack: { type: Boolean, default: true },
     /** 
      * Whether to use format clear (remove styles) button
      */
-    usingFormatClear: { type: Boolean, required: false, default: true },
+    usingFormatClear: { type: Boolean, default: true },
     /** 
      * Whether to use undo button
      */
-    usingUndo: { type: Boolean, required: false, default: true },
+    usingUndo: { type: Boolean, default: true },
     /** 
      * Whether to use redo button
      */
-    usingRedo: { type: Boolean, required: false, default: true },
+    usingRedo: { type: Boolean, default: true },
     /** 
      * Whether to use help (shortcut guide) button
      */
-    usingHelp: { type: Boolean, required: false, default: true },
+    usingHelp: { type: Boolean, default: true },
     /**
      * Whether to use paragraph style all buttons
      */
-    usingParagraphAllStyle: { type: Boolean, required: false, default: true },
+    usingParagraphAllStyle: { type: Boolean, default: true },
     /**
      * Whether to use character style all buttons
      */
-    usingCharacterStyle: { type: Boolean, required: false, default: true },
+    usingCharacterStyle: { type: Boolean, default: true },
     /**
      * Whether to use character size all buttons
      */
-    usingCharacterSize: { type: Boolean, required: false, default: true },
+    usingCharacterSize: { type: Boolean, default: true },
     /**
      * Whether to use attachment all buttons
      */
-    usingAttachFile: { type: Boolean, required: false, default: true },
+    usingAttachFile: { type: Boolean, default: true },
     /**
      * Whether to use redo and undo buttons
      */
-    usingDo: { type: Boolean, required: false, default: true },
+    usingDo: { type: Boolean, default: true },
     /**
      * Whether the note is required.
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-note-required` class when `'true'`
      */
-    required: { type: Boolean, required: false, default: false },
+    required: { type: Boolean, default: false },
 }
 
 export const noteEventProps = {
