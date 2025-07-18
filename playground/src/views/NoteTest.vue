@@ -18,13 +18,13 @@
         @mounted="mountNote2"
         textarea-height="200px"
         ></HNote>
-        <HNote v-model="noteData3"
-        id="note3"
-        class="hison-col-12-mb hison-col-4-pc hison-size-m-mb hison-size-s-pc"
-        @mounted="mountNote3"
-        textarea-height="200px"
-        ></HNote>
     </HLayout>
+    <HNote v-model="noteData3"
+    id="note3"
+    class="hison-col-12-mb hison-col-4-pc hison-size-m-mb hison-size-s-pc"
+    @mounted="mountNote3"
+    textarea-height="200px"
+    ></HNote>
 </template>
 
 <script setup lang="ts">
@@ -42,17 +42,20 @@ const onBoldBeforeClick = (e: Event) => { console.log('onBoldBeforeClick'); retu
 const onTextareaBeforeFocus = (e: Event) => { console.log('onTextareaBeforeFocus'); return false}
 
 let testToggle = false;
+let invertColorToggle = true
 
 const goBack = () => {
     router.push('/')
 }
 const getNote1 = () => {
     hison.utils.getNumberFormat(1234.12789,'#,##0.##')
-    hison.vue.getButton('b3')!.setDisable(testToggle)
+    hison.component.getButton('b3')!.setDisable(testToggle)
     testToggle = !testToggle
 }
 const setNote3 = () => {
     noteData3.value = noteData1.value;
+    hison.style.setInvertColor(invertColorToggle)
+    invertColorToggle = !invertColorToggle
 }
 
 const mountNote1 = (note: VanillanoteElement) => {
