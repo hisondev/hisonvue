@@ -48,7 +48,7 @@ const goBack = () => {
 }
 const getNote1 = () => {
     hison.utils.getNumberFormat(1234.12789,'#,##0.##')
-    hison.vue.getButton('b3')!.setDisable(testToggle)
+    hison.component.getButton('b3')!.setDisable(testToggle)
     testToggle = !testToggle
 }
 const setNote3 = () => {
