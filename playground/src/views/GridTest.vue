@@ -54,7 +54,7 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
   import { hison, type HGridColumn, GridAlign } from 'hisonvue'
-  import type { GridMethods } from 'vanillagrid2'
+  import { Align, type GridMethods } from 'vanillagrid2'
 
   const onActiveRow = (row: number) => {console.log('onActiveRow',row)}
   const onActiveCol = (colId: string) => {console.log('onActiveCol',colId)}
@@ -75,13 +75,13 @@
 
   const testColumns: HGridColumn[] = [
     { id : "dept", header : "Click the Sigma button to the left of the header;filter1(mask);dept ", dataType : "mask", format : "AAA99", width : "100", rowMerge : true },
-    { id : "f_nm", header : ";filter2(text);first name", dataType : "text", width : "120", align : "center", locked : true },
-    { id : "l_nm", header : ";filter3(text);last name", dataType : "text", width : "120", align : "center", locked : true, colMerge : true },
-    { id : "d_o_j", header : ";filter4(month);DOJ", dataType : "month", format : "yyyy/mm", width : "120", align : "center", locked : true },
-    { id : "e_id", header : "sort1(text);;", dataType : "number", width : "120", align : "center", locked : true, footer : "MAX;MIN;AVG;SUM", roundNumber : -1 },
+    { id : "f_nm", header : ";filter2(text);first name", dataType : "text", width : "120", align : Align.center, locked : true },
+    { id : "l_nm", header : ";filter3(text);last name", dataType : "text", width : "120", align : Align.center, locked : true, colMerge : true },
+    { id : "d_o_j", header : ";filter4(month);DOJ", dataType : "month", format : "yyyy/mm", width : "120", align : Align.center, locked : true },
+    { id : "e_id", header : "sort1(text);;", dataType : "number", width : "120", align : Align.center, locked : true, footer : "MAX;MIN;AVG;SUM", roundNumber : -1 },
     { id : "salary", header : "sort2(number);;salary", dataType : "number", format : "$ #,###.#####", width : "150", footer : "$$MAX;$$MIN;$$AVG;$$SUM" },
-    { id : "status", header : "Please double click;checkbox;status", dataType : "checkbox", width : "80", align : "center", footer : "$$COUNT_CHECK" },
-    { id : "radio", header : "radio", dataType : "radio", width : "80", align : "center", footer : "$$COUNT_CHECK" }
+    { id : "status", header : "Please double click;checkbox;status", dataType : "checkbox", width : "80", align : Align.center, footer : "$$COUNT_CHECK" },
+    { id : "radio", header : "radio", dataType : "radio", width : "80", align : Align.center, footer : "$$COUNT_CHECK" }
   ]
 
   let sampleData = [
@@ -96,7 +96,7 @@
   let invertColorToggle = true
   // 버튼 테스트용
   const test1 = () => {
-    const grid4 = hison.vue.getGrid("grid04")!;
+    const grid4 = hison.component.getGrid("grid04")!;
     grid4.load(testData)
   }
   const test2 = () => {
