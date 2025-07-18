@@ -4,7 +4,7 @@ import { DataStatus, EditMode } from "../../enums";
 export const inputGroupProps = {
     /**
      * Unique identifier for the input.
-     * - You can later retrieve its methods via `hison.vue.getButton(id)`
+     * - You can later retrieve its methods via `hison.component.getButton(id)`
      * - ⚠️ Duplicate `id` values will throw an error at mount time
      */
     id: { type: String, required: false },
@@ -28,7 +28,7 @@ export const inputGroupProps = {
      * through runtime methods:
      * 
      * ```ts
-     * const group = hison.vue.getInputGroup('group1');
+     * const group = hison.component.getInputGroup('group1');
      * group.getStatus();      // 'R'
      * group.setStatus('U');   // Change to 'updated'
      * ```
@@ -71,5 +71,5 @@ export const inputGroupProps = {
      * @prop {Record<string, any>} modelValue - Bound value object for all child inputs. Supports `v-model` binding.
      * @default {}
      */
-    modelValue: { type: Object as PropType<Record<string, any>>, required: false, default: () => ({}), },
+    modelValue: { type: Object as PropType<Record<string, any>>, default: () => ({}), },
 }
