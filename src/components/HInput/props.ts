@@ -4,7 +4,7 @@ import { EditMode, InputType } from "../../enums";
 export const inputProps = {
     /**
      * Unique identifier for the input.
-     * - You can later retrieve its methods via `hison.vue.getInput(id)`
+     * - You can later retrieve its methods via `hison.component.getInput(id)`
      * - ⚠️ Duplicate `id` values will throw an error at mount time
      */
     id: { type: String, required: false },
@@ -20,7 +20,7 @@ export const inputProps = {
      *    - `textarea` → `string`
      * - Internally processed and formatted based on `inputType` and `format`
      */
-    modelValue: { type: [String, Number, Boolean, Object, Array, Date] as PropType<any>, required: false, default: null },
+    modelValue: { type: [String, Number, Boolean, Object, Array, Date] as PropType<any>, default: null },
     /**
      * Custom class string applied to the input container.
      * - Supports responsive classes like `hison-col-*`, `hison-pos-*`, `hison-size-*`
@@ -38,7 +38,7 @@ export const inputProps = {
      * - Accepts string values: `'true'` or `'false'`
      * - Default: `'true'` (visible)
      */
-    visible: { type: Boolean, required: false, default: true },
+    visible: { type: Boolean, default: true },
     /**
      * Tooltip text shown on hover.
      * - Maps to the `title` attribute
@@ -60,7 +60,7 @@ export const inputProps = {
      * Placeholder text to show when value is null or empty.
      * - Used as a display fallback in span mode
      */
-    nullText: { type: String, required: false, default: '' },
+    nullText: { type: String, default: '' },
     /**
      * Maximum numeric value.
      * - Only applicable when `type` is `'number'`
@@ -100,37 +100,37 @@ export const inputProps = {
      * - Values: `'editable'`, `'readonly'`, `'disable'`
      * - `'readonly'` and `'disable'` both prevent editing but differ in styling
      */
-    editMode: { type: String as PropType<EditMode>, required: false, default: EditMode.editable },
+    editMode: { type: String as PropType<EditMode>, default: EditMode.editable },
     /**
      * Whether the input is required.
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-input-required` class when `'true'`
      */
-    required: { type: Boolean, required: false, default: false },
+    required: { type: Boolean, default: false },
     /**
      * Bold font style toggle.
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-font-bold` class when enabled
      */
-    fontBold: { type: Boolean, required: false, default: false },
+    fontBold: { type: Boolean, default: false },
     /**
      * Italic font style toggle.
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-font-italic` class when enabled
      */
-    fontItalic: { type: Boolean, required: false, default: false },
+    fontItalic: { type: Boolean, default: false },
     /**
      * Strikethrough font style toggle.
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-font-thruline` class when enabled
      */
-    fontThruline: { type: Boolean, required: false, default: false },
+    fontThruline: { type: Boolean, default: false },
     /**
      * Underline font style toggle.
      * - Accepts `'true'` or `'false'`
      * - Adds `hison-font-underline` class when enabled
      */
-    fontUnderline: { type: Boolean, required: false, default: false },
+    fontUnderline: { type: Boolean, default: false },
     /**
      * List of selectable options for `inputType: 'select'`.
      * - Each option should be an object with `text` (label shown to the user) and `value` (actual value to bind).
@@ -151,13 +151,13 @@ export const inputProps = {
      * - Used only when `inputType === 'checkbox'`.
      * - Affects the display text returned by `getText()` and the span view when not editing.
      */
-    checkedText: { type: String, required: false, default: 'Y' },
+    checkedText: { type: String, default: 'Y' },
     /**
      * Output value when checkbox is unchecked (used in display mode).
      * - Used only when `inputType === 'checkbox'`.
      * - Affects the display text returned by `getText()` and the span view when not editing.
      */
-    uncheckedText: { type: String, required: false, default: 'N' },
+    uncheckedText: { type: String, default: 'N' },
     /**
      * Custom formatter function for display text (span text) of the input component.
      *
