@@ -13,3 +13,8 @@ export const reloadAllHisonComponents = () => {
     fn()
   }
 }
+
+export const reloadHisonComponent = (id: string) => {
+  const fn = reloadHandlers.get(id)
+  if (fn) fn()
+}
