@@ -1,9 +1,10 @@
 import { CSSProperties, PropType } from "vue";
+import { BackgroundType } from "../../enums";
 
 export const buttonProps = {
     /**
      * Unique identifier for the button.
-     * - You can later retrieve its methods via `hison.vue.getButton(id)`
+     * - You can later retrieve its methods via `hison.component.getButton(id)`
      * - ⚠️ Duplicate `id` values will throw an error at mount time
      */
     id: { type: String, required: false },
@@ -24,7 +25,7 @@ export const buttonProps = {
      * - Accepts string values: `'true'` or `'false'` (not boolean)
      * - Defaults to visible if not provided or if value is not `'false'`
      */
-    visible: { type: Boolean, required: false, default: true},
+    visible: { type: Boolean, default: true},
     /**
      * Whether the button is disabled.
      * - Accepts `'true'` or `'false'` as string.
@@ -32,7 +33,7 @@ export const buttonProps = {
      * - Can be changed at runtime via `HButtonMethods.setDisable(true|false)`
      * - Default: `'false'`
      */
-    disable : { type: Boolean, required: false, default: false },
+    disable : { type: Boolean, default: false },
     /**
      * Tooltip text shown when hovering over the button.
      * - Maps to the `title` attribute.
@@ -47,4 +48,18 @@ export const buttonProps = {
      * - Default: `''` (slot or fallback content is shown)
      */
     text : { type: String, required: false },
+    /**
+     * Minimum interval (ms) between button clicks.
+     * - If set, button cannot be clicked again until this time has elapsed.
+     * - Default: 0 (no interval limit)
+     */
+    clickInterval: { type: Number, default: 0 },
+    /**
+     * Button background type
+     * - `'filled'` (default): theme color background (`hison-color-primary`, etc)
+     * - `'empty'`: always uses --hison-emptyColor as background
+     * - `'transparent'`: transparent background (CSS transparent)
+     * @default 'filled'
+     */
+    backgroundType: { type: String as PropType<BackgroundType>, default: BackgroundType.filled, },
 }
