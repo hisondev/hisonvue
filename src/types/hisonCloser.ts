@@ -1,7 +1,7 @@
 import { Vanillagrid } from "vanillagrid2"
 import { Vanillanote } from "vanillanote2"
-import { HButtonMethods, HCalendarMethods, HChartInstance, HFileSetMethods, HInputGroupMethods, HInputMethods, HLayoutMethods } from "./component"
-import { ComponentStyleConfig, HisonvueEvent } from "./hisonConfig"
+import { HButtonMethods, HCalendarMethods, HChartInstance, HFileSetMethods, HImageBoxMethods, HInputGroupMethods, HInputMethods, HLayoutMethods } from "./component"
+import { ComponentConfig, ComponentStyleConfig, HisonvueEvent } from "./hisonConfig"
 
 export interface ComponentColor {
   primary: {
@@ -60,7 +60,7 @@ export interface ComponentColor {
   }
 }
 
-export interface ComponentStyle extends ComponentStyleConfig{
+export interface ComponentStyle extends ComponentStyleConfig {
   componentColor: ComponentColor
   primaryInvertColor: string;
   mutedInvertColor: string;
@@ -80,12 +80,14 @@ export interface HisonCloser {
     component: {
         buttonList: Record<string, HButtonMethods>
         layoutList: Record<string, HLayoutMethods>
-        inputList: Record<string, HInputMethods>
         fileSetList: Record<string, HFileSetMethods>
+        imageBoxList: Record<string, HImageBoxMethods>
+        inputList: Record<string, HInputMethods>
         inputGroupList: Record<string, HInputGroupMethods>
         calendarList: Record<string, HCalendarMethods>
         chartList: Record<string, HChartInstance>
     }
     event: HisonvueEvent
     componentStyle: ComponentStyle
+    componentConfig: Omit<ComponentConfig, 'note' | 'grid' | 'chart'>
 }
