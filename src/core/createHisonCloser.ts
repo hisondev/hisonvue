@@ -114,6 +114,12 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
     }
   } as any
   
+  //컴포넌트 설정
+  hisonCloser.componentConfig = {
+    fileSetSize : hisonConfig.component.fileSetSize ?? Infinity,
+    fileSetTotalSize : hisonConfig.component.fileSetTotalSize ?? Infinity,
+  }
+
   // plugin설정
   const vn = getVn(hisonConfig)
   const vg = getVg(hisonConfig)
@@ -126,6 +132,7 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
     buttonList: {},
     layoutList: {},
     fileSetList: {},
+    imageBoxList: {},
     inputList: {},
     inputGroupList: {},
     calendarList: {},
