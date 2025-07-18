@@ -1,6 +1,7 @@
-export enum BoolString {
-    true = 'true',
-    false = 'false',
+export enum BackgroundType {
+  filled = 'filled',
+  empty = 'empty',
+  transparent = 'transparent',
 }
 
 export enum InputType {
