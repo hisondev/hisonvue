@@ -3,8 +3,9 @@
     <HLayout class="hison-col-12-mb hison-col-12-tb hison-col-12-pc hison-col-12-wd hison-layout-vertical-align-center-mb hison-layout-vertical-align-top-pc">
         <HButton
           @click="goToNoteTest"
-          :disable="true"
+          :disable="false"
           id="b1"
+          :backgroundType="BackgroundType.empty"
           class="hison-col-2 hison-pos-left hison-size-l-mb hison-size-s-pc hison-color-danger-mb hison-color-warning-pc">
           Go to Note<br>(left-button)
         </HButton>
@@ -13,16 +14,49 @@
             @click="onClickCenterButton1"
             class="hison-col-6 hison-size-l-mb hison-size-s-pc"
             text="center button1"
+            :backgroundType="BackgroundType.empty"
             ></HButton>
-            <HButton @click="onClickCenterButton2" id="b4" class="hison-col-6 hison-size-l-mb hison-size-s-pc" text="center button2"></HButton>
+            <HButton
+            @click="onClickCenterButton2"
+            id="b4"
+            :backgroundType="BackgroundType.transparent"
+            class="hison-col-6 hison-size-l-mb hison-size-s-pc"
+            text="center button2"
+            ></HButton>
         </HLayout>
         <HButton @click="goToGridTest" id="b2" class="hison-col-2 hison-pos-right hison-size-l-mb hison-size-s-pc">Go to Grid<br>(right-button)</HButton>
+    </HLayout>
+    <HLayout>
+  <HImageBox
+    id="imageBox"
+    class="hison-col-6-pc hison-col-12-mb hison-size-l-mb hison-size-s-pc hison-pos-center hison-color-primary-mb hison-color-success-pc"
+    style="height: 250px;"
+    @add="onAdd"
+    @remove="onRemove"
+  >
+    <!-- 이미지가 없을 때 나타나는 커스텀 empty slot -->
+    <template #empty>
+      <div class="custom-empty">
+        <span>Drag image here or click the button below</span>
+      </div>
+    </template>
+
+    <!-- add 버튼 커스텀 (plus 아이콘 + 텍스트 예시) -->
+    <template #add-button="{ add }">
+      <span><i class="fa fa-plus"></i> Add Image</span>
+    </template>
+
+    <!-- remove 버튼 커스텀 (trash 아이콘 예시) -->
+    <template #remove-button="{ remove }">
+      <span><i class="fa fa-trash"></i> Delete</span>
+    </template>
+  </HImageBox>
     </HLayout>
     <HInputGroup id="inputGroup1" v-model="dataObject">
       <HLayout id="layout1" class="hison-col-12-tb hison-col-6-pc" style="height: 250px;">
         <HFileSet
           id="fileSet"
-          class="hison-col-12 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-primary-mb hison-color-success-pc"
+          class="hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-primary-mb hison-color-success-pc"
           v-model="files"
           :multiCols="true"
           :placeholder="'저장된 파일이 없습니다.'"
@@ -154,14 +188,17 @@
       v-model="chartData1"
       :options="chartOptions1"
       style="height:300px; display: inline-flex; align-items: center; justify-content: center;"
+      :loadDelay="10"
       :visible="true"
     />
     <HChart
+      id="chart2"
       type="doughnut"
       class="hison-col-6-pc hison-col-12-mb"
       v-model="chartData2"
       :options="chartOptions2"
       style="height:300px; display: inline-flex; align-items: center; justify-content: center;"
+      :loadDelay="10"
     />
     <br><br>
     <HCalendar
@@ -232,6 +269,12 @@
 </template>
 
 <script setup lang="ts">
+function onAdd(file: AttachedFileItem, imageBoxMethods: HImageBoxMethods) {
+  console.log("Image added:", file)
+}
+function onRemove(prevFile: AttachedFileItem, imageBoxMethods: HImageBoxMethods) {
+  console.log("Image removed:", prevFile)
+}
 const allowedTypes = [
   'image/png',
   'image/jpeg',
@@ -254,15 +297,20 @@ let toggle = true
 let data, dataModel, dataWrapper
 let invertColorToggle = true
 let tempFiles: any = null
+let fileDm: InterfaceDataModel<AttachedFileItem> | null = null
+let imageFile: AttachedFileItem | null = null
+let imageDm: InterfaceDataModel<AttachedFileItem> | null = null
 const noteData1 = ref<NoteData>()
 const noteData2 = ref<NoteData>()
 const onClickCenterButton1 = (e: Event, button: HButtonMethods) => {
-  const fileSet = hison.component.getFileSet('fileSet')
-  fileSet?.setValue(tempFiles ?? [])
+  const imageBox = hison.component.getImageBox('imageBox')
+  console.log(imageBox?.focus())
 }
 const onClickCenterButton2 = () => {
-  const fileSet = hison.component.getFileSet('fileSet')
-  tempFiles = fileSet?.getValue()
+  console.log('onClickCenterButton2 start!!!!')
+  const imageBox = hison.component.getImageBox('imageBox')
+  hison.style.setInvertColor(toggle)
+  toggle = !toggle
 }
 const colorValue = ref('#f4ed25')
 const rangeValue = ref(100)
@@ -502,11 +550,12 @@ const isWeekend = (heading: any) => {
     return heading.label === 'Saturday' || heading.label === 'Sunday'
 }
 
-import { AttachedFileItem, DateFormat, DayOfWeek, EditMode, HButtonMethods, HCalenderTimeFormat, HCalenderView, HGridColumn, HInputMethods, hison, InputType, NoteToolPosition } from 'hisonvue'
+import { AttachedFileItem, DateFormat, DayOfWeek, EditMode, BackgroundType, HButtonMethods, HCalenderTimeFormat, HCalenderView, HGridColumn, HImageBoxMethods, HInputMethods, hison, InputType, NoteToolPosition } from 'hisonvue'
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
 import { Align, GridMethods } from 'vanillagrid2'
 import { NoteData, NoteModeByDevice, ToolPosition, VanillanoteElement } from 'vanillanote2'
+import { InterfaceDataModel } from 'hisonjs'
 
 const inputValue1 = ref<any>('20240228');
 const inputValue2 = ref<any>('2025-03')
