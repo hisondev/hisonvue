@@ -29,8 +29,8 @@
     <HLayout>
   <HImageBox
     id="imageBox"
-    class="hison-col-6-pc hison-col-12-mb hison-size-l-mb hison-size-s-pc hison-pos-center hison-color-primary-mb hison-color-success-pc"
-    style="height: 250px;"
+    class="hison-col-12-pc hison-col-12-mb hison-size-l-mb hison-size-s-pc hison-pos-center hison-color-primary-mb hison-color-success-pc"
+    style="height: 250px; box-shadow: none;"
     @add="onAdd"
     @remove="onRemove"
   >
@@ -304,6 +304,7 @@ const noteData1 = ref<NoteData>()
 const noteData2 = ref<NoteData>()
 const onClickCenterButton1 = (e: Event, button: HButtonMethods) => {
   const imageBox = hison.component.getImageBox('imageBox')
+  imageBox?.setEditMode(EditMode.readonly)
   console.log(imageBox?.focus())
 }
 const onClickCenterButton2 = () => {
