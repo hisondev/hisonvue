@@ -2,7 +2,7 @@
   <div
     :class="[
       'hison-calendar',
-      'hison-wrap',
+      'hison-wrapper',
       ...responsiveClassList,
       visibleClass,
       disableClass
@@ -53,7 +53,6 @@ import {
   getUUID,
   registerReloadable,
   extractResponsiveClasses,
-  addComponentNameToClass,
   getSpecificClassValueFromClassList,
   getIndexSpecificClassNameFromClassList,
   applyOpacityToRgba,
@@ -62,12 +61,14 @@ import {
   getInvertColor,
   unregisterReloadable,
   reloadHisonComponent,
+  toClassString,
+  addComponentNameToClass,
 } from '../../utils'
 import { useDevice } from '../../core'
-import { HCalenderView, hison, hisonCloser, Size } from '../..'
+import { HCalendarView, hison, hisonCloser, Size } from '../..'
 import { calendarProps } from './props'
 import { HCalendarEvent, HCalendarMethods, HCalendarSpecialTimeMap } from '../../types'
-import { HCalenderTimeFormat } from '../../enums/props'
+import { HCalendarTimeFormat } from '../../enums/props'
 
 export default defineComponent({
   name: 'HCalendar',
@@ -130,14 +131,14 @@ export default defineComponent({
     
     const responsiveClassList = ref<string[]>([])
     const refreshResponsiveClassList = () => {
-      responsiveClassList.value = extractResponsiveClasses(props.class || '', device.value)
+      responsiveClassList.value = extractResponsiveClasses(toClassString(props.class) || '', device.value)
 
       if (getIndexSpecificClassNameFromClassList(responsiveClassList.value, 'col') === -1) {
         responsiveClassList.value.push('hison-col-12')
       }
 
-      addComponentNameToClass(responsiveClassList.value, 'size', 'calender', hisonCloser.componentStyle.size)
-      addComponentNameToClass(responsiveClassList.value, 'color', 'calender', 'primary')
+      addComponentNameToClass(responsiveClassList.value, 'size', hisonCloser.componentStyle.size)
+      addComponentNameToClass(responsiveClassList.value, 'color', 'primary')
 
       if (calendarRef.value?.$el) {
         const el = calendarRef.value.$el as HTMLElement
@@ -260,7 +261,7 @@ export default defineComponent({
     }
 
     const adjustStyleWeekendColor = (activeView: string) => {
-      if(activeView === HCalenderView.month || activeView === HCalenderView.week) {
+      if(activeView === HCalendarView.month || activeView === HCalendarView.week) {
         const calendarEl = calendarRef.value.$el
         const weekendNumber = weekendDays.value ? weekendDays.value : (startWeekOnSunday.value ? [0, 6] : [5, 6])
         const headingEls = calendarEl.querySelectorAll('.vuecal__heading') as HTMLDivElement[]
@@ -291,9 +292,9 @@ export default defineComponent({
 
     const onViewChange = (event: any) => {
       adjustStyleChangedView(event.view)
-      if(event.view === HCalenderView.day) {
+      if(event.view === HCalendarView.day) {
         adjustStyleChangedDate(event.startDate)
-      } else if(event.view === HCalenderView.week) {
+      } else if(event.view === HCalendarView.week) {
         adjustStyleChangedDate()
       }
       activeView.value = event.view
@@ -449,7 +450,7 @@ export default defineComponent({
         getTimeCellHeight : () => timeCellHeight.value,
         setTimeCellHeight : (val: number) => { timeCellHeight.value = val },
         getTimeFormat : () => timeFormat.value,
-        setTimeFormat : (val: HCalenderTimeFormat) => { timeFormat.value = val },
+        setTimeFormat : (val: HCalendarTimeFormat) => { timeFormat.value = val },
         getTimeFrom : () => timeFrom.value,
         setTimeFrom : (val: number) => { timeFrom.value = val },
         getTimeStep : () => timeStep.value,
@@ -462,15 +463,15 @@ export default defineComponent({
         isTwelveHour : () => twelveHour.value,
         setTwelveHour : (val: boolean) => { twelveHour.value = val },
 
-        getActiveView : () => calendarRef.value.view.id as HCalenderView,
-        setActiveView : (val: HCalenderView) => {
+        getActiveView : () => calendarRef.value.view.id,
+        setActiveView : (val: HCalendarView) => {
           calendarRef.value.switchView(val)
         },
         getDisableViews : () => disableViews.value,
-        setDisableViews : (val: HCalenderView[]) => {
+        setDisableViews : (val: HCalendarView[]) => {
           disableViews.value = val
           if(val.includes(calendarRef.value.view.id)) {
-            const filtered = ['years', 'year', 'month', 'week', 'day'].filter(view => !val.includes(view as HCalenderView))
+            const filtered = ['years', 'year', 'month', 'week', 'day'].filter(view => !val.includes(view as HCalendarView))
             calendarRef.value.switchView(filtered[0])
           }
         },
