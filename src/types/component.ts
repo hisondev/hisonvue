@@ -589,20 +589,15 @@ export interface HBaggieMethods extends ComponentMethods {
   getShape(): 'square' | 'rounded' | 'circle'
   setShape(s: 'square' | 'rounded' | 'circle'): void
 
-  getTarget(): HTMLElement | null
-  setTarget(el: HTMLElement | null): void
-
   getTabIndex(): number | null
   setTabIndex(v: number | null): void
 
   isButtonEnabled(): boolean
   setButtonEnabled(v: boolean): void
 
-  /** 배치 강제 재계산 */
-  reposition(): void | Promise<void>
-
   reload(): void
 }
+
 
 /**
  * Runtime control methods for `HButton` component.
