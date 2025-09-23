@@ -1,16 +1,34 @@
 import { CSSProperties, PropType } from "vue";
-import { Color, EditMode, NoteModeByDevice, NoteToolPosition } from "../../enums";
-import { NoteData } from "vanillanote2";
+import { Color, EditMode, EditModeValue, NOTE_MODE_BY_DEVICE_VALUES, NoteModeByDevice, NoteModeByDeviceValue, NoteToolPosition, TOOL_POSITION_VALUES, ToolPositionValue } from "../../enums";
+import { NoteData, ToolPosition } from "vanillanote2";
 
-export const noteProps = {
+export const noteProps = {    /**
+     * Unique identifier for the note.
+     * - Access methods via `hison.component.getNote(id)`
+     * - Duplicate `id` will throw at mount time
+     */
     id: { type: String, required: false },
-    modelValue: Object as () => NoteData,
-    class: {type: String, required: false },
-    style: { type: [String, Object] as PropType<string | CSSProperties>, required: false },
+    /**
+     * Custom class applied to the label (string / array / object all supported).
+     * - Works with responsive classes like `hison-col-*`, `hison-size-*`, etc.
+     */
+    class: {
+        type: [String, Array, Object] as PropType<string | string[] | Record<string, boolean>>,
+        required: false
+    },
+    /**
+     * Inline style for the label (string, object, or an array of objects).
+     */
+    style: {
+        type: [String, Object, Array] as PropType<string | CSSProperties | CSSProperties[]>,
+        required: false
+    },
     /**
      * Controls visibility of the editor field.
      * - Accepts string values: `'true'` or `'false'`
      * - Default: `'true'` (visible)
+     *
+     * [Note] Boolean only. Use `:visible="false"` (with colon) when binding.
      */
     visible: { type: Boolean, default: true },
     /**
@@ -18,24 +36,36 @@ export const noteProps = {
      * - Values: `'editable'`, `'readonly'`, `'disable'`
      * - `'readonly'` and `'disable'` both prevent editing but differ in styling
      */
-    editMode: { type: String as PropType<EditMode>, default: EditMode.editable },
+    editMode: {
+        type: String as PropType<EditMode | EditModeValue>,
+        default: EditMode.editable,
+        validator: (v: any) => (['editable','disable','readonly'] as const).includes(v),
+    },
     /**
      * ADAPTIVE : The composition of notes varies depending on whether the device is a desktop or mobile device.
      * MOBILE : Always recognize as mobile.
      * DESKTOP : Always recognize as desktop.
      */
-    noteModeByDevice: { type: String as PropType<NoteModeByDevice>, required: false },
+    noteModeByDevice: {
+        type: String as PropType<NoteModeByDevice | NoteModeByDeviceValue>,
+        required: false,
+        validator: (v: any) => v == null || (NOTE_MODE_BY_DEVICE_VALUES as readonly string[]).includes(v),
+    },
     /**
-    * Position of the toolbar
-    */
-    toolPosition: { type: String as PropType<NoteToolPosition>, required: false },
+     * Position of the toolbar
+     */
+    toolPosition: {
+        type: String as PropType<ToolPosition | ToolPositionValue>,
+        required: false,
+        validator: (v: any) => v == null || (TOOL_POSITION_VALUES as readonly string[]).includes(v),
+    },
     /**
-    * Toolbar Line Count
-    */
+     * Toolbar Line Count
+     */
     toolDefaultLine: { type: Number, required: false },
     /**
-    * Whether to use the toolbar fold/unfold function
-    */
+     * Whether to use the toolbar fold/unfold function
+     */
     toolToggle: { type: Boolean, default: false },
     /**
      * - Variables for dynamically setting the size of the textarea
@@ -66,7 +96,7 @@ export const noteProps = {
      * - `true` : Uses a placeholder.
      * - `false` : Default value. Does not use a placeholder.
      */
-    placeholderIsVisible: { type: Boolean, default: false},
+    placeholderIsVisible: { type: Boolean, default: false },
     /**
      * - Values related to placeholders. The attribute placeholder- can be used, but using these variables allows dynamic control of placeholders.
      * - Adjusts the vertical position of the placeholder. Negative values are possible. The unit is px. Default value is 0.
@@ -82,23 +112,23 @@ export const noteProps = {
      * - Sets the width of the placeholder. The default value is the size of the flexible textarea.
      */
     placeholderWidth: { type: String, required: false },
-    /** 
+    /**
      * Placeholder text color
      */
     placeholderColor: { type: String, required: false },
-    /** 
+    /**
      * Placeholder background color
      */
     placeholderBackgroundColor: { type: String, required: false },
-    /** 
+    /**
      * Placeholder title text
      */
     placeholderTitle: { type: String, required: false },
-    /** 
+    /**
      * Placeholder body text
      */
     placeholderTextContent: { type: String, required: false },
-    /**  
+    /**
      * Comma-separated list of blocked MIME types (e.g., `'image/gif,text/csv'`).  
      * Prevents uploading specified file types. Default is `''` (no restriction).  
      */
@@ -112,7 +142,7 @@ export const noteProps = {
      * Maximum file upload size in bytes (e.g., `10485760` for 10MB).  
      * Files exceeding this limit will be blocked. Default is `20971520` (20MB).  
      */
-    attFileMaxSize: { type: Number, required: false },
+    attFileMaxSize: { type: Number, required: false, default: 20 * 1024 * 1024 },
     /**
      * Comma-separated list of blocked MIME types for images (e.g., `'image/gif,image/svg+xml'`).  
      * Prevents uploading specified image types. Default is `''` (no restriction).  
@@ -127,7 +157,7 @@ export const noteProps = {
      * Maximum upload size for images in bytes (e.g., `10485760` for 10MB).  
      * Images exceeding this limit will be blocked. Default is `20971520` (20MB).  
      */
-    attImageMaxSize: { type: Number, required: false },
+    attImageMaxSize: { type: Number, required: false, default: 20 * 1024 * 1024 },
     /**
      * default textarea font-size
      */
@@ -162,7 +192,7 @@ export const noteProps = {
      * - `'...'` : Can be used after being defined in .languageSet.
      */
     language: { type: String, required: false },
-    /** 
+    /**
      * Maximum undo/redo record count
      */
     recodeLimit: { type: String, required: false },
@@ -174,95 +204,95 @@ export const noteProps = {
      * Size (ratio) of note elements on mobile
      */
     sizeLevelMobile: { type: Number, required: false },
-    /** 
+    /**
      * Main theme color for the editor
      */
-    color: { type: String as PropType<Color> || String, required: false },
-    /** 
+    color: { type: String as PropType<Color | string>, required: false },
+    /**
      * Whether to use inverted (dark mode) colors
      */
     invertColor: { type: Boolean, default: false },
-    /** 
+    /**
      * Whether to use paragraph style buttons (normal, heading, etc.)
      */
     usingParagraphStyle: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use bold button
      */
     usingBold: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use underline button
      */
     usingUnderline: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use italic button
      */
     usingItalic: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use unordered list (ul) button
      */
     usingUl: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use ordered list (ol) button
      */
     usingOl: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use text align buttons (left, center, right)
      */
     usingTextAlign: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use attach link button
      */
     usingAttLink: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use attach file button
      */
     usingAttFile: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use attach image button
      */
     usingAttImage: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use attach video button
      */
     usingAttVideo: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to allow font size adjustment
      */
     usingFontSize: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to allow letter spacing adjustment
      */
     usingLetterSpacing: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to allow line height adjustment
      */
     usingLineHeight: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to allow font family change
      */
     usingFontFamily: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to allow text color change
      */
     usingColorText: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to allow background color change
      */
     usingColorBack: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use format clear (remove styles) button
      */
     usingFormatClear: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use undo button
      */
     usingUndo: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use redo button
      */
     usingRedo: { type: Boolean, default: true },
-    /** 
+    /**
      * Whether to use help (shortcut guide) button
      */
     usingHelp: { type: Boolean, default: true },
@@ -292,6 +322,81 @@ export const noteProps = {
      * - Adds `hison-note-required` class when `'true'`
      */
     required: { type: Boolean, default: false },
+    /**
+     * Two-way bound editor state (`NoteData`).
+     *
+     * Binds the full snapshot of the Vanillanote editor so you can
+     * initialize, observe, persist, and later restore the content.
+     * When the user edits the note, the component emits
+     * `update:modelValue` with a fresh `NoteData` object.
+     *
+     * ---
+     *
+     * ### What it contains
+     * Mirrors the `NoteData` interface:
+     * - `html` — Serialized HTML of the editor.
+     * - `plainText` — Text-only representation (no tags).
+     * - `links` — Array of embedded hyperlink metadata.
+     * - `files` — Array of attached file metadata.
+     * - `images` — Array of attached image metadata.
+     * - `videos` — Array of attached video metadata.
+     * - `fileObjects` — Map of active `File` objects for files (UUID → `File`).
+     * - `imageObjects` — Map of active `File` objects for images (UUID → `File`).
+     *
+     * ---
+     *
+     * ### Behavior
+     * - If omitted, the editor starts empty and will emit a snapshot on first user change.
+     * - For best reactivity, treat `modelValue` as **immutable** (replace the whole object
+     *   rather than mutating nested fields in place).
+     * - Emissions are debounced by the editor’s internal lifecycle (not by this component).
+     * - `fileObjects`/`imageObjects` exist **only in the browser** and are not JSON-serializable.
+     *
+     * ---
+     *
+     * ### Typical usage
+     * **Initialize from server & bind**
+     * ```vue
+     * <HNote v-model="note" />
+     *
+     * <script setup lang="ts">
+     * import type { NoteData } from 'hisonvue'
+     * const note = ref<NoteData | undefined>(undefined) // start empty
+     * // later: note.value = fetchedNoteData // (without File objects)
+     * </script>
+     * ```
+     *
+     * **Persist to server (omit File objects)**
+     * ```ts
+     * const { fileObjects, imageObjects, ...serializable } = note.value ?? {}
+     * await saveNoteData(serializable) // send JSON; upload Files separately if needed
+     * ```
+     *
+     * **Restore later**
+     * ```ts
+     * // After loading from API:
+     * note.value = savedNoteData
+     * ```
+     *
+     * ---
+     *
+     * ### Advanced
+     * - If you need the latest snapshot on demand, you can rely on the most recent
+     *   `modelValue` received via `v-model`, or call the underlying editor API
+     *   (e.g., `getNoteData()` / `setNoteData()`) if you access the instance directly.
+     */
+    modelValue: { type: Object as PropType<NoteData>, required: false },
+    /**
+     * Controls keyboard focus order of the element.
+     * - `0` enables natural tab navigation, positive numbers set custom order.
+     * - `null` or `''` removes tabindex (not focusable).
+     */
+    tabIndex: {
+        type: [Number, String] as PropType<number | string | null>,
+        default: null,
+        validator: (v: any) =>
+        v === null || v === '' || (!isNaN(+v) && isFinite(+v))
+    },
 }
 
 export const noteEventProps = {
