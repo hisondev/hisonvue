@@ -46,44 +46,70 @@ export const applyCssVariables = () => {
   --hison-primary-shadowColor: ${cc.primary.shadowColor};
   --hison-primary-hoverColor: ${cc.primary.hoverColor};
   --hison-primary-activeColor: ${cc.primary.activeColor};
+  --hison-primary-rowHoverColor: ${cc.primary.rowHoverColor};
+  --hison-primary-stripeColor: ${cc.primary.stripeColor};
   --hison-primary-emptyTextColor: ${cc.primary.emptyTextColor};
   --hison-primary-filledTextColor: ${cc.primary.filledTextColor};
+
   --hison-muted-buttonColor: ${cc.muted.buttonColor};
   --hison-muted-borderColor: ${cc.muted.borderColor};
   --hison-muted-shadowColor: ${cc.muted.shadowColor};
   --hison-muted-hoverColor: ${cc.muted.hoverColor};
   --hison-muted-activeColor: ${cc.muted.activeColor};
+  --hison-muted-rowHoverColor: ${cc.muted.rowHoverColor};
+  --hison-muted-stripeColor: ${cc.muted.stripeColor};
   --hison-muted-emptyTextColor: ${cc.muted.emptyTextColor};
   --hison-muted-filledTextColor: ${cc.muted.filledTextColor};
+
   --hison-info-buttonColor: ${cc.info.buttonColor};
   --hison-info-borderColor: ${cc.info.borderColor};
   --hison-info-shadowColor: ${cc.info.shadowColor};
   --hison-info-hoverColor: ${cc.info.hoverColor};
   --hison-info-activeColor: ${cc.info.activeColor};
+  --hison-info-rowHoverColor: ${cc.info.rowHoverColor};
+  --hison-info-stripeColor: ${cc.info.stripeColor};
   --hison-info-emptyTextColor: ${cc.info.emptyTextColor};
   --hison-info-filledTextColor: ${cc.info.filledTextColor};
+
   --hison-success-buttonColor: ${cc.success.buttonColor};
   --hison-success-borderColor: ${cc.success.borderColor};
   --hison-success-shadowColor: ${cc.success.shadowColor};
   --hison-success-hoverColor: ${cc.success.hoverColor};
   --hison-success-activeColor: ${cc.success.activeColor};
+  --hison-success-rowHoverColor: ${cc.success.rowHoverColor};
+  --hison-success-stripeColor: ${cc.success.stripeColor};
   --hison-success-emptyTextColor: ${cc.success.emptyTextColor};
   --hison-success-filledTextColor: ${cc.success.filledTextColor};
+
   --hison-danger-buttonColor: ${cc.danger.buttonColor};
   --hison-danger-borderColor: ${cc.danger.borderColor};
   --hison-danger-shadowColor: ${cc.danger.shadowColor};
   --hison-danger-hoverColor: ${cc.danger.hoverColor};
   --hison-danger-activeColor: ${cc.danger.activeColor};
+  --hison-danger-rowHoverColor: ${cc.danger.rowHoverColor};
+  --hison-danger-stripeColor: ${cc.danger.stripeColor};
   --hison-danger-emptyTextColor: ${cc.danger.emptyTextColor};
   --hison-danger-filledTextColor: ${cc.danger.filledTextColor};
+
   --hison-warning-buttonColor: ${cc.warning.buttonColor};
   --hison-warning-borderColor: ${cc.warning.borderColor};
   --hison-warning-shadowColor: ${cc.warning.shadowColor};
   --hison-warning-hoverColor: ${cc.warning.hoverColor};
   --hison-warning-activeColor: ${cc.warning.activeColor};
+  --hison-warning-rowHoverColor: ${cc.warning.rowHoverColor};
+  --hison-warning-stripeColor: ${cc.warning.stripeColor};
   --hison-warning-emptyTextColor: ${cc.warning.emptyTextColor};
   --hison-warning-filledTextColor: ${cc.warning.filledTextColor};
+
   --hison-font-family: 'Arial, sans-serif';
+  --hison-s-min-height: ${c.minHeightS};
+  --hison-m-min-height: ${c.minHeightM};
+  --hison-l-min-height: ${c.minHeightL};
+  --hison-xl-min-height: ${c.minHeightXL};
+  --hison-s-font-size: ${c.fontSizeS};
+  --hison-m-font-size: ${c.fontSizeM};
+  --hison-l-font-size: ${c.fontSizeL};
+  --hison-xl-font-size: ${c.fontSizeXL};
 }
 `.trim();
 
