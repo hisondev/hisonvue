@@ -148,6 +148,16 @@ export const getIndexSpecificClassNameFromClassList = (classList: string[], clas
   return classList.findIndex(cls => cls.startsWith(`hison-${classStarts}-`))
 }
 
+export const toClassString = (cls: any): string => {
+    if (!cls) return ''
+    if (typeof cls === 'string') return cls
+    if (Array.isArray(cls)) return cls.map(toClassString).filter(Boolean).join(' ')
+    if (typeof cls === 'object') {
+        return Object.keys(cls).filter(k => !!cls[k]).join(' ')
+    }
+    return ''
+}
+
 /**
  * 반응형 클래스 문자열에서 현재 디바이스에 맞는 클래스만 추출
  * - 예: hison-col-6-mb hison-col-4-pc → 모바일이면 hison-col-6
@@ -191,16 +201,12 @@ export const extractResponsiveClasses = (
   return [...staticClasses, ...responsiveClasses].filter(Boolean)
 }
 
-/**
- * 클래스 목록에 컴포넌트 이름을 추가
- * - 예: hison-color-primary → hison-color-primary-button
- */
-export const addComponentNameToClass = (classList: string[], classStarts: string, addComponentName: string, defaultAttrName: string) => {
+export const addComponentNameToClass = (classList: string[], classStarts: string, defaultAttrName: string) => {
     const idx = getIndexSpecificClassNameFromClassList(classList, classStarts)
     if (idx !== -1) {
-        classList[idx] = classList[idx] + `-${addComponentName}`
+        classList[idx] = classList[idx]
     } else {
-        classList.push(`hison-${classStarts}-${defaultAttrName}-${addComponentName}`)
+        classList.push(`hison-${classStarts}-${defaultAttrName}`)
     }
 }
 
