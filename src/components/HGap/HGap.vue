@@ -1,0 +1,181 @@
+<template>
+    <div
+        :class="[
+        'hison-wrapper',
+        ...responsiveClassList,
+        visibleClass
+        ]"
+    >
+        <div
+        ref="gapRef"
+        :class="[
+            'hison-gap',
+            borderClass,
+            backgroundTypeClass
+        ]"
+        :style="props.style"
+        >
+            <div v-if="line === 'horizontal'" class="hison-gap-line-horizontal" :style="horizontalStyle" />
+            <div v-else-if="line === 'vertical'"   class="hison-gap-line-vertical"   :style="verticalStyle" />
+        </div>
+    </div>
+</template>
+
+<script lang="ts">
+import {
+  defineComponent, ref, computed, onMounted, onBeforeUnmount, nextTick, watch, unref
+} from 'vue'
+import { gapProps } from './props'
+import { BackgroundType, type BackgroundTypeValue, HGapLineStyle, HGapLineStyleValue, hisonCloser } from '../..'
+import {
+  extractResponsiveClasses,
+  getUUID,
+  addComponentNameToClass,
+  registerReloadable,
+  reloadHisonComponent,
+  toClassString,
+  unregisterReloadable,
+  getIndexSpecificClassNameFromClassList,
+  getSpecificClassValueFromClassList,
+  getHexCodeFromColorText
+} from '../../utils'
+import { useDevice } from '../../core'
+import type { HGapMethods } from '../../types'
+
+export default defineComponent({
+    name: 'HGap',
+    props: gapProps,
+    inheritAttrs: false,
+    emits: ['mounted', 'responsive-change'],
+    setup(props, { emit }) {
+        const gapRef = ref<HTMLDivElement | null>(null)
+        const gapMethods = ref<HGapMethods | null>(null)
+        const id = props.id ? props.id : getUUID()
+        const reloadId = `hgap:${id}`
+        const device = useDevice()
+
+        const visible = ref<boolean>(props.visible)
+        const border = ref<boolean>(props.border ?? false)
+        const backgroundType = ref<BackgroundType | BackgroundTypeValue>(props.backgroundType ?? BackgroundType.empty)
+        const line = ref(props.line)
+        const lineStyle = ref<HGapLineStyleValue>(props.lineStyle || 'solid')
+        const lineWidthRaw = ref<number | string>(props.lineWidth ?? 1)
+        const lineColor = ref<string>(props.lineColor || '')
+
+        const effectiveLineColor = computed(() => {
+            const explicit = String(lineColor.value || '').trim()
+            const colorText = getHexCodeFromColorText(explicit)
+            if (colorText) return colorText
+            if (explicit) return explicit
+
+            const colorName = getSpecificClassValueFromClassList(responsiveClassList.value, 'color')
+            const hex = colorName ? getHexCodeFromColorText(colorName) : null
+            if (hex) return hex
+
+            return hisonCloser?.componentStyle?.mutedColor || '#999999'
+        })
+
+        const lineWidthCss = computed(() => {
+            const v = lineWidthRaw.value
+            return typeof v === 'number' ? `${v}px` : (String(v || '1px'))
+        })
+
+        const horizontalStyle = computed(() => ({
+            borderTop: `${lineWidthCss.value} ${lineStyle.value} ${effectiveLineColor.value}`,
+        }))
+        const verticalStyle = computed(() => ({
+            borderLeft: `${lineWidthCss.value} ${lineStyle.value} ${effectiveLineColor.value}`,
+        }))
+
+        const visibleClass = computed(() => (visible.value ? '' : 'hison-display-none'))
+        const borderClass = computed(() => (border.value ? 'hison-border' : ''))
+        const backgroundTypeClass = computed(() => {
+            switch (backgroundType.value) {
+                case BackgroundType.empty: return 'hison-bg-empty'
+                case BackgroundType.transparent: return 'hison-bg-transparent'
+                default: return 'hison-bg-filled'
+        }
+        })
+
+        const responsiveClassList = ref<string[]>([])
+        const refreshResponsiveClassList = () => {
+            responsiveClassList.value = extractResponsiveClasses(toClassString(props.class) || '', device.value)
+            addComponentNameToClass(responsiveClassList.value, 'size', hisonCloser.componentStyle.size)
+            addComponentNameToClass(responsiveClassList.value, 'color', 'primary')
+            if (getIndexSpecificClassNameFromClassList(responsiveClassList.value, 'col') === -1) {
+                responsiveClassList.value.push('hison-col-12')
+            }
+        }
+
+        const mount = () => {
+            if (hisonCloser.component.gapList[id]) throw new Error('[Hisonvue] gap id attribute was duplicated.')
+
+            registerReloadable(reloadId, () => {
+                unmount()
+                nextTick(mount)
+            })
+
+            refreshResponsiveClassList()
+
+            gapMethods.value = {
+                getId: () => id,
+                getType: () => 'gap',
+                isVisible: () => visible.value,
+                setVisible: (v: boolean) => { visible.value = v },
+
+                isBorder: () => border.value,
+                setBorder: (v: boolean) => { border.value = v },
+
+                getBackgroundType: () => backgroundType.value as BackgroundTypeValue,
+                setBackgroundType: (t: BackgroundType | BackgroundTypeValue) => { backgroundType.value = t },
+
+                getLine: () => line.value,
+                setLine: (r: 'none' | 'horizontal' | 'vertical') => { line.value = r },
+
+                getLineStyle: () => lineStyle.value,
+                setLineStyle: (s: HGapLineStyleValue) => { lineStyle.value = s },
+
+                getLineWidth: () => lineWidthRaw.value,
+                setLineWidth: (w: number | string) => { lineWidthRaw.value = w },
+
+                getLineColor: () => lineColor.value,
+                setLineColor: (c?: string) => { lineColor.value = c ?? '' },
+
+                reload: () => reloadHisonComponent(reloadId),
+            }
+
+            hisonCloser.component.gapList[id] = gapMethods.value
+            emit('mounted', gapMethods.value)
+        }
+
+        const unmount = () => {
+            unregisterReloadable(reloadId)
+            if (hisonCloser.component.gapList) {
+                delete hisonCloser.component.gapList[id]
+            }
+        }
+
+        onMounted(mount)
+        onBeforeUnmount(unmount)
+
+        watch(device, (d) => {
+            refreshResponsiveClassList()
+            emit('responsive-change', d)
+        })
+
+        return {
+        gapRef,
+        props,
+        line,
+        visibleClass,
+        borderClass,
+        backgroundTypeClass,
+        responsiveClassList,
+        horizontalStyle,
+        verticalStyle,
+        }
+    }
+})
+</script>
+
+<style scoped></style>
