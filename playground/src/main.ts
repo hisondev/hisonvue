@@ -7,9 +7,8 @@ import router from './router'
 const app = createApp(App)
 
 const hisonConfig: HisonConfig = getDefaultHisonConfig()
-//hisonConfig.componentStyle.primaryColor = '#217346'
-hisonConfig.componentStyle.size = Size.s
 hisonConfig.componentStyle.primaryColor = '#123456'
+hisonConfig.componentStyle.size = Size.s
 
 console.log('### hisonConfig',hisonConfig);
 
@@ -19,8 +18,11 @@ iconSpan.textContent = 'auto_fix_high'
 hisonConfig.component.note.iconSpanElement.boldButtonIcon = iconSpan
 
 hisonConfig.event.cssEvent.input_onAfterBlur = (e) => {
-    return true;
+    return console.log('hisonConfig.event.cssEvent.input_onAfterBlur!!',e.target);
 }
+
+hisonConfig.componentStyle.fontSizeS = 0.75
+hisonConfig.componentStyle.fontSizeM = 0.8
 
 app.use(hisonvue, hisonConfig)
 app.use(router)
