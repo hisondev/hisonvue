@@ -1,5 +1,6 @@
 import { hisonCloser } from "../.."
-import { getColorClass } from "../../utils"
+let activeTimer: number | undefined;
+const bound = new WeakSet<HTMLElement>();
 
 const onFocus = (e: FocusEvent) => {
     const target = e.currentTarget as HTMLElement
@@ -8,7 +9,7 @@ const onFocus = (e: FocusEvent) => {
         e.preventDefault()
         return
     }
-    target.classList.add(getColorClass(target, 'button', 'on-focus'))
+    target.classList.add('hison-button-on-focus')
     hisonCloser.event.cssEvent.button_onAfterFocus(e)
 }
 const onBlur = (e: FocusEvent) => {
@@ -18,8 +19,9 @@ const onBlur = (e: FocusEvent) => {
         e.preventDefault()
         return
     }
-    target.classList.remove(getColorClass(target, 'button', 'on-focus'))
-    hisonCloser.event.cssEvent.button_onAfterBlur(e)
+    target.classList.remove('hison-button-on-focus')
+    if (activeTimer) { clearTimeout(activeTimer); activeTimer = undefined; }
+    hisonCloser.event.cssEvent.button_onAfterBlur(e);
 }
 const onClick = (e: MouseEvent) => {
     const target = e.currentTarget as HTMLElement
@@ -28,12 +30,17 @@ const onClick = (e: MouseEvent) => {
       e.preventDefault()
       return
     }
-    target.classList.add(getColorClass(target, 'button', 'on-active'))
-    setTimeout(() => {
-        target.classList.remove(getColorClass(target, 'button', 'on-active'))
-        target.classList.remove(getColorClass(target, 'button', 'on-focus'))
-        hisonCloser.event.cssEvent.button_onAfterClick(e)
-    }, 100)
+    target.classList.remove('hison-button-on-mouseover', 'hison-button-on-focus');
+    target.classList.add('hison-button-on-active');
+    if (activeTimer) { clearTimeout(activeTimer); }
+    activeTimer = window.setTimeout(() => {
+        target.classList.remove('hison-button-on-active');
+        if (document.activeElement === target) {
+        target.classList.add('hison-button-on-focus');
+        }
+        hisonCloser.event.cssEvent.button_onAfterClick(e);
+        activeTimer = undefined;
+    }, 100);
 }
 const onMouseover = (e: MouseEvent) => {
     const target = e.currentTarget as HTMLElement
@@ -42,7 +49,7 @@ const onMouseover = (e: MouseEvent) => {
         e.preventDefault()
         return
     }
-    target.classList.add(getColorClass(target, 'button', 'on-mouseover'))
+    target.classList.add('hison-button-on-mouseover')
     hisonCloser.event.cssEvent.button_onAfterMouseover(e)
 }
 const onMouseout = (e: MouseEvent) => {
@@ -52,7 +59,7 @@ const onMouseout = (e: MouseEvent) => {
         e.preventDefault()
         return
     }
-    target.classList.remove(getColorClass(target, 'button', 'on-mouseover'))
+    target.classList.remove('hison-button-on-mouseover')
     hisonCloser.event.cssEvent.button_onAfterMouseout(e)
 }
 const onTouchstart = (e: TouchEvent) => {
@@ -62,7 +69,7 @@ const onTouchstart = (e: TouchEvent) => {
         e.preventDefault()
         return
     }
-    target.classList.add(getColorClass(target, 'button', 'on-mouseover'))
+    target.classList.add('hison-button-on-mouseover')
     hisonCloser.event.cssEvent.button_onAfterTouchstart(e)
 }
 const onTouchend = (e: TouchEvent) => {
@@ -72,25 +79,29 @@ const target = e.currentTarget as HTMLElement
         e.preventDefault()
         return
     }
-    target.classList.remove(getColorClass(target, 'button', 'on-mouseover'))
+    target.classList.remove('hison-button-on-mouseover')
     hisonCloser.event.cssEvent.button_onAfterTouchend(e)
 }
 
 export const addButtonCssEvent = (el: HTMLElement) => {
+    if (bound.has(el)) return;
+    bound.add(el);
     el.addEventListener('click', onClick, { capture: true })
     el.addEventListener('focus', onFocus)
     el.addEventListener('blur', onBlur)
-    el.addEventListener('mouseover', onMouseover)
-    el.addEventListener('mouseout', onMouseout)
+    el.addEventListener('mouseenter', onMouseover)
+    el.addEventListener('mouseleave', onMouseout)
     el.addEventListener('touchstart', onTouchstart, { passive: false, capture: true })
     el.addEventListener('touchend', onTouchend, { passive: false, capture: true })
 }
 export const removeButtonCssEvent = (el: HTMLElement) => {
-    el.removeEventListener('click', onClick)
+    if (!bound.has(el)) return;
+    bound.delete(el);
+    el.removeEventListener('click', onClick, { capture: true })
     el.removeEventListener('focus', onFocus)
     el.removeEventListener('blur', onBlur)
-    el.removeEventListener('mouseover', onMouseover)
-    el.removeEventListener('mouseout', onMouseout)
-    el.removeEventListener('touchstart', onTouchstart)
-    el.removeEventListener('touchend', onTouchend)
+    el.removeEventListener('mouseenter', onMouseover)
+    el.removeEventListener('mouseleave', onMouseout)
+    el.removeEventListener('touchstart', onTouchstart, { capture: true })
+    el.removeEventListener('touchend', onTouchend, { capture: true })
 }
