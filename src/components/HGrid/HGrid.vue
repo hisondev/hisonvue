@@ -1,5 +1,5 @@
 <template>
-    <div ref="editorWrap" :class="['hison-grid', 'hison-wrap', ...responsiveClassList, visibleClass]" :style="props.style">
+    <div ref="editorWrap" :class="['hison-grid', 'hison-wrapper', ...responsiveClassList, visibleClass]" :style="props.style">
       <div data-vanillagrid v-bind="bindAttrs"></div>
     </div>
 </template>
@@ -9,7 +9,7 @@ import { defineComponent, computed, onMounted, onBeforeUnmount, ref, nextTick, t
 import type { Vanillagrid } from 'vanillagrid2'
 import type { HGridColumn, HGridMethods } from '../../types'
 import { gridEventProps, gridProps } from './props'
-import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getSpecificClassValueFromClassList, getUUID, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
+import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getSpecificClassValueFromClassList, getUUID, registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable } from '../../utils'
 import { hison, hisonCloser, Size } from '../..'
 import { useDevice } from '../../core'
 import { InterfaceDataModel } from 'hisonjs'
@@ -40,7 +40,7 @@ setup(props, { emit }) {
     }
     const bindAttrs = computed(() => {
         bindAttrsTrigger.value
-        const classList = extractResponsiveClasses(props.class || '', device.value)
+        const classList = extractResponsiveClasses(toClassString(props.class) || '', device.value)
         const color = getSpecificClassValueFromClassList(classList, 'color')
         const size = getSpecificClassValueFromClassList(classList, 'size')
         if (getIndexSpecificClassNameFromClassList(classList, 'col') === -1) classList.push('hison-col-12')
@@ -189,7 +189,7 @@ setup(props, { emit }) {
     watch(device, (newDevice) => {
         const grid = gridInstance.value
         if(grid) {
-            const classList = extractResponsiveClasses(props.class || '', device.value)
+            const classList = extractResponsiveClasses(toClassString(props.class) || '', device.value)
             const color = getSpecificClassValueFromClassList(classList, 'color')
             const size = getSpecificClassValueFromClassList(classList, 'size')
 
