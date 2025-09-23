@@ -1,114 +1,121 @@
 <template>
   <div
     :class="[
-      'hison-fileset',
+      'hison-wrapper',
       ...responsiveClassList,
       visibleClass,
-      editModeClass,
     ]"
-    :style="props.style"
-    >
+  >
     <div
-      class="file-list-wrapper"
-      :class="{ 'drag-over': isDragging }"
-      @dragover.prevent
-      @dragenter.prevent="handleDragEnter"
-      @dragleave.prevent="isDragging = false"
-      @drop.prevent="handleDrop"
-    >
-      <div
-        :class="['file-list', { 'multi-cols': multiCols }]"
+      :class="[
+        'hison-fileset',
+        editModeClass,
+      ]"
+      :style="props.style"
       >
-        <template v-if="visibleFiles.length === 0 && placeholder">
-          <div class="file-placeholder">{{ placeholder }}</div>
-        </template>
-
-        <template v-else>
-          <div
-            v-for="(file, index) in visibleFiles"
-            :key="index"
-            class="file-item"
-          >
-            <slot name="file-icon" :file="file" />
-            <span
-              class="file-name"
-              @click="downloadFile(file)"
-              :class="{ clickable: file.file || file.filePath }"
-            >
-              {{ file.fileName }}
-            </span>
-            <template v-if="!readonly">
-              <template v-if="$slots['remove-button']">
-                <slot
-                  name="remove-button"
-                  :file="file"
-                  :index="index"
-                  :remove="() => removeFile(index)"
-                  :disable="disable"
-                />
-              </template>
-              <template v-else>
-                <button
-                  class="delete-btn"
-                  :class="{ 'hison-disable': disable }"
-                  :disabled="disable"
-                  @click="removeFile(index)"
-                  >
-                  <span v-html="removeButtonTextHtml"></span>
-                </button>
-              </template>
-            </template>
-          </div>
-        </template>
-      </div>
-    </div>
-
-    <template v-if="!readonly">
-      <div class="add-btn-container">
-        <HButton
-          @click="openFileDialog"
-          @focus="$emit('focus', fileSetMethods)"
-          @blur="$emit('blur', fileSetMethods)"
-          :id="`hison_input_file_add_button_${id}`"
-          :disable="disable"
-          :class="[...buttonClassList]"
-          >
-          <template v-if="$slots['add-button']">
-            <slot name="add-button" :add="openFileDialog" />
+      <div
+        class="file-list-wrapper"
+        :class="{ 'drag-over': isDragging }"
+        @dragover.prevent
+        @dragenter.prevent="handleDragEnter"
+        @dragleave.prevent="isDragging = false"
+        @drop.prevent="handleDrop"
+      >
+        <div
+          :class="['file-list', { 'multi-cols': multiCols }]"
+        >
+          <template v-if="visibleFiles.length === 0 && placeholder">
+            <div class="file-placeholder">{{ placeholder }}</div>
           </template>
+
           <template v-else>
-            <span v-html="addButtonTextHtml"></span>
+            <div
+              v-for="(file, index) in visibleFiles"
+              :key="index"
+              class="file-item"
+            >
+              <slot name="file-icon" :file="file" />
+              <span
+                class="file-name"
+                @click="downloadFile(file)"
+                :class="{ clickable: file.file || file.filePath }"
+              >
+                {{ file.fileName }}
+              </span>
+              <template v-if="!readonly">
+                <template v-if="$slots['remove-button']">
+                  <slot
+                    name="remove-button"
+                    :file="file"
+                    :index="index"
+                    :remove="() => removeFile(index)"
+                    :disable="disable"
+                  />
+                </template>
+                <template v-else>
+                  <button
+                    class="delete-btn"
+                    :class="{ 'hison-disable': disable }"
+                    :disabled="disable"
+                    @click="removeFile(index)"
+                  >
+                    <span class="hison-fileset-remove-text">{{ removeButtonText }}</span>
+                  </button>
+                </template>
+              </template>
+            </div>
           </template>
-        </HButton>
+        </div>
       </div>
-    </template>
 
-    <input
-      :id="`hison_fileset_${id}`"
-      ref="fileInputRef"
-      type="file"
-      :accept="accept || undefined"
-      :multiple="multiple"
-      hidden
-      @change="onFileChange"
-    />
+      <template v-if="!readonly">
+        <div class="add-btn-container">
+          <HButton
+            @click="openFileDialog"
+            @focus="$emit('focus', filesetMethods)"
+            @blur="$emit('blur', filesetMethods)"
+            :id="`hison_fileset_add_button_${id}`"
+            :disable="disable"
+            :class="[...buttonClassList]"
+            :tabindex="tabIndex ?? undefined"
+          >
+            <template v-if="$slots['add-button']">
+              <slot name="add-button" :add="openFileDialog" />
+            </template>
+            <template v-else>
+              <span class="hison-fileset-add-text">{{ addButtonText }}</span>
+            </template>
+          </HButton>
+        </div>
+      </template>
+
+      <input
+        :id="`hison_fileset_${id}`"
+        ref="fileInputRef"
+        type="file"
+        :accept="accept || undefined"
+        :multiple="multiple"
+        hidden
+        @change="onFileChange"
+      />
+    </div>
   </div>
 </template>
 
 
 <script lang="ts">
-import { defineComponent, ref, computed, nextTick, onMounted, onBeforeUnmount, watch, readonly } from 'vue'
-import { fileSetProps } from './props'
-import { AttachedFileItem, HFileSetMethods } from '../../types'
-import { addComponentNameToClass, extractPrefixedClasses, extractResponsiveClasses, getIndexSpecificClassNameFromClassList, getUUID, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
+import { defineComponent, ref, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
+import { filesetProps } from './props'
+import { AttachedFileItem, HFilesetMethods } from '../../types'
+import { addComponentNameToClass, extractPrefixedClasses, extractResponsiveClasses, getIndexSpecificClassNameFromClassList, getUUID, registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable } from '../../utils'
 import { EditMode } from '../../enums'
 import { hison, hisonCloser } from '../..'
 import { useDevice } from '../../core'
 import { InterfaceDataModel } from 'hisonjs'
 
 export default defineComponent({
-  name: 'HFileSet',
-  props: fileSetProps,
+  name: 'HFileset',
+  props: filesetProps,
   emits: [
     'mounted',
     'responsive-change',
@@ -123,10 +130,10 @@ export default defineComponent({
   setup(props, { emit }) {
     const fileInputRef = ref<HTMLInputElement | null>(null)
     const internalFiles = ref<AttachedFileItem[]>([...props.modelValue])
-    const fileSetMethods = ref<HFileSetMethods | null>(null)
+    const filesetMethods = ref<HFilesetMethods | null>(null)
     const id = props.id ? props.id : getUUID()
     const reloadId = `hbutton:${id}`
-    
+
     const visible = ref(props.visible)
     const editMode = ref(props.editMode)
     const disable = computed(() => editMode.value === EditMode.disable)
@@ -137,9 +144,7 @@ export default defineComponent({
     const attId = ref(props.attId || '')
 
     const addButtonText = ref(props.addButtonText || '')
-    const addButtonTextHtml = computed(() => (addButtonText.value || '').replace(/\n/g, '<br>'))
     const removeButtonText = ref(props.removeButtonText || '')
-    const removeButtonTextHtml = computed(() =>(removeButtonText.value || '').replace(/\n/g, '<br>'))
     const placeholder = ref(props.placeholder ?? '')
     const isDragging = ref(false)
     const enableDrop = ref(props.enableDrop)
@@ -161,34 +166,38 @@ export default defineComponent({
 
     const allowedTypes = ref<string[]>(Array.isArray(props.allowedTypes) ? props.allowedTypes : props.allowedTypes ? props.allowedTypes.split(',') : [])
     const disallowedTypes = ref<string[]>(Array.isArray(props.disallowedTypes) ? props.disallowedTypes : props.disallowedTypes ? props.disallowedTypes.split(',') : [])
-    const maxFileSize = ref<number>(props.maxFileSize ?? hison.getMaxFileSetSize())
-    const maxTotalSize = ref<number>(props.maxTotalFileSize ?? hison.getMaxFileSetTotalSize())
+    const maxFileSize = ref<number>(props.maxFileSize ?? hison.getMaxFilesetSize())
+    const maxTotalSize = ref<number>(props.maxTotalFileSize ?? hison.getMaxFilesetTotalSize())
     const maxFileCount = ref<number>(props.maxFileCount)
 
     const onDisallowedType = ref(typeof props.onDisallowedType === 'function' ? props.onDisallowedType : undefined)
     const onMaxFileSizeExceeded = ref(typeof props.onMaxFileSizeExceeded === 'function' ? props.onMaxFileSizeExceeded : undefined)
     const onMaxTotalSizeExceeded = ref(typeof props.onMaxTotalSizeExceeded === 'function' ? props.onMaxTotalSizeExceeded : undefined)
 
+    const tabIndex = ref<number | null>(
+      props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
+    )
+
     const device = useDevice()
-    
+
     const responsiveClassList = ref<string[]>([])
-    const refleshResponsiveClassList = () => {
-      responsiveClassList.value = extractResponsiveClasses(props.class || '', device.value)
+    const refreshResponsiveClassList = () => {
+      responsiveClassList.value = extractResponsiveClasses(toClassString(props.class) || '', device.value)
       if (getIndexSpecificClassNameFromClassList(responsiveClassList.value, 'col') === -1) responsiveClassList.value.push('hison-col-12')
-      addComponentNameToClass(responsiveClassList.value, 'size', 'fileset', hisonCloser.componentStyle.size)
-      addComponentNameToClass(responsiveClassList.value, 'color', 'fileset', 'primary')
+      addComponentNameToClass(responsiveClassList.value, 'size', hisonCloser.componentStyle.size)
+      addComponentNameToClass(responsiveClassList.value, 'color', 'primary')
     }
     const buttonClassList = computed(() => {
       const classList = []
-      classList.push(...extractPrefixedClasses(props.class || '', 'size'))
-      classList.push(...extractPrefixedClasses(props.class || '', 'color'))
+      classList.push(...extractPrefixedClasses(toClassString(props.class) || '', 'size'))
+      classList.push(...extractPrefixedClasses(toClassString(props.class) || '', 'color'))
       return classList
     })
 
     const openFileDialog = () => {
       fileInputRef.value?.click()
     }
-    
+
     const isFileTypeAllowed = (file: File): boolean => {
       const type = file.type
       const ext = '.' + file.name.split('.').pop()?.toLowerCase()
@@ -233,7 +242,7 @@ export default defineComponent({
       )
 
       if (!multiple.value && validFiles.length > 1) {
-        validFiles = [validFiles[0]] // 단일 선택만 허용
+        validFiles = [validFiles[0]]
       }
 
       let filesChanged = false
@@ -251,7 +260,6 @@ export default defineComponent({
           break
         }
 
-        // ❗ multiple = false → 기존 파일 무조건 제거
         if (!multiple.value) {
           for (const f of currentFiles) {
             if (f.isNew) {
@@ -264,7 +272,6 @@ export default defineComponent({
           filesChanged = true
         }
 
-        // ❗ multiple = true + maxFileCount > 0 → 바꿔치기
         if (multiple.value && maxFileCount.value > 0 && currentCount >= maxFileCount.value) {
           const replaceIndex = internalFiles.value.findIndex(f => !f.isDeleted)
           if (replaceIndex !== -1) {
@@ -281,7 +288,6 @@ export default defineComponent({
           }
         }
 
-        // 신규 파일 추가
         const newItem: AttachedFileItem = {
           fileName: file.name,
           fileSize: file.size,
@@ -298,8 +304,8 @@ export default defineComponent({
       if (filesChanged) {
         isModified.value = true
         emit('update:modelValue', [...internalFiles.value])
-        if (addedItems.length) emit('add', hison.utils.deepCopyObject(addedItems), fileSetMethods.value)
-        emit('change', hison.utils.deepCopyObject(internalFiles.value), fileSetMethods.value)
+        if (addedItems.length) emit('add', hison.utils.deepCopyObject(addedItems), filesetMethods.value)
+        emit('change', hison.utils.deepCopyObject(internalFiles.value), filesetMethods.value)
       }
     }
 
@@ -313,8 +319,8 @@ export default defineComponent({
       }
       isModified.value = true
       emit('update:modelValue', [...internalFiles.value])
-      emit('remove', hison.utils.deepCopyObject(target), index, fileSetMethods.value)
-      emit('change', hison.utils.deepCopyObject(internalFiles.value), fileSetMethods.value)
+      emit('remove', hison.utils.deepCopyObject(target), index, filesetMethods.value)
+      emit('change', hison.utils.deepCopyObject(internalFiles.value), filesetMethods.value)
     }
 
     const onFileChange = (e: Event) => {
@@ -334,7 +340,7 @@ export default defineComponent({
     })
 
     const downloadFile = (file: AttachedFileItem) => {
-      emit('download', hison.utils.deepCopyObject(file), fileSetMethods.value)
+      emit('download', hison.utils.deepCopyObject(file), filesetMethods.value)
       if (downloadHandler.value) {
         downloadHandler.value(file)
         return
@@ -383,22 +389,22 @@ export default defineComponent({
     }
 
     const mount = () => {
-      if (hisonCloser.component.fileSetList[id]) throw new Error(`[Hisonvue] fileSet id attribute was duplicated.`)
+      if (hisonCloser.component.filesetList[id]) throw new Error(`[Hisonvue] fileset id attribute was duplicated.`)
       registerReloadable(reloadId, () => {
         unmount()
         nextTick(mount)
       })
       if (!fileInputRef.value) return
-      refleshResponsiveClassList()
-      fileSetMethods.value = {
+      refreshResponsiveClassList()
+      filesetMethods.value = {
         getId: () => id,
-        getType : () => 'fileSet',
+        getType : () => 'fileset',
         isVisible : () => visible.value,
         setVisible : (val: boolean) => { visible.value = val },
         getEditMode : () => { return editMode.value },
         setEditMode : (val: EditMode) => {
           editMode.value = val
-          hisonCloser.component.buttonList[`hison_input_file_add_button_${id}`]?.setDisable(disable.value)
+          hisonCloser.component.buttonList[`hison_fileset_add_button_${id}`]?.setDisable(disable.value)
         },
         getValue: () => hison.utils.deepCopyObject(internalFiles.value),
         setValue: (attachedFileItem: AttachedFileItem[]) => { internalFiles.value = hison.utils.deepCopyObject([...attachedFileItem]) },
@@ -441,16 +447,20 @@ export default defineComponent({
         setOnMaxTotalSizeExceeded: (handler) => { onMaxTotalSizeExceeded.value = handler },
         isModified : () => { return isModified.value },
         setModified : (val: boolean) => { isModified.value = val},
-        focus : () => { hisonCloser.component.buttonList[`hison_input_file_add_button_${id}`]?.focus() },
+        getTabIndex: () => tabIndex.value,
+        setTabIndex: (v: number | null) => {
+          tabIndex.value = v !== null && v !== undefined ? Number(v) : null
+        },
+        focus : () => { hisonCloser.component.buttonList[`hison_fileset_add_button_${id}`]?.focus() },
         reload: () => reloadHisonComponent(reloadId)
       }
-      hisonCloser.component.fileSetList[id] = fileSetMethods.value
-      emit('mounted', fileSetMethods.value)
+      hisonCloser.component.filesetList[id] = filesetMethods.value
+      emit('mounted', filesetMethods.value)
     }
 
     const unmount = () => {
       unregisterReloadable(reloadId)
-      delete hisonCloser.component.fileSetList[id]
+      delete hisonCloser.component.filesetList[id]
     }
 
     onMounted(mount)
@@ -467,7 +477,7 @@ export default defineComponent({
     )
 
     watch(device, (newDevice) => {
-      refleshResponsiveClassList()
+      refreshResponsiveClassList()
       emit('responsive-change', newDevice)
     })
 
@@ -476,20 +486,21 @@ export default defineComponent({
       id,
       props,
       visibleFiles,
-      fileSetMethods,
+      filesetMethods,
       responsiveClassList,
       buttonClassList,
       visibleClass,
       editModeClass,
       disable,
       readonly,
-      addButtonTextHtml,
-      removeButtonTextHtml,
+      addButtonText,
+      removeButtonText,
       placeholder,
       isDragging,
       multiCols,
       multiple,
       accept,
+      tabIndex,
 
       openFileDialog,
       removeFile,
@@ -502,5 +513,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
