@@ -1,5 +1,5 @@
 import { GridMethods } from "vanillagrid2"
-import { GridAlign, GridVerticalAlign, EditMode, InputType, DataStatus, DayOfWeek, HCalenderView, HCalenderTimeFormat, BackgroundType } from "../enums"
+import { GridAlign, GridVerticalAlign, EditMode, InputType, DataStatus, DayOfWeek, HCalendarView, HCalendarTimeFormat, BackgroundType, DropdownTrigger, TextAlign, EditModeValue, BackgroundTypeValue, HCalendarViewValue, HCalendarTimeFormatValue, TextAlignValue, DataStatusValue, BackImageAlignValue, BackImageAlign, BackImageVerticalAlignValue, BackImageVerticalAlign, HGapLineStyleValue, HGapLineStyle, HGapLine, HGapLineValue, VerticalAlignValue, ModalPlacementValue, ModalPlacement, ScreenPositionValue, ScreenPosition, SpinnerTypeValue, SpinnerType } from "../enums"
 import { NoteData, VanillanoteElement } from "vanillanote2"
 import { InterfaceDataModel } from "hisonjs"
 import { Chart } from "chart.js"
@@ -7,7 +7,7 @@ import { Chart } from "chart.js"
 export type DeviceType = 'mb' | 'tb' | 'pc' | 'wd'
 
 /**
- * Represents a file item attached to the HFileSet component.
+ * Represents a file item attached to the HFileset component.
  * 
  * This interface is used to describe both server-provided files (already uploaded)
  * and new files selected via input or drag-and-drop.
@@ -322,6 +322,96 @@ export interface HGridColumn {
 }
 
 /**
+ * Defines a selectable option in `HDropdown`.
+ *
+ * Each option has a `label` (shown to user) and `value` (programmatic).
+ * Optional `disabled` makes the item visible but not selectable.
+ *
+ * @example
+ * { label: 'Korea', value: 'KR' }
+ */
+export interface HDropdownOption {
+  /** Display text shown in the dropdown menu */
+  label: string
+  /** Programmatic value associated with this option */
+  value: any
+  /** If true, option is visible but cannot be selected */
+  disabled?: boolean
+}
+
+/**
+ * v-model payload for `HDropdown`.
+ *
+ * Contains the current `value` and the list of `options`.
+ * Used for two-way binding and runtime updates.
+ *
+ * @example
+ * {
+ *   value: 'KR',
+ *   options: [
+ *     { label: 'Korea', value: 'KR' },
+ *     { label: 'Japan', value: 'JP' }
+ *   ]
+ * }
+ */
+export interface HDropdownModel {
+  /** Currently selected option value */
+  value: any
+  /** Full list of selectable options */
+  options: HDropdownOption[]
+}
+
+/**
+ * Defines additional attributes that can be bound to an `<a>` element in `HLabel`.
+ *
+ * These map directly to standard HTML anchor attributes plus ARIA support.
+ * Provides flexibility for accessibility and advanced link behavior.
+ *
+ * @example
+ * {
+ *   target: '_blank',
+ *   rel: 'noopener noreferrer',
+ *   download: true,
+ *   hreflang: 'en',
+ *   'aria-label': 'External link'
+ * }
+ */
+export interface HLabelAnchorAttrs {
+  /** Where to display the linked URL (`_self`, `_blank`, `_parent`, `_top`, etc.) */
+  target?: '_self' | '_blank' | '_parent' | '_top' | (string & {});
+  /** Relationship of the target object (e.g., `"noopener noreferrer"`) */
+  rel?: string;
+  /** Marks link for download; may specify filename */
+  download?: boolean | string;
+  /** Language of the linked resource (e.g., `"en"`, `"ko"`) */
+  hreflang?: string;
+  /** Referrer policy for the request */
+  referrerpolicy?:
+    | 'no-referrer'
+    | 'no-referrer-when-downgrade'
+    | 'origin'
+    | 'origin-when-cross-origin'
+    | 'same-origin'
+    | 'strict-origin'
+    | 'strict-origin-when-cross-origin'
+    | 'unsafe-url';
+  /** MIME type of the linked resource */
+  type?: string;
+  /** Space-separated URLs to notify when link is clicked */
+  ping?: string;
+  /** ARIA role for accessibility */
+  role?: string;
+  /** Tab order index for keyboard navigation */
+  tabindex?: number;
+  /** Accessible label text */
+  'aria-label'?: string;
+  /** Indicates the current item within a set of related links */
+  'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean;
+  /** Any additional custom attribute */
+  [key: string]: unknown;
+}
+
+/**
  * Basic methods in all components
  */
 export interface ComponentMethods {
@@ -356,200 +446,162 @@ export interface ComponentMethods {
 }
 
 /**
- * Provides various methods to manipulate and manage a Vanillagrid instance.
+ * Runtime control methods for `HAccordion` component.
  *
- * - This interface includes over 200 methods for handling grid structure, data,
- *   filtering, sorting, appearance, and user interactions.
- * - A `GridMethods` instance can be retrieved using `vg.getGrid({gridId})`.
- * - It allows users to dynamically modify grid properties, update cell values,
- *   and customize the grid's behavior through predefined methods.
+ * This interface defines methods accessible via `hison.component.getAccordion(id)`.
+ * It allows you to programmatically open/close/toggle the accordion, update its title,
+ * adjust header text alignment, and control expand/collapse animation behavior.
  *
- * ### Key Features:
- * - Manage grid headers, footers, rows, and columns.
- * - Load and retrieve data as JSON.
- * - Apply filters, sorting, and styling dynamically.
- * - Control grid visibility, locking, and resizing.
- * - Undo and redo changes within the grid.
+ * ---
  *
- * ### Example usage:
- * ```typescript
- * const grid = vg.getGrid('gridId');
- * grid.setHeaderText('col1', 'New Header');
- * grid.setCellValue(1, 'col1', 'Updated Value');
+ * ### 🔧 Example Usage
+ * ```ts
+ * const acc = hison.component.getAccordion('filters');
+ *
+ * // Open/close programmatically
+ * acc.open();
+ * acc.close();
+ *
+ * // Update header title dynamically
+ * acc.setTitle('Advanced Filters');
+ *
+ * // Adjust alignment at runtime
+ * acc.setTextAlign('center');
+ *
+ * // Customize animation
+ * acc.setDuration(800);
+ * acc.setEasing('ease-in-out');
+ *
+ * // Move focus to the header (keyboard accessible)
+ * acc.focus();
  * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - Accordions are **display/output-only**; no editMode or value binding is supported.
+ * - Title slot (`#title`) visually overrides the `title` prop.  
+ *   When slot content is used, `setTitle()` still updates the internal state but will not affect the rendered header.
+ * - Animation (`animate`, `duration`, `easing`) is applied per instance and reflected immediately.
  */
-export interface HGridMethods extends ComponentMethods, Omit<GridMethods, 'isGridVisible' | 'setGridVisible'>{
+export interface HAccordionMethods extends ComponentMethods {
   /**
-   * Returns the type of the grid.
+   * Returns the component type literal.
    */
-  getType(): 'grid'
+  getType(): 'accordion'
   /**
-   * Extracts the current grid content as a `DataModel` instance.
-   *
-   * - Converts all current grid rows into a `DataModel`.
-   * - Each row becomes a record in the `DataModel`.
-   * - Columns are inferred automatically from the grid's structure or cell values.
-   *
-   * @returns A `DataModel` instance representing the current grid content.
+   * Whether the accordion body is currently expanded.
    */
-  getDataModel(): InterfaceDataModel<Record<string, any>>;
+  isOpen(): boolean
   /**
-   * Loads data into the grid using a `DataModel` instance.
-   *
-   * - Converts the first `getRowCount()` rows of the provided `DataModel` into key-value records.
-   * - These records are then inserted into the grid.
-   * - Grid is cleared before new data is loaded.
-   *
-   * @param dataModel A `DataModel` object representing the rows to load into the grid.
+   * Expands the accordion body with animation (if enabled).
    */
-  setDataModel<T extends Record<string, any>>(dataModel: InterfaceDataModel<T>): void;
+  open(e?: Event | null): void
   /**
-   * Loads data into the grid.
-   *
-   * - Supports three different data formats:
-   *   1. **Key-Value Format**: An array of objects where each object represents a row with column-value pairs.
-   *   2. **Datas Format**: A 2D array of cell objects, each containing `{ colId, value }`.
-   *   3. **DataModel Format**: A `DataModel` instance whose rows are inserted into the grid.
-   * - Before loading, the grid is automatically cleared.
-   *
-   * ### Example Usage:
-   * ```ts
-   * // 1. Key-Value Format
-   * grid.load([
-   *   { col1: 'value1-1', col2: 'value1-2' },
-   *   { col1: 'value2-1', col2: 'value2-2' }
-   * ]);
-   *
-   * // 2. Datas Format
-   * grid.load([
-   *   [{ colId: 'col1', value: 'value1-1' }, { colId: 'col2', value: 'value1-2' }],
-   *   [{ colId: 'col1', value: 'value2-1' }, { colId: 'col2', value: 'value2-2' }]
-   * ]);
-   *
-   * // 3. DataModel Format
-   * const model = new hison.data.DataModel();
-   * model.setColumns(['col1', 'col2']);
-   * model.addRow({ col1: 'value1-1', col2: 'value1-2' });
-   * grid.load(model);
-   * ```
-   *
-   * @param keyValueOrDatas The data to load into the grid.
-   * @returns `true` if the data was successfully loaded.
+   * Collapses the accordion body with animation (if enabled).
    */
-  load<T extends Record<string, any>>(keyValueOrDatas: Record<string, any> | Record<string, any>[] | InterfaceDataModel<T>): boolean;
+  close(e?: Event | null): void
+  /**
+   * Toggles the accordion body between expanded and collapsed.
+   */
+  toggle(e?: Event | null): void
+  /**
+   * Returns the current header title (from `title` prop/state).
+   */
+  getTitle(): string
+  /**
+   * Updates the header title text.
+   * - ⚠️ If a `#title` slot is provided, this will not change the visible header.
+   */
+  setTitle(text: string): void
+  /**
+   * Returns the current header text alignment.
+   */
+  getTextAlign(): 'left' | 'center' | 'right'
+  /**
+   * Sets the header text alignment.
+   * - Accepted values: `'left' | 'center' | 'right'`
+   */
+  setTextAlign(v: 'left' | 'center' | 'right'): void
+  /**
+   * Whether expand/collapse animation is enabled.
+   */
+  getAnimate(): boolean
+  /**
+   * Enables/disables expand/collapse animation.
+   */
+  setAnimate(v: boolean): void
+  /**
+   * Returns the current animation duration (in ms).
+   */
+  getDuration(): number
+  /**
+   * Sets the animation duration (in ms).
+   */
+  setDuration(ms: number): void
+  /**
+   * Returns the CSS timing function used for animation.
+   */
+  getEasing(): string
+  /**
+   * Sets the CSS timing function for animation (e.g., `'ease'`, `'linear'`, `'cubic-bezier(...)'`).
+   */
+  setEasing(fn: string): void
+  /**
+   * Gets the current `tabIndex` applied to element.
+   * - `null`: no `tabindex` attribute (items not focusable).
+   * - `0` or positive number: items can be focused via keyboard navigation.
+   */
+  getTabIndex(): number | null
+  /**
+   * Sets `tabIndex` for element.
+   * @param v - `null` to remove, or number to make focusable.
+   */
+  setTabIndex(v: number | null): void
+  /**
+   * Moves focus to the accordion header (for accessibility/keyboard usage).
+   */
+  focus(): void
 }
 
-/**
- * Represents a single editable Vanillanote instance within the DOM.
- *
- * - Each Vanillanote editor on the page is mounted into a `VanillanoteElement`,
- *   which extends `HTMLDivElement` and adds additional internal properties and methods.
- * - All editors are dynamically generated based on a `<div data-vanillanote>` element.
- * - Editors are automatically assigned a unique `_id`, based on creation order or a custom `data-id`.
- * - Each `VanillanoteElement` manages its own selection state, styling, events, attachment data, and DOM references.
- *
- * ### Key Features:
- * - Manages internal selections, styles, file attachments, and UI states independently per editor.
- * - Provides API methods like `getNoteData()` to export editor content and `setNoteData()` to restore editor state.
- * - Supports rich text editing features including text styling, file/image/video attachment, undo/redo history, placeholders, and more.
- * - Integrates before/after event hooks to customize interaction behaviors.
- *
- * ### Internal Structure:
- * - `_selection`: Tracks selection state like current selection range, start/end nodes, and drag selections.
- * - `_attributes`: Stores editor behavior settings like device mode, language, and size constraints.
- * - `_status`: Stores current toggled states (e.g., bold active, selected color).
- * - `_elements`: References to important DOM elements (textarea, toolbar buttons, modals, etc.).
- * - `_cssEvents`: Low-level event handlers (click, touch) for custom interaction logic.
- * - `_elementEvents`: High-level hooks for specific UI elements.
- * - `_attFiles`, `_attImages`: Manage attached files/images.
- * - `_recodes`: Manage undo/redo history for editing actions.
- *
- * ### Usage Example:
- * ```ts
- * const note = Vanillanote.getNote('my-editor-id');
- * const data = note.getNoteData();
- *
- * console.log(data.html); // Editor HTML content
- * editor.setNoteData(data); // Restore content
- * ```
- *
- * @remarks
- * - `VanillanoteElement` is automatically created when calling `vn.mountNote()`.
- * - It should not be manually instantiated by developers.
- * - Each `VanillanoteElement` belongs to a shared singleton `Vanillanote` object.
- * - Supports multiple editors per page.
- *
- * @see Vanillanote
- * @see getNoteData
- * @see setNoteData
- */
-export interface HNoteElement extends ComponentMethods, VanillanoteElement {
-  /**
-   * Returns the type of the note.
-   */
-  getType(): 'note'
-  /**
-   * Gets whether the note is currently required.
-   * - If `true`, the note will show a visual required style.
-   */
-  getRequired(): boolean;
-  /**
-   * Sets the required state of the note.
-   */
-  setRequired(required: boolean): void;
-  /**
-   * Gets the current edit mode.
-   * - Possible values: `'editable'`, `'readonly'`, `'disable'`
-   */
-  getEditMode(): EditMode;
-  /**
-   * Sets the edit mode of the note.
-   * - `'readonly'` and `'disable'` both prevent editing but differ in style.
-   */
-  setEditMode(mode: EditMode): void;
-  /**
-   * Returns whether any note inside the group has been modified by user interaction.
-   * 
-   * @returns `true` if at least one note is marked as modified.
-   */
-  isModified(): boolean;
-  /**
-   * Resets the modification status of all notes in the group.
-   * 
-   * Typically called after saving or loading new data.
-   */
-  initModified(): void;
-  /**
-   * Focus on the note.
-   */
-  focus(): void;
-  /**
-   * Converts the current editor content into a `DataModel` instance.
-   *
-   * - Returns a new `DataModel` where each property of `NoteData` (like `html`, `links`, `files`, etc.)
-   *   becomes a column, and a single row represents the editor state.
-   *
-   * @returns A `DataModel<NoteData>` containing the editor's current data.
-   */
-  getDataModel(): InterfaceDataModel<NoteData>;
-  /**
-   * Populates the editor using a `DataModel` instance.
-   *
-   * - Extracts values from the first row of the `DataModel`, if available.
-   * - Uses the values from columns like `html`, `plainText`, `links`, etc. to restore editor content.
-   *
-   * @param dataModel A `DataModel` whose first row maps to `NoteData` structure.
-   */
-  setDataModel<T extends NoteData>(dataModel: InterfaceDataModel<T>): void;
-  /**
-   * Loads editor content from either a `NoteData` object or a compatible `DataModel`.
-   *
-   * - Accepts plain `NoteData`, raw object, or `DataModel`.
-   * - Automatically determines how to process the input and restores the editor accordingly.
-   *
-   * @param data Editor content to load, in `NoteData` or `DataModel` form.
-   */
-  load<T extends NoteData>(data: NoteData | Record<string, any> | InterfaceDataModel<T>): void;
+/** */
+export interface HBaggieMethods extends ComponentMethods {
+  getType(): 'baggie'
+
+  isVisible(): boolean
+  setVisible(v: boolean): void
+
+  getZIndex(): number
+  setZIndex(v: number): void
+
+  getPosition(): ScreenPositionValue
+  setPosition(v: ScreenPosition | ScreenPositionValue): void
+
+  getText(): string
+  setText(t: string): void
+
+  isBorder(): boolean
+  setBorder(v: boolean): void
+
+  getBackgroundType(): BackgroundTypeValue
+  setBackgroundType(t: BackgroundType | BackgroundTypeValue): void
+
+  getShape(): 'square' | 'rounded' | 'circle'
+  setShape(s: 'square' | 'rounded' | 'circle'): void
+
+  getTarget(): HTMLElement | null
+  setTarget(el: HTMLElement | null): void
+
+  getTabIndex(): number | null
+  setTabIndex(v: number | null): void
+
+  isButtonEnabled(): boolean
+  setButtonEnabled(v: boolean): void
+
+  /** 배치 강제 재계산 */
+  reposition(): void | Promise<void>
+
+  reload(): void
 }
 
 /**
@@ -613,18 +665,28 @@ export interface HButtonMethods extends ComponentMethods {
    */
   setDisable(disable: boolean): void;
   /**
+   * Returns whether the current element displays a border.
+   */
+  isBorder(): boolean
+  /**
+   * ESets whether the current element displays a border.
+   * 
+   * @param border - `true` to display border, `false` to none display border
+   */
+  setBorder(border: boolean): void
+  /**
    * Gets the current background type of the button.
    * Returns 'filled', 'empty', or 'transparent' according to the applied style.
    * See BackgroundType enum for all possible values.
    */
-  getBackgroundType(): BackgroundType
+  getBackgroundType(): BackgroundTypeValue
   /**
    * Changes the button's background type at runtime.
    * Accepts 'filled', 'empty', or 'transparent' (see BackgroundType).
    * Triggers re-render and updates the button's CSS class immediately.
    * @param type - New background type to apply.
    */
-  setBackgroundType(type: BackgroundType): void
+  setBackgroundType(type: BackgroundType | BackgroundTypeValue): void
   /**
    * Unlocks the button, allowing it to be clicked again after a manual lock.
    *
@@ -692,427 +754,854 @@ export interface HButtonMethods extends ComponentMethods {
    */
   setClickInterval(ms: number): void
   /**
+   * Gets the current `tabIndex` applied to element.
+   * - `null`: no `tabindex` attribute (items not focusable).
+   * - `0` or positive number: items can be focused via keyboard navigation.
+   */
+  getTabIndex(): number | null
+  /**
+   * Sets `tabIndex` for element.
+   * @param v - `null` to remove, or number to make focusable.
+   */
+  setTabIndex(v: number | null): void
+  /**
    * Focus on the button.
    */
   focus(): void
 }
 
 /**
- * Runtime control methods for `HLayout` component.
+ * Runtime control methods for `HCalendar` component.
  *
- * This interface defines programmatic access to a layout's visibility,
- * background, border, and layout styling. You can retrieve an instance
- * using `hison.component.getLayout(id)`.
+ * This interface defines the available methods on `HCalendar`,
+ * accessible via `hison.component.getCalendar(id)`, to programmatically control
+ * calendar state, selected date, events, and display configuration.
  *
  * ---
  *
  * ### 🔧 Example Usage
  * ```ts
- * const layout = hison.component.getLayout('layout01');
- * layout.setVisible(true);
- * layout.setBackColor('primary');
- * layout.setBackImageSrc('/assets/bg.jpg');
- * layout.setHeight('300px');
+ * const calendar = hison.component.getCalendar('cal1');
+ * calendar.setSelectedDate('2025-07-01');
+ * calendar.setDisable(true);
+ * calendar.setVisible(false);
+ *
+ * const events = calendar.getEvents();
+ * calendar.setEvents([...events, { start: '2025-07-02 10:00', end: '2025-07-02 11:00', title: 'Meeting' }]);
  * ```
  *
  * ---
  *
  * ### ⚠️ Notes
- * - All methods are reactive and immediately affect the DOM.
- * - Background-related methods directly modify the `style` attribute of the layout.
+ * - Each `HCalendar` instance is automatically registered by `id` via `hison.component.getCalendar(id)`.
+ * - Style-related changes (e.g. `weekendColor`, `selectedColor`) are applied via dynamic CSS variables.
+ * - Date/time options use minutes (0~1440) where applicable (e.g. `timeFrom`, `timeTo`).
+ * - Some properties like view mode (`setActiveView`) or locale (`setLocale`) can be changed live without re-render.
+ * - `HCalendar` supports both `v-model:selected-date` and `v-model:events`, but changes via method calls will override both.
  */
-export interface HLayoutMethods extends ComponentMethods {
+export interface HCalendarMethods extends ComponentMethods {
   /**
-   * Returns the type of the layout.
+   * Returns the type identifier for the component.
+   * Always returns `'calendar'`.
    */
-  getType(): 'layout'
+  getType(): 'calendar';
   /**
-   * Gets the current background image URL (`background-image`).
+   * Returns whether the calendar is currently disabled.
+   * - `true` means the calendar cannot be clicked.
    */
-  getBackImageSrc(): string;
+  isDisable(): boolean;
   /**
-   * Sets the background image URL.
-   * Applies to `background-image` via `url(...)`.
+   * Enables or disables the calendar.
+   * - When disabled, calendar is grayed out and not clickable.
+   * @param disable
    */
-  setBackImageSrc(src: string): void;
+  setDisable(disable: boolean): void;
   /**
-   * Gets the background repeat or scaling mode.
-   * Corresponds to `background-repeat` or `background-size`.
+   * Returns the currently selected date.
+   * @param getDateType If `true`, returns a `Date` object; otherwise returns a formatted string.
+   * @param format Optional format string. Defaults to global hison datetime format.
    */
-  getBackImageRepeat(): string;
+  getSelectedDate(getDateType?: boolean, format?: string): string | Date;
   /**
-   * Sets the background repeat or scale style.
-   * Examples: `'no-repeat'`, `'repeat'`, `'cover'`, `'contain'`
+   * Sets the selected date in the calendar.
+   * @param selectedDate A string or Date object.
    */
-  setBackImageRepeat(cssText: string): void;
+  setSelectedDate(selectedDate: string | Date): void;
   /**
-   * Gets the background image width setting (`background-size`).
-   * Examples: `'100%'`, `'300px'`
+   * Returns the array of events currently displayed in the calendar.
    */
-  getBackImageWidth(): string;
+  getEvents(): HCalendarEvent[];
   /**
-   * Sets the background image width (`background-size`).
+   * Updates the calendar events array.
+   * @param events List of events to set.
    */
-  setBackImageWidth(cssText: string): void;
+  setEvents(events: HCalendarEvent[]): void;
   /**
-   * Gets the horizontal alignment of the background image.
-   * Values: `'left'`, `'center'`, `'right'`
+   * Returns the map of special time highlights.
    */
-  getBackImageAlign(): string;
+  getSpecialTime(): HCalendarSpecialTimeMap;
   /**
-   * Sets the horizontal alignment of the background image.
+   * Sets special time ranges for specific days of the week.
+   * @param specialTimeMap Object mapping day index to time ranges.
    */
-  setBackImageAlign(cssText: string): void;
+  setSpecialTime(specialTimeMap: HCalendarSpecialTimeMap): void;
   /**
-   * Gets the vertical alignment of the background image.
-   * Values: `'top'`, `'center'`, `'bottom'`
+   * Returns the background color for weekend header cells.
    */
-  getBackImageVerticalAlign(): string;
+  getWeekendColor(): string | undefined;
   /**
-   * Sets the vertical alignment of the background image.
+   * Sets the weekend header background color.
+   * @param cssText CSS color value (e.g., `#ff0000`, `rgba(...)`).
    */
-  setBackImageVerticalAlign(cssText: string): void;
+  setWeekendColor(cssText: string): void;
+    /**
+   * Returns which weekday indices are considered weekends.
+   */
+  getWeekendDays(): number[] | undefined;
   /**
-   * Gets the background color of the layout.
-   * May be a hex color, rgba string, or keyword (e.g. `'primary'`).
+   * Sets which weekday indices are treated as weekends.
+   * @param weekendDays Array of day indices (0 = Sunday).
    */
-  getBackColor(): string;
+  setWeekendDays(weekendDays: number[]): void;
   /**
-   * Sets the background color.
-   * Accepts hex, rgba, or `hison` keyword values (`'primary'`, `'danger'`, etc.).
+   * Returns whether today is highlighted with background color.
    */
-  setBackColor(cssText: string): void;
+  isShowTodayColor(): boolean;
   /**
-   * Gets the current border color of the layout.
-   * Same format as background color.
+   * Enables or disables special background highlight for today's date.
+   * @param showTodayColor Boolean
    */
-  getBorderColor(): string;
+  setShowTodayColor(showTodayColor: boolean): void;
   /**
-   * Sets the border color.
-   * Automatically applies `border-style: solid`.
+   * Returns the background color for the selected date.
    */
-  setBorderColor(cssText: string): void;
+  getSelectedColor(): string | undefined;
   /**
-   * Gets the current border width (e.g. `'1px'`, `'0.5rem'`).
+   * Sets the background color for the selected date cell.
+   * @param cssText (e.g., '#ff0000' or 'rgba(255,0,0,0.2)')
    */
-  getBorderWidth(): string;
+  setSelectedColor(cssText: string): void;
   /**
-   * Sets the border width.
-   * Automatically applies `border-style: solid`.
+   * Returns the minimum height (in px) for date cells in month view.
    */
-  setBorderWidth(cssText: string): void;
+  getDateCellMinHeight(): number | undefined;
   /**
-   * Gets the current height of the layout container.
-   * Examples: `'100px'`, `'50%'`, `'auto'`, `'100vh'`
+   * Sets the minimum height (in px) for date cells in month view.
+   * @param minHeight number of px
    */
-  getHeight(): string;
+  setDateCellMinHeight(minHeight: number): void;
   /**
-   * Sets the height of the layout container.
+   * Returns the maximum height (in px) for date cells in month view.
    */
-  setHeight(cssText: string): void;
+  getDateCellMaxHeight(): number | undefined;
+  /**
+   * Sets the maximum height (in px) for date cells in month view.
+   * @param maxHeight number of px
+   */
+  setDateCellMaxHeight(maxHeight: number): void;
+  /**
+   * Returns the list of disabled dates.
+   * - These are dates that users cannot select in the calendar.
+   */
+  getDisableDays(): string[] | undefined;
+  /**
+   * Sets the list of disabled dates.
+   * @param disableDays array of string dates (e.g., ['2025-06-26', '2025-06-27'])
+   */
+  setDisableDays(disableDays: string[]): void;
+  /**
+   * Returns the current setting for month view event display.
+   * - Can be `false`, `'short'`, or other strings for full event text.
+   */
+  getEventsOnMonthView(): string | boolean | undefined;
+  /**
+   * Sets how events are displayed in the month view.
+   * @param eventsOnMonthView
+   * - `false`: shows event count only
+   * - `'short'`: shows only titles
+   * - others: shows full event contents
+   */
+  setEventsOnMonthView(eventsOnMonthView: string | boolean): void;
+  /**
+   * Returns which weekdays are currently hidden.
+   * - Array of weekday indexes: 0 = Sunday, 6 = Saturday
+   */
+  getHideWeekdays(): number[] | undefined;
+  /**
+   * Hides or shows specific weekdays.
+   * @param hideWeekdays Array of weekday indexes to hide (e.g., [2,3] to hide Tue/Wed)
+   */
+  setHideWeekdays(hideWeekdays: number[]): void;
+  /**
+   * Returns whether weekends (Saturday and Sunday) are currently hidden.
+   */
+  getHideWeekends(): boolean;
+  /**
+   * Hides or shows weekends in the calendar.
+   * @param hideWeekends
+   */
+  setHideWeekends(hideWeekends: boolean): void;
+  /**
+   * Returns the current locale (language code).
+   * - Example: 'en', 'ko'
+   */
+  getLocale(): string;
+  /**
+   * Sets the calendar language (locale).
+   * - Example: 'fr', 'zh-cn'
+   * @param locale See vue-cal docs for full list of locales
+   */
+  setLocale(locale: string): void;
+  /**
+   * Returns the maximum selectable date.
+   * @param getDateType If `true`, returns a Date object; otherwise returns a string.
+  */
+  getMaxDate(getDateType?: boolean): string | Date | undefined | null;
+  /**
+   * Sets the maximum date users can select.
+   * @param maxDate A string or Date object.
+   */
+  setMaxDate(maxDate: string | Date): void;
+  /**
+   * Returns the minimum selectable date.
+   * @param getDateType If `true`, returns a Date object; otherwise returns a string.
+   */
+  getMinDate(getDateType?: boolean): string | Date | undefined | null;
+  /**
+   * Sets the minimum date users can select.
+   * @param minDate A string or Date object.
+   */
+  setMinDate(minDate: string | Date): void;
+  /**
+   * Returns whether the week starts on Sunday.
+   * - `true`: Sunday, `false`: Monday
+   */
+  isStartWeekOnSunday(): boolean;
+  /**
+   * Sets the start day of the week.
+   * @param startWeekOnSunday `true` for Sunday, `false` for Monday
+   */
+  setStartWeekOnSunday(startWeekOnSunday: boolean): void;
+  /**
+   * Returns whether time cells are currently shown in 'day' or 'week' views.
+   * - Equivalent to the `time` prop.
+   */
+  isShowTimeCell(): boolean;
+  /**
+   * Enables or disables display of time cells.
+   * @param showTimeCell `true` to show time column, `false` to hide
+   */
+  setShowTimeCell(showTimeCell: boolean): void;
+  /**
+   * Returns the height (in pixels) of each time cell.
+   */
+  getTimeCellHeight(): number | undefined;
+  /**
+   * Sets the height (in pixels) of each time cell.
+   * @param timeCellHeight A positive number (e.g., `40`)
+   */
+  setTimeCellHeight(timeCellHeight: number): void;
+  /**
+   * Returns the current time format used in the time column.
+   */
+  getTimeFormat(): HCalendarTimeFormat | HCalendarTimeFormatValue | undefined;
+  /**
+   * Sets the time format used for displaying time cells.
+   * @param timeFormat Format string from `HCalendarTimeFormat` enum
+   */
+  setTimeFormat(timeFormat: HCalendarTimeFormat): void;
+  /**
+   * Returns the start time of the time axis (in minutes).
+   */
+  getTimeFrom(): number | undefined;
+  /**
+   * Sets the start time of the time axis (in minutes).
+   * @param timeFrom A number between 0 and 1440 (e.g., `9 * 60` = 9:00 AM)
+   */
+  setTimeFrom(timeFrom: number): void;
+  /**
+   * Returns the time step between time cells (in minutes).
+   */
+  getTimeStep(): number | undefined;
+  /**
+   * Sets the time step interval for time cells.
+   * @param timeStep A number between 1 and 60 (e.g., `30` for half-hour blocks)
+   */
+  setTimeStep(timeStep: number): void;
+  /**
+   * Returns the end time of the time axis (in minutes).
+   */
+  getTimeTo(): number | undefined;
+  /**
+   * Sets the end time of the time axis (in minutes).
+   * @param timeTo A number between 0 and 1440 (e.g., `18 * 60` = 6:00 PM)
+   */
+  setTimeTo(timeTo: number): void;
+  /**
+   * Returns whether the title bar (month/year label & arrows) is hidden.
+   */
+  isHideTitleBar(): boolean;
+  /**
+   * Shows or hides the title bar at the top of the calendar.
+   * @param hideTitleBar `true` to hide, `false` to show
+   */
+  setHideTitleBar(hideTitleBar: boolean): void;
+  /**
+   * Returns whether the calendar is using 12-hour AM/PM format.
+   */
+  isTwelveHour(): boolean;
+  /**
+   * Enables or disables 12-hour format display.
+   * @param twelveHour `true` for AM/PM display, `false` for 24-hour
+   */
+  setTwelveHour(twelveHour: boolean): void;
+  /**
+   * Returns the currently active view mode.
+   * - One of `'day'`, `'week'`, `'month'`, `'year'`, `'years'`
+   */
+  getActiveView(): HCalendarViewValue;
+  /**
+   * Changes the active calendar view.
+   * @param view New view mode from `HCalendarView` enum
+   */
+  setActiveView(view: HCalendarView | HCalendarViewValue): void;
+  /**
+   * Returns the list of views that are currently disabled.
+   */
+  getDisableViews(): HCalendarView[] | HCalendarViewValue[] | undefined;
+  /**
+   * Disables specific view modes to restrict user navigation.
+   * @param disableViews Array of view modes to disable
+   */
+  setDisableViews(disableViews: HCalendarView[]): void;
 }
 
 /**
- * Interface for runtime control of `<HImageBox>` component.
+ * Runtime control methods for `HCaption` component.
  *
- * This interface provides a complete set of methods for dynamically controlling and querying the state
- * of an HImageBox instance in hisonvue. All methods are accessible via `hison.vue.getInput(id)` or
- * on the instance emitted via the `mounted` event.
+ * This interface defines methods that can be accessed via `hison.component.getCaption(id)`.
+ * Use these methods to manipulate caption (heading) state programmatically at runtime.
  *
- * **Typical use cases include:**
- * - Changing edit mode, button text, allowed file types, or drag-and-drop support at runtime
- * - Setting the image programmatically (e.g., for editing or resetting forms)
- * - Integrating with backend logic to preload, update, or clear the image state
- * - Customizing validation or error handling logic for file type or file size checks
- * - Dynamically updating UI text such as placeholder or button labels in response to user actions
- * - Managing attachment group IDs for file association with backend records
+ * ---
  *
- * :::example
+ * ### 🔧 Example Usage
  * ```ts
- * // Get runtime methods from hison.vue
- * const imageBox = hison.vue.getInput('avatarBox') as HImageBoxMethods
- *
- * // Make the component readonly
- * imageBox.setEditMode('readonly')
- *
- * // Set allowed file types to PNG only
- * imageBox.setAllowedTypes(['image/png'])
- *
- * // Change add button label at runtime
- * imageBox.setAddButtonText('Upload Photo')
- *
- * // Replace the image with a new uploaded file
- * imageBox.setValue({
- *   fileName: 'profile.png',
- *   file: someFileObj,
- *   fileSize: someFileObj.size,
- *   extension: 'png',
- *   isNew: true
- * })
- *
- * // Attach a custom handler for max file size exceeded
- * imageBox.setOnMaxFileSizeExceeded((file, size, max) => {
- *   alert(`File too large! Max allowed: ${max} bytes`)
- * })
- *
- * // Programmatically focus the add button
- * imageBox.focus()
+ * const cp = hison.component.getCaption('title01');
+ * cp.setLevel(2);                 // <h2>
+ * cp.setText('Section Title');    // when not rendering an element-slot
+ * cp.setTextAlign('center');
+ * cp.setFontBold(true);
+ * cp.setBorder(true);
+ * cp.setBackgroundType('transparent');
  * ```
- * :::
  *
- * **Method groups:**
- * - **Edit Mode & Visibility**: Control user interaction and UI state
- * - **Image Value**: Get or set the attached image file (including clearing or preloading)
- * - **File Upload Options**: Allowed/disallowed types, file size, drag-and-drop, validation handlers
- * - **UI Labels & Placeholders**: Set button labels or placeholder dynamically
- * - **Attachment Grouping**: Manage `attId` for backend association
- * - **State Query**: Check if the image box has been modified
+ * ---
  *
- * All setters update the internal state and UI instantly.
+ * ### ⚠️ Notes
+ * - If the default slot contains **any element vnode**, `getText()` returns `''` and `setText()` has no effect.
+ *   - If the default slot is **pure text nodes**, that text is absorbed and becomes controllable by `getText/setText`.
+ * - Changes are reactive and reflected immediately in the DOM.
+ * - Heading level is constrained to **1 ~ 6** and maps to actual `<h1> ~ <h6>` tags at render time.
  */
-export interface HImageBoxMethods extends ComponentMethods {
+export interface HCaptionMethods extends ComponentMethods {
   /**
-   * Returns the type of this component instance.
-   * Always returns `'imageBox'` for `<HImageBox>`.
+   * Returns the type of the component.
+   * - Always `'caption'` for this component.
    */
-  getType(): 'imageBox'
+  getType(): 'caption'
   /**
-   * Gets the current edit mode of the image box.
-   * 
-   * - `'editable'`: Full editing (add/delete) enabled
-   * - `'readonly'`: View only, image file actions hidden
-   * - `'disable'`: Completely disabled, grayed out
+   * Returns whether the caption is visible.
+   * - `true`: rendered normally.
+   * - `false`: hidden via `hison-display-none` on wrapper.
    */
-  getEditMode(): EditMode;
+  isVisible(): boolean
   /**
-   * Sets the edit mode of the image box.
-   * 
-   * - `'editable'`: Allows adding/removing image file
-   * - `'readonly'`: Disables all image file operations but keeps UI visible
-   * - `'disable'`: Fully disables the UI (input, buttons)
-   * 
-   * @param mode - The new edit mode
+   * Sets caption visibility.
+   * @param visible - `true` to show, `false` to hide.
    */
-  setEditMode(mode: EditMode): void;
+  setVisible(visible: boolean): void
   /**
-   * Returns the current (visible, not deleted) image file.
-   * 
-   * file is an object conforming to `AttachedFileItem`.
-   * Files marked `isDeleted: true` are excluded.
-   * 
-   * @returns The current list of image file.
+   * Gets the current tooltip (title attribute) text shown on hover.
    */
-  getValue(): AttachedFileItem | null;
+  getTitle(): string
   /**
-   * Sets the internal image file to the provided value.
-   * 
-   * - The list will be displayed immediately and emitted via `update:modelValue`.
-   * - Use this to reset, replace, or synchronize the image file with backend data.
-   * 
-   * @param attachedFileItem - The new image file.
+   * Sets the tooltip (title attribute) text shown on hover.
+   * @param title - Tooltip text.
    */
-  setValue(attachedFileItem: AttachedFileItem): void;
+  setTitle(title: string): void
   /**
-   * Converts the current editor content into a `DataModel` instance.
-   *
-   * - Returns a new `DataModel` where each property of `AttachedFileItem`
-   *   becomes a column, and a single row represents the editor state.
-   *
-   * @returns A `DataModel<AttachedFileItem>` containing the editor's current data.
+   * Gets the caption text when controllable:
+   * - Returns `''` if the default slot renders **any element vnode**.
+   * - Otherwise, returns the internally managed text (including text-only slot absorption).
    */
-  getDataModel(): InterfaceDataModel<AttachedFileItem> | null;
+  getText(): string
   /**
-   * Populates the editor using a `DataModel` instance.
-   *
-   * - Extracts values from the first row of the `DataModel`, if available.
-   * - Uses the values from columns like `html`, `plainText`, `links`, etc. to restore editor content.
-   *
-   * @param dataModel A `DataModel` whose first row maps to `AttachedFileItem` structure.
+   * Sets the caption text when controllable:
+   * - No effect if the default slot renders **any element vnode**.
+   * - Updates internal reactive text rendered inside the heading element.
+   * @param text - New caption text.
    */
-  setDataModel<T extends AttachedFileItem>(dataModel: InterfaceDataModel<T>): void;
+  setText(text: string): void
   /**
-   * Loads editor content from either a `AttachedFileItem` object or a compatible `DataModel`.
-   *
-   * - Accepts plain `AttachedFileItem`, raw object, or `DataModel`.
-   * - Automatically determines how to process the input and restores the editor accordingly.
-   *
-   * @param data Editor content to load, in `AttachedFileItem` or `DataModel` form.
+   * Gets the current heading level (1~6).
+   * - Maps to `<h1>` ~ `<h6>` at render time.
    */
-  load<T extends Record<string, any>>(data: AttachedFileItem | Record<string, any> | InterfaceDataModel<T>): void;
+  getLevel(): number
   /**
-   * Returns the current `attId` (attachment group ID).
-   * 
-   * Used to group image file logically, often for backend APIs.
+   * Sets the heading level.
+   * - Values outside 1~6 are clamped to the nearest bound.
+   * @param level - Target heading level (1~6).
    */
-  getAttId(): string;
+  setLevel(level: number): void
   /**
-   * Sets the `attId` (attachment group ID).
-   * 
-   * - Use to associate this image box with a different group in your backend.
-   * - Has no effect on UI, but is included in emitted file info.
-   * 
-   * @param attId - The new attachment group ID.
+   * Gets current text alignment (`'left' | 'center' | 'right'`).
    */
-  setAttId(attId: string): void;
+  getTextAlign(): TextAlignValue
   /**
-   * Gets the text content currently shown on the add/upload button.
-   * 
-   * - Corresponds to `addButtonText` prop.
+   * Sets text alignment.
+   * - Accepts enum `TextAlign` or its string literal values.
+   * @param textAlign - `'left' | 'center' | 'right'`.
    */
-  getAddButtonText(): string;
+  setTextAlign(textAlign: TextAlign | TextAlignValue): void
   /**
-   * Sets the text shown on the add/upload button.
-   * 
-   * - Supports multiline via `\n` (rendered as `<br>`).
-   * - If an `add-button` slot is used, this will have no effect.
-   * 
-   * @param addButtonText - New button text
+   * Returns whether bold style is applied.
    */
-  setAddButtonText(addButtonText: string): void;
+  isFontBold(): boolean
   /**
-   * Gets the text content currently shown on the remove/delete button.
-   * 
-   * - Corresponds to `removeButtonText` prop.
+   * Applies or removes bold style.
+   * @param bold - `true` to apply, `false` to remove.
    */
-  getRemoveButtonText(): string;
+  setFontBold(bold: boolean): void
   /**
-   * Sets the text shown on the remove/delete button.
-   * 
-   * - Supports multiline via `\n` (rendered as `<br>`).
-   * - If a `remove-button` slot is used, this will have no effect.
-   * 
-   * @param removeButtonText - New button text
+   * Returns whether italic style is applied.
    */
-  setRemoveButtonText(removeButtonText: string): void;
+  isFontItalic(): boolean
   /**
-   * Gets the current placeholder text (empty state message).
-   * 
-   * - Shown when there is no image in the image box.
-   * - Corresponds to the `placeholder` prop.
+   * Applies or removes italic style.
+   * @param italic - `true` to apply, `false` to remove.
    */
-  getPlaceholder(): string;
+  setFontItalic(italic: boolean): void
   /**
-   * Sets the placeholder text (empty state message).
-   * 
-   * - Updates UI immediately.
-   * 
-   * @param placeholder - New placeholder text
+   * Returns whether strikethrough is applied.
    */
-  setPlaceholder(placeholder: string): void;
+  isFontThruline(): boolean
   /**
-   * Returns whether drag-and-drop uploading is currently enabled.
-   * 
-   * - Controlled by the `enableDrop` prop.
+   * Applies or removes strikethrough style.
+   * @param thruline - `true` to apply, `false` to remove.
    */
-  isEnableDrop(): boolean;
+  setFontThruline(thruline: boolean): void
   /**
-   * Enables or disables drag-and-drop image file uploading.
-   * 
-   * @param enableDrop - `true` to allow drag-and-drop, `false` to block it.
+   * Returns whether underline is applied.
    */
-  setEnableDrop(enableDrop: boolean): void;
+  isFontUnderline(): boolean
   /**
-   * Gets the current list of allowed image file types/extensions.
-   * 
-   * - Controlled by the `allowedTypes` prop.
-   * - MIME types or extensions (e.g. `.pdf`, `image/png`).
+   * Applies or removes underline style.
+   * @param underline - `true` to apply, `false` to remove.
    */
-  getAllowedTypes(): string[];
+  setFontUnderline(underline: boolean): void
   /**
-   * Sets the allowed file types/extensions.
-   * 
-   * - Accepts an array of MIME types or file extensions.
-   * - Updates the file input's accept filter and internal validation.
-   * 
-   * @param allowedTypes - Array of allowed types/extensions.
+   * Returns whether the caption shows border (box-shadow).
    */
-  setAllowedTypes(allowedTypes: string[]): void;
+  isBorder(): boolean
   /**
-   * Gets the current list of disallowed file types/extensions.
-   * 
-   * - Controlled by the `disallowedTypes` prop.
-   * - MIME types or extensions (e.g. `.exe`, `application/x-msdownload`).
+   * Sets whether border (box-shadow) is shown.
+   * @param border - `true` to show, `false` to hide.
    */
-  getDisallowedTypes(): string[];
+  setBorder(border: boolean): void
   /**
-   * Sets the disallowed file types/extensions.
-   * 
-   * - Accepts an array of MIME types or file extensions.
-   * - Any file matching these types/extensions will be rejected.
-   * 
-   * @param disallowedTypes - Array of disallowed types/extensions.
+   * Gets current background type of the caption.
+   * - One of `'filled' | 'empty' | 'transparent'`.
    */
-  setDisallowedTypes(disallowedTypes: string[]): void;
+  getBackgroundType(): BackgroundTypeValue
   /**
-   * Gets the current maximum allowed file size (per file, bytes).
-   * 
-   * - Controlled by the `maxFileSize` prop.
+   * Sets background type of the caption.
+   * - Accepts `'filled' | 'empty' | 'transparent'` (see `BackgroundType` enum).
+   * @param type - New background type to apply.
    */
-  getMaxFileSize(): number;
-  /**
-   * Sets the maximum allowed file size (per file, bytes).
-   * 
-   * - Files exceeding this size are rejected on upload.
-   * 
-   * @param maxFileSize - Maximum size in bytes
-   */
-  setMaxFileSize(maxFileSize: number): void;
-  /**
-   * Sets a custom callback when a file has a disallowed type/extension.
-   * 
-   * - Called during file selection/drag if a file fails allowed/disallowed check.
-   * - Use for custom alerts, validation UI, logging, etc.
-   * 
-   * @param onDisallowedType - Callback with the file, allowedTypes, disallowedTypes.
-   */
-  setOnDisallowedType(
-    onDisallowedType: (
-      currentCheckFile: File,
-      allowedTypes: string[] | null,
-      disallowedTypes: string[] | null
-    ) => void
-  ): void;
-  /**
-   * Sets a custom callback when a file exceeds the maximum file size.
-   * 
-   * - Use to alert the user or log the event.
-   * 
-   * @param onMaxFileSizeExceeded - Callback with file, file size, and limit.
-   */
-  setOnMaxFileSizeExceeded(
-    onMaxFileSizeExceeded: (
-      currentCheckFile: File,
-      currentFileSize: number,
-      maxFileSizeAllowed: number
-    ) => void
-  ): void;
-  /**
-   * Returns whether the file list has been modified since the last set/reset.
-   * 
-   * - Adding or removing files, or changing file info, sets this to true.
-   */
-  isModified(): boolean;
-  /**
-   * Sets the "modified" state of the image box.
-   * 
-   * - Use to manually reset the modified flag (e.g., after save).
-   * 
-   * @param modified - `true` to mark as modified, `false` to reset.
-   */
-  setModified(modified: boolean): void;
-  /**
-   * Focuses the add image file button.
-   * 
-   * - Useful for accessibility or guiding user attention programmatically.
-   */
-  focus(): void;
+  setBackgroundType(type: BackgroundType | BackgroundTypeValue): void
 }
 
 /**
- * Interface for runtime control of `<HFileSet>` component.
+ * Runtime control interface for the `HChart` component.
+ *
+ * This interface is returned by `hison.component.getChart(id)` and allows full programmatic control of the chart.
+ *
+ * ---
+ *
+ * ### 📊 Example Usage
+ * ```ts
+ * const chart = hison.component.getChart('salesChart')
+ * if (chart) {
+ *   chart.setVisible(true)
+ *   chart.data.labels = ['Jan', 'Feb', 'Mar']
+ *   chart.data.datasets[0].data = [10, 20, 30]
+ *   chart.update()
+ * }
+ * ```
+ *
+ * ---
+ *
+ * ### ⚙️ Chart.js Integration
+ * - `HChartInstance` extends [`Chart`](https://www.chartjs.org/docs/latest/api/chart) from Chart.js.
+ * - This means **you can directly use all Chart.js instance methods**, such as:
+ *   - `.update()`
+ *   - `.resize()`
+ *   - `.destroy()`
+ *   - `.reset()`
+ *   - `.render()`
+ *   - `.stop()`
+ *   - `.toBase64Image()`
+ *   - `.getElementsAtEventForMode()`
+ * - You also have full access to mutable properties like:
+ *   - `chart.data`
+ *   - `chart.options`
+ *   - `chart.canvas`
+ *   - `chart.config`
+ *   - `chart.scales`, etc.
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - `getChartInstance()` is no longer needed; the entire Chart instance is exposed directly.
+ * - `setData()` and `setOptions()` helpers are unnecessary—just mutate `data` or `options` and call `.update()`.
+ */
+export interface HChartInstance extends ComponentMethods, Chart {
+  /**
+   * Returns the type identifier.
+   * Always returns `'chart'`.
+   */
+  getType(): 'chart';
+  /**
+   * Get the current reload delay (ms) used for re-creating the chart after unmount.
+   *
+   * @returns {number} The delay in milliseconds.
+   *
+   * @example
+   * const chart = hison.component.getChart('chart1');
+   * const delay = chart.getLoadDelay();
+   * console.log('Current delay:', delay);
+   */
+  getLoadDelay(): number;
+  /**
+   * Set the reload delay (ms) to wait before re-creating the chart after unmount.
+   * Useful for adjusting the debounce period for rapid reloads.
+   *
+   * @param {number} ms - The delay in milliseconds to use for subsequent reloads.
+   *
+   * @example
+   * const chart = hison.component.getChart('chart1');
+   * chart.setLoadDelay(1000); // Sets delay to 1 second for reloads
+   */
+  setLoadDelay(ms: number): void;
+}
+
+/**
+ * Runtime control methods for `HDrawer` component.
+ *
+ * This interface defines programmatic access to a drawer’s visibility,
+ * edge position, dimensions, swipe-close gestures, overlay, scroll lock,
+ * border, and animation settings. You can retrieve an instance
+ * using `hison.component.getDrawer(id)`.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const drawer = hison.component.getDrawer('drawer01');
+ * drawer.open();
+ * drawer.setPosition('left');
+ * drawer.setWidth(300, true);   // animate width change
+ * drawer.setZIndex(1400);
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - Visibility (`visible`) is **only** controlled by these methods. The `visible` prop is an initial state.
+ * - `scrollLock` is reference-counted across multiple drawers; closing one does not unlock if others are still open.
+ * - `zIndex` applies to the wrapper; the overlay is always rendered at `zIndex - 1`.
+ * - Size changes (`setWidth` / `setHeight`) can be animated when supported by the current edge position.
+ */
+export interface HDrawerMethods extends ComponentMethods {
+  /**
+   * Returns the type of the component.
+   * Always `'drawer'`.
+   */
+  getType(): 'drawer'
+  /**
+   * Returns whether the drawer is currently visible.
+   */
+  isVisible(): boolean
+  /**
+   * Opens the drawer (with animation and scroll lock).
+   */
+  open(): void | Promise<void>
+  /**
+   * Closes the drawer (with animation and scroll unlock).
+   */
+  close(): void | Promise<void>
+  /**
+   * Toggles drawer open/close state.
+   */
+  toggle(): void | Promise<void>
+  /**
+   * Sets drawer visibility.
+   * @param v `true` → open, `false` → close
+   */
+  setVisible(v: boolean): void | Promise<void>
+  /**
+   * Gets the current z-index of the drawer wrapper.
+   */
+  getZIndex(): number
+  /**
+   * Sets the z-index of the drawer wrapper (overlay will use `zIndex - 1`).
+   */
+  setZIndex(v: number): void
+  /**
+   * Gets the current screen edge position of the drawer.
+   */
+  getPosition(): 'top' | 'bottom' | 'left' | 'right'
+  /**
+   * Sets the drawer position to a screen edge.
+   * Also updates default animations if none were provided via props.
+   */
+  setPosition(p: 'top' | 'bottom' | 'left' | 'right'): void
+  /**
+   * Gets the current width of the drawer in pixels.
+   * Returns `null` if not explicitly set (auto).
+   */
+  getWidth(): number | null
+  /**
+   * Sets the drawer width in pixels.
+   * @param v width in px (`null` for auto)
+   * @param animate whether to animate the resize (default: `false`)
+   */
+  setWidth(v: number | null, animate: boolean): Promise<void> | void
+  /**
+   * Gets the current height of the drawer in pixels.
+   * Returns `null` if not explicitly set (auto).
+   */
+  getHeight(): number | null
+  /**
+   * Sets the drawer height in pixels.
+   * @param v height in px (`null` for auto)
+   * @param animate whether to animate the resize (default: `false`)
+   */
+  setHeight(v: number | null, animate: boolean): Promise<void> | void
+  /**
+   * Returns whether swipe-to-close is enabled.
+   */
+  isSwipeCloseEnabled(): boolean
+  /**
+   * Enables or disables swipe-to-close gestures.
+   */
+  setSwipeCloseEnabled(v: boolean): void
+  /**
+   * Returns whether a close button is visible inside the drawer.
+   */
+  isCloseButtonVisible(): boolean
+  /**
+   * Shows or hides the close button.
+   */
+  setCloseButtonVisible(v: boolean): void
+  /**
+   * Returns whether the overlay (backdrop) is shown.
+   */
+  isOverlayShown(): boolean
+  /**
+   * Sets whether the overlay (backdrop) is shown.
+   */
+  setOverlayShown(v: boolean): void
+  /**
+   * Returns whether clicking the overlay closes the drawer.
+   */
+  isCloseClickOverlay(): boolean
+  /**
+   * Sets whether clicking the overlay closes the drawer.
+   */
+  setCloseClickOverlay(v: boolean): void
+  /**
+   * Returns whether scroll lock is enabled for this drawer.
+   */
+  isScrollLocked(): boolean
+  /**
+   * Enables or disables scroll lock.
+   * If enabled while visible, locks immediately.
+   * If disabled while visible, unlocks immediately.
+   */
+  setScrollLock(v: boolean): void
+  /**
+   * Returns whether border styling is enabled.
+   */
+  isBorder(): boolean
+  /**
+   * Enables or disables border styling.
+   */
+  setBorder(v: boolean): void
+  /**
+   * Gets the CSS class names for enter/leave animations.
+   */
+  getAnimationClasses(): { enter: string, leave: string }
+  /**
+   * Sets one or both CSS animation classes for drawer enter/leave.
+   * Example: `{ enter: 'slide-in', leave: 'slide-out' }`
+   */
+  setAnimationClasses(opt: Partial<{ enter: string, leave: string }>): void
+  /**
+   * Forces a full component reload (rebuild internals).
+   */
+  reload(): void
+}
+
+/**
+ * Runtime control methods for `HDropdown` component.
+ *
+ * This interface defines methods accessible via `hison.component.getDropdown(id)`.
+ * It lets you open/close the menu, change selection/options, adjust behavior (trigger, close-on-select),
+ * and tweak appearance (edit mode, text alignment) at runtime.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const dd = hison.component.getDropdown('country');
+ * dd.open();
+ * dd.setOptions([{ label: 'Korea', value: 'KR' }]);
+ * dd.setValue('KR');
+ * dd.setEditMode('readonly');
+ * dd.setTextAlign('center');
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - All changes are reactive and reflected immediately.
+ * - Edit modes: `editable`, `readonly`, `disable` (readonly hides the caret & removes box-shadow).
+ * - `getText()` returns the label of the currently selected option.
+ */
+export interface HDropdownMethods extends ComponentMethods {
+  /**
+   * Returns the component type literal.
+   */
+  getType(): 'dropdown'
+  /**
+   * Whether the menu is currently open.
+   */
+  isOpen(): boolean
+  /**
+   * Opens the menu.
+   */
+  open(): void
+  /**
+   * Closes the menu.
+   */
+  close(): void
+  /**
+   * Toggles the menu open/closed.
+   */
+  toggle(): void
+  /**
+   * Gets the current edit mode (`editable` | `readonly` | `disable`).
+   */
+  getEditMode(): EditModeValue
+  /**
+   * Sets the edit mode.
+   */
+  setEditMode(v: EditMode | EditModeValue): void
+  /**
+   * Gets the current selected value.
+   */
+  getValue(): any
+  /**
+   * Sets the selected value (does not emit user events).
+   */
+  setValue(val: any): void
+  /**
+   * Returns the label (text) of the current selection.
+   */
+  getText(): string
+  /**
+   * Returns the current option list.
+   */
+  getOptions(): HDropdownOption[]
+  /**
+   * Replaces the option list at runtime.
+   */
+  setOptions(options: HDropdownOption[]): void
+  /**
+   * Sets how the menu opens: `'click'` or `'hover'`.
+   */
+  setTriggerType(trigger: DropdownTrigger): void
+  /**
+   * Gets the max menu height in pixels.
+   */
+  getMaxHeight(): number
+  /**
+   * Sets the max menu height in pixels.
+   */
+  setMaxHeight(maxHeightPx: number): void
+  /**
+   * Whether the menu closes automatically after selecting an item.
+   */
+  isCloseOnSelect(): boolean
+  /**
+   * Enables/disables close-on-select behavior.
+   */
+  setCloseOnSelect(closeOn: boolean): void
+  /**
+   * Returns current text alignment (`left` | `center` | `right`).
+   */
+  getTextAlign(): TextAlign
+  /**
+   * Sets text alignment for both the toggle and the menu.
+   */
+  setTextAlign(textAlign: TextAlign): void
+  /** 
+   * Whether animation is enabled.
+   */
+  getAnimate(): boolean
+  /** 
+   * Enables/disables animation (caret + menu).
+   */
+  setAnimate(v: boolean): void
+  /** 
+   * Returns animation duration in ms.
+   */
+  getDuration(): number
+  /** 
+   * Sets animation duration in ms.
+   */
+  setDuration(ms: number): void
+  /** 
+   * Returns CSS timing function used by transitions.
+   */
+  getEasing(): string
+  /** 
+   * Sets CSS timing function (e.g., 'ease-in-out', 'cubic-bezier(...)').
+   */
+  setEasing(fn: string): void
+  /**
+   * Gets the current `tabIndex` applied to element.
+   * - `null`: no `tabindex` attribute (items not focusable).
+   * - `0` or positive number: items can be focused via keyboard navigation.
+   */
+  getTabIndex(): number | null
+  /**
+   * Sets `tabIndex` for element.
+   * @param v - `null` to remove, or number to make focusable.
+   */
+  setTabIndex(v: number | null): void
+  /**
+   * Moves focus to the toggle element.
+   */
+  focus(): void
+}
+
+/**
+ * Interface for runtime control of `<HFileset>` component.
  *
  * This interface exposes a full set of methods for dynamically controlling and querying the state
- * of an HFileSet instance registered with hisonvue. All methods are available via `hison.vue.getInput(id)` or
+ * of an HFileset instance registered with hisonvue. All methods are available via `hison.vue.getInput(id)` or
  * on the instance exposed in the `mounted` event.
  *
  * **Typical use cases include:**
@@ -1125,25 +1614,25 @@ export interface HImageBoxMethods extends ComponentMethods {
  * :::example
  * ```ts
  * // Get runtime methods from hison.vue
- * const fileSet = hison.vue.getInput('myFileSet') as HFileSetMethods
+ * const fileset = hison.vue.getInput('myFileset') as HFilesetMethods
  * 
  * // Change edit mode to readonly
- * fileSet.setEditMode('readonly')
+ * fileset.setEditMode('readonly')
  * 
  * // Limit to only 2 files and only PDFs
- * fileSet.setMaxFileCount(2)
- * fileSet.setAllowedTypes(['.pdf'])
+ * fileset.setMaxFileCount(2)
+ * fileset.setAllowedTypes(['.pdf'])
  * 
  * // Change add button label dynamically
- * fileSet.setAddButtonText('파일 추가')
+ * fileset.setAddButtonText('파일 추가')
  * 
  * // Replace all files with new ones
- * fileSet.setValue([
+ * fileset.setValue([
  *   { fileName: 'newfile.pdf', fileSize: 100000, extension: 'pdf', isNew: true, file: someFileObj }
  * ])
  *
  * // Focus add button programmatically
- * fileSet.focus()
+ * fileset.focus()
  * ```
  * :::
  *
@@ -1157,12 +1646,12 @@ export interface HImageBoxMethods extends ComponentMethods {
  *
  * All setters immediately update the internal state and UI.
  */
-export interface HFileSetMethods extends ComponentMethods {
+export interface HFilesetMethods extends ComponentMethods {
   /**
    * Returns the type of this component instance.
-   * Always returns `'fileSet'` for `<HFileSet>`.
+   * Always returns `'fileset'` for `<HFileset>`.
    */
-  getType(): 'fileSet'
+  getType(): 'fileset'
   /**
    * Gets the current edit mode of the file set.
    * 
@@ -1170,7 +1659,7 @@ export interface HFileSetMethods extends ComponentMethods {
    * - `'readonly'`: View only, file actions hidden
    * - `'disable'`: Completely disabled, grayed out
    */
-  getEditMode(): EditMode;
+  getEditMode(): EditModeValue;
   /**
    * Sets the edit mode of the file set.
    * 
@@ -1180,7 +1669,7 @@ export interface HFileSetMethods extends ComponentMethods {
    * 
    * @param mode - The new edit mode
    */
-  setEditMode(mode: EditMode): void;
+  setEditMode(mode: EditMode | EditModeValue): void;
   /**
    * Returns the current (visible, not deleted) file list.
    * 
@@ -1472,7 +1961,520 @@ export interface HFileSetMethods extends ComponentMethods {
    */
   setModified(modified: boolean): void;
   /**
+   * Gets the current `tabIndex` applied to element.
+   * - `null`: no `tabindex` attribute (items not focusable).
+   * - `0` or positive number: items can be focused via keyboard navigation.
+   */
+  getTabIndex(): number | null
+  /**
+   * Sets `tabIndex` for element.
+   * @param v - `null` to remove, or number to make focusable.
+   */
+  setTabIndex(v: number | null): void
+  /**
    * Focuses the add file button.
+   * 
+   * - Useful for accessibility or guiding user attention programmatically.
+   */
+  focus(): void;
+}
+
+/**
+ * Runtime control methods for `HGap` component.
+ *
+ * This interface defines methods that can be accessed via `hison.component.getGap(id)`.
+ * Use these methods to programmatically control spacing behavior and optional divider line rendering.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const gap = hison.component.getGap('gap01')
+ *
+ * // Show a horizontal divider with dashed line
+ * gap.setVisible(true)
+ * gap.setLine('horizontal')
+ * gap.setLineStyle('dashed')
+ * gap.setLineWidth(2)             // number => px
+ *
+ * // Theme-driven color (from hison-color-* class)
+ * gap.setLineColor('')
+ *
+ * // Switch to vertical divider with transparent background
+ * gap.setBackgroundType('transparent')
+ * gap.setLine('vertical')
+ *
+ * // Hide again
+ * gap.setVisible(false)
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - `lineColor`:
+ *   - `''` (empty) → auto color from wrapper’s `hison-color-*` class or fallback muted color.
+ *   - Any valid CSS color (hex, rgb, var) is accepted.
+ * - `lineWidth` accepts a `number` (treated as `px`) or a CSS length string (e.g. `'0.5rem'`, `'2px'`).
+ * - All changes are reactive and reflected immediately in the DOM.
+ */
+export interface HGapMethods extends ComponentMethods {
+  /** 
+   * Returns the type of the component (always `'gap'`).
+   */
+  getType(): 'gap'
+  /** 
+   * Returns whether the gap is visible.
+   */
+  isVisible(): boolean
+  /** 
+   * Sets visibility of the gap.
+   */
+  setVisible(visible: boolean): void
+  /** 
+   * Returns whether the gap shows border (box-shadow).
+   */
+  isBorder(): boolean
+  /** 
+   * Sets whether the gap shows border (box-shadow).
+   */
+  setBorder(border: boolean): void
+  /** 
+   * Gets the current background type ('filled' | 'empty' | 'transparent').
+   */
+  getBackgroundType(): BackgroundTypeValue
+  /** 
+   * Sets the background type of the gap.
+   */
+  setBackgroundType(type: BackgroundType | BackgroundTypeValue): void
+  /** 
+   * Gets the current line mode ('none' | 'horizontal' | 'vertical').
+   */
+  getLine(): 'none' | 'horizontal' | 'vertical'
+  /** 
+   * Sets the line mode ('none' | 'horizontal' | 'vertical').
+   */
+  setLine(line: HGapLine | HGapLineValue): void
+  /** 
+   * Gets the current line style ('solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset').
+   */
+  getLineStyle(): HGapLineStyleValue
+  /** 
+   * Sets the line style.
+   */
+  setLineStyle(style: HGapLineStyle | HGapLineStyleValue): void
+  /** 
+   * Gets the current line width (number in px or CSS length string).
+   */
+  getLineWidth(): number | string
+  /** 
+   * Sets the line width (number → px, or CSS length string).
+   */
+  setLineWidth(width: number | string): void
+  /** 
+   * Gets the current line color (CSS value or empty string for auto).
+   */
+  getLineColor(): string
+  /** 
+   * Sets the line color (CSS value, or '' to auto resolve from theme).
+   */
+  setLineColor(color?: string): void
+}
+
+/**
+ * Provides various methods to manipulate and manage a Vanillagrid instance.
+ *
+ * - This interface includes over 200 methods for handling grid structure, data,
+ *   filtering, sorting, appearance, and user interactions.
+ * - A `GridMethods` instance can be retrieved using `vg.getGrid({gridId})`.
+ * - It allows users to dynamically modify grid properties, update cell values,
+ *   and customize the grid's behavior through predefined methods.
+ *
+ * ### Key Features:
+ * - Manage grid headers, footers, rows, and columns.
+ * - Load and retrieve data as JSON.
+ * - Apply filters, sorting, and styling dynamically.
+ * - Control grid visibility, locking, and resizing.
+ * - Undo and redo changes within the grid.
+ *
+ * ### Example usage:
+ * ```typescript
+ * const grid = vg.getGrid('gridId');
+ * grid.setHeaderText('col1', 'New Header');
+ * grid.setCellValue(1, 'col1', 'Updated Value');
+ * ```
+ */
+export interface HGridMethods extends ComponentMethods, Omit<GridMethods, 'isGridVisible' | 'setGridVisible'>{
+  /**
+   * Returns the type of the grid.
+   */
+  getType(): 'grid'
+  /**
+   * Extracts the current grid content as a `DataModel` instance.
+   *
+   * - Converts all current grid rows into a `DataModel`.
+   * - Each row becomes a record in the `DataModel`.
+   * - Columns are inferred automatically from the grid's structure or cell values.
+   *
+   * @returns A `DataModel` instance representing the current grid content.
+   */
+  getDataModel(): InterfaceDataModel<Record<string, any>>;
+  /**
+   * Loads data into the grid using a `DataModel` instance.
+   *
+   * - Converts the first `getRowCount()` rows of the provided `DataModel` into key-value records.
+   * - These records are then inserted into the grid.
+   * - Grid is cleared before new data is loaded.
+   *
+   * @param dataModel A `DataModel` object representing the rows to load into the grid.
+   */
+  setDataModel<T extends Record<string, any>>(dataModel: InterfaceDataModel<T>): void;
+  /**
+   * Loads data into the grid.
+   *
+   * - Supports three different data formats:
+   *   1. **Key-Value Format**: An array of objects where each object represents a row with column-value pairs.
+   *   2. **Datas Format**: A 2D array of cell objects, each containing `{ colId, value }`.
+   *   3. **DataModel Format**: A `DataModel` instance whose rows are inserted into the grid.
+   * - Before loading, the grid is automatically cleared.
+   *
+   * ### Example Usage:
+   * ```ts
+   * // 1. Key-Value Format
+   * grid.load([
+   *   { col1: 'value1-1', col2: 'value1-2' },
+   *   { col1: 'value2-1', col2: 'value2-2' }
+   * ]);
+   *
+   * // 2. Datas Format
+   * grid.load([
+   *   [{ colId: 'col1', value: 'value1-1' }, { colId: 'col2', value: 'value1-2' }],
+   *   [{ colId: 'col1', value: 'value2-1' }, { colId: 'col2', value: 'value2-2' }]
+   * ]);
+   *
+   * // 3. DataModel Format
+   * const model = new hison.data.DataModel();
+   * model.setColumns(['col1', 'col2']);
+   * model.addRow({ col1: 'value1-1', col2: 'value1-2' });
+   * grid.load(model);
+   * ```
+   *
+   * @param keyValueOrDatas The data to load into the grid.
+   * @returns `true` if the data was successfully loaded.
+   */
+  load<T extends Record<string, any>>(keyValueOrDatas: Record<string, any> | Record<string, any>[] | InterfaceDataModel<T>): boolean;
+}
+
+/**
+ * Interface for runtime control of `<HImagebox>` component.
+ *
+ * This interface provides a complete set of methods for dynamically controlling and querying the state
+ * of an HImagebox instance in hisonvue. All methods are accessible via `hison.vue.getInput(id)` or
+ * on the instance emitted via the `mounted` event.
+ *
+ * **Typical use cases include:**
+ * - Changing edit mode, button text, allowed file types, or drag-and-drop support at runtime
+ * - Setting the image programmatically (e.g., for editing or resetting forms)
+ * - Integrating with backend logic to preload, update, or clear the image state
+ * - Customizing validation or error handling logic for file type or file size checks
+ * - Dynamically updating UI text such as placeholder or button labels in response to user actions
+ * - Managing attachment group IDs for file association with backend records
+ *
+ * :::example
+ * ```ts
+ * // Get runtime methods from hison.vue
+ * const imagebox = hison.vue.getInput('avatarBox') as HImageboxMethods
+ *
+ * // Make the component readonly
+ * imagebox.setEditMode('readonly')
+ *
+ * // Set allowed file types to PNG only
+ * imagebox.setAllowedTypes(['image/png'])
+ *
+ * // Change add button label at runtime
+ * imagebox.setAddButtonText('Upload Photo')
+ *
+ * // Replace the image with a new uploaded file
+ * imagebox.setValue({
+ *   fileName: 'profile.png',
+ *   file: someFileObj,
+ *   fileSize: someFileObj.size,
+ *   extension: 'png',
+ *   isNew: true
+ * })
+ *
+ * // Attach a custom handler for max file size exceeded
+ * imagebox.setOnMaxFileSizeExceeded((file, size, max) => {
+ *   alert(`File too large! Max allowed: ${max} bytes`)
+ * })
+ *
+ * // Programmatically focus the add button
+ * imagebox.focus()
+ * ```
+ * :::
+ *
+ * **Method groups:**
+ * - **Edit Mode & Visibility**: Control user interaction and UI state
+ * - **Image Value**: Get or set the attached image file (including clearing or preloading)
+ * - **File Upload Options**: Allowed/disallowed types, file size, drag-and-drop, validation handlers
+ * - **UI Labels & Placeholders**: Set button labels or placeholder dynamically
+ * - **Attachment Grouping**: Manage `attId` for backend association
+ * - **State Query**: Check if the image box has been modified
+ *
+ * All setters update the internal state and UI instantly.
+ */
+export interface HImageboxMethods extends ComponentMethods {
+  /**
+   * Returns the type of this component instance.
+   * Always returns `'imagebox'` for `<HImagebox>`.
+   */
+  getType(): 'imagebox'
+  /**
+   * Gets the current edit mode of the image box.
+   * 
+   * - `'editable'`: Full editing (add/delete) enabled
+   * - `'readonly'`: View only, image file actions hidden
+   * - `'disable'`: Completely disabled, grayed out
+   */
+  getEditMode(): EditModeValue;
+  /**
+   * Sets the edit mode of the image box.
+   * 
+   * - `'editable'`: Allows adding/removing image file
+   * - `'readonly'`: Disables all image file operations but keeps UI visible
+   * - `'disable'`: Fully disables the UI (input, buttons)
+   * 
+   * @param mode - The new edit mode
+   */
+  setEditMode(mode: EditMode | EditModeValue): void;
+  /**
+   * Returns the current (visible, not deleted) image file.
+   * 
+   * file is an object conforming to `AttachedFileItem`.
+   * Files marked `isDeleted: true` are excluded.
+   * 
+   * @returns The current list of image file.
+   */
+  getValue(): AttachedFileItem | null;
+  /**
+   * Sets the internal image file to the provided value.
+   * 
+   * - The list will be displayed immediately and emitted via `update:modelValue`.
+   * - Use this to reset, replace, or synchronize the image file with backend data.
+   * 
+   * @param attachedFileItem - The new image file.
+   */
+  setValue(attachedFileItem: AttachedFileItem): void;
+  /**
+   * Converts the current editor content into a `DataModel` instance.
+   *
+   * - Returns a new `DataModel` where each property of `AttachedFileItem`
+   *   becomes a column, and a single row represents the editor state.
+   *
+   * @returns A `DataModel<AttachedFileItem>` containing the editor's current data.
+   */
+  getDataModel(): InterfaceDataModel<AttachedFileItem> | null;
+  /**
+   * Populates the editor using a `DataModel` instance.
+   *
+   * - Extracts values from the first row of the `DataModel`, if available.
+   * - Uses the values from columns like `html`, `plainText`, `links`, etc. to restore editor content.
+   *
+   * @param dataModel A `DataModel` whose first row maps to `AttachedFileItem` structure.
+   */
+  setDataModel<T extends AttachedFileItem>(dataModel: InterfaceDataModel<T>): void;
+  /**
+   * Loads editor content from either a `AttachedFileItem` object or a compatible `DataModel`.
+   *
+   * - Accepts plain `AttachedFileItem`, raw object, or `DataModel`.
+   * - Automatically determines how to process the input and restores the editor accordingly.
+   *
+   * @param data Editor content to load, in `AttachedFileItem` or `DataModel` form.
+   */
+  load<T extends Record<string, any>>(data: AttachedFileItem | Record<string, any> | InterfaceDataModel<T>): void;
+  /**
+   * Returns the current `attId` (attachment group ID).
+   * 
+   * Used to group image file logically, often for backend APIs.
+   */
+  getAttId(): string;
+  /**
+   * Sets the `attId` (attachment group ID).
+   * 
+   * - Use to associate this image box with a different group in your backend.
+   * - Has no effect on UI, but is included in emitted file info.
+   * 
+   * @param attId - The new attachment group ID.
+   */
+  setAttId(attId: string): void;
+  /**
+   * Gets the text content currently shown on the add/upload button.
+   * 
+   * - Corresponds to `addButtonText` prop.
+   */
+  getAddButtonText(): string;
+  /**
+   * Sets the text shown on the add/upload button.
+   * 
+   * - Supports multiline via `\n` (rendered as `<br>`).
+   * - If an `add-button` slot is used, this will have no effect.
+   * 
+   * @param addButtonText - New button text
+   */
+  setAddButtonText(addButtonText: string): void;
+  /**
+   * Gets the text content currently shown on the remove/delete button.
+   * 
+   * - Corresponds to `removeButtonText` prop.
+   */
+  getRemoveButtonText(): string;
+  /**
+   * Sets the text shown on the remove/delete button.
+   * 
+   * - Supports multiline via `\n` (rendered as `<br>`).
+   * - If a `remove-button` slot is used, this will have no effect.
+   * 
+   * @param removeButtonText - New button text
+   */
+  setRemoveButtonText(removeButtonText: string): void;
+  /**
+   * Gets the current placeholder text (empty state message).
+   * 
+   * - Shown when there is no image in the image box.
+   * - Corresponds to the `placeholder` prop.
+   */
+  getPlaceholder(): string;
+  /**
+   * Sets the placeholder text (empty state message).
+   * 
+   * - Updates UI immediately.
+   * 
+   * @param placeholder - New placeholder text
+   */
+  setPlaceholder(placeholder: string): void;
+  /**
+   * Returns whether drag-and-drop uploading is currently enabled.
+   * 
+   * - Controlled by the `enableDrop` prop.
+   */
+  isEnableDrop(): boolean;
+  /**
+   * Enables or disables drag-and-drop image file uploading.
+   * 
+   * @param enableDrop - `true` to allow drag-and-drop, `false` to block it.
+   */
+  setEnableDrop(enableDrop: boolean): void;
+  /**
+   * Gets the current list of allowed image file types/extensions.
+   * 
+   * - Controlled by the `allowedTypes` prop.
+   * - MIME types or extensions (e.g. `.pdf`, `image/png`).
+   */
+  getAllowedTypes(): string[];
+  /**
+   * Sets the allowed file types/extensions.
+   * 
+   * - Accepts an array of MIME types or file extensions.
+   * - Updates the file input's accept filter and internal validation.
+   * 
+   * @param allowedTypes - Array of allowed types/extensions.
+   */
+  setAllowedTypes(allowedTypes: string[]): void;
+  /**
+   * Gets the current list of disallowed file types/extensions.
+   * 
+   * - Controlled by the `disallowedTypes` prop.
+   * - MIME types or extensions (e.g. `.exe`, `application/x-msdownload`).
+   */
+  getDisallowedTypes(): string[];
+  /**
+   * Sets the disallowed file types/extensions.
+   * 
+   * - Accepts an array of MIME types or file extensions.
+   * - Any file matching these types/extensions will be rejected.
+   * 
+   * @param disallowedTypes - Array of disallowed types/extensions.
+   */
+  setDisallowedTypes(disallowedTypes: string[]): void;
+  /**
+   * Gets the current maximum allowed file size (per file, bytes).
+   * 
+   * - Controlled by the `maxFileSize` prop.
+   */
+  getMaxFileSize(): number;
+  /**
+   * Sets the maximum allowed file size (per file, bytes).
+   * 
+   * - Files exceeding this size are rejected on upload.
+   * 
+   * @param maxFileSize - Maximum size in bytes
+   */
+  setMaxFileSize(maxFileSize: number): void;
+  /**
+   * Returns whether the current element displays a border.
+   */
+  isBorder(): boolean
+  /**
+   * ESets whether the current element displays a border.
+   * 
+   * @param border - `true` to display border, `false` to none display border
+   */
+  setBorder(border: boolean): void
+  /**
+   * Sets a custom callback when a file has a disallowed type/extension.
+   * 
+   * - Called during file selection/drag if a file fails allowed/disallowed check.
+   * - Use for custom alerts, validation UI, logging, etc.
+   * 
+   * @param onDisallowedType - Callback with the file, allowedTypes, disallowedTypes.
+   */
+  setOnDisallowedType(
+    onDisallowedType: (
+      currentCheckFile: File,
+      allowedTypes: string[] | null,
+      disallowedTypes: string[] | null
+    ) => void
+  ): void;
+  /**
+   * Sets a custom callback when a file exceeds the maximum file size.
+   * 
+   * - Use to alert the user or log the event.
+   * 
+   * @param onMaxFileSizeExceeded - Callback with file, file size, and limit.
+   */
+  setOnMaxFileSizeExceeded(
+    onMaxFileSizeExceeded: (
+      currentCheckFile: File,
+      currentFileSize: number,
+      maxFileSizeAllowed: number
+    ) => void
+  ): void;
+  /**
+   * Returns whether the file list has been modified since the last set/reset.
+   * 
+   * - Adding or removing files, or changing file info, sets this to true.
+   */
+  isModified(): boolean;
+  /**
+   * Sets the "modified" state of the image box.
+   * 
+   * - Use to manually reset the modified flag (e.g., after save).
+   * 
+   * @param modified - `true` to mark as modified, `false` to reset.
+   */
+  setModified(modified: boolean): void;
+  /**
+   * Gets the current `tabIndex` applied to element.
+   * - `null`: no `tabindex` attribute (items not focusable).
+   * - `0` or positive number: items can be focused via keyboard navigation.
+   */
+  getTabIndex(): number | null
+  /**
+   * Sets `tabIndex` for element.
+   * @param v - `null` to remove, or number to make focusable.
+   */
+  setTabIndex(v: number | null): void
+  /**
+   * Focuses the add image file button.
    * 
    * - Useful for accessibility or guiding user attention programmatically.
    */
@@ -1565,12 +2567,12 @@ export interface HInputMethods extends ComponentMethods {
    * Gets the current edit mode.
    * - Possible values: `'editable'`, `'readonly'`, `'disable'`
    */
-  getEditMode(): EditMode;
+  getEditMode(): EditModeValue;
   /**
    * Sets the edit mode of the input.
    * - `'readonly'` and `'disable'` both prevent editing but differ in style.
    */
-  setEditMode(mode: EditMode): void;
+  setEditMode(mode: EditMode | EditModeValue): void;
   /**
    * Gets the maximum allowed numeric value (if applicable).
    * - Only applies when `type === 'number'`
@@ -1670,6 +2672,23 @@ export interface HInputMethods extends ComponentMethods {
    */
   setFontUnderline(underline: boolean): void;
   /**
+   * Returns current text alignment ('left' | 'center' | 'right').
+   */
+  getTextAlign(): TextAlignValue
+  /**
+   * Sets text alignment for the input.
+   */
+  setTextAlign(textAlign: TextAlign | TextAlignValue): void
+  /**
+   * Returns whether the label shows border (box-shadow).
+   */
+  isBorder(): boolean
+  /**
+   * Sets whether border (box-shadow) is shown.
+   * @param border - `true` to show, `false` to hide.
+   */
+  setBorder(border: boolean): void
+  /**
    * Returns whether the input value has been modified since initial load or last reset.
    * - Modification is only tracked via user interactions (`onInput`, `onBlur`, `onChange`).
    * - This is used by parent components like `HInputGroup` to determine group-level state.
@@ -1681,6 +2700,17 @@ export interface HInputMethods extends ComponentMethods {
    * @param modified A boolean indicating whether the input should be marked as modified.
    */
   setModified(modified: boolean): void;
+  /**
+   * Gets the current `tabIndex` applied to element.
+   * - `null`: no `tabindex` attribute (items not focusable).
+   * - `0` or positive number: items can be focused via keyboard navigation.
+   */
+  getTabIndex(): number | null
+  /**
+   * Sets `tabIndex` for element.
+   * @param v - `null` to remove, or number to make focusable.
+   */
+  setTabIndex(v: number | null): void
   /**
    * Focus on the input.
    */
@@ -1791,7 +2821,7 @@ export interface HInputGroupMethods extends Omit<ComponentMethods, 'isVisible' |
    * - `U`: Updated
    * - `D`: Deleted
    */
-  getStatus(): DataStatus;
+  getStatus(): DataStatusValue;
   /**
    * Sets the status of the input group.
    *
@@ -1799,7 +2829,7 @@ export interface HInputGroupMethods extends Omit<ComponentMethods, 'isVisible' |
    * 
    * @param status A valid `DataStatus` value (`R`, `C`, `U`, `D`).
    */
-  setStatus(status: DataStatus): void;
+  setStatus(status: DataStatus | DataStatusValue): void;
   /**
    * Returns whether any input inside the group has been modified by user interaction.
    * 
@@ -1828,13 +2858,13 @@ export interface HInputGroupMethods extends Omit<ComponentMethods, 'isVisible' |
    * - `'readonly'`: Inputs are readonly (visually different)
    * - `'disable'`: Inputs are disabled (fully blocked)
    */
-  getEditMode(): EditMode;
+  getEditMode(): EditModeValue;
   /**
    * Sets the edit mode for all inputs in the group.
    *
    * @param mode One of: `'editable'`, `'readonly'`, `'disable'`
    */
-  setEditMode(mode: EditMode): void;
+  setEditMode(mode: EditMode | EditModeValue): void;
   /**
    * Focus on the first input that is editable, or a specific input if `inputId` is provided.
    *
@@ -1849,381 +2879,1482 @@ export interface HInputGroupMethods extends Omit<ComponentMethods, 'isVisible' |
 }
 
 /**
- * Runtime control methods for `HCalendar` component.
+ * Runtime control methods for `HLabel` component.
  *
- * This interface defines the available methods on `HCalendar`,
- * accessible via `hison.component.getCalendar(id)`, to programmatically control
- * calendar state, selected date, events, and display configuration.
+ * This interface defines methods that can be accessed via `hison.component.getLabel(id)`.
+ * Use these methods to manipulate label state programmatically at runtime.
  *
  * ---
  *
  * ### 🔧 Example Usage
  * ```ts
- * const calendar = hison.component.getCalendar('cal1');
- * calendar.setSelectedDate('2025-07-01');
- * calendar.setDisable(true);
- * calendar.setVisible(false);
- *
- * const events = calendar.getEvents();
- * calendar.setEvents([...events, { start: '2025-07-02 10:00', end: '2025-07-02 11:00', title: 'Meeting' }]);
+ * const lb = hison.component.getLabel('lb1');
+ * lb.setVisible(true);
+ * lb.setTitle('Go to naver');
+ * lb.setHref('https://www.naver.com/');
+ * lb.setText('Open Naver'); // works when the label doesn't render an element-slot
+ * lb.mergeAnchorAttrs({ target: '_blank' });
  * ```
  *
  * ---
  *
  * ### ⚠️ Notes
- * - Each `HCalendar` instance is automatically registered by `id` via `hison.component.getCalendar(id)`.
- * - Style-related changes (e.g. `weekendColor`, `selectedColor`) are applied via dynamic CSS variables.
- * - Date/time options use minutes (0~1440) where applicable (e.g. `timeFrom`, `timeTo`).
- * - Some properties like view mode (`setActiveView`) or locale (`setLocale`) can be changed live without re-render.
- * - `HCalendar` supports both `v-model:selected-date` and `v-model:events`, but changes via method calls will override both.
+ * - `setText` / `getText` are effective when the label **does not render an element-slot**:
+ *   - If the default slot is **text-only**, the text is absorbed into internal state ➜ controllable by `getText/setText`.
+ *   - If the default slot contains **any element vnode**, the slot is rendered as-is ➜ `getText()` returns `''` and `setText()` has no effect.
+ * - When `href` is a non-empty string, the label renders as an `<a>` and button-like CSS events are attached to the root.
+ * - All changes are reactive and reflected immediately in the DOM.
  */
-export interface HCalendarMethods extends ComponentMethods {
+export interface HLabelMethods extends ComponentMethods {
   /**
-   * Returns the type identifier for the component.
-   * Always returns `'calendar'`.
+   * Returns the type of the component.
    */
-  getType(): 'calendar';
+  getType(): 'label'
   /**
-   * Returns whether the calendar is currently disabled.
-   * - `true` means the calendar cannot be clicked.
+   * Returns whether the label is visible.
+   * - `true`: rendered normally.
+   * - `false`: hidden via `hison-display-none` on wrapper.
    */
-  isDisable(): boolean;
+  isVisible(): boolean
   /**
-   * Enables or disables the calendar.
-   * - When disabled, calendar is grayed out and not clickable.
-   * @param disable
+   * Sets label visibility.
+   * @param visible - `true` to show, `false` to hide.
    */
-  setDisable(disable: boolean): void;
+  setVisible(visible: boolean): void
   /**
-   * Returns the currently selected date.
-   * @param getDateType If `true`, returns a `Date` object; otherwise returns a formatted string.
-   * @param format Optional format string. Defaults to global hison datetime format.
+   * Gets the current tooltip (title) text shown on hover.
    */
-  getSelectedDate(getDateType?: boolean, format?: string): string | Date;
+  getTitle(): string
   /**
-   * Sets the selected date in the calendar.
-   * @param selectedDate A string or Date object.
+   * Sets the tooltip (title) text shown on hover.
    */
-  setSelectedDate(selectedDate: string | Date): void;
+  setTitle(title: string): void
   /**
-   * Returns the array of events currently displayed in the calendar.
+   * Gets the label text when controllable:
+   * - Returns `''` if the default slot renders **any element vnode**.
+   * - Otherwise returns the internally managed text (including text-only slot absorption).
    */
-  getEvents(): HCalendarEvent[];
+  getText(): string
   /**
-   * Updates the calendar events array.
-   * @param events List of events to set.
+   * Sets the label text when controllable:
+   * - No effect if the default slot renders **any element vnode**.
+   * - Updates internal reactive text which is rendered either inside `<a>` (when `href` exists) or `<span>`.
    */
-  setEvents(events: HCalendarEvent[]): void;
+  setText(text: string): void
   /**
-   * Returns the map of special time highlights.
+   * Gets the current `href`.
+   * - Empty string means "no link" (label renders as `<span>` or `<div>` depending on slot).
    */
-  getSpecialTime(): HCalendarSpecialTimeMap;
+  getHref(): string
   /**
-   * Sets special time ranges for specific days of the week.
-   * @param specialTimeMap Object mapping day index to time ranges.
+   * Sets the `href`.
+   * - `null` or empty string disables link mode (label becomes non-anchor).
+   * - Non-empty string enables link mode (label renders as `<a>`).
    */
-  setSpecialTime(specialTimeMap: HCalendarSpecialTimeMap): void;
+  setHref(href?: string | null): void
   /**
-   * Returns the background color for weekend header cells.
+   * Reads the full `anchorAttrs` (shallow-copied) object used for `<a v-bind="...">`.
+   * - Typical keys: `target`, `rel`, `download`, `referrerPolicy`, `hreflang`, etc.
    */
-  getWeekendColor(): string | undefined;
+  getAnchorAttrs(): Record<string, unknown>
   /**
-   * Sets the weekend header background color.
-   * @param cssText CSS color value (e.g., `#ff0000`, `rgba(...)`).
+   * Replaces the entire `anchorAttrs` object.
+   * - Use to reset all attributes at once.
    */
-  setWeekendColor(cssText: string): void;
-    /**
-   * Returns which weekday indices are considered weekends.
-   */
-  getWeekendDays(): number[] | undefined;
+  replaceAnchorAttrs(next: Record<string, unknown>): void
   /**
-   * Sets which weekday indices are treated as weekends.
-   * @param weekendDays Array of day indices (0 = Sunday).
+   * Shallow-merges given patch into current `anchorAttrs`.
+   * - Use to update a subset of attributes without losing others.
    */
-  setWeekendDays(weekendDays: number[]): void;
+  mergeAnchorAttrs(patch: Record<string, unknown>): void
   /**
-   * Returns whether today is highlighted with background color.
+   * Sets a single anchor attribute by key.
+   * - Example: `setAnchorAttr('target', '_blank')`
    */
-  isShowTodayColor(): boolean;
+  setAnchorAttr(key: string, val: unknown): void
   /**
-   * Enables or disables special background highlight for today's date.
-   * @param showTodayColor Boolean
+   * Removes a single anchor attribute by key.
+   * - Example: `removeAnchorAttr('download')`
    */
-  setShowTodayColor(showTodayColor: boolean): void;
+  removeAnchorAttr(key: string): void
   /**
-   * Returns the background color for the selected date.
+   * Returns whether bold style is applied.
    */
-  getSelectedColor(): string | undefined;
+  isFontBold(): boolean
   /**
-   * Sets the background color for the selected date cell.
-   * @param cssText (e.g., '#ff0000' or 'rgba(255,0,0,0.2)')
+   * Applies or removes bold style.
    */
-  setSelectedColor(cssText: string): void;
+  setFontBold(bold: boolean): void
   /**
-   * Returns the minimum height (in px) for date cells in month view.
+   * Returns whether italic style is applied.
    */
-  getDateCellMinHeight(): number | undefined;
+  isFontItalic(): boolean
   /**
-   * Sets the minimum height (in px) for date cells in month view.
-   * @param minHeight number of px
+   * Applies or removes italic style.
    */
-  setDateCellMinHeight(minHeight: number): void;
+  setFontItalic(italic: boolean): void
   /**
-   * Returns the maximum height (in px) for date cells in month view.
+   * Returns whether strikethrough is applied.
    */
-  getDateCellMaxHeight(): number | undefined;
+  isFontThruline(): boolean
   /**
-   * Sets the maximum height (in px) for date cells in month view.
-   * @param maxHeight number of px
+   * Applies or removes strikethrough style.
    */
-  setDateCellMaxHeight(maxHeight: number): void;
+  setFontThruline(thruline: boolean): void
   /**
-   * Returns the list of disabled dates.
-   * - These are dates that users cannot select in the calendar.
+   * Returns whether underline is applied.
    */
-  getDisableDays(): string[] | undefined;
+  isFontUnderline(): boolean
   /**
-   * Sets the list of disabled dates.
-   * @param disableDays array of string dates (e.g., ['2025-06-26', '2025-06-27'])
+   * Applies or removes underline style.
    */
-  setDisableDays(disableDays: string[]): void;
+  setFontUnderline(underline: boolean): void
   /**
-   * Returns the current setting for month view event display.
-   * - Can be `false`, `'short'`, or other strings for full event text.
+   * Gets current text alignment ('left' | 'center' | 'right').
    */
-  getEventsOnMonthView(): string | boolean | undefined;
+  getTextAlign(): TextAlignValue
   /**
-   * Sets how events are displayed in the month view.
-   * @param eventsOnMonthView
-   * - `false`: shows event count only
-   * - `'short'`: shows only titles
-   * - others: shows full event contents
+   * Sets text alignment.
    */
-  setEventsOnMonthView(eventsOnMonthView: string | boolean): void;
+  setTextAlign(textAlign: TextAlign | TextAlignValue): void
   /**
-   * Returns which weekdays are currently hidden.
-   * - Array of weekday indexes: 0 = Sunday, 6 = Saturday
+   * Returns whether the label shows border (box-shadow).
    */
-  getHideWeekdays(): number[] | undefined;
+  isBorder(): boolean
   /**
-   * Hides or shows specific weekdays.
-   * @param hideWeekdays Array of weekday indexes to hide (e.g., [2,3] to hide Tue/Wed)
+   * Sets whether border (box-shadow) is shown.
+   * @param border - `true` to show, `false` to hide.
    */
-  setHideWeekdays(hideWeekdays: number[]): void;
+  setBorder(border: boolean): void
   /**
-   * Returns whether weekends (Saturday and Sunday) are currently hidden.
+   * Gets current background type of the label.
+   * - One of 'filled' | 'empty' | 'transparent'.
    */
-  getHideWeekends(): boolean;
+  getBackgroundType(): BackgroundTypeValue
   /**
-   * Hides or shows weekends in the calendar.
-   * @param hideWeekends
+   * Sets background type of the label.
+   * - Accepts 'filled' | 'empty' | 'transparent'.
    */
-  setHideWeekends(hideWeekends: boolean): void;
+  setBackgroundType(type: BackgroundType | BackgroundTypeValue): void
   /**
-   * Returns the current locale (language code).
-   * - Example: 'en', 'ko'
+   * Gets the current `tabIndex` applied to element.
+   * - `null`: no `tabindex` attribute (items not focusable).
+   * - `0` or positive number: items can be focused via keyboard navigation.
    */
-  getLocale(): string;
+  getTabIndex(): number | null
   /**
-   * Sets the calendar language (locale).
-   * - Example: 'fr', 'zh-cn'
-   * @param locale See vue-cal docs for full list of locales
+   * Sets `tabIndex` for element.
+   * @param v - `null` to remove, or number to make focusable.
    */
-  setLocale(locale: string): void;
+  setTabIndex(v: number | null): void
   /**
-   * Returns the maximum selectable date.
-   * @param getDateType If `true`, returns a Date object; otherwise returns a string.
-  */
-  getMaxDate(getDateType?: boolean): string | Date | undefined | null;
-  /**
-   * Sets the maximum date users can select.
-   * @param maxDate A string or Date object.
+   * Focuses the label when applicable.
+   * - If the label renders as `<a>`, focus moves to the anchor element.
+   * - Otherwise (non-anchor), no-op.
    */
-  setMaxDate(maxDate: string | Date): void;
-  /**
-   * Returns the minimum selectable date.
-   * @param getDateType If `true`, returns a Date object; otherwise returns a string.
-   */
-  getMinDate(getDateType?: boolean): string | Date | undefined | null;
-  /**
-   * Sets the minimum date users can select.
-   * @param minDate A string or Date object.
-   */
-  setMinDate(minDate: string | Date): void;
-  /**
-   * Returns whether the week starts on Sunday.
-   * - `true`: Sunday, `false`: Monday
-   */
-  isStartWeekOnSunday(): boolean;
-  /**
-   * Sets the start day of the week.
-   * @param startWeekOnSunday `true` for Sunday, `false` for Monday
-   */
-  setStartWeekOnSunday(startWeekOnSunday: boolean): void;
-  /**
-   * Returns whether time cells are currently shown in 'day' or 'week' views.
-   * - Equivalent to the `time` prop.
-   */
-  isShowTimeCell(): boolean;
-  /**
-   * Enables or disables display of time cells.
-   * @param showTimeCell `true` to show time column, `false` to hide
-   */
-  setShowTimeCell(showTimeCell: boolean): void;
-  /**
-   * Returns the height (in pixels) of each time cell.
-   */
-  getTimeCellHeight(): number | undefined;
-  /**
-   * Sets the height (in pixels) of each time cell.
-   * @param timeCellHeight A positive number (e.g., `40`)
-   */
-  setTimeCellHeight(timeCellHeight: number): void;
-  /**
-   * Returns the current time format used in the time column.
-   */
-  getTimeFormat(): string | undefined;
-  /**
-   * Sets the time format used for displaying time cells.
-   * @param timeFormat Format string from `HCalenderTimeFormat` enum
-   */
-  setTimeFormat(timeFormat: HCalenderTimeFormat): void;
-  /**
-   * Returns the start time of the time axis (in minutes).
-   */
-  getTimeFrom(): number | undefined;
-  /**
-   * Sets the start time of the time axis (in minutes).
-   * @param timeFrom A number between 0 and 1440 (e.g., `9 * 60` = 9:00 AM)
-   */
-  setTimeFrom(timeFrom: number): void;
-  /**
-   * Returns the time step between time cells (in minutes).
-   */
-  getTimeStep(): number | undefined;
-  /**
-   * Sets the time step interval for time cells.
-   * @param timeStep A number between 1 and 60 (e.g., `30` for half-hour blocks)
-   */
-  setTimeStep(timeStep: number): void;
-  /**
-   * Returns the end time of the time axis (in minutes).
-   */
-  getTimeTo(): number | undefined;
-  /**
-   * Sets the end time of the time axis (in minutes).
-   * @param timeTo A number between 0 and 1440 (e.g., `18 * 60` = 6:00 PM)
-   */
-  setTimeTo(timeTo: number): void;
-  /**
-   * Returns whether the title bar (month/year label & arrows) is hidden.
-   */
-  isHideTitleBar(): boolean;
-  /**
-   * Shows or hides the title bar at the top of the calendar.
-   * @param hideTitleBar `true` to hide, `false` to show
-   */
-  setHideTitleBar(hideTitleBar: boolean): void;
-  /**
-   * Returns whether the calendar is using 12-hour AM/PM format.
-   */
-  isTwelveHour(): boolean;
-  /**
-   * Enables or disables 12-hour format display.
-   * @param twelveHour `true` for AM/PM display, `false` for 24-hour
-   */
-  setTwelveHour(twelveHour: boolean): void;
-  /**
-   * Returns the currently active view mode.
-   * - One of `'day'`, `'week'`, `'month'`, `'year'`, `'years'`
-   */
-  getActiveView(): HCalenderView;
-  /**
-   * Changes the active calendar view.
-   * @param view New view mode from `HCalenderView` enum
-   */
-  setActiveView(view: HCalenderView): void;
-  /**
-   * Returns the list of views that are currently disabled.
-   */
-  getDisableViews(): HCalenderView[] | undefined;
-  /**
-   * Disables specific view modes to restrict user navigation.
-   * @param disableViews Array of view modes to disable
-   */
-  setDisableViews(disableViews: HCalenderView[]): void;
+  focus(): void
 }
 
 /**
- * Runtime control interface for the `HChart` component.
+ * Runtime control methods for `HLayout` component.
  *
- * This interface is returned by `hison.component.getChart(id)` and allows full programmatic control of the chart.
+ * This interface defines programmatic access to a layout's visibility,
+ * background, border, and layout styling. You can retrieve an instance
+ * using `hison.component.getLayout(id)`.
  *
  * ---
  *
- * ### 📊 Example Usage
+ * ### 🔧 Example Usage
  * ```ts
- * const chart = hison.component.getChart('salesChart')
- * if (chart) {
- *   chart.setVisible(true)
- *   chart.data.labels = ['Jan', 'Feb', 'Mar']
- *   chart.data.datasets[0].data = [10, 20, 30]
- *   chart.update()
- * }
+ * const layout = hison.component.getLayout('layout01');
+ * layout.setVisible(true);
+ * layout.setBackColor('primary');
+ * layout.setBackImageSrc('/assets/bg.jpg');
+ * layout.setHeight('300px');
  * ```
  *
  * ---
  *
- * ### ⚙️ Chart.js Integration
- * - `HChartInstance` extends [`Chart`](https://www.chartjs.org/docs/latest/api/chart) from Chart.js.
- * - This means **you can directly use all Chart.js instance methods**, such as:
- *   - `.update()`
- *   - `.resize()`
- *   - `.destroy()`
- *   - `.reset()`
- *   - `.render()`
- *   - `.stop()`
- *   - `.toBase64Image()`
- *   - `.getElementsAtEventForMode()`
- * - You also have full access to mutable properties like:
- *   - `chart.data`
- *   - `chart.options`
- *   - `chart.canvas`
- *   - `chart.config`
- *   - `chart.scales`, etc.
+ * ### ⚠️ Notes
+ * - All methods are reactive and immediately affect the DOM.
+ * - Background-related methods directly modify the `style` attribute of the layout.
+ */
+export interface HLayoutMethods extends ComponentMethods {
+  /**
+   * Returns the type of the layout.
+   */
+  getType(): 'layout'
+  /**
+   * Gets the current background image URL (`background-image`).
+   */
+  getBackImageSrc(): string;
+  /**
+   * Sets the background image URL.
+   * Applies to `background-image` via `url(...)`.
+   */
+  setBackImageSrc(src: string): void;
+  /**
+   * Gets the background repeat or scaling mode.
+   * Corresponds to `background-repeat` or `background-size`.
+   */
+  getBackImageRepeat(): string | BackImageAlignValue;
+  /**
+   * Sets the background repeat or scale style.
+   * Examples: `'no-repeat'`, `'repeat'`, `'cover'`, `'contain'`
+   */
+  setBackImageRepeat(cssText: string | BackImageAlign | BackImageAlignValue): void;
+  /**
+   * Gets the background image width setting (`background-size`).
+   * Examples: `'100%'`, `'300px'`
+   */
+  getBackImageWidth(): string;
+  /**
+   * Sets the background image width (`background-size`).
+   */
+  setBackImageWidth(cssText: string): void;
+  /**
+   * Gets the horizontal alignment of the background image.
+   * Values: `'left'`, `'center'`, `'right'`
+   */
+  getBackImageAlign(): string | BackImageAlignValue;
+  /**
+   * Sets the horizontal alignment of the background image.
+   */
+  setBackImageAlign(cssText: BackImageAlign | BackImageAlignValue): void;
+  /**
+   * Gets the vertical alignment of the background image.
+   * Values: `'top'`, `'center'`, `'bottom'`
+   */
+  getBackImageVerticalAlign(): string | BackImageVerticalAlignValue;
+  /**
+   * Sets the vertical alignment of the background image.
+   */
+  setBackImageVerticalAlign(cssText: BackImageVerticalAlign | BackImageVerticalAlignValue): void;
+  /**
+   * Gets the background color of the layout.
+   * May be a hex color, rgba string, or keyword (e.g. `'primary'`).
+   */
+  getBackColor(): string;
+  /**
+   * Sets the background color.
+   * Accepts hex, rgba, or `hison` keyword values (`'primary'`, `'danger'`, etc.).
+   */
+  setBackColor(cssText: string): void;
+  /**
+   * Returns whether the label shows border (box-shadow).
+   */
+  isBorder(): boolean
+  /**
+   * Sets whether border (box-shadow) is shown.
+   * @param border - `true` to show, `false` to hide.
+   */
+  setBorder(border: boolean): void
+  /**
+   * Gets the current height of the layout container.
+   * Examples: `'100px'`, `'50%'`, `'auto'`, `'100vh'`
+   */
+  getHeight(): string;
+  /**
+   * Sets the height of the layout container.
+   */
+  setHeight(cssText: string): void;
+}
+
+/**
+ * Runtime control methods for `HList` component.
+ *
+ * This interface defines methods that can be accessed via `hison.component.getList(id)`.
+ * Use these methods to manipulate list state, appearance, and items programmatically at runtime.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const list = hison.component.getList('list1');
+ * list.setVisible(true);
+ * list.setListType('ol');
+ * list.setShowMarker(true);
+ * list.setBulletChar('★');
+ * list.setTextList(['Alpha', 'Beta', 'Gamma']);
+ * list.setTabIndex(0); // make items focusable
+ * list.focus(); // focuses the first item
+ * ```
  *
  * ---
  *
  * ### ⚠️ Notes
- * - `getChartInstance()` is no longer needed; the entire Chart instance is exposed directly.
- * - `setData()` and `setOptions()` helpers are unnecessary—just mutate `data` or `options` and call `.update()`.
+ * - **Slots vs textList**:
+ *   - If the default slot contains element vnodes, items render directly from the slot ➜ `getTextList/setTextList` do not affect them.
+ *   - If slot is absent or text-only, items are driven by `textList`.
+ * - **Keyboard navigation**:
+ *   - `tabIndex` applies to all `<li>` items. When set (e.g., `0`), items become focusable and respond to keyboard `Enter` / `Space` as click.
+ * - **Event model**:
+ *   - When `addEvent = true`, items attach textbox-like CSS states and emit `click/mousedown/mouseup/mouseover/mouseout`.
+ *   - Events are `.stop`-scoped internally to avoid propagating into consumer code unexpectedly.
+ * - All changes are reactive and reflected immediately in the DOM.
  */
-export interface HChartInstance extends ComponentMethods, Chart {
+export interface HListMethods extends ComponentMethods {
   /**
-   * Returns the type identifier.
-   * Always returns `'chart'`.
+   * Returns the type of the component.
    */
-  getType(): 'chart';
+  getType(): 'list'
   /**
-   * Get the current reload delay (ms) used for re-creating the chart after unmount.
-   *
-   * @returns {number} The delay in milliseconds.
-   *
-   * @example
-   * const chart = hison.component.getChart('chart1');
-   * const delay = chart.getLoadDelay();
-   * console.log('Current delay:', delay);
+   * Returns whether the list is visible.
+   * - `true`: rendered normally.
+   * - `false`: hidden via `hison-display-none` on wrapper.
    */
-  getLoadDelay(): number;
+  isVisible(): boolean
   /**
-   * Set the reload delay (ms) to wait before re-creating the chart after unmount.
-   * Useful for adjusting the debounce period for rapid reloads.
-   *
-   * @param {number} ms - The delay in milliseconds to use for subsequent reloads.
-   *
-   * @example
-   * const chart = hison.component.getChart('chart1');
-   * chart.setLoadDelay(1000); // Sets delay to 1 second for reloads
+   * Sets list visibility.
+   * @param visible - `true` to show, `false` to hide.
    */
-  setLoadDelay(ms: number): void;
+  setVisible(visible: boolean): void
+  /**
+   * Gets the current list tag type.
+   * - `'ul'` → unordered list.
+   * - `'ol'` → ordered list.
+   */
+  getListType(): 'ul' | 'ol'
+  /**
+   * Sets the list tag type.
+   * - Switches rendering between `<ul>` and `<ol>`.
+   */
+  setListType(type: 'ul' | 'ol'): void
+  /**
+   * Returns whether markers are shown.
+   * - `true`: show bullet or number depending on listType.
+   * - `false`: hide all markers.
+   */
+  isShowMarker(): boolean
+  /**
+   * Toggles marker visibility.
+   */
+  setShowMarker(v: boolean): void
+  /**
+   * Gets the current bullet character (for `ul` type).
+   */
+  getBulletChar(): string
+  /**
+   * Sets the bullet character (used only for `ul` when `showMarker=true`).
+   */
+  setBulletChar(ch: string): void
+  /**
+   * Returns whether the outer list container shows border (box-shadow).
+   */
+  isBorder(): boolean
+  /**
+   * Sets border state for the outer list container.
+   */
+  setBorder(v: boolean): void
+  /**
+   * Returns whether each list item (`li`) shows border (box-shadow).
+   */
+  isListBorder(): boolean
+  /**
+   * Sets border state for each list item (`li`).
+   */
+  setListBorder(v: boolean): void
+  /**
+   * Gets background type of the list container.
+   * - One of 'filled' | 'empty' | 'transparent'.
+   */
+  getBackgroundType(): BackgroundTypeValue
+  /**
+   * Sets background type of the list container.
+   */
+  setBackgroundType(t: BackgroundTypeValue): void
+  /**
+   * Gets background type of each list item (`li`).
+   * - One of 'filled' | 'empty' | 'transparent'.
+   */
+  getListBackgroundType(): BackgroundTypeValue
+  /**
+   * Sets background type of each list item (`li`).
+   */
+  setListBackgroundType(t: BackgroundTypeValue): void
+  /**
+   * Gets the current text list (shallow-copied).
+   * - Effective only when items are driven by `textList` (not slot elements).
+   */
+  getTextList(): Array<string | number>
+  /**
+   * Replaces the text list (for data-driven rendering).
+   * - No effect if slot elements are provided.
+   */
+  setTextList(list: Array<string | number>): void
+  /**
+   * Returns whether textbox-like CSS event binding is active.
+   * - `true`: list items emit events & apply interactive CSS states.
+   * - `false`: static rendering only.
+   */
+  isAddEvent(): boolean
+  /**
+   * Enables or disables textbox-like CSS event binding on list items.
+   */
+  setAddEvent(v: boolean): void
+  /**
+   * Gets the current `tabIndex` applied to each list item.
+   * - `null`: no `tabindex` attribute (items not focusable).
+   * - `0` or positive number: items can be focused via keyboard navigation.
+   */
+  getTabIndex(): number | null
+  /**
+   * Sets `tabIndex` for each list item.
+   * @param v - `null` to remove, or number to make focusable.
+   */
+  setTabIndex(v: number | null): void
+  /**
+   * Returns the total number of list items (`<li>` elements).
+   */
+  getListRowCount(): number
+  /**
+   * Returns the raw `<li>` element at the given index (0-based).
+   * - Returns `null` if index is out of bounds.
+   */
+  getListItem(index: number): HTMLElement | null
+  /**
+   * Focuses the list item at `index` (0-based).
+   * - Works only when `addEvent` is enabled AND `tabIndex` is neither `null/undefined` nor `-1`.
+   * - If `index` is out of bounds or conditions are not met, it's a no-op.
+   */
+  focus(index?: number): void
+}
+
+/**
+ * Runtime control methods for `HModal` component.
+ *
+ * This interface defines programmatic access to a modal’s visibility,
+ * header/footer sections, caption, close button, overlay, scroll lock,
+ * styling, and animation settings. You can retrieve an instance
+ * using `hison.component.getModal(id)`.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const modal = hison.component.getModal('modal01');
+ * modal.open();
+ * modal.setCaption('Hello world');
+ * modal.setPosition('top-right');
+ * modal.setZIndex(2000);
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - Visibility (`visible`) is **only** controlled by these methods. The `visible` prop is an initial state.
+ * - `scrollLock` is reference-counted across multiple modals; closing one does not unlock if others are still open.
+ * - `zIndex` applies to the wrapper; the overlay is always rendered at `zIndex - 1`.
+ */
+export interface HModalMethods extends ComponentMethods {
+  /**
+   * Returns the type of the component.
+   * Always `'modal'`.
+   */
+  getType(): 'modal'
+  /**
+   * Returns whether the modal is currently visible.
+   */
+  isVisible(): boolean
+  /**
+   * Opens the modal (with animation and scroll lock).
+   */
+  open(): void | Promise<void>
+  /**
+   * Closes the modal (with animation and scroll unlock).
+   */
+  close(): void | Promise<void>
+  /**
+   * Toggles modal open/close state.
+   */
+  toggle(): void | Promise<void>
+  /**
+   * Sets modal visibility.
+   * @param v `true` → open, `false` → close
+   */
+  setVisible(v: boolean): void | Promise<void>
+  /**
+   * Gets the current z-index of the modal wrapper.
+   */
+  getZIndex(): number
+  /**
+   * Sets the z-index of the modal wrapper (overlay will use `zIndex - 1`).
+   */
+  setZIndex(v: number): void
+  /**
+   * Gets the current fixed screen position of the modal wrapper.
+   */
+  getPosition(): ScreenPositionValue
+  /**
+   * Sets the modal wrapper position on screen.
+   * Accepts any `ScreenPosition` value (e.g. `'top-left'`, `'middle-center'`).
+   */
+  setPosition(v: ScreenPosition | ScreenPositionValue): void
+  /**
+   * Returns whether the header section is visible.
+   */
+  isHeaderVisible(): boolean
+  /**
+   * Sets whether the header section is visible.
+   */
+  setHeaderVisible(v: boolean): void
+  /**
+   * Returns whether the footer section is visible.
+   */
+  isFooterVisible(): boolean
+  /**
+   * Sets whether the footer section is visible.
+   */
+  setFooterVisible(v: boolean): void
+  /**
+   * Gets the current caption text (empty string if none).
+   */
+  getCaption(): string
+  /**
+   * Sets the caption text (null or empty hides caption).
+   */
+  setCaption(text: string | null): void
+  /**
+   * Returns whether the caption has border styling.
+   */
+  isCaptionBorder(): boolean
+  /**
+   * Sets whether the caption shows border styling.
+   */
+  setCaptionBorder(v: boolean): void
+  /**
+   * Gets the background type of the caption.
+   */
+  getCaptionBackgroundType(): BackgroundTypeValue
+  /**
+   * Sets the background type of the caption.
+   */
+  setCaptionBackgroundType(t: BackgroundType | BackgroundTypeValue): void
+  /**
+   * Gets the caption placement (header/footer + side).
+   */
+  getCaptionPlacement(): ModalPlacementValue
+  /**
+   * Sets the caption placement (header/footer + side).
+   */
+  setCaptionPlacement(p: ModalPlacement | ModalPlacementValue): void
+  /**
+   * Returns whether the close button is visible.
+   */
+  isCloseButtonVisible(): boolean
+  /**
+   * Sets whether the close button is visible.
+   */
+  setCloseButtonVisible(v: boolean): void
+  /**
+   * Returns whether the close button has border styling.
+   */
+  isCloseButtonBorder(): boolean
+  /**
+   * Sets whether the close button shows border styling.
+   */
+  setCloseButtonBorder(v: boolean): void
+  /**
+   * Gets the background type of the close button.
+   */
+  getCloseButtonBackgroundType(): BackgroundTypeValue
+  /**
+   * Sets the background type of the close button.
+   */
+  setCloseButtonBackgroundType(t: BackgroundType | BackgroundTypeValue): void
+  /**
+   * Gets the close button placement (header/footer + side).
+   */
+  getButtonPlacement(): ModalPlacementValue
+  /**
+   * Sets the close button placement (header/footer + side).
+   */
+  setButtonPlacement(p: ModalPlacement | ModalPlacementValue): void
+  /**
+   * Returns whether clicking the overlay closes the modal.
+   */
+  isCloseClickOverlay(): boolean
+  /**
+   * Sets whether clicking the overlay closes the modal.
+   */
+  setCloseClickOverlay(v: boolean): void
+  /**
+   * Returns whether the overlay (backdrop) is shown.
+   */
+  isOverlayShown(): boolean
+  /**
+   * Sets whether the overlay (backdrop) is shown.
+   */
+  setOverlayShown(v: boolean): void
+  /**
+   * Returns whether scroll lock is enabled for this modal.
+   */
+  isScrollLocked(): boolean
+  /**
+   * Enables or disables scroll lock.
+   * If enabled while visible, locks immediately.
+   * If disabled while visible, unlocks immediately.
+   */
+  setScrollLock(v: boolean): void
+  /**
+   * Returns whether the modal has border styling.
+   */
+  isBorder(): boolean
+  /**
+   * Sets whether the modal shows border styling.
+   */
+  setBorder(v: boolean): void
+  /**
+   * Gets the background type of the modal.
+   */
+  getBackgroundType(): BackgroundTypeValue
+  /**
+   * Sets the background type of the modal.
+   */
+  setBackgroundType(t: BackgroundType | BackgroundTypeValue): void
+  /**
+   * Gets the CSS class names for enter/leave animations.
+   */
+  getAnimationClasses(): { enter: string, leave: string }
+  /**
+   * Sets one or both CSS animation classes for modal enter/leave.
+   * Example: `{ enter: 'fade-in', leave: 'fade-out' }`
+   */
+  setAnimationClasses(opt: Partial<{ enter: string, leave: string }>): void
+}
+
+/**
+ * Represents a single editable Vanillanote instance within the DOM.
+ *
+ * - Each Vanillanote editor on the page is mounted into a `VanillanoteElement`,
+ *   which extends `HTMLDivElement` and adds additional internal properties and methods.
+ * - All editors are dynamically generated based on a `<div data-vanillanote>` element.
+ * - Editors are automatically assigned a unique `_id`, based on creation order or a custom `data-id`.
+ * - Each `VanillanoteElement` manages its own selection state, styling, events, attachment data, and DOM references.
+ *
+ * ### Key Features:
+ * - Manages internal selections, styles, file attachments, and UI states independently per editor.
+ * - Provides API methods like `getNoteData()` to export editor content and `setNoteData()` to restore editor state.
+ * - Supports rich text editing features including text styling, file/image/video attachment, undo/redo history, placeholders, and more.
+ * - Integrates before/after event hooks to customize interaction behaviors.
+ *
+ * ### Internal Structure:
+ * - `_selection`: Tracks selection state like current selection range, start/end nodes, and drag selections.
+ * - `_attributes`: Stores editor behavior settings like device mode, language, and size constraints.
+ * - `_status`: Stores current toggled states (e.g., bold active, selected color).
+ * - `_elements`: References to important DOM elements (textarea, toolbar buttons, modals, etc.).
+ * - `_cssEvents`: Low-level event handlers (click, touch) for custom interaction logic.
+ * - `_elementEvents`: High-level hooks for specific UI elements.
+ * - `_attFiles`, `_attImages`: Manage attached files/images.
+ * - `_recodes`: Manage undo/redo history for editing actions.
+ *
+ * ### Usage Example:
+ * ```ts
+ * const note = Vanillanote.getNote('my-editor-id');
+ * const data = note.getNoteData();
+ *
+ * console.log(data.html); // Editor HTML content
+ * editor.setNoteData(data); // Restore content
+ * ```
+ *
+ * @remarks
+ * - `VanillanoteElement` is automatically created when calling `vn.mountNote()`.
+ * - It should not be manually instantiated by developers.
+ * - Each `VanillanoteElement` belongs to a shared singleton `Vanillanote` object.
+ * - Supports multiple editors per page.
+ *
+ * @see Vanillanote
+ * @see getNoteData
+ * @see setNoteData
+ */
+export interface HNoteElement extends ComponentMethods, VanillanoteElement {
+  /**
+   * Returns the type of the note.
+   */
+  getType(): 'note'
+  /**
+   * Gets whether the note is currently required.
+   * - If `true`, the note will show a visual required style.
+   */
+  getRequired(): boolean;
+  /**
+   * Sets the required state of the note.
+   */
+  setRequired(required: boolean): void;
+  /**
+   * Gets the current edit mode.
+   * - Possible values: `'editable'`, `'readonly'`, `'disable'`
+   */
+  getEditMode(): EditModeValue;
+  /**
+   * Sets the edit mode of the note.
+   * - `'readonly'` and `'disable'` both prevent editing but differ in style.
+   */
+  setEditMode(mode: EditMode | EditModeValue): void;
+  /**
+   * Returns whether any note inside the group has been modified by user interaction.
+   * 
+   * @returns `true` if at least one note is marked as modified.
+   */
+  isModified(): boolean;
+  /**
+   * Resets the modification status of all notes in the group.
+   * 
+   * Typically called after saving or loading new data.
+   */
+  initModified(): void;
+  /**
+   * Gets the current `tabIndex` applied to element.
+   * - `null`: no `tabindex` attribute (items not focusable).
+   * - `0` or positive number: items can be focused via keyboard navigation.
+   */
+  getTabIndex(): number | null
+  /**
+   * Sets `tabIndex` for element.
+   * @param v - `null` to remove, or number to make focusable.
+   */
+  setTabIndex(v: number | null): void
+  /**
+   * Focus on the note.
+   */
+  focus(): void;
+  /**
+   * Converts the current editor content into a `DataModel` instance.
+   *
+   * - Returns a new `DataModel` where each property of `NoteData` (like `html`, `links`, `files`, etc.)
+   *   becomes a column, and a single row represents the editor state.
+   *
+   * @returns A `DataModel<NoteData>` containing the editor's current data.
+   */
+  getDataModel(): InterfaceDataModel<NoteData>;
+  /**
+   * Populates the editor using a `DataModel` instance.
+   *
+   * - Extracts values from the first row of the `DataModel`, if available.
+   * - Uses the values from columns like `html`, `plainText`, `links`, etc. to restore editor content.
+   *
+   * @param dataModel A `DataModel` whose first row maps to `NoteData` structure.
+   */
+  setDataModel<T extends NoteData>(dataModel: InterfaceDataModel<T>): void;
+  /**
+   * Loads editor content from either a `NoteData` object or a compatible `DataModel`.
+   *
+   * - Accepts plain `NoteData`, raw object, or `DataModel`.
+   * - Automatically determines how to process the input and restores the editor accordingly.
+   *
+   * @param data Editor content to load, in `NoteData` or `DataModel` form.
+   */
+  load<T extends NoteData>(data: NoteData | Record<string, any> | InterfaceDataModel<T>): void;
+}
+
+/**
+ * Runtime control methods for `HParagraph` component.
+ *
+ * This interface exposes programmatic access to a paragraph’s visibility, text,
+ * typography toggles, alignment, background/border, whitespace policy, and the
+ * built-in copy behavior. You can retrieve an instance via
+ * `hison.component.getParagraph(id)`.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const p = hison.component.getParagraph('p1');
+ * p.setText('Line 1\n  Line 2\nLine 3');
+ * p.setWhiteSpace('pre-wrap');         // preserve newlines + sequences of spaces
+ * p.setFontBold(true);
+ * p.setTextAlign('right');
+ * p.setCopyEnabled(true);
+ * p.setShowCopyButton(true);
+ * await p.copy();                      // copy rendered text to clipboard
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - All methods are reactive and immediately affect the DOM.
+ * - `getText()`/`setText()` control the internal text **only when there is no
+ *   element content in the default slot**. If the default slot contains any
+ *   elements, `getText()` returns `''` and `setText()` is a no-op.
+ * - `setWhiteSpace(null)` uses the component default (currently `'pre-wrap'`).
+ * - `copy()` copies the **rendered** text (mirrors what a user would select),
+ *   respecting the current whitespace policy.
+ */
+export interface HParagraphMethods extends ComponentMethods {
+  /**
+   * Returns the component type identifier.
+   */
+  getType(): 'paragraph'
+  /**
+   * Returns whether the paragraph is currently visible.
+   */
+  isVisible(): boolean
+  /**
+   * Shows or hides the paragraph.
+   */
+  setVisible(visible: boolean): void
+  /**
+   * Gets the current tooltip text (`title` attribute).
+   */
+  getTitle(): string
+  /**
+   * Sets the tooltip text (`title` attribute).
+   */
+  setTitle(title: string): void
+  /**
+   * Gets the internal text value.
+   * - Returns `''` when the default slot contains elements (non-text).
+   */
+  getText(): string
+  /**
+   * Sets the internal text value.
+   * - Ignored when the default slot contains elements (non-text).
+   */
+  setText(text: string): void
+  /**
+   * Gets the horizontal text alignment.
+   * - One of `'left' | 'center' | 'right'`.
+   */
+  getTextAlign(): TextAlignValue
+  /**
+   * Sets the horizontal text alignment.
+   * - Accepts enum `TextAlign` or a string literal.
+   */
+  setTextAlign(textAlign: TextAlign | TextAlignValue): void
+  /**
+   * Gets the vertical alignment mode.
+   * - One of `'top' | 'middle' | 'bottom'` (applies when container has height).
+   */
+  getVerticalAlign(): 'top' | 'middle' | 'bottom'
+  /**
+   * Sets the vertical alignment mode.
+   */
+  setVerticalAlign(align: 'top' | 'middle' | 'bottom'): void
+  /**
+   * Returns whether bold style is enabled.
+   */
+  isFontBold(): boolean
+  /**
+   * Toggles bold style.
+   */
+  setFontBold(bold: boolean): void
+  /**
+   * Returns whether italic style is enabled.
+   */
+  isFontItalic(): boolean
+  /**
+   * Toggles italic style.
+   */
+  setFontItalic(italic: boolean): void
+  /**
+   * Returns whether strikethrough is enabled.
+   */
+  isFontThruline(): boolean
+  /**
+   * Toggles strikethrough.
+   */
+  setFontThruline(thruline: boolean): void
+  /**
+   * Returns whether underline is enabled.
+   */
+  isFontUnderline(): boolean
+  /**
+   * Toggles underline.
+   */
+  setFontUnderline(underline: boolean): void
+  /**
+   * Returns whether the border (subtle box shadow) is shown.
+   */
+  isBorder(): boolean
+  /**
+   * Shows or hides the border (subtle box shadow).
+   */
+  setBorder(border: boolean): void
+  /**
+   * Gets the current background type.
+   * - `'filled' | 'empty' | 'transparent'`
+   */
+  getBackgroundType(): BackgroundTypeValue
+  /**
+   * Sets the background type.
+   */
+  setBackgroundType(type: BackgroundType | BackgroundTypeValue): void
+  /**
+   * Gets the current CSS `white-space` policy, or `null` for component default.
+   * - `'normal' | 'pre' | 'pre-wrap' | 'pre-line' | 'break-spaces' | null`
+   */
+  getWhiteSpace(): 'normal' | 'pre' | 'pre-wrap' | 'pre-line' | 'break-spaces' | null
+  /**
+   * Sets the CSS `white-space` policy.
+   * - Pass `null` to use the component default (currently `'pre-wrap'`).
+   */
+  setWhiteSpace(ws: 'normal' | 'pre' | 'pre-wrap' | 'pre-line' | 'break-spaces' | null): void
+  /**
+   * Gets the text shown on the built-in copy button.
+   */
+  getCopyButtonText(): string
+  /**
+   * Sets the text shown on the built-in copy button.
+   */
+  setCopyButtonText(buttonText: string): void
+  /**
+   * Returns whether copy actions are enabled (Ctrl/Cmd+C and copy button).
+   */
+  isCopyEnabled(): boolean
+  /**
+   * Enables or disables copy actions.
+   */
+  setCopyEnabled(copyEnabled: boolean): void
+  /**
+   * Returns whether the built-in copy button is visible.
+   */
+  isShowCopyButton(): boolean
+  /**
+   * Shows or hides the built-in copy button.
+   */
+  setShowCopyButton(v: boolean): void
+  /**
+   * Copies the rendered text content to the clipboard.
+   * - Resolves to `true` on success, `false` if copying is blocked or fails.
+   */
+  copy(): Promise<boolean>
+}
+
+/**
+ * Runtime control methods for `HPopup` component.
+ *
+ * This interface defines programmatic access to a popup’s visibility,
+ * positioning, size, draggability, overlay, scroll lock, border, and animation settings.
+ * You can retrieve an instance using `hison.component.getPopup(id)`.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const popup = hison.component.getPopup('popup01');
+ * popup.open();
+ * popup.setDraggable(false);
+ * popup.setPopupPosition('top-right');
+ * popup.setZIndex(1300);
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - Visibility (`visible`) is **only** controlled by these methods. The `visible` prop is an initial state.
+ * - `scrollLock` is reference-counted across multiple popups; closing one does not unlock if others are still open.
+ * - `zIndex` applies to the wrapper; the overlay is always rendered at `zIndex - 1`.
+ * - Dragging is enabled/disabled via `isDraggable` / `setDraggable`.
+ */
+export interface HPopupMethods extends ComponentMethods {
+  /**
+   * Returns the type of the component.
+   * Always `'popup'`.
+   */
+  getType(): 'popup'
+  /**
+   * Returns whether the popup is currently visible.
+   */
+  isVisible(): boolean
+  /**
+   * Opens the popup (with animation and scroll lock).
+   */
+  open(): void | Promise<void>
+  /**
+   * Closes the popup (with animation and scroll unlock).
+   */
+  close(): void | Promise<void>
+  /**
+   * Toggles popup open/close state.
+   */
+  toggle(): void | Promise<void>
+  /**
+   * Sets popup visibility.
+   * @param v `true` → open, `false` → close
+   */
+  setVisible(v: boolean): void | Promise<void>
+  /**
+   * Gets the current z-index of the popup wrapper.
+   */
+  getZIndex(): number
+  /**
+   * Sets the z-index of the popup wrapper (overlay will use `zIndex - 1`).
+   */
+  setZIndex(v: number): void
+  /**
+   * Gets the current fixed screen position of the popup wrapper.
+   */
+  getPosition(): ScreenPositionValue
+  /**
+   * Sets the popup wrapper position on screen.
+   * Accepts any `ScreenPosition` value (e.g. `'top-left'`, `'middle-center'`).
+   */
+  setPosition(v: ScreenPosition | ScreenPositionValue): void
+  /**
+   * Gets the current absolute left (X) position in pixels.
+   * Returns `null` if not in absolute mode.
+   */
+  getLeft(): number | null
+  /**
+   * Sets the absolute left (X) position in pixels.
+   * Setting this switches the popup into absolute mode.
+   */
+  setLeft(v: number | null): void
+  /**
+   * Gets the current absolute top (Y) position in pixels.
+   * Returns `null` if not in absolute mode.
+   */
+  getTop(): number | null
+  /**
+   * Sets the absolute top (Y) position in pixels.
+   * Setting this switches the popup into absolute mode.
+   */
+  setTop(v: number | null): void
+  /**
+   * Gets the current width of the popup in pixels.
+   * Returns `null` if not explicitly set.
+   */
+  getWidth(): number | null
+  /**
+   * Sets the width of the popup in pixels.
+   */
+  setWidth(v: number | null): void
+  /**
+   * Gets the current height of the popup in pixels.
+   * Returns `null` if not explicitly set.
+   */
+  getHeight(): number | null
+  /**
+   * Sets the height of the popup in pixels.
+   */
+  setHeight(v: number | null): void
+  /**
+   * Returns whether dragging by the topbar is enabled.
+   */
+  isDraggable(): boolean
+  /**
+   * Enables or disables dragging by the topbar.
+   * @param v `true` → allow dragging, `false` → disable dragging
+   */
+  setDraggable(v: boolean): void
+  /**
+   * Returns whether the overlay (backdrop) is shown.
+   */
+  isOverlayShown(): boolean
+  /**
+   * Sets whether the overlay (backdrop) is shown.
+   */
+  setOverlayShown(v: boolean): void
+  /**
+   * Returns whether clicking the overlay closes the popup.
+   */
+  isCloseClickOverlay(): boolean
+  /**
+   * Sets whether clicking the overlay closes the popup.
+   */
+  setCloseClickOverlay(v: boolean): void
+  /**
+   * Returns whether scroll lock is enabled for this popup.
+   */
+  isScrollLocked(): boolean
+  /**
+   * Enables or disables scroll lock.
+   * If enabled while visible, locks immediately.
+   * If disabled while visible, unlocks immediately.
+   */
+  setScrollLock(v: boolean): void
+  /**
+   * Returns whether the popup has border styling.
+   */
+  isBorder(): boolean
+  /**
+   * Sets whether the popup shows border styling.
+   */
+  setBorder(v: boolean): void
+  /**
+   * Gets the CSS class names for enter/leave animations.
+   */
+  getAnimationClasses(): { enter: string, leave: string }
+  /**
+   * Sets one or both CSS animation classes for popup enter/leave.
+   * Example: `{ enter: 'fade-in', leave: 'fade-out' }`
+   */
+  setAnimationClasses(opt: Partial<{ enter: string, leave: string }>): void
+}
+
+/**
+ * Runtime control methods for `HSpinner` component.
+ *
+ * This interface defines programmatic access to a spinner’s visibility,
+ * position, z-index, timeout auto-hide, spinner type, and overlay style.
+ * You can retrieve an instance using `hison.component.getSpinner(id)`.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const spinner = hison.component.getSpinner('spinner01');
+ * spinner.open();
+ * spinner.setSpinnerType('dots');
+ * spinner.setPosition('bottom-right');
+ * spinner.setTimeout(5000);
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - Visibility (`visible`) is **only** controlled by these methods. The `visible` prop is an initial state.
+ * - Overlay and scroll lock are always enforced while the spinner is open (cannot be disabled).
+ * - `zIndex` applies to the wrapper; the overlay is always rendered at `zIndex - 1`.
+ * - When a custom `#spinner` slot is provided, `spinnerType` is ignored.
+ */
+export interface HSpinnerMethods extends ComponentMethods {
+  /**
+   * Returns the type of the component.
+   * Always `'spinner'`.
+   */
+  getType(): 'spinner'
+  /**
+   * Returns whether the spinner is currently visible.
+   */
+  isVisible(): boolean
+  /**
+   * Opens the spinner (with enforced overlay and scroll lock).
+   */
+  open(): void | Promise<void>
+  /**
+   * Closes the spinner (removes overlay and releases scroll lock).
+   */
+  close(): void | Promise<void>
+  /**
+   * Toggles spinner open/close state.
+   */
+  toggle(): void | Promise<void>
+  /**
+   * Sets spinner visibility.
+   * @param v `true` → open, `false` → close
+   */
+  setVisible(v: boolean): void | Promise<void>
+  /**
+   * Gets the current z-index of the spinner wrapper.
+   */
+  getZIndex(): number
+  /**
+   * Sets the z-index of the spinner wrapper (overlay will use `zIndex - 1`).
+   */
+  setZIndex(v: number): void
+  /**
+   * Gets the current fixed screen position of the spinner wrapper.
+   */
+  getPosition(): ScreenPositionValue
+  /**
+   * Sets the spinner wrapper position on screen.
+   * Accepts any `ScreenPosition` value (e.g. `'top-left'`, `'middle-center'`).
+   */
+  setPosition(v: ScreenPosition | ScreenPositionValue): void
+  /**
+   * Gets the current timeout in milliseconds.
+   * `0` means no auto-hide.
+   */
+  getTimeout(): number
+  /**
+   * Sets the auto-hide timeout in milliseconds.
+   * `0` disables timeout (spinner stays open until closed programmatically).
+   */
+  setTimeout(ms: number): void
+  /**
+   * Gets the current built-in spinner type.
+   * One of `'ring' | 'dots' | 'bars' | 'pulse'`.
+   */
+  getSpinnerType(): SpinnerTypeValue
+  /**
+   * Sets the spinner type.
+   * One of `'ring' | 'dots' | 'bars' | 'pulse'`.
+   * Ignored when using a custom `#spinner` slot.
+   */
+  setSpinnerType(t: SpinnerType | SpinnerTypeValue): void
+  /**
+   * Gets the current overlay style object/string/array.
+   */
+  getOverlayStyle(): any
+  /**
+   * Sets the overlay style.
+   * Merged with an internal `{ zIndex: (zIndex - 1) }`.
+   */
+  setOverlayStyle(s: any): void
+  /**
+   * Reloads the spinner instance (re-registers in `hisonCloser`).
+   */
+  reload(): void
+}
+
+/**
+ * Runtime control methods for `HTable` component.
+ *
+ * This interface exposes programmatic access to a table’s visibility, borders,
+ * striping/hover modes, caption, section-level alignment (text/vertical), and
+ * raw DOM section elements. You can retrieve an instance via
+ * `hison.component.getTable(id)`.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const t = hison.component.getTable('tbl1');
+ * 
+ * // Visibility and borders
+ * t.setVisible(true);
+ * t.setBorder(true);
+ * t.setHeaderBorderBottom(true);
+ *
+ * // Caption and background
+ * t.setCaption('Monthly Report');
+ * t.setBackgroundType('filled');
+ *
+ * // Striping and hover highlight
+ * t.setStriped('row');
+ * t.setHoverable('col');
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - All methods are reactive and immediately affect the DOM.
+ * - Border toggles are section-specific (`header`, `body`, `footer`) and apply
+ *   per side (`top`, `bottom`, `left`, `right`).
+ * - Text and vertical alignment are applied at the section level and affect all
+ *   contained cells.
+ * - `getRowElement(index)` uses **0-based indexing** and returns `null` if
+ *   out of range.
+ * - Use slots (`#caption`, `#thead`, default, `#tfoot`) for full markup
+ *   customization; `setCaption()` only affects plain text captions.
+ */
+export interface HTableMethods extends ComponentMethods {
+  /**
+   * Returns the component type identifier.
+   */
+  getType(): 'table'
+  /**
+   * Returns whether the table is currently visible.
+   * - `true`: rendered normally
+   * - `false`: wrapper has `hison-display-none`
+   */
+  isVisible(): boolean
+  /**
+   * Shows or hides the table.
+   */
+  setVisible(visible: boolean): void
+  /**
+   * Returns whether the border (subtle box shadow) is shown.
+   */
+  isBorder(): boolean
+  /**
+   * Shows or hides the border (subtle box shadow).
+   */
+  setBorder(v: boolean): void
+  /**
+   * Returns whether the header top border is shown.
+   */
+  isHeaderBorderTop(): boolean
+  /**
+   * Shows or hides the header top border.
+   */
+  setHeaderBorderTop(v: boolean): void
+  /**
+   * Returns whether the header bottom border is shown.
+   */
+  isHeaderBorderBottom(): boolean
+  /**
+   * Shows or hides the header bottom border.
+   */
+  setHeaderBorderBottom(v: boolean): void
+  /**
+   * Returns whether the header left border is shown.
+   */
+  isHeaderBorderLeft(): boolean
+  /**
+   * Shows or hides the header left border.
+   */
+  setHeaderBorderLeft(v: boolean): void
+  /**
+   * Returns whether the header right border is shown.
+   */
+  isHeaderBorderRight(): boolean
+  /**
+   * Shows or hides the header right border.
+   */
+  setHeaderBorderRight(v: boolean): void
+  /**
+   * Returns whether the body top border is shown.
+   */
+  isBodyBorderTop(): boolean
+  /**
+   * Shows or hides the body top border.
+   */
+  setBodyBorderTop(v: boolean): void
+  /**
+   * Returns whether the body bottom border is shown.
+   */
+  isBodyBorderBottom(): boolean
+  /**
+   * Shows or hides the body bottom border.
+   */
+  setBodyBorderBottom(v: boolean): void
+  /**
+   * Returns whether the body left border is shown.
+   */
+  isBodyBorderLeft(): boolean
+  /**
+   * Shows or hides the body left border.
+   */
+  setBodyBorderLeft(v: boolean): void
+  /**
+   * Returns whether the body right border is shown.
+   */
+  isBodyBorderRight(): boolean
+  /**
+   * Shows or hides the body right border.
+   */
+  setBodyBorderRight(v: boolean): void
+  /**
+   * Returns whether the footer top border is shown.
+   */
+  isFooterBorderTop(): boolean
+  /**
+   * Shows or hides the footer top border.
+   */
+  setFooterBorderTop(v: boolean): void
+  /**
+   * Returns whether the footer bottom border is shown.
+   */
+  isFooterBorderBottom(): boolean
+  /**
+   * Shows or hides the footer bottom border.
+   */
+  setFooterBorderBottom(v: boolean): void
+  /**
+   * Returns whether the footer left border is shown.
+   */
+  isFooterBorderLeft(): boolean
+  /**
+   * Shows or hides the footer left border.
+   */
+  setFooterBorderLeft(v: boolean): void
+  /**
+   * Returns whether the footer right border is shown.
+   */
+  isFooterBorderRight(): boolean
+  /**
+   * Shows or hides the footer right border.
+   */
+  setFooterBorderRight(v: boolean): void
+  /**
+   * Gets the current striping mode.
+   * - `'row' | 'col' | 'none'`
+   */
+  getStriped(): 'row' | 'col' | 'none'
+  /**
+   * Sets the striping mode.
+   */
+  setStriped(v: 'row' | 'col' | 'none'): void
+  /**
+   * Gets the current hover highlight mode.
+   * - `'row' | 'col' | 'none'`
+   */
+  getHoverable(): 'row' | 'col' | 'none'
+  /**
+   * Sets the hover highlight mode.
+   */
+  setHoverable(v: 'row' | 'col' | 'none'): void
+  /**
+   * Gets the caption text (use `#caption` slot for custom content).
+   */
+  getCaption(): string
+  /**
+   * Sets the caption text.
+   */
+  setCaption(text: string): void
+  /**
+   * Gets the current background type.
+   * - `'filled' | 'empty' | 'transparent'`
+   */
+  getBackgroundType(): BackgroundTypeValue
+  /**
+   * Sets the background type.
+   */
+  setBackgroundType(t: BackgroundTypeValue): void
+  /**
+   * Gets the horizontal text alignment for header cells.
+   * - `'left' | 'center' | 'right'`
+   */
+  getHeaderTextAlign(): TextAlignValue
+  /**
+   * Sets the horizontal text alignment for header cells.
+   */
+  setHeaderTextAlign(v: TextAlignValue): void
+  /**
+   * Gets the horizontal text alignment for body cells.
+   * - `'left' | 'center' | 'right'`
+   */
+  getBodyTextAlign(): TextAlignValue
+  /**
+   * Sets the horizontal text alignment for body cells.
+   */
+  setBodyTextAlign(v: TextAlignValue): void
+  /**
+   * Gets the horizontal text alignment for footer cells.
+   * - `'left' | 'center' | 'right'`
+   */
+  getFooterTextAlign(): TextAlignValue
+  /**
+   * Sets the horizontal text alignment for footer cells.
+   */
+  setFooterTextAlign(v: TextAlignValue): void
+  /**
+   * Gets the vertical alignment for header cells.
+   * - `'top' | 'middle' | 'bottom'`
+   */
+  getHeaderVerticalAlign(): VerticalAlignValue
+  /**
+   * Sets the vertical alignment for header cells.
+   */
+  setHeaderVerticalAlign(v: VerticalAlignValue): void
+  /**
+   * Gets the vertical alignment for body cells.
+   * - `'top' | 'middle' | 'bottom'`
+   */
+  getBodyVerticalAlign(): VerticalAlignValue
+  /**
+   * Sets the vertical alignment for body cells.
+   */
+  setBodyVerticalAlign(v: VerticalAlignValue): void
+  /**
+   * Gets the vertical alignment for footer cells.
+   * - `'top' | 'middle' | 'bottom'`
+   */
+  getFooterVerticalAlign(): VerticalAlignValue
+  /**
+   * Sets the vertical alignment for footer cells.
+   */
+  setFooterVerticalAlign(v: VerticalAlignValue): void
+  /**
+   * Returns the number of body rows (`tbody > tr`).
+   */
+  getRowCount(): number
+  /**
+   * Returns the `<tr>` element at the given 0-based index, or `null` if out of range.
+   */
+  getRowElement(index: number): HTMLTableRowElement | null
+  /**
+   * Returns the raw `<thead>` element, if present.
+   */
+  getHeadElement(): HTMLTableSectionElement | null
+  /**
+   * Returns the raw `<tbody>` element.
+   */
+  getBodyElement(): HTMLTableSectionElement | null
+  /**
+   * Returns the raw `<tfoot>` element, if present.
+   */
+  getFootElement(): HTMLTableSectionElement | null
 }
