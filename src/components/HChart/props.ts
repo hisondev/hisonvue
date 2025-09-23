@@ -1,14 +1,32 @@
-import type { PropType } from 'vue'
+import type { CSSProperties, PropType } from 'vue'
 import type { ChartType, ChartData, ChartOptions } from 'chart.js'
 
 export const chartProps = {
     /**
      * Unique identifier for the chart instance.
      * - Use `hison.component.getChart(id)` to access chart methods at runtime.
-     * - ⚠️ Duplicate `id` values will throw an error at mount time.
-     * - If omitted, a UUID will be auto-generated internally.
+     * - ⚠️ Duplicate `id` values will throw at mount time.
      */
     id: { type: String, required: false },
+
+    /**
+     * Custom class applied to the chart container.
+     * - Accepts string / array / object. Works with `hison-col-*`, `hison-size-*`, etc.
+     */
+    class: {
+        type: [String, Array, Object] as PropType<string | string[] | Record<string, boolean>>,
+        required: false,
+    },
+
+    /**
+     * Inline style applied to the chart container.
+     * - Accepts string / object / array of objects (Vue style binding forms)
+     */
+    style: {
+        type: [String, Object, Array] as PropType<string | CSSProperties | CSSProperties[]>,
+        required: false,
+    },
+
     /**
      * The chart type to render.
      * - Examples: `'line'`, `'bar'`, `'doughnut'`, `'pie'`, `'radar'`, etc.
@@ -16,46 +34,27 @@ export const chartProps = {
      * - This is a required prop.
      */
     type: { type: String as PropType<ChartType>, required: true },
+
     /**
      * The data object used to render the chart.
      * - Follows the Chart.js `ChartData` structure
-     * - This prop supports `v-model` binding.
-     * - When changed reactively, the chart will auto-update.
+     * - Supports `v-model`.
      */
     modelValue: { type: Object as PropType<ChartData>, required: true },
+
     /**
      * Optional configuration for the chart.
      * - Follows the Chart.js `ChartOptions` structure
-     * - If omitted, Chart.js internal defaults are used
-     * - Automatically merged with internal color resolution logic (e.g., `'primary-50'` → rgba)
      */
     options: { type: Object as PropType<ChartOptions>, required: false },
-    /**
-     * Custom class string applied to the chart container.
-     * - Use responsive classes like `hison-col-*`, `hison-pos-*`, `hison-size-*`
-     * - These will be internally parsed and adjusted based on current device
-     * - If no `hison-col-*` class is found, `hison-col-12` will be added by default
-     */
-    class: { type: String, required: false },
-    /**
-     * Inline style applied to the chart container.
-     * - Accepts string, object, or array of valid Vue `style` formats
-     * - Merged with internal styles computed for visibility and layout
-     */
-    style: { type: [String, Object, Array] as PropType<any>, required: false },
+
     /**
      * Controls the visibility of the chart.
-     * - `true`: chart is visible
-     * - `false`: `display: none` is applied
-     * - Default: `true`
-     * - Runtime control available via `HChartInstance.setVisible(true|false)`
      */
     visible: { type: Boolean, default: true },
+
     /**
-     * The delay (in milliseconds) to wait before reloading the chart after unmounting the previous instance.
-     * - Prevents errors from rapid reloads by ensuring the DOM is ready before creating a new Chart.js instance.
-     * - Default: `500`
-     * - You can control this dynamically via `HChartInstance.getReloadDelay()` and `HChartInstance.setReloadDelay(ms)`.
+     * Delay (ms) before recreating the chart on reload.
      */
     loadDelay: { type: Number, default: 500 },
 }
