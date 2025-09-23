@@ -4,9 +4,11 @@ import 'hisonvue/style.css'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const hisonConfig: HisonConfig = getDefaultHisonConfig()
-  hisonConfig.componentStyle.primaryColor = '#123456'
+  hisonConfig.componentStyle.primaryColor = '#217346'
   hisonConfig.componentStyle.size = Size.s
-  hisonConfig.componentStyle.invertColor = true
+  hisonConfig.componentStyle.invertColor = false
+
+  console.log('hisonvue.client.ts hisonConfig!!!',hisonConfig)
   
   const iconSpan = document.createElement('span')
   iconSpan.classList.add('material-symbols-rounded')
@@ -15,3 +17,5 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp.vueApp.use(hisonvue, hisonConfig)
 })
+
+
