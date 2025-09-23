@@ -16,7 +16,7 @@ import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, next
 import type { Vanillanote, VanillanoteElement, NoteData } from 'vanillanote2'
 import { noteEventProps, noteProps } from './props'
 import { EditMode, Size } from '../../enums'
-import { extractResponsiveClasses, getSpecificClassValueFromClassList, getHexCodeFromColorText, getUUID, registerReloadable, getIndexSpecificClassNameFromClassList, unregisterReloadable, reloadHisonComponent } from '../../utils'
+import { extractResponsiveClasses, getSpecificClassValueFromClassList, getHexCodeFromColorText, getUUID, registerReloadable, getIndexSpecificClassNameFromClassList, unregisterReloadable, reloadHisonComponent, toClassString } from '../../utils'
 import { hison, hisonCloser } from '../..'
 import { useDevice } from '../../core'
 import { HNoteElement } from '../../types'
@@ -47,6 +47,9 @@ export default defineComponent({
       if(editMode.value !== EditMode.editable) return `hison-note-${editMode.value}`
     })
     const isModified = ref(false)
+    const tabIndex = ref<number | null>(
+      props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
+    )
 
     const updateTabbableChildren = (rootEl: HTMLElement, disable: boolean) => {
       if (!rootEl) return
@@ -111,7 +114,7 @@ export default defineComponent({
     }
     const bindAttrs = computed(() => {
       bindAttrsTrigger.value
-      const classList = extractResponsiveClasses(props.class || '', device.value)
+      const classList = extractResponsiveClasses(toClassString(props.class) || '', device.value)
       const color = getSpecificClassValueFromClassList(classList, 'color')
       const size = getSpecificClassValueFromClassList(classList, 'size')
       if (getIndexSpecificClassNameFromClassList(classList, 'col') === -1) classList.push('hison-col-12')
@@ -213,6 +216,11 @@ export default defineComponent({
       if (props.modelValue && note) {
         note.setNoteData(props.modelValue)
       }
+      if(tabIndex.value && note._elements.textarea) {
+        console.log('note!!! template',note._elements.template)
+        console.log('note!!! textarea',note._elements.textarea)
+        note._elements.textarea.setAttribute('tabIndex', String(tabIndex.value))
+      }
 
       if (note) {
         note.getId = () => id
@@ -228,6 +236,8 @@ export default defineComponent({
         }
         note.isModified = () => isModified.value
         note.initModified = () => isModified.value = false
+        note.getTabIndex = () => tabIndex.value
+        note.setTabIndex = (v: number | null) => { tabIndex.value = v !== null && v !== undefined ? Number(v) : null }
         note.focus = () => { note._elements?.textarea?.focus() }
         note.getDataModel = () => {
           const noteData = note.getNoteData()
