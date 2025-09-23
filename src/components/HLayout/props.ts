@@ -1,64 +1,103 @@
 import { CSSProperties, PropType } from "vue";
+import { BACK_IMAGE_ALIGN_VALUES, BACK_IMAGE_STYLE_VALUES, BACK_IMAGE_VERTICAL_ALIGN_VALUES, BackImageAlignValue, BackImageRepeatValue, BackImageVerticalAlignValue } from "../../enums";
 
 export const layoutProps = {
-    /**
-     * Unique identifier for the layout.
-     * - You can later retrieve its methods via `hison.component.getLayout(id)`
-     * - ⚠️ Duplicate `id` values will throw an error at mount time
-     */
-    id: { type: String, required: false },
-    /**
-     * Custom class string applied to the layout container.
-     * - You can use `hison-col-*`, `hison-pos-*`, `hison-size-*` and other responsive classes
-     * - These classes will be processed internally for device-specific application
-     */
-    class: { type: String, required: false },
-    /**
-     * Inline style string applied to the layout container.
-     * - Accepts valid CSS style text (e.g., 'padding: 10px; margin-top: 20px')
-     * - Merged with dynamic computed styles like background and border settings
-     */
-    style: { type: [String, Object] as PropType<string | CSSProperties>, required: false },
-    /**
-     * Controls visibility of the layout.
-     * - Accepts string values: `'true'` or `'false'` (not boolean)
-     * - Defaults to visible if not provided or if value is not `'false'`
-     */
-    visible: { type: Boolean, default: true },
-    /** Background image URL */
-    backImageSrc: { type: String, required: false },
-    /** Background repeat/cover/contain settings */
-    backImageStyle: { type: String, required: false },
-    /** Background width (e.g. '100%', '300px') */
-    backImageWidth: { type: String, required: false },
-    /** Horizontal alignment: left, center, right */
-    backImageAlign: { type: String, required: false },
-    /** Vertical alignment: top, center, bottom */
-    backImageVerticalAlign: { type: String, required: false },
-    /**
-     * Background color of layout.
-     * Acceptable values:
-     * - Hex: '#ffffff', '#fff'
-     * - RGB/RGBA: 'rgb(255,255,255)', 'rgba(0,0,0,0.5)'
-     * - Keyword: 'primary', 'muted', 'info', 'success', 'danger', 'warning'
-     *   (these will be resolved via getHexCodeFromColorText)
-     */
-    backColor: { type: String, required: false },
-    /**
-     * Border color of the layout.
-     * Acceptable values are the same as `backColor`.
-     */
-    borderColor: { type: String, required: false },
-    /**
-     * Border width of the layout.
-     * Use valid CSS size values:
-     * - e.g., '1px', '2px', '0.5rem'
-     */
-    borderWidth: { type: String, required: false },
-    /**
-     * Height of the layout container.
-     * Use valid CSS height values:
-     * - e.g., '100px', '50%', 'auto', '100vh'
-     */
-    height: { type: String, required: false },
+  /**
+   * Unique identifier for the layout.
+   * - You can later retrieve its methods via `hison.component.getLayout(id)`
+   * - ⚠️ Duplicate `id` values will throw an error at mount time
+   */
+  id: { type: String, required: false },
+
+  /**
+   * Custom class string applied to the layout container.
+   * - You can use `hison-col-*`, `hison-pos-*`, `hison-size-*` and other responsive classes
+   * - These classes will be processed internally for device-specific application
+   */
+  class: {
+    type: [String, Array, Object] as PropType<string | string[] | Record<string, boolean>>,
+    required: false,
+  },
+
+  /**
+   * Inline style string applied to the layout container.
+   * - Accepts valid CSS style text (e.g., 'padding: 10px; margin-top: 20px')
+   * - Merged with dynamic computed styles like background and border settings
+   */
+  style: {
+    type: [String, Object, Array] as PropType<string | CSSProperties | CSSProperties[]>,
+    required: false,
+  },
+
+  /**
+   * Controls visibility of the layout.
+   * - Boolean only. Use `:visible="false"` (with a colon)
+   * - Defaults to visible if not provided
+   */
+  visible: { type: Boolean, default: true },
+
+  /** Background image URL */
+  backImageSrc: { type: String, required: false },
+
+  /**
+   * Background repeat/cover/contain settings
+   * - Quick tokens: 'repeat' | 'no-repeat' | 'cover' | 'contain'
+   * - Also accepts any valid CSS background-repeat/size shorthand string (e.g. 'repeat-x', 'repeat-y', 'no-repeat center/cover')
+   */
+  backImageRepeat: {
+    type: String as PropType<BackImageRepeatValue | string>,
+    required: false,
+    validator: (v: any) => {
+      if (v == null) return true
+      // 1) 권장 토큰
+      if ((BACK_IMAGE_STYLE_VALUES as readonly string[]).includes(v)) return true
+      // 2) 흔한 CSS 패턴 몇 가지 허용 (repeat-x / repeat-y / no-repeat / cover/contain 조합 등)
+      const relaxed =
+        /^(repeat-x|repeat-y|repeat|no-repeat)(\s+\S+\/\S+)?$/.test(v) || // repeat-x, repeat-y, no-repeat center/cover
+        /^(cover|contain)$/.test(v) ||
+        // 아무거나 CSS shorthand를 쓰고 싶을 수 있으니, 너무 빡세지 않게: 공백/슬래시 포함 문자열은 통과
+        /[\/\s]/.test(v)
+      return relaxed
+    },
+  },
+
+  /** Background width (e.g. '100%', '300px') */
+  backImageWidth: { type: String, required: false },
+
+  /** Horizontal alignment: left, center, right */
+  backImageAlign: {
+    type: String as PropType<BackImageAlignValue>,
+    required: false,
+    validator: (v: any) => v == null || (BACK_IMAGE_ALIGN_VALUES as readonly string[]).includes(v),
+  },
+
+  /** Vertical alignment: top, center, bottom */
+  backImageVerticalAlign: {
+    type: String as PropType<BackImageVerticalAlignValue>,
+    required: false,
+    validator: (v: any) => v == null || (BACK_IMAGE_VERTICAL_ALIGN_VALUES as readonly string[]).includes(v),
+  },
+
+  /**
+   * Background color of layout.
+   * Acceptable values:
+   * - Hex: '#ffffff', '#fff'
+   * - RGB/RGBA: 'rgb(255,255,255)', 'rgba(0,0,0,0.5)'
+   * - Keyword: 'primary', 'muted', 'info', 'success', 'danger', 'warning'
+   *   (these will be resolved via getHexCodeFromColorText)
+   */
+  backColor: { type: String, required: false },
+
+  /**
+   * Whether to show border (rendered as subtle box-shadow).
+   * - Default: false (no border)
+   */
+  border: { type: Boolean, default: false },
+
+  /**
+   * Height of the layout container.
+   * Use valid CSS height values:
+   * - e.g., '100px', '50%', 'auto', '100vh'
+   */
+  height: { type: String, required: false },
 }
