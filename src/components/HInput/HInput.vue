@@ -1,336 +1,342 @@
 <template>
   <div
-  v-if="inputType === 'range'"
-  :class="[
-    'hison-input',
-    'hison-input-range-div',
-    ...responsiveClassList,
-    visibleClass,
-  ]"
-  :style="props.style"
-  >
-    <input
-      ref="inputRef"
-      :id="`hison_input_${id}`"
-      :name="`hison_input_${id}`"
-      type="range"
-      :class="[
-        `hison-input-${inputType}`,
-        ...editModeClassList,
-        ...requiredClassList,
-      ]"
-      :value="inputValue"
-      :disabled="disable"
-      :readonly="readonly"
-      :title="title || undefined"
-      @change="onRangeChange"
-      @focus="onFocus"
-      @blur="onBlur"
-      @keydown="onKeydown"
-
-      @click="$emit('click', $event, inputMethods)"
-      @dblclick="$emit('dblclick', $event, inputMethods)"
-      @mousedown="$emit('mousedown', $event, inputMethods)"
-      @mouseup="$emit('mouseup', $event, inputMethods)"
-      @mouseenter="$emit('mouseenter', $event, inputMethods)"
-      @mouseleave="$emit('mouseleave', $event, inputMethods)"
-      @mouseover="$emit('mouseover', $event, inputMethods)"
-      @mouseout="$emit('mouseout', $event, inputMethods)"
-
-      @pointerdown="$emit('pointerdown', $event, inputMethods)"
-      @pointerup="$emit('pointerup', $event, inputMethods)"
-      @pointermove="$emit('pointermove', $event, inputMethods)"
-      @pointerenter="$emit('pointerenter', $event, inputMethods)"
-      @pointerleave="$emit('pointerleave', $event, inputMethods)"
-
-      @touchstart="$emit('touchstart', $event, inputMethods)"
-      @touchend="$emit('touchend', $event, inputMethods)"
-      @touchmove="$emit('touchmove', $event, inputMethods)"
-      @touchcancel="$emit('touchcancel', $event, inputMethods)"
-
-      @contextmenu="$emit('contextmenu', $event, inputMethods)"
-    />
-  </div>
-
-  <div
-  v-else-if="inputType === 'color'"
-  :class="[
-    'hison-input',
-    'hison-input-color-div',
-    ...responsiveClassList,
-    visibleClass,
-  ]"
-  :style="props.style"
-  >
-    <input
-      ref="inputRef"
-      :id="`hison_input_${id}`"
-      :name="`hison_input_${id}`"
-      type="color"
-      :class="[
-        `hison-input-${inputType}`,
-        ...editModeClassList,
-        ...requiredClassList,
-      ]"
-      :value="inputValue"
-      :disabled="disable"
-      :readonly="readonly"
-      :checked="inputValue === true"
-      :title="title || undefined"
-      @change="onColorChange"
-      @focus="onFocus"
-      @blur="onBlur"
-      @keydown="onKeydown"
-
-      @click="$emit('click', $event, inputMethods)"
-      @dblclick="$emit('dblclick', $event, inputMethods)"
-      @mousedown="$emit('mousedown', $event, inputMethods)"
-      @mouseup="$emit('mouseup', $event, inputMethods)"
-      @mouseenter="$emit('mouseenter', $event, inputMethods)"
-      @mouseleave="$emit('mouseleave', $event, inputMethods)"
-      @mouseover="$emit('mouseover', $event, inputMethods)"
-      @mouseout="$emit('mouseout', $event, inputMethods)"
-
-      @pointerdown="$emit('pointerdown', $event, inputMethods)"
-      @pointerup="$emit('pointerup', $event, inputMethods)"
-      @pointermove="$emit('pointermove', $event, inputMethods)"
-      @pointerenter="$emit('pointerenter', $event, inputMethods)"
-      @pointerleave="$emit('pointerleave', $event, inputMethods)"
-
-      @touchstart="$emit('touchstart', $event, inputMethods)"
-      @touchend="$emit('touchend', $event, inputMethods)"
-      @touchmove="$emit('touchmove', $event, inputMethods)"
-      @touchcancel="$emit('touchcancel', $event, inputMethods)"
-
-      @contextmenu="$emit('contextmenu', $event, inputMethods)"
-    />
-  </div>
-
-  <div
-  v-else-if="inputType === 'checkbox'"
-  :class="[
-    'hison-input',
-    'hison-input-checkbox-div',
-    ...responsiveClassList,
-    visibleClass,
-  ]"
-  :style="props.style"
-  >
-    <input
-      ref="inputRef"
-      :id="`hison_input_${id}`"
-      :name="`hison_input_${id}`"
-      type="checkbox"
-      :class="[
-        `hison-input-${inputType}`,
-        ...editModeClassList,
-        ...requiredClassList,
-      ]"
-      :disabled="disable"
-      :readonly="readonly"
-      :checked="inputValue === true"
-      :title="title || undefined"
-      @change="onCheckboxChange"
-      @focus="onFocus"
-      @blur="onBlur"
-      @keydown="onKeydown"
-
-      @click="$emit('click', $event, inputMethods)"
-      @dblclick="$emit('dblclick', $event, inputMethods)"
-      @mousedown="$emit('mousedown', $event, inputMethods)"
-      @mouseup="$emit('mouseup', $event, inputMethods)"
-      @mouseenter="$emit('mouseenter', $event, inputMethods)"
-      @mouseleave="$emit('mouseleave', $event, inputMethods)"
-      @mouseover="$emit('mouseover', $event, inputMethods)"
-      @mouseout="$emit('mouseout', $event, inputMethods)"
-
-      @pointerdown="$emit('pointerdown', $event, inputMethods)"
-      @pointerup="$emit('pointerup', $event, inputMethods)"
-      @pointermove="$emit('pointermove', $event, inputMethods)"
-      @pointerenter="$emit('pointerenter', $event, inputMethods)"
-      @pointerleave="$emit('pointerleave', $event, inputMethods)"
-
-      @touchstart="$emit('touchstart', $event, inputMethods)"
-      @touchend="$emit('touchend', $event, inputMethods)"
-      @touchmove="$emit('touchmove', $event, inputMethods)"
-      @touchcancel="$emit('touchcancel', $event, inputMethods)"
-
-      @contextmenu="$emit('contextmenu', $event, inputMethods)"
-    />
-  </div>
-
-  <select
-    v-else-if="inputType === 'select'"
-    ref="inputRef"
-    :id="`hison_select_${id}`"
-    :name="`hison_select_${id}`"
-    :style="props.style"
     :class="[
-      'hison-input',
-      `hison-input-${inputType}`,
+      'hison-wrapper',
+      'hison-s-input-margin-adjustment',
       ...responsiveClassList,
       visibleClass,
-      ...editModeClassList,
-      ...requiredClassList,
-      fontBoldClass,
-      fontItalicClass,
-      fontThrulineClass,
-      fontUnderlineClass,
     ]"
-    :value="inputValue"
-    :disabled="disable"
-    :readonly="readonly"
-    :title="title || undefined"
-    @change="onSelectChange"
-    @focus="onFocus"
-    @blur="onBlur"
-    @keydown="onKeydown"
-
-    @click="$emit('click', $event, inputMethods)"
-    @dblclick="$emit('dblclick', $event, inputMethods)"
-    @mousedown="$emit('mousedown', $event, inputMethods)"
-    @mouseup="$emit('mouseup', $event, inputMethods)"
-    @mouseenter="$emit('mouseenter', $event, inputMethods)"
-    @mouseleave="$emit('mouseleave', $event, inputMethods)"
-    @mouseover="$emit('mouseover', $event, inputMethods)"
-    @mouseout="$emit('mouseout', $event, inputMethods)"
-
-    @pointerdown="$emit('pointerdown', $event, inputMethods)"
-    @pointerup="$emit('pointerup', $event, inputMethods)"
-    @pointermove="$emit('pointermove', $event, inputMethods)"
-    @pointerenter="$emit('pointerenter', $event, inputMethods)"
-    @pointerleave="$emit('pointerleave', $event, inputMethods)"
-
-    @touchstart="$emit('touchstart', $event, inputMethods)"
-    @touchend="$emit('touchend', $event, inputMethods)"
-    @touchmove="$emit('touchmove', $event, inputMethods)"
-    @touchcancel="$emit('touchcancel', $event, inputMethods)"
-
-    @contextmenu="$emit('contextmenu', $event, inputMethods)"
   >
-    <option
-      v-for="opt in props.options"
-      :key="opt.value"
-      :value="opt.value"
-    >{{ opt.text }}</option>
-  </select>
-
-  <!-- ✅ textarea: 항상 렌더링 -->
-  <textarea
-    v-else-if="inputType === 'textarea'"
-    ref="inputRef"
-    :id="`hison_input_${id}`"
-    :name="`hison_input_${id}`"
+    <div
+    v-if="inputType === 'range'"
     :class="[
       'hison-input',
-      `hison-input-${inputType}`,
-      ...responsiveClassList,
-      visibleClass,
-      ...editModeClassList,
-      ...requiredClassList,
-      fontBoldClass,
-      fontItalicClass,
-      fontThrulineClass,
-      fontUnderlineClass,
+      'hison-input-range-div',
     ]"
-    :value="inputValue"
-    :style="props.style"
-    :disabled="disable"
-    :readonly="readonly"
-    :placeholder="placeholder || undefined"
-    :title="title || undefined"
-    :maxlength="maxLength || undefined"
-    @input="onInput"
-    @focus="onFocus"
-    @blur="onBlur"
-  >{{ inputValue }}</textarea>
+    :style="[textAlignStyle, props.style]"
+    >
+      <input
+        ref="inputRef"
+        :id="`hison_input_${id}`"
+        :name="`hison_input_${id}`"
+        type="range"
+        :class="[
+          `hison-input-${inputType}`,
+          ...editModeClassList,
+          ...requiredClassList,
+        ]"
+        :value="inputValue"
+        :disabled="disable"
+        :readonly="readonly"
+        :title="title || undefined"
+        :tabindex="tabIndex ?? undefined"
+        @change.stop="onRangeChange"
+        @focus.stop="onFocus"
+        @blur.stop="onBlur"
+        @keydown.stop="onKeydown"
 
-  <template v-else>
-    <input
-      ref="inputTextRef"
-      :id="`hison_input_text_${id}`"
-      :name="`hison_input_text_${id}`"
-      v-show="!editing"
+        @click.stop="$emit('click', $event, inputMethods)"
+        @dblclick.stop="$emit('dblclick', $event, inputMethods)"
+        @mousedown.stop="$emit('mousedown', $event, inputMethods)"
+        @mouseup.stop="$emit('mouseup', $event, inputMethods)"
+        @mouseenter.stop="$emit('mouseenter', $event, inputMethods)"
+        @mouseleave.stop="$emit('mouseleave', $event, inputMethods)"
+        @mouseover.stop="$emit('mouseover', $event, inputMethods)"
+        @mouseout.stop="$emit('mouseout', $event, inputMethods)"
+
+        @pointerdown.stop="$emit('pointerdown', $event, inputMethods)"
+        @pointerup.stop="$emit('pointerup', $event, inputMethods)"
+        @pointermove.stop="$emit('pointermove', $event, inputMethods)"
+        @pointerenter.stop="$emit('pointerenter', $event, inputMethods)"
+        @pointerleave.stop="$emit('pointerleave', $event, inputMethods)"
+
+        @touchstart.stop="$emit('touchstart', $event, inputMethods)"
+        @touchend.stop="$emit('touchend', $event, inputMethods)"
+        @touchmove.stop="$emit('touchmove', $event, inputMethods)"
+        @touchcancel.stop="$emit('touchcancel', $event, inputMethods)"
+
+        @contextmenu.stop="$emit('contextmenu', $event, inputMethods)"
+      />
+    </div>
+
+    <div
+    v-else-if="inputType === 'color'"
+    :class="[
+      'hison-input',
+      'hison-input-color-div',
+    ]"
+    :style="[textAlignStyle, props.style]"
+    >
+      <input
+        ref="inputRef"
+        :id="`hison_input_${id}`"
+        :name="`hison_input_${id}`"
+        type="color"
+        :class="[
+          `hison-input-${inputType}`,
+          ...editModeClassList,
+          ...requiredClassList,
+        ]"
+        :value="inputValue"
+        :disabled="disable"
+        :readonly="readonly"
+        :checked="inputValue === true"
+        :title="title || undefined"
+        :tabindex="tabIndex ?? undefined"
+        @change.stop="onColorChange"
+        @focus.stop="onFocus"
+        @blur.stop="onBlur"
+        @keydown.stop="onKeydown"
+
+        @click.stop="$emit('click', $event, inputMethods)"
+        @dblclick.stop="$emit('dblclick', $event, inputMethods)"
+        @mousedown.stop="$emit('mousedown', $event, inputMethods)"
+        @mouseup.stop="$emit('mouseup', $event, inputMethods)"
+        @mouseenter.stop="$emit('mouseenter', $event, inputMethods)"
+        @mouseleave.stop="$emit('mouseleave', $event, inputMethods)"
+        @mouseover.stop="$emit('mouseover', $event, inputMethods)"
+        @mouseout.stop="$emit('mouseout', $event, inputMethods)"
+
+        @pointerdown.stop="$emit('pointerdown', $event, inputMethods)"
+        @pointerup.stop="$emit('pointerup', $event, inputMethods)"
+        @pointermove.stop="$emit('pointermove', $event, inputMethods)"
+        @pointerenter.stop="$emit('pointerenter', $event, inputMethods)"
+        @pointerleave.stop="$emit('pointerleave', $event, inputMethods)"
+
+        @touchstart.stop="$emit('touchstart', $event, inputMethods)"
+        @touchend.stop="$emit('touchend', $event, inputMethods)"
+        @touchmove.stop="$emit('touchmove', $event, inputMethods)"
+        @touchcancel.stop="$emit('touchcancel', $event, inputMethods)"
+
+        @contextmenu.stop="$emit('contextmenu', $event, inputMethods)"
+      />
+    </div>
+
+    <div
+    v-else-if="inputType === 'checkbox'"
+    :class="[
+      'hison-input',
+      'hison-input-checkbox-div',
+    ]"
+    :style="[textAlignStyle, props.style]"
+    >
+      <input
+        ref="inputRef"
+        :id="`hison_input_${id}`"
+        :name="`hison_input_${id}`"
+        type="checkbox"
+        :class="[
+          `hison-input-${inputType}`,
+          ...editModeClassList,
+          ...requiredClassList,
+        ]"
+        :disabled="disable"
+        :readonly="readonly"
+        :checked="inputValue === true"
+        :title="title || undefined"
+        :tabindex="tabIndex ?? undefined"
+        @change.stop="onCheckboxChange"
+        @focus.stop="onFocus"
+        @blur.stop="onBlur"
+        @keydown.stop="onKeydown"
+
+        @click.stop="$emit('click', $event, inputMethods)"
+        @dblclick.stop="$emit('dblclick', $event, inputMethods)"
+        @mousedown.stop="$emit('mousedown', $event, inputMethods)"
+        @mouseup.stop="$emit('mouseup', $event, inputMethods)"
+        @mouseenter.stop="$emit('mouseenter', $event, inputMethods)"
+        @mouseleave.stop="$emit('mouseleave', $event, inputMethods)"
+        @mouseover.stop="$emit('mouseover', $event, inputMethods)"
+        @mouseout.stop="$emit('mouseout', $event, inputMethods)"
+
+        @pointerdown.stop="$emit('pointerdown', $event, inputMethods)"
+        @pointerup.stop="$emit('pointerup', $event, inputMethods)"
+        @pointermove.stop="$emit('pointermove', $event, inputMethods)"
+        @pointerenter.stop="$emit('pointerenter', $event, inputMethods)"
+        @pointerleave.stop="$emit('pointerleave', $event, inputMethods)"
+
+        @touchstart.stop="$emit('touchstart', $event, inputMethods)"
+        @touchend.stop="$emit('touchend', $event, inputMethods)"
+        @touchmove.stop="$emit('touchmove', $event, inputMethods)"
+        @touchcancel.stop="$emit('touchcancel', $event, inputMethods)"
+
+        @contextmenu.stop="$emit('contextmenu', $event, inputMethods)"
+      />
+    </div>
+
+    <select
+      v-else-if="inputType === 'select'"
+      ref="inputRef"
+      :id="`hison_select_${id}`"
+      :name="`hison_select_${id}`"
+      :style="[textAlignStyle, props.style]"
       :class="[
         'hison-input',
-        `hison-input-text-${inputType}`,
-        ...responsiveClassList,
-        visibleClass,
+        `hison-input-${inputType}`,
         ...editModeClassList,
         ...requiredClassList,
         fontBoldClass,
         fontItalicClass,
         fontThrulineClass,
         fontUnderlineClass,
+        borderClass
       ]"
-      type="text"
-      :value="spanText"
-      :style="props.style"
+      :value="inputValue"
       :disabled="disable"
       :readonly="readonly"
       :title="title || undefined"
-      :placeholder="placeholder || undefined"
-      @focus="onTextInputFocus"
-      @click="$emit('click', $event, inputMethods)"
-      @dblclick="$emit('dblclick', $event, inputMethods)"
-      @mousedown="$emit('mousedown', $event, inputMethods)"
-      @mouseup="$emit('mouseup', $event, inputMethods)"
-      @mouseenter="$emit('mouseenter', $event, inputMethods)"
-      @mouseleave="$emit('mouseleave', $event, inputMethods)"
-      @mouseover="$emit('mouseover', $event, inputMethods)"
-      @mouseout="$emit('mouseout', $event, inputMethods)"
-      @mousemove="$emit('mousemove', $event, inputMethods)"
-  
-      @pointerdown="$emit('pointerdown', $event, inputMethods)"
-      @pointerup="$emit('pointerup', $event, inputMethods)"
-      @pointermove="$emit('pointermove', $event, inputMethods)"
-      @pointerenter="$emit('pointerenter', $event, inputMethods)"
-      @pointerleave="$emit('pointerleave', $event, inputMethods)"
-      @touchstart="$emit('touchstart', $event, inputMethods)"
-      @touchend="$emit('touchend', $event, inputMethods)"
-      @touchmove="$emit('touchmove', $event, inputMethods)"
-      @touchcancel="$emit('touchcancel', $event, inputMethods)"
-    />
-    <input
-      v-show="editing"
+      :tabindex="tabIndex ?? undefined"
+      @change.stop="onSelectChange"
+      @focus.stop="onFocus"
+      @blur.stop="onBlur"
+      @keydown.stop="onKeydown"
+
+      @click.stop="$emit('click', $event, inputMethods)"
+      @dblclick.stop="$emit('dblclick', $event, inputMethods)"
+      @mousedown.stop="$emit('mousedown', $event, inputMethods)"
+      @mouseup.stop="$emit('mouseup', $event, inputMethods)"
+      @mouseenter.stop="$emit('mouseenter', $event, inputMethods)"
+      @mouseleave.stop="$emit('mouseleave', $event, inputMethods)"
+      @mouseover.stop="$emit('mouseover', $event, inputMethods)"
+      @mouseout.stop="$emit('mouseout', $event, inputMethods)"
+
+      @pointerdown.stop="$emit('pointerdown', $event, inputMethods)"
+      @pointerup.stop="$emit('pointerup', $event, inputMethods)"
+      @pointermove.stop="$emit('pointermove', $event, inputMethods)"
+      @pointerenter.stop="$emit('pointerenter', $event, inputMethods)"
+      @pointerleave.stop="$emit('pointerleave', $event, inputMethods)"
+
+      @touchstart.stop="$emit('touchstart', $event, inputMethods)"
+      @touchend.stop="$emit('touchend', $event, inputMethods)"
+      @touchmove.stop="$emit('touchmove', $event, inputMethods)"
+      @touchcancel.stop="$emit('touchcancel', $event, inputMethods)"
+
+      @contextmenu.stop="$emit('contextmenu', $event, inputMethods)"
+    >
+      <option
+        v-for="opt in props.options"
+        :key="opt.value"
+        :value="opt.value"
+      >{{ opt.text }}</option>
+    </select>
+
+    <!-- ✅ textarea: 항상 렌더링 -->
+    <textarea
+      v-else-if="inputType === 'textarea'"
       ref="inputRef"
       :id="`hison_input_${id}`"
       :name="`hison_input_${id}`"
       :class="[
         'hison-input',
         `hison-input-${inputType}`,
-        ...responsiveClassList,
-        visibleClass,
         ...editModeClassList,
+        ...requiredClassList,
+        fontBoldClass,
+        fontItalicClass,
+        fontThrulineClass,
+        fontUnderlineClass,
+        borderClass
       ]"
       :value="inputValue"
-      :style="props.style"
+      :style="[textAlignStyle, props.style]"
       :disabled="disable"
       :readonly="readonly"
-      :type="inputType"
-      :title="title || undefined"
       :placeholder="placeholder || undefined"
-      :max="maxNumber || undefined"
-      :min="minNumber || undefined"
-      @focus="onFocus"
-      @blur="onBlur"
-      @input="onInput"
-      @compositionstart="$emit('compositionstart', $event, inputMethods)"
-      @compositionupdate="$emit('compositionupdate', $event, inputMethods)"
-      @compositionend="$emit('compositionend', $event, inputMethods)"
-      @keydown="$emit('keydown', $event, inputMethods)"
-      @keyup="$emit('keyup', $event, inputMethods)"
-      @dragstart="$emit('dragstart', $event, inputMethods)"
-      @dragend="$emit('dragend', $event, inputMethods)"
-      @drag="$emit('drag', $event, inputMethods)"
-      @drop="$emit('drop', $event, inputMethods)"
-      @copy="$emit('copy', $event, inputMethods)"
-      @cut="$emit('cut', $event, inputMethods)"
-      @paste="$emit('paste', $event, inputMethods)"
-      @wheel="$emit('wheel', $event, inputMethods)"
-      @contextmenu="$emit('contextmenu', $event, inputMethods)"
-    />
-  </template>
+      :title="title || undefined"
+      :maxlength="maxLength || undefined"
+      :tabindex="tabIndex ?? undefined"
+      @input.stop="onInput"
+      @focus.stop="onFocus"
+      @blur.stop="onBlur"
+    >{{ inputValue }}</textarea>
+
+    <template v-else>
+      <input
+        ref="inputTextRef"
+        :id="`hison_input_text_${id}`"
+        :name="`hison_input_text_${id}`"
+        v-show="!editing"
+        :class="[
+          'hison-input',
+          `hison-input-text-${inputType}`,
+          ...editModeClassList,
+          ...requiredClassList,
+          fontBoldClass,
+          fontItalicClass,
+          fontThrulineClass,
+          fontUnderlineClass,
+          borderClass
+        ]"
+        type="text"
+        :value="spanText"
+        :style="[textAlignStyle, props.style]"
+        :disabled="disable"
+        :readonly="readonly"
+        :title="title || undefined"
+        :placeholder="placeholder || undefined"
+        :tabindex="tabIndex ?? undefined"
+        @focus.stop="onTextInputFocus"
+        @click.stop="$emit('click', $event, inputMethods)"
+        @dblclick.stop="$emit('dblclick', $event, inputMethods)"
+        @mousedown.stop="$emit('mousedown', $event, inputMethods)"
+        @mouseup.stop="$emit('mouseup', $event, inputMethods)"
+        @mouseenter.stop="$emit('mouseenter', $event, inputMethods)"
+        @mouseleave.stop="$emit('mouseleave', $event, inputMethods)"
+        @mouseover.stop="$emit('mouseover', $event, inputMethods)"
+        @mouseout.stop="$emit('mouseout', $event, inputMethods)"
+        @mousemove.stop="$emit('mousemove', $event, inputMethods)"
+    
+        @pointerdown.stop="$emit('pointerdown', $event, inputMethods)"
+        @pointerup.stop="$emit('pointerup', $event, inputMethods)"
+        @pointermove.stop="$emit('pointermove', $event, inputMethods)"
+        @pointerenter.stop="$emit('pointerenter', $event, inputMethods)"
+        @pointerleave.stop="$emit('pointerleave', $event, inputMethods)"
+        @touchstart.stop="$emit('touchstart', $event, inputMethods)"
+        @touchend.stop="$emit('touchend', $event, inputMethods)"
+        @touchmove.stop="$emit('touchmove', $event, inputMethods)"
+        @touchcancel.stop="$emit('touchcancel', $event, inputMethods)"
+      />
+      <input
+        v-show="editing"
+        ref="inputRef"
+        :id="`hison_input_${id}`"
+        :name="`hison_input_${id}`"
+        :class="[
+          'hison-input',
+          `hison-input-${inputType}`,
+          ...editModeClassList,
+          borderClass
+        ]"
+        :value="inputValue"
+        :style="[textAlignStyle, props.style]"
+        :disabled="disable"
+        :readonly="readonly"
+        :type="inputType"
+        :title="title || undefined"
+        :placeholder="placeholder || undefined"
+        :max="maxNumber || undefined"
+        :min="minNumber || undefined"
+        :tabindex="tabIndex ?? undefined"
+        @focus.stop="onFocus"
+        @blur.stop="onBlur"
+        @input.stop="onInput"
+        @compositionstart.stop="$emit('compositionstart', $event, inputMethods)"
+        @compositionupdate.stop="$emit('compositionupdate', $event, inputMethods)"
+        @compositionend.stop="$emit('compositionend', $event, inputMethods)"
+        @keydown.stop="$emit('keydown', $event, inputMethods)"
+        @keyup.stop="$emit('keyup', $event, inputMethods)"
+        @dragstart.stop="$emit('dragstart', $event, inputMethods)"
+        @dragend.stop="$emit('dragend', $event, inputMethods)"
+        @drag.stop="$emit('drag', $event, inputMethods)"
+        @drop.stop="$emit('drop', $event, inputMethods)"
+        @copy.stop="$emit('copy', $event, inputMethods)"
+        @cut.stop="$emit('cut', $event, inputMethods)"
+        @paste.stop="$emit('paste', $event, inputMethods)"
+        @wheel.stop="$emit('wheel', $event, inputMethods)"
+        @contextmenu.stop="$emit('contextmenu', $event, inputMethods)"
+      />
+    </template>
+  </div>
 </template>
 
 <script lang="ts">
@@ -338,8 +344,8 @@
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, unref, inject } from 'vue'
 import type { HInputMethods } from '../../types'
 import { inputProps } from './props'
-import { DateFormat, hison, hisonCloser, EditMode, InputType, YearMonthFormat, TimeFormat } from '../..'
-import { addComponentNameToClass, extractResponsiveClasses, getDigitsOnly, getIndexSpecificClassNameFromClassList, getMaskValue, getUUID, isNullOrUndefined, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
+import { DateFormat, hison, hisonCloser, EditMode, InputType, YearMonthFormat, TimeFormat, TextAlign, TextAlignValue } from '../..'
+import { extractResponsiveClasses, getDigitsOnly, getIndexSpecificClassNameFromClassList, getMaskValue, getUUID, isNullOrUndefined, addComponentNameToClass, registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 import { addInputCssEvent, addInputTextCssEvent, removeInputCssEvent, removeInputTextCssEvent } from '../common/setInputCssEvent'
 
@@ -400,11 +406,11 @@ export default defineComponent({
     const device = useDevice()
 
     const responsiveClassList = ref<string[]>([])
-    const refleshResponsiveClassList = () => {
-      responsiveClassList.value = extractResponsiveClasses(props.class || '', device.value)
+    const refreshResponsiveClassList = () => {
+      responsiveClassList.value = extractResponsiveClasses(toClassString(props.class) || '', device.value)
       if (getIndexSpecificClassNameFromClassList(responsiveClassList.value, 'col') === -1) responsiveClassList.value.push('hison-col-12')
-      addComponentNameToClass(responsiveClassList.value, 'size', 'input', hisonCloser.componentStyle.size)
-      addComponentNameToClass(responsiveClassList.value, 'color', 'input', 'primary')
+      addComponentNameToClass(responsiveClassList.value, 'size', hisonCloser.componentStyle.size)
+      addComponentNameToClass(responsiveClassList.value, 'color', 'primary')
     }
 
     const inputType = ref(props.inputType ?? InputType.text)
@@ -438,6 +444,22 @@ export default defineComponent({
     const roundNumber = ref(hison.utils.isInteger(props.roundNumber) || hison.utils.isNegativeInteger(props.roundNumber) || props.roundNumber === '0' ? Number(props.roundNumber) : null)
     const maxLength = ref(hison.utils.isPositiveInteger(props.maxLength) ? Number(props.maxLength) : null)
     const maxByte = ref(hison.utils.isPositiveInteger(props.maxByte) ? Number(props.maxByte) : null)
+    const computeDefaultTextAlign = (inputType: InputType): TextAlign => {
+      switch (inputType) {
+        case InputType.number:
+        case InputType.digit:
+          return TextAlign.right
+        case InputType.date:
+        case InputType.month:
+        case InputType.time:
+          return TextAlign.center
+        default:
+          return TextAlign.left
+      }
+    }
+    const textAlign = ref<TextAlignValue>(props.textAlign ?? computeDefaultTextAlign(inputType.value))
+    const textAlignStyle = computed(() => ({ textAlign: textAlign.value }))
+    const border = ref<boolean>(props.border ?? true)
     const getCutLengthString = (value: any) => {
       value = String(value)
       if(maxLength.value) value = value.substring(0, maxLength.value)
@@ -502,6 +524,7 @@ export default defineComponent({
       if(editMode.value === EditMode.readonly) return true
       return false
     })
+    const borderClass = computed(() => (border.value && !readonly.value ? 'hison-border' : ''))
     const editModeClassList = computed(() => {
       if(editMode.value !== EditMode.editable) return [`hison-input-${editMode.value}`, `hison-input-${inputExpressionType.value}-${editMode.value}`]
       else return []
@@ -532,10 +555,13 @@ export default defineComponent({
     const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
     const editing = ref(false)
     const isModified = ref(false)
+    const tabIndex = ref<number | null>(
+      props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
+    )
 
     //HInputGroup에 주입
-    const registerToInputGroup = inject('registerToInputGroup') as ((inputId: string) => void) | undefined
-    const notifyInputGroupStatus = inject<(inputId: string, newVal: any) => void>('notifyInputGroupStatus')
+    const registerToInputGroup = inject<((inputId: string) => void) | null>('registerToInputGroup', null)
+    const notifyInputGroupStatus = inject<((inputId: string, newVal: any) => void) | null>('notifyInputGroupStatus', null)
 
     const computeSpanText = (value: any) => {
       if (isNullOrUndefined(value) || value === '') return nullText.value ?? ''
@@ -675,7 +701,7 @@ export default defineComponent({
       })
       if (!inputRef.value) return
 
-      refleshResponsiveClassList()
+      refreshResponsiveClassList()
       if(inputTextRef.value) addInputTextCssEvent(inputTextRef.value)
       if(inputType.value !== InputType.checkbox
         && inputType.value !== InputType.range
@@ -702,6 +728,9 @@ export default defineComponent({
           inputType.value = InputType[val]
           oldValue.value = modelValue.value
           updateValue(modelValue.value)
+          if (props.textAlign == null) {
+            textAlign.value = computeDefaultTextAlign(inputType.value)
+          }
         },
         getFormat : () => { return format.value ?? '' },
         setFormat : (val: string) => {
@@ -763,8 +792,20 @@ export default defineComponent({
         setFontThruline : (val: boolean) => { fontThruline.value = val },
         isFontUnderline : () => { return fontUnderline.value },
         setFontUnderline : (val: boolean) => { fontUnderline.value = val },
+        getTextAlign: () => textAlign.value,
+        setTextAlign: (v: TextAlign) => {
+          if (v === TextAlign.left || v === TextAlign.center || v === TextAlign.right) {
+            textAlign.value = v
+          }
+        },
+        isBorder: () => border.value,
+        setBorder: (val: boolean) => { border.value = val },
         isModified : () => { return isModified.value },
         setModified : (val: boolean) => { isModified.value = val},
+        getTabIndex: () => tabIndex.value,
+        setTabIndex: (v: number | null) => {
+          tabIndex.value = v !== null && v !== undefined ? Number(v) : null
+        },
         focus : () => {
           if(inputTextRef.value) inputTextRef.value.focus()
           else inputRef.value?.focus()
@@ -792,7 +833,7 @@ export default defineComponent({
     onBeforeUnmount(unmount)
 
     watch(device, (newDevice) => {
-      refleshResponsiveClassList()
+      refreshResponsiveClassList()
       emit('responsive-change', newDevice)
     })
 
@@ -816,6 +857,8 @@ export default defineComponent({
         fontItalicClass,
         fontThrulineClass,
         fontUnderlineClass,
+        textAlignStyle,
+        borderClass,
         disable,
         readonly,
         inputType,
@@ -826,6 +869,7 @@ export default defineComponent({
         maxNumber,
         minNumber,
         spanText,
+        tabIndex,
         onInput,
         onTextInputFocus,
         onFocus,
