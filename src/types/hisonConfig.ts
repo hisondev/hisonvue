@@ -633,10 +633,44 @@ export interface ComponentStyleConfig {
   emptyColor: string;
   filledTextColor: string;
   emptyTextColor: string;
+  /** Whether to invert colors. Used in dark mode. */
   invertColor: boolean;
+
+  /** The default height of an element when it is small. The unit is 'rem'. (default 1.7) */
+  minHeightS: number;
+  /** The default height of an element when it is medium. The unit is 'rem'. (default 1.95) */
+  minHeightM: number;
+  /** The default height of an element when it is large. The unit is 'rem'. (default 2.25) */
+  minHeightL: number;
+  /** The default height of an element when it is extra large. The unit is 'rem'. (default 2.55) */
+  minHeightXL: number;
+  /** The default font size of an element when it is small. The unit is 'rem'. (default 0.7) */
+  fontSizeS: number;
+  /** The default font size of an element when it is medium. The unit is 'rem'. (default 0.75) */
+  fontSizeM: number;
+  /** The default font size of an element when it is large. The unit is 'rem'. (default 0.85) */
+  fontSizeL: number;
+  /** The default font size of an element when it is extra large. The unit is 'rem'. (default 1) */
+  fontSizeXL: number;
 }
 
 export interface CssEvent {
+  //클릭 등 이벤트가 활성화되는 빈 배경의 textbox 이벤트
+  textbox_onBeforeFocus: (e: FocusEvent) => boolean;
+  textbox_onAfterFocus: (e: FocusEvent) => void;
+  textbox_onBeforeBlur: (e: FocusEvent) => boolean;
+  textbox_onAfterBlur: (e: FocusEvent) => void;
+  textbox_onBeforeClick: (e: MouseEvent) => boolean;
+  textbox_onAfterClick: (e: MouseEvent) => void;
+  textbox_onBeforeMouseover: (e: MouseEvent) => boolean;
+  textbox_onAfterMouseover: (e: MouseEvent) => void;
+  textbox_onBeforeMouseout: (e: MouseEvent) => boolean;
+  textbox_onAfterMouseout: (e: MouseEvent) => void;
+  textbox_onBeforeTouchstart: (e: TouchEvent) => boolean;
+  textbox_onAfterTouchstart: (e: TouchEvent) => void;
+  textbox_onBeforeTouchend: (e: TouchEvent) => boolean;
+  textbox_onAfterTouchend: (e: TouchEvent) => void;
+
   button_onBeforeFocus: (e: FocusEvent) => boolean;
   button_onAfterFocus: (e: FocusEvent) => void;
   button_onBeforeBlur: (e: FocusEvent) => boolean;
@@ -687,13 +721,13 @@ export interface ComponentConfig {
    */
   chart: Defaults;
   /**
-   * The maximum size of all uploaded files that the fileSet component will have by default.
+   * The maximum size of all uploaded files that the fileset component will have by default.
    */
-  fileSetTotalSize: number
+  filesetTotalSize: number
   /**
-   * The maximum size per upload file that the fileSet component will have by default.
+   * The maximum size per upload file that the fileset component will have by default.
    */
-  fileSetSize: number
+  filesetSize: number
 }
 
 /**
