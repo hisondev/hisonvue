@@ -5,13 +5,14 @@
             'hison-layout',
             ...responsiveClassList,
             visibleClass,
+            borderClass,
         ]"
         :style="[props.style, computedBackStyle]"
-        @click="$emit('click', $event, layoutMethods)"
-        @mousedown="$emit('mousedown', $event, layoutMethods)"
-        @mouseup="$emit('mouseup', $event, layoutMethods)"
-        @mouseover="$emit('mouseover', $event, layoutMethods)"
-        @mouseout="$emit('mouseout', $event, layoutMethods)"
+        @click.stop="$emit('click', $event, layoutMethods)"
+        @mousedown.stop="$emit('mousedown', $event, layoutMethods)"
+        @mouseup.stop="$emit('mouseup', $event, layoutMethods)"
+        @mouseover.stop="$emit('mouseover', $event, layoutMethods)"
+        @mouseout.stop="$emit('mouseout', $event, layoutMethods)"
     >
         <div class="hison-layout-frame-adjust"></div>
         <slot>Hison Layout</slot>
@@ -23,7 +24,7 @@ import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, next
 import type { HLayoutMethods } from '../../types'
 import { layoutProps } from './props'
 import { hisonCloser } from '../..'
-import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getUUID, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
+import { addComponentNameToClass, extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getUUID, registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 
 export default defineComponent({
@@ -40,28 +41,21 @@ setup(props, { emit }) {
 
     const visible = ref(props.visible)
     const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
+    const border = ref<boolean>(props.border ?? false)
+    const borderClass = computed(() => (border.value ? 'hison-border' : ''))
 
     const computedBackStyle = computed(() => {
         const styles: Record<string, string> = {};
 
         if (props.backImageSrc) {
             styles.backgroundImage = `url(${props.backImageSrc})`;
-            styles.backgroundRepeat = props.backImageStyle || 'no-repeat';
+            styles.backgroundRepeat = props.backImageRepeat || 'no-repeat';
             styles.backgroundSize = props.backImageWidth || 'auto';
             styles.backgroundPosition = `${props.backImageAlign || 'center'} ${props.backImageVerticalAlign || 'center'}`;
         }
         if (props.backColor) {
             const color = getHexCodeFromColorText(props.backColor) || props.backColor;
             styles.backgroundColor = color;
-        }
-        if (props.borderColor) {
-            const color = getHexCodeFromColorText(props.borderColor) || props.borderColor;
-            styles.borderColor = color;
-            styles.borderStyle = 'solid';
-        }
-        if (props.borderWidth) {
-            styles.borderWidth = props.borderWidth;
-            styles.borderStyle = 'solid';
         }
         if (props.height) {
             styles.height = props.height;
@@ -71,9 +65,10 @@ setup(props, { emit }) {
     });
 
     const responsiveClassList = ref<string[]>([])
-    const refleshResponsiveClassList = () => {
-        responsiveClassList.value = extractResponsiveClasses(props.class || '', device.value)
+    const refreshResponsiveClassList = () => {
+        responsiveClassList.value = extractResponsiveClasses(toClassString(props.class) || '', device.value)
         if (getIndexSpecificClassNameFromClassList(responsiveClassList.value, 'col') === -1) responsiveClassList.value.push('hison-col-12')
+        addComponentNameToClass(responsiveClassList.value, 'color', 'primary')
     }
     
     const mount = () => {
@@ -84,7 +79,7 @@ setup(props, { emit }) {
         })
         if (!layoutRef.value) return
 
-        refleshResponsiveClassList()
+        refreshResponsiveClassList()
         layoutMethods.value = {
             getId : () => { return id },
             getType : () => 'layout',
@@ -96,7 +91,7 @@ setup(props, { emit }) {
             setBackImageSrc: (val: string) => {
                 if (layoutRef.value) layoutRef.value.style.backgroundImage = `url(${val})`;
             },
-            getBackImageRepeat: () => props.backImageStyle || '',
+            getBackImageRepeat: () => props.backImageRepeat || '',
             setBackImageRepeat: (val: string) => {
                 if (layoutRef.value) layoutRef.value.style.backgroundRepeat = val;
             },
@@ -124,20 +119,8 @@ setup(props, { emit }) {
                     layoutRef.value.style.backgroundColor = getHexCodeFromColorText(val) || val;
                 }
             },
-            getBorderColor: () => props.borderColor || '',
-            setBorderColor: (val: string) => {
-                if (layoutRef.value) {
-                    layoutRef.value.style.borderColor = getHexCodeFromColorText(val) || val;
-                    layoutRef.value.style.borderStyle = 'solid';
-                }
-            },
-            getBorderWidth: () => props.borderWidth || '',
-            setBorderWidth: (val: string) => {
-                if (layoutRef.value) {
-                    layoutRef.value.style.borderWidth = val;
-                    layoutRef.value.style.borderStyle = 'solid';
-                }
-            },
+            isBorder: () => border.value,
+            setBorder: (val: boolean) => { border.value = val },
             getHeight: () => props.height || '',
             setHeight: (val: string) => {
                 if (layoutRef.value) {
@@ -158,7 +141,7 @@ setup(props, { emit }) {
     onBeforeUnmount(unmount)
 
     watch(device, (newDevice) => {
-        refleshResponsiveClassList()
+        refreshResponsiveClassList()
         emit('responsive-change', newDevice)
     })
 
@@ -168,6 +151,7 @@ setup(props, { emit }) {
         props,
         responsiveClassList,
         visibleClass,
+        borderClass,
         computedBackStyle,
     }
 }
