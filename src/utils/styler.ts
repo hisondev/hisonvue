@@ -202,6 +202,8 @@ export const applyDefaultColor = (target: any, baseColor: string) => {
   target.shadowColor = adjustRgbaColor(baseColor, -47);
   target.hoverColor = adjustRgbaColor(baseColor, -24);
   target.activeColor = adjustRgbaColor(baseColor, -24);
+  target.rowHoverColor = adjustRgbaColor(baseColor, 64, 0.2);
+  target.stripeColor = adjustRgbaColor(baseColor, 64, 0.1);
   target.emptyTextColor = baseColor;
   target.filledTextColor = getBasicTextColor(baseColor);
 };
