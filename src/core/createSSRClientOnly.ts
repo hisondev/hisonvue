@@ -1,20 +1,19 @@
 // src/core/createSSRClientOnly.ts
-import { defineComponent, ref, h, onMounted, markRaw, Component } from 'vue'
+import { defineComponent, ref, h, onMounted, markRaw, type Component } from 'vue'
 
-export const createSSRClientOnly = <T extends Component>(
-  importer: () => Promise<{ default: T }>,
+export function createSSRClientOnly(
+  importer: () => Promise<{ default: Component }>,
   componentName: string
-) =>
-defineComponent({
-  name: `${componentName}SSRWrapper`,
-  setup(_, { slots, attrs }) {
-    const comp = ref<T | null>(null)
-
-    onMounted(async () => {
-      const imported = await importer()
-      comp.value = markRaw(imported.default)
-    })
-
-    return () => comp.value ? h(comp.value, { ...attrs }, slots) : null
-  }
-})
+): Component {
+  return defineComponent({
+    name: `${componentName}SSRWrapper`,
+    setup(_, { slots, attrs }) {
+      const comp = ref<Component | null>(null)
+      onMounted(async () => {
+        const mod = await importer()
+        comp.value = markRaw(mod.default)
+      })
+      return () => (comp.value ? h(comp.value as any, { ...attrs }, slots) : null)
+    }
+  })
+}
