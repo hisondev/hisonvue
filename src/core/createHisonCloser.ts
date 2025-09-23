@@ -4,6 +4,21 @@ import { configureChartDefaults, getVg, getVn } from "../plugins"
 
 export const createHisonCloser = (hisonConfig: HisonConfig) => {
   // 이벤트 설정
+  if(hisonConfig.event.cssEvent.textbox_onBeforeFocus) hisonCloser.event.cssEvent.textbox_onBeforeFocus = hisonConfig.event.cssEvent.textbox_onBeforeFocus
+  if(hisonConfig.event.cssEvent.textbox_onAfterFocus) hisonCloser.event.cssEvent.textbox_onAfterFocus = hisonConfig.event.cssEvent.textbox_onAfterFocus
+  if(hisonConfig.event.cssEvent.textbox_onBeforeBlur) hisonCloser.event.cssEvent.textbox_onBeforeBlur = hisonConfig.event.cssEvent.textbox_onBeforeBlur
+  if(hisonConfig.event.cssEvent.textbox_onAfterBlur) hisonCloser.event.cssEvent.textbox_onAfterBlur = hisonConfig.event.cssEvent.textbox_onAfterBlur
+  if(hisonConfig.event.cssEvent.textbox_onBeforeClick) hisonCloser.event.cssEvent.textbox_onBeforeClick = hisonConfig.event.cssEvent.textbox_onBeforeClick
+  if(hisonConfig.event.cssEvent.textbox_onAfterClick) hisonCloser.event.cssEvent.textbox_onAfterClick = hisonConfig.event.cssEvent.textbox_onAfterClick
+  if(hisonConfig.event.cssEvent.textbox_onBeforeMouseover) hisonCloser.event.cssEvent.textbox_onBeforeMouseover = hisonConfig.event.cssEvent.textbox_onBeforeMouseover
+  if(hisonConfig.event.cssEvent.textbox_onAfterMouseover) hisonCloser.event.cssEvent.textbox_onAfterMouseover = hisonConfig.event.cssEvent.textbox_onAfterMouseover
+  if(hisonConfig.event.cssEvent.textbox_onBeforeMouseout) hisonCloser.event.cssEvent.textbox_onBeforeMouseout = hisonConfig.event.cssEvent.textbox_onBeforeMouseout
+  if(hisonConfig.event.cssEvent.textbox_onAfterMouseout) hisonCloser.event.cssEvent.textbox_onAfterMouseout = hisonConfig.event.cssEvent.textbox_onAfterMouseout
+  if(hisonConfig.event.cssEvent.textbox_onBeforeTouchstart) hisonCloser.event.cssEvent.textbox_onBeforeTouchstart = hisonConfig.event.cssEvent.textbox_onBeforeTouchstart
+  if(hisonConfig.event.cssEvent.textbox_onAfterTouchstart) hisonCloser.event.cssEvent.textbox_onAfterTouchstart = hisonConfig.event.cssEvent.textbox_onAfterTouchstart
+  if(hisonConfig.event.cssEvent.textbox_onBeforeTouchend) hisonCloser.event.cssEvent.textbox_onBeforeTouchend = hisonConfig.event.cssEvent.textbox_onBeforeTouchend
+  if(hisonConfig.event.cssEvent.textbox_onAfterTouchend) hisonCloser.event.cssEvent.textbox_onAfterTouchend = hisonConfig.event.cssEvent.textbox_onAfterTouchend
+
   if(hisonConfig.event.cssEvent.button_onBeforeFocus) hisonCloser.event.cssEvent.button_onBeforeFocus = hisonConfig.event.cssEvent.button_onBeforeFocus
   if(hisonConfig.event.cssEvent.button_onAfterFocus) hisonCloser.event.cssEvent.button_onAfterFocus = hisonConfig.event.cssEvent.button_onAfterFocus
   if(hisonConfig.event.cssEvent.button_onBeforeBlur) hisonCloser.event.cssEvent.button_onBeforeBlur = hisonConfig.event.cssEvent.button_onBeforeBlur
@@ -46,6 +61,14 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
     dangerColor : hisonConfig.componentStyle.dangerColor,
     warningColor : hisonConfig.componentStyle.warningColor,
     invertColor : hisonConfig.componentStyle.invertColor,
+    minHeightS: hisonConfig.componentStyle.minHeightS,
+    minHeightM: hisonConfig.componentStyle.minHeightM,
+    minHeightL: hisonConfig.componentStyle.minHeightL,
+    minHeightXL: hisonConfig.componentStyle.minHeightXL,
+    fontSizeS: hisonConfig.componentStyle.fontSizeS,
+    fontSizeM: hisonConfig.componentStyle.fontSizeM,
+    fontSizeL: hisonConfig.componentStyle.fontSizeL,
+    fontSizeXL: hisonConfig.componentStyle.fontSizeXL,
     primaryInvertColor: null,
     mutedInvertColor: null,
     infoInvertColor: null,
@@ -116,8 +139,8 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
   
   //컴포넌트 설정
   hisonCloser.componentConfig = {
-    fileSetSize : hisonConfig.component.fileSetSize ?? Infinity,
-    fileSetTotalSize : hisonConfig.component.fileSetTotalSize ?? Infinity,
+    filesetSize : hisonConfig.component.filesetSize ?? Infinity,
+    filesetTotalSize : hisonConfig.component.filesetTotalSize ?? Infinity,
   }
 
   // plugin설정
@@ -129,13 +152,26 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
 
   // 컴포넌트 리스트 생성
   hisonCloser.component = {
+    accordionList: {},
+    baggieList: {},
     buttonList: {},
-    layoutList: {},
-    fileSetList: {},
-    imageBoxList: {},
+    calendarList: {},
+    captionList: {},
+    chartList: {},
+    drawerList: {},
+    dropdownList: {},
+    filesetList: {},
+    gapList: {},
+    imageboxList: {},
     inputList: {},
     inputGroupList: {},
-    calendarList: {},
-    chartList: {},
+    labelList: {},
+    layoutList: {},
+    listList: {},
+    modalList: {},
+    paragraphList: {},
+    popupList: {},
+    spinnerList: {},
+    tableList: {},
   }
 }
