@@ -1,5 +1,6 @@
 import { hisonCloser } from "../.."
-import { getColorClass } from "../../utils"
+const boundInputText = new WeakSet<HTMLElement>();
+const boundInput = new WeakSet<HTMLElement>();
 
 const onFocus = (e: Event) => {
     const target = e.currentTarget as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -8,7 +9,7 @@ const onFocus = (e: Event) => {
         e.preventDefault()
         return
     }
-    target.classList.add(getColorClass(target, 'input', 'on-active'))
+    target.classList.add('hison-input-on-active')
     hisonCloser.event.cssEvent.input_onAfterFocus(e as FocusEvent)
 }
 const onBlur = (e: Event) => {
@@ -18,7 +19,7 @@ const onBlur = (e: Event) => {
         e.preventDefault()
         return
     }
-    target.classList.remove(getColorClass(target, 'input', 'on-active'))
+    target.classList.remove('hison-input-on-active')
     hisonCloser.event.cssEvent.input_onAfterBlur(e as FocusEvent)
 }
 const onMouseover = (e: MouseEvent) => {
@@ -29,7 +30,7 @@ const onMouseover = (e: MouseEvent) => {
         e.preventDefault()
         return
     }
-    target.classList.add(getColorClass(target, 'input', 'on-mouseover'))
+    target.classList.add('hison-input-on-mouseover')
     hisonCloser.event.cssEvent.input_onAfterMouseover(e)
 }
 const onMouseout = (e: MouseEvent) => {
@@ -40,7 +41,7 @@ const onMouseout = (e: MouseEvent) => {
         e.preventDefault()
         return
     }
-    target.classList.remove(getColorClass(target, 'input', 'on-mouseover'))
+    target.classList.remove('hison-input-on-mouseover')
     hisonCloser.event.cssEvent.input_onAfterMouseout(e)
 }
 const onTouchstart = (e: TouchEvent) => {
@@ -51,7 +52,7 @@ const onTouchstart = (e: TouchEvent) => {
         e.preventDefault()
         return
     }
-    target.classList.add(getColorClass(target, 'input', 'on-mouseover'))
+    target.classList.add('hison-input-on-mouseover')
     hisonCloser.event.cssEvent.input_onAfterTouchstart(e)
 }
 const onTouchend = (e: TouchEvent) => {
@@ -62,27 +63,35 @@ const onTouchend = (e: TouchEvent) => {
         e.preventDefault()
         return
     }
-    target.classList.remove(getColorClass(target, 'input', 'on-mouseover'))
+    target.classList.remove('hison-input-on-mouseover')
     hisonCloser.event.cssEvent.input_onAfterTouchend(e)
 }
 
 export const addInputTextCssEvent = (el: HTMLInputElement) => {
-    el.addEventListener('mouseover', onMouseover)
-    el.addEventListener('mouseout', onMouseout)
+    if (boundInputText.has(el)) return;
+    boundInputText.add(el);
+    el.addEventListener('mouseenter', onMouseover)
+    el.addEventListener('mouseleave', onMouseout)
     el.addEventListener('touchstart', onTouchstart, { passive: false, capture: true })
     el.addEventListener('touchend', onTouchend, { passive: false, capture: true })
 }
 export const removeInputTextCssEvent = (el: HTMLInputElement) => {
-    el.removeEventListener('mouseover', onMouseover)
-    el.removeEventListener('mouseout', onMouseout)
-    el.removeEventListener('touchstart', onTouchstart)
-    el.removeEventListener('touchend', onTouchend)
+    if (!boundInputText.has(el)) return;
+    boundInputText.delete(el);
+    el.removeEventListener('mouseenter', onMouseover)
+    el.removeEventListener('mouseleave', onMouseout)
+    el.removeEventListener('touchstart', onTouchstart, { capture: true })
+    el.removeEventListener('touchend', onTouchend, { capture: true })
 }
 export const addInputCssEvent = (el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => {
+    if (boundInput.has(el)) return;
+    boundInput.add(el);
     el.addEventListener('focus', onFocus)
     el.addEventListener('blur', onBlur)
 }
 export const removeInputCssEvent = (el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => {
+    if (!boundInput.has(el)) return;
+    boundInput.delete(el);
     el.removeEventListener('focus', onFocus)
     el.removeEventListener('blur', onBlur)
 }
