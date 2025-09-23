@@ -1,5 +1,7 @@
 import { PropType } from "vue";
 import { DataStatus, EditMode } from "../../enums";
+import type { DataStatusValue } from "../../enums"; // 위에서 추가한 타입
+import { DATA_STATUS_VALUES, EDIT_MODE_VALUES } from "../../enums";
 
 export const inputGroupProps = {
     /**
@@ -8,12 +10,18 @@ export const inputGroupProps = {
      * - ⚠️ Duplicate `id` values will throw an error at mount time
      */
     id: { type: String, required: false },
+
     /**
      * Edit mode of the input.
      * - Values: `'editable'`, `'readonly'`, `'disable'`
      * - `'readonly'` and `'disable'` both prevent editing but differ in styling
      */
-    editMode: { type: String as PropType<EditMode>, required: false },
+    editMode: {
+        type: String as PropType<EditMode | typeof EDIT_MODE_VALUES[number]>,
+        required: false,
+        validator: (v: any) => v == null || (EDIT_MODE_VALUES as readonly string[]).includes(v),
+    },
+
     /**
      * Initial status of the input group.
      * 
@@ -35,7 +43,13 @@ export const inputGroupProps = {
      * 
      * @default 'R'
      */
-    status: { type: String as PropType<DataStatus>, required: false },
+    status: {
+        type: String as PropType<DataStatus | DataStatusValue>,
+        required: false,
+        default: DataStatus.R,
+        validator: (v: any) => (DATA_STATUS_VALUES as readonly string[]).includes(v),
+    },
+
     /**
      * Two-way binding value for the input group.
      *
@@ -71,5 +85,8 @@ export const inputGroupProps = {
      * @prop {Record<string, any>} modelValue - Bound value object for all child inputs. Supports `v-model` binding.
      * @default {}
      */
-    modelValue: { type: Object as PropType<Record<string, any>>, default: () => ({}), },
-}
+    modelValue: {
+        type: Object as PropType<Record<string, any>>,
+        default: () => ({}),
+    },
+};
