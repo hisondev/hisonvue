@@ -46,7 +46,7 @@
   "dependencies": {
     "chart.js": "^4.5.0",
     "hisonjs": "^1.2.6",
-    "vanillagrid2": "^1.0.7",
+    "vanillagrid2": "^1.0.8",
     "vanillanote2": "^1.1.0",
     "vue-cal": "^4.10.2"
   }
