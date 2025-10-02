@@ -9,7 +9,6 @@ export const hexToRgba = (hex: string) => {
     let r: number, g: number, b: number
   
     if (hex.length === 4) {
-      // #rgb → #rrggbb 변환
       r = parseInt(hex[1] + hex[1], 16)
       g = parseInt(hex[2] + hex[2], 16)
       b = parseInt(hex[3] + hex[3], 16)
@@ -77,7 +76,7 @@ export const normalizeToRgba = (color: string) => {
       return hexToRgba(color)
     }
     if (isValidRgbaColor(color)) {
-      return color.replace(/\s+/g, '') // 필요 시 공백 제거
+      return color.replace(/\s+/g, '')
     }
     throw new Error(`Invalid color format: ${color}`)
 }
@@ -208,7 +207,6 @@ export const applyDefaultColor = (target: any, baseColor: string) => {
   target.filledTextColor = getBasicTextColor(baseColor);
 };
 
-//rgba형태 css text값에 opacity만 별도 적용
 export const applyOpacityToRgba = (rgbaString: string, newOpacity: number) => {
   return rgbaString.replace(
     /rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([0-9.]+)\s*\)/i,
