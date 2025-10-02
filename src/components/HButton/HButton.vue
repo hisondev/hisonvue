@@ -18,11 +18,11 @@
       :disabled="disable"
       :title="title || undefined"
       :tabindex="tabIndex ?? undefined"
-      @click.stop="onClick"
-      @mousedown.stop="$emit('mousedown', $event, buttonMethods)"
-      @mouseup.stop="$emit('mouseup', $event, buttonMethods)"
-      @mouseover.stop="$emit('mouseover', $event, buttonMethods)"
-      @mouseout.stop="$emit('mouseout', $event, buttonMethods)"
+      @click="onClick"
+      @mousedown="$emit('mousedown', $event, buttonMethods)"
+      @mouseup="$emit('mouseup', $event, buttonMethods)"
+      @mouseover="$emit('mouseover', $event, buttonMethods)"
+      @mouseout="$emit('mouseout', $event, buttonMethods)"
       :aria-label="computedAriaLabel"
     >
       <template v-if="$slots.icon">
@@ -155,7 +155,7 @@ export default defineComponent({
     }
 
     const mount = () => {
-      if (hisonCloser.component.buttonList[id]) throw new Error(`[Hisonvue] button id attribute was duplicated.`)
+      if (hisonCloser.component.buttonList[id] && hisonCloser.component.buttonList[id].isHisonvueComponent) console.warn(`[Hisonvue] The button ID is at risk of being duplicated. ${id}`)
       registerReloadable(reloadId, () => {
         unmount()
         nextTick(mount)
@@ -164,6 +164,7 @@ export default defineComponent({
       refreshResponsiveClassList()
 
       buttonMethods.value = {
+        isHisonvueComponent: true,
         getId: () => id,
         getType : () => 'button',
         getText: () => (hasLabelSlot.value ? '' : internalText.value),
@@ -209,6 +210,16 @@ export default defineComponent({
       refreshResponsiveClassList()
       emit('responsive-change', device.value)
     })
+
+    watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
+    watch(() => props.disable, v => { const nv = !!v; if (nv !== disable.value) disable.value = nv })
+    watch(() => props.title, v => { const t = v ?? ''; if (t !== title.value) title.value = t })
+    watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
+    watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
+    watch(() => props.text, v => { if (!hasLabelSlot.value) { const t = v ?? ''; if (t !== internalText.value) internalText.value = t } })
+    watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
+    watch(() => props.clickInterval, v => { const n = Number(v) || 0; if (n !== clickInterval.value) { clickInterval.value = n; lastClickTime.value = 0 } })
+    watch(() => props.class, () => { refreshResponsiveClassList() })
 
     return {
       buttonRef,
