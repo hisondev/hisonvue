@@ -1,5 +1,5 @@
 import { GridMethods } from "vanillagrid2"
-import { GridAlign, GridVerticalAlign, EditMode, InputType, DataStatus, DayOfWeek, HCalendarView, HCalendarTimeFormat, BackgroundType, DropdownTrigger, TextAlign, EditModeValue, BackgroundTypeValue, HCalendarViewValue, HCalendarTimeFormatValue, TextAlignValue, DataStatusValue, BackImageAlignValue, BackImageAlign, BackImageVerticalAlignValue, BackImageVerticalAlign, HGapLineStyleValue, HGapLineStyle, HGapLine, HGapLineValue, VerticalAlignValue, ModalPlacementValue, ModalPlacement, ScreenPositionValue, ScreenPosition, SpinnerTypeValue, SpinnerType } from "../enums"
+import { GridAlign, GridVerticalAlign, EditMode, InputType, DataStatus, DayOfWeek, HCalendarView, HCalendarTimeFormat, BackgroundType, DropdownTrigger, TextAlign, EditModeValue, BackgroundTypeValue, HCalendarViewValue, HCalendarTimeFormatValue, TextAlignValue, DataStatusValue, BackImageAlignValue, BackImageAlign, BackImageVerticalAlignValue, BackImageVerticalAlign, HGapLineStyleValue, HGapLineStyle, HGapLine, HGapLineValue, VerticalAlignValue, ModalPlacementValue, ModalPlacement, ScreenPositionValue, ScreenPosition, SpinnerTypeValue, SpinnerType, InputTypeValue, GridVerticalAlignValue, GridAlignValue } from "../enums"
 import { NoteData, VanillanoteElement } from "vanillanote2"
 import { InterfaceDataModel } from "hisonjs"
 import { Chart } from "chart.js"
@@ -278,11 +278,11 @@ export interface HGridColumn {
    * Sets the align of the column. Choose from 'left', 'center', 'right'. If no value is specified, the default align follows the data-type.
    * text, mask: left, number: right, date, month, code, select, checkbox, button, link: center.
    */
-  align?: GridAlign
+  align?: GridAlign | GridAlignValue
   /**
    * Sets the default vertical-align of the column. Choose from 'top', 'center', 'bottom'. If no value is specified, it defaults to center.
    */
-  verticalAlign?: GridVerticalAlign
+  verticalAlign?: GridVerticalAlign | GridVerticalAlignValue
   /**
    * Sets the default overflow-wrap of the column. Enter the overflow-wrap in cssText.
    */
@@ -415,6 +415,7 @@ export interface HLabelAnchorAttrs {
  * Basic methods in all components
  */
 export interface ComponentMethods {
+  isHisonvueComponent: true
   /**
    * Returns the unique ID of the component.
    * This is the same as the `id` prop (or auto-generated if not set).
@@ -564,40 +565,325 @@ export interface HAccordionMethods extends ComponentMethods {
   focus(): void
 }
 
-/** */
+/**
+ * Runtime control methods for `HBaggie` component.
+ *
+ * This interface defines programmatic access to a baggie’s visibility,
+ * badge-only visibility, z-index layering, position, text content, shape,
+ * background, border, tabindex, and interactive state.
+ * You can retrieve an instance using `hison.component.getBaggie(id)`.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const baggie = hison.component.getBaggie('bag01');
+ * baggie.setText('9+');
+ * baggie.setPosition('bottom-left');
+ * baggie.setButtonEnabled(true);
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - The `visible` prop hides both the target and badge; `baggieVisible` hides **only the badge**.
+ * - `zIndex` applies to the anchor; the badge itself is rendered at `zIndex + 1`.
+ * - For custom content, the `#badge` slot overrides the `text` prop entirely.
+ */
 export interface HBaggieMethods extends ComponentMethods {
+  /**
+   * Returns the type of the component.
+   * Always `'baggie'`.
+   */
   getType(): 'baggie'
-
+  /**
+   * Returns whether the entire baggie anchor (target + badge) is visible.
+   */
   isVisible(): boolean
+  /**
+   * Sets whether the entire baggie anchor (target + badge) is visible.
+   */
   setVisible(v: boolean): void
-
+  /**
+   * Returns whether the badge itself is visible.
+   * (Target element stays visible regardless.)
+   */
+  isBaggieVisible(): boolean
+  /**
+   * Sets whether the badge itself is visible.
+   */
+  setBaggieVisible(v: boolean): void
+  /**
+   * Gets the current base z-index (applied to the anchor).
+   * The badge uses `zIndex + 1`.
+   */
   getZIndex(): number
+  /**
+   * Sets the base z-index (applied to the anchor).
+   * The badge will automatically render at `zIndex + 1`.
+   */
   setZIndex(v: number): void
-
+  /**
+   * Gets the current badge position relative to its target.
+   */
   getPosition(): ScreenPositionValue
+  /**
+   * Sets the badge position relative to its target.
+   * Accepts any `ScreenPosition` value (e.g. `'top-right'`, `'bottom-center'`).
+   */
   setPosition(v: ScreenPosition | ScreenPositionValue): void
-
+  /**
+   * Gets the current text content of the badge.
+   * Returns empty string if no text is set.
+   */
   getText(): string
+  /**
+   * Sets the text content of the badge.
+   * Ignored if slot `#badge` is used.
+   */
   setText(t: string): void
-
+  /**
+   * Returns whether the badge has border/shadow styling.
+   */
   isBorder(): boolean
+  /**
+   * Sets whether the badge shows border/shadow styling.
+   */
   setBorder(v: boolean): void
-
+  /**
+   * Gets the current background type of the badge.
+   */
   getBackgroundType(): BackgroundTypeValue
+  /**
+   * Sets the background type of the badge.
+   * One of: `'empty' | 'transparent' | 'filled'`
+   */
   setBackgroundType(t: BackgroundType | BackgroundTypeValue): void
-
+  /**
+   * Gets the shape of the badge.
+   * One of: `'square' | 'rounded' | 'circle'`
+   */
   getShape(): 'square' | 'rounded' | 'circle'
+  /**
+   * Sets the shape of the badge.
+   */
   setShape(s: 'square' | 'rounded' | 'circle'): void
-
+  /**
+   * Gets the tabindex value of the badge (or `null` if not focusable).
+   */
   getTabIndex(): number | null
+  /**
+   * Sets the tabindex value of the badge.
+   * Use `null` to remove focusability.
+   */
   setTabIndex(v: number | null): void
-
+  /**
+   * Returns whether the badge is enabled for button-like interaction.
+   */
   isButtonEnabled(): boolean
+  /**
+   * Enables or disables button-like interaction styling/behavior.
+   */
   setButtonEnabled(v: boolean): void
-
+  /**
+   * Reloads the component instance (re-applies props and state).
+   * Typically used internally for hot-reload or style updates.
+   */
   reload(): void
 }
 
+/**
+ * Runtime control methods for `HBanner` component.
+ *
+ * This interface defines programmatic access to a banner’s visibility,
+ * frame styling (background/border), slide index navigation, navigation UI
+ * (prev/next buttons, indicators, indicators’ position), autoplay behavior,
+ * and transition timing. You can retrieve an instance using
+ * `hison.component.getBanner(id)`.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const banner = hison.component.getBanner('bn1');
+ * banner.next();
+ * banner.setAutoInterval(3000);
+ * banner.startAuto();
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - `initialIndex` is applied on mount; calling `setInitialIndex()` will navigate immediately.
+ * - When `loop` is `false`, navigation at the first/last slide is disabled and buttons may be disabled.
+ * - Setting `autoInterval` to a value < 100 disables autoplay.
+ * - If `pauseOnHover` is `true`, hovering the banner pauses autoplay.
+ * - `indicatorClickable = false` renders dots as non-interactive.
+ * - `indicatorsPosition: 'overlay'` draws dots inside the banner near the bottom edge; `'bottom'` places them below.
+ */
+export interface HBannerMethods extends ComponentMethods {
+  /**
+   * Returns the type of the component.
+   * Always `'banner'`.
+   */
+  getType(): 'banner'
+  /**
+   * Returns whether the entire banner frame is visible.
+   */
+  isVisible(): boolean
+  /**
+   * Sets whether the entire banner frame is visible.
+   */
+  setVisible(v: boolean): void
+  /**
+   * Returns whether the banner shows border/shadow styling.
+   */
+  isBorder(): boolean
+  /**
+   * Sets whether the banner shows border/shadow styling.
+   */
+  setBorder(v: boolean): void
+  /**
+   * Gets the current background type of the banner.
+   */
+  getBackgroundType(): BackgroundTypeValue
+  /**
+   * Sets the background type of the banner.
+   * One of: `'empty' | 'transparent' | 'filled'`
+   */
+  setBackgroundType(t: BackgroundType | BackgroundTypeValue): void
+  /**
+   * Gets the current zero-based slide index.
+   */
+  getCurrentIndex(): number
+  /**
+   * Navigates to the given zero-based slide index.
+   * Clamped to bounds; when `loop` is true, wraps around.
+   */
+  setCurrentIndex(i: number): void
+  /**
+   * Gets the initial zero-based slide index used on mount.
+   */
+  getInitialIndex(): number
+  /**
+   * Sets the initial slide index and navigates immediately.
+   */
+  setInitialIndex(i: number): void
+  /**
+   * Returns the total number of slides (default slot children).
+   */
+  getSlideCount(): number
+  /**
+   * Navigates to the next slide (respecting `loop`).
+   */
+  next(): void
+  /**
+   * Navigates to the previous slide (respecting `loop`).
+   */
+  prev(): void
+  /**
+   * Navigates to the specified zero-based slide index.
+   */
+  goTo(i: number): void
+  /**
+   * Gets the current navigation button style.
+   * One of: `'chevron' | 'triangle'`
+   */
+  getNavButtonStyle(): 'chevron' | 'triangle'
+  /**
+   * Sets the navigation button style.
+   */
+  setNavButtonStyle(s: 'chevron' | 'triangle'): void
+  /**
+   * Returns whether prev/next navigation buttons are shown.
+   */
+  isShowNavButtons(): boolean
+  /**
+   * Sets whether prev/next navigation buttons are shown.
+   */
+  setShowNavButtons(v: boolean): void
+  /**
+   * Returns whether page indicators (dots) are shown.
+   */
+  isShowIndicators(): boolean
+  /**
+   * Sets whether page indicators (dots) are shown.
+   */
+  setShowIndicators(v: boolean): void
+  /**
+   * Gets the indicators’ position.
+   * One of: `'bottom' | 'overlay'`
+   */
+  getIndicatorsPosition(): 'bottom' | 'overlay'
+  /**
+   * Sets the indicators’ position.
+   */
+  setIndicatorsPosition(p: 'bottom' | 'overlay'): void
+  /**
+   * Returns whether page indicators are clickable.
+   */
+  isIndicatorClickable(): boolean
+  /**
+   * Sets whether page indicators are clickable.
+   */
+  setIndicatorClickable(v: boolean): void
+  /**
+   * Gets the autoplay interval in milliseconds.
+   * Values < 100 disable autoplay.
+   */
+  getAutoInterval(): number
+  /**
+   * Sets the autoplay interval in milliseconds.
+   * If autoplay is running, the timer is restarted.
+   */
+  setAutoInterval(ms: number): void
+  /**
+   * Gets the autoplay direction.
+   * One of: `'next' | 'prev'`
+   */
+  getAutoDirection(): 'next' | 'prev'
+  /**
+   * Sets the autoplay direction.
+   */
+  setAutoDirection(d: 'next' | 'prev'): void
+  /**
+   * Returns whether edge navigation wraps around.
+   */
+  isLoop(): boolean
+  /**
+   * Sets whether edge navigation wraps around.
+   */
+  setLoop(v: boolean): void
+  /**
+   * Returns whether hovering the banner pauses autoplay.
+   */
+  isPauseOnHover(): boolean
+  /**
+   * Sets whether hovering the banner pauses autoplay.
+   */
+  setPauseOnHover(v: boolean): void
+  /**
+   * Starts autoplay (if interval ≥ 100 ms).
+   */
+  startAuto(): void
+  /**
+   * Stops autoplay.
+   */
+  stopAuto(): void
+  /**
+   * Gets the slide transition duration in milliseconds.
+   */
+  getTransitionMs(): number
+  /**
+   * Sets the slide transition duration in milliseconds.
+   */
+  setTransitionMs(ms: number): void
+  /**
+   * Reloads the component instance (re-applies props and state).
+   * Typically used for hot-reload or style updates.
+   */
+  reload(): void
+}
 
 /**
  * Runtime control methods for `HButton` component.
@@ -1546,11 +1832,11 @@ export interface HDropdownMethods extends ComponentMethods {
   /**
    * Returns current text alignment (`left` | `center` | `right`).
    */
-  getTextAlign(): TextAlign
+  getTextAlign(): TextAlignValue
   /**
    * Sets text alignment for both the toggle and the menu.
    */
-  setTextAlign(textAlign: TextAlign): void
+  setTextAlign(textAlign: TextAlign | TextAlignValue): void
   /** 
    * Whether animation is enabled.
    */
@@ -1619,7 +1905,7 @@ export interface HDropdownMethods extends ComponentMethods {
  * fileset.setAllowedTypes(['.pdf'])
  * 
  * // Change add button label dynamically
- * fileset.setAddButtonText('파일 추가')
+ * fileset.setAddButtonText('ADD FILE')
  * 
  * // Replace all files with new ones
  * fileset.setValue([
@@ -2507,6 +2793,23 @@ export interface HInputMethods extends ComponentMethods {
    */
   getType(): 'input'
   /**
+   * Gets the current HTML `name` of this input.
+   * - For radio inputs, this is the **group key** used by `HInputGroup` to aggregate
+   *   selection as `{ [name]: selectedRadioId | null }`.
+   * - For non-radio inputs, it’s just the underlying HTML attribute.
+   */
+  getName(): string;
+  /**
+   * Sets the HTML `name` of this input.
+   * - Safe to call at runtime.
+   * - **Radio inputs:** re-registers group membership with `HInputGroup`
+   *   (moves this radio from the old group to the new one). The current `checked`
+   *   state is preserved and the group’s `{ [name]: id | null }` mapping updates.
+   * - **Non-radio inputs:** only updates the HTML attribute; no grouping behavior.
+   * - Does **not** toggle the radio’s checked state by itself.
+   */
+  setName(name: string): void;
+  /**
    * Returns the formatted display text shown in the span layer.
    * - Applies `format`, `nullText`, and masking logic based on `type`.
    */
@@ -2525,12 +2828,12 @@ export interface HInputMethods extends ComponentMethods {
    * Gets the current input type.
    * - Matches the `InputType` enum (e.g., `'text'`, `'date'`, `'number'`, etc.)
    */
-  getInputType(): InputType;
+  getInputType(): InputTypeValue;
   /**
    * Sets the input type.
    * - Automatically adjusts formatting/rendering logic.
    */
-  setInputType(type: InputType): void;
+  setInputType(type: InputType | InputTypeValue): void;
   /**
    * Gets the format string used to format the value.
    * - Affects `'number'`, `'mask'`, `'date'`, `'month'` types.
@@ -3640,6 +3943,181 @@ export interface HNoteElement extends ComponentMethods, VanillanoteElement {
    * @param data Editor content to load, in `NoteData` or `DataModel` form.
    */
   load<T extends NoteData>(data: NoteData | Record<string, any> | InterfaceDataModel<T>): void;
+}
+
+/**
+ * Runtime control methods for `HPagination` component.
+ *
+ * This interface defines methods that can be accessed via `hison.component.getPagination(id)`.
+ * Use these methods to manipulate pagination state programmatically at runtime.
+ *
+ * ---
+ *
+ * ### 🔧 Example Usage
+ * ```ts
+ * const pg = hison.component.getPagination('pg1');
+ * pg.setCurrentPage(3);       // Jump to page 3
+ * pg.goNext();                // Move to the next page
+ * pg.setShowFirst(false);     // Hide the "First" button
+ * pg.setGap('1rem');          // Change spacing between buttons
+ * ```
+ *
+ * ---
+ *
+ * ### ⚠️ Notes
+ * - `modelValue` (v-model) is automatically updated when using `setCurrentPage` or navigation methods.
+ * - All changes are reactive and immediately reflected in the DOM.
+ * - If `totalPages` is explicitly set via props, it overrides `totalItems/pageSize` calculation.
+ */
+export interface HPaginationMethods extends ComponentMethods {
+  /**
+   * Returns the component type identifier.
+   * - Always `'pagination'`
+   */
+  getType(): 'pagination'
+  /**
+   * Returns whether the pagination component is currently visible.
+   */
+  isVisible(): boolean
+  /**
+   * Sets the visibility of the entire pagination component.
+   * @param v - `true` to show, `false` to hide
+   */
+  setVisible(v: boolean): void
+  /**
+   * Returns the current spacing (gap) between buttons.
+   * - Value is normalized into a CSS unit string (e.g., `"8px"`, `"0.5rem"`).
+   */
+  getGap(): string
+  /**
+   * Sets the spacing (gap) between buttons.
+   * @param v - Number (treated as px) or CSS size string
+   */
+  setGap(v: number | string): void
+  /**
+   * Gets the current active page number (1-based).
+   */
+  getCurrentPage(): number
+  /**
+   * Sets the current active page number.
+   * - Automatically clamps to `[1 .. totalPages]`.
+   * - Emits both `update:modelValue` and `change` events if page changes.
+   */
+  setCurrentPage(page: number): void
+  /**
+   * Returns the total number of pages.
+   * - Computed from `totalItems/pageSize` unless `totalPages` prop is explicitly set.
+   */
+  getTotalPages(): number
+  /**
+   * Sets the total number of pages.
+   * - If current page is out of range, it will be clamped.
+   */
+  setTotalPages(totalPages: number): void
+  /**
+   * Returns the total number of items (from `totalItems` prop).
+   */
+  getTotalItems(): number
+  /**
+   * Returns the page size (from `pageSize` prop).
+   */
+  getPageSize(): number
+  /**
+   * Moves to the previous page (if not on the first).
+   */
+  goPrev(): void
+  /**
+   * Moves to the next page (if not on the last).
+   */
+  goNext(): void
+  /**
+   * Moves to the first page.
+   */
+  goFirst(): void
+  /**
+   * Moves to the last page.
+   */
+  goLast(): void
+  /**
+   * Returns whether the "Prev" button is currently visible.
+   */
+  isShowPrev(): boolean
+  /**
+   * Shows or hides the "Prev" button.
+   */
+  setShowPrev(v: boolean): void
+  /**
+   * Returns whether the "Next" button is currently visible.
+   */
+  isShowNext(): boolean
+  /**
+   * Shows or hides the "Next" button.
+   */
+  setShowNext(v: boolean): void
+  /**
+   * Returns whether the "First" button is currently visible.
+   */
+  isShowFirst(): boolean
+  /**
+   * Shows or hides the "First" button.
+   */
+  setShowFirst(v: boolean): void
+  /**
+   * Returns whether the "Last" button is currently visible.
+   */
+  isShowLast(): boolean
+  /**
+   * Shows or hides the "Last" button.
+   */
+  setShowLast(v: boolean): void
+  /**
+   * Returns whether buttons currently display a border.
+   */
+  isBorder(): boolean
+  /**
+   * Sets whether buttons display a border.
+   * @param border - `true` to show, `false` to hide
+   */
+  setBorder(border: boolean): void
+  /**
+   * Gets the current background type of the buttons.
+   * - 'filled' | 'empty' | 'transparent'
+   */
+  getBackgroundType(): BackgroundTypeValue
+  /**
+   * Sets the background type of the buttons.
+   * @param type - New background type to apply
+   */
+  setBackgroundType(type: BackgroundType | BackgroundTypeValue): void
+  /**
+   * Returns the current click interval (in ms) applied to navigation buttons.
+   */
+  getClickInterval(): number
+  /**
+   * Sets the minimum interval (in ms) between button clicks.
+   */
+  setClickInterval(ms: number): void
+  /**
+   * Gets the current `tabIndex` for pagination buttons.
+   * - `null`: no `tabindex` (not focusable)
+   * - `0` or positive: focusable in tab order
+   */
+  getTabIndex(): number | null
+  /**
+   * Sets the `tabIndex` for pagination buttons.
+   * @param v - `null` to remove, or number to set
+   */
+  setTabIndex(v: number | null): void
+  /**
+   * Focuses on the most relevant pagination button.
+   * - Priority: current page → prev → next → first → last
+   */
+  focus(): void
+  /**
+   * Forces a full reload of the pagination component.
+   * - Useful if props or slots have changed dynamically.
+   */
+  reload(): void
 }
 
 /**
