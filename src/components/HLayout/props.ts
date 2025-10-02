@@ -49,13 +49,10 @@ export const layoutProps = {
     required: false,
     validator: (v: any) => {
       if (v == null) return true
-      // 1) 권장 토큰
       if ((BACK_IMAGE_STYLE_VALUES as readonly string[]).includes(v)) return true
-      // 2) 흔한 CSS 패턴 몇 가지 허용 (repeat-x / repeat-y / no-repeat / cover/contain 조합 등)
       const relaxed =
-        /^(repeat-x|repeat-y|repeat|no-repeat)(\s+\S+\/\S+)?$/.test(v) || // repeat-x, repeat-y, no-repeat center/cover
+        /^(repeat-x|repeat-y|repeat|no-repeat)(\s+\S+\/\S+)?$/.test(v) ||
         /^(cover|contain)$/.test(v) ||
-        // 아무거나 CSS shorthand를 쓰고 싶을 수 있으니, 너무 빡세지 않게: 공백/슬래시 포함 문자열은 통과
         /[\/\s]/.test(v)
       return relaxed
     },
