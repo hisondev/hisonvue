@@ -304,7 +304,7 @@ export default defineComponent({
     }
 
     const mount = async () => {
-      if (hisonCloser.component.tableList[id]) throw new Error(`[Hisonvue] table id attribute was duplicated.`)
+      if (hisonCloser.component.tableList[id] && hisonCloser.component.tableList[id].isHisonvueComponent) console.warn(`[Hisonvue] The table ID is at risk of being duplicated. ${id}`)
 
       registerReloadable(reloadId, () => {
         unmount()
@@ -323,6 +323,7 @@ export default defineComponent({
       applyFooterBulk()
 
       tableMethods.value = {
+        isHisonvueComponent: true,
         getId: () => id,
         getType: () => 'table',
         isVisible: () => visible.value,
@@ -399,7 +400,7 @@ export default defineComponent({
         tbodyRef.value.removeEventListener('mouseleave', onBodyMouseLeave)
       }
       unregisterReloadable(reloadId)
-      if (hisonCloser.component.tableList) delete hisonCloser.component.tableList[id]
+      delete hisonCloser.component.tableList[id]
     }
 
     onMounted(mount)
@@ -409,6 +410,44 @@ export default defineComponent({
       refreshResponsiveClassList()
       emit('responsive-change', d)
     })
+
+    watch(() => props.visible, v => { const b = !!v; if (b !== visible.value) visible.value = b })
+    watch(() => props.caption, v => { const t = v ?? ''; if (t !== caption.value) caption.value = t })
+    watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
+    watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
+    watch(() => props.striped, v => {
+      const nv = (v ?? 'row') as 'row'|'col'|'none'
+      if (nv !== stripedMode.value) stripedMode.value = nv
+    })
+    watch(() => props.hoverable, v => {
+      const nv = (v ?? 'row') as 'row'|'col'|'none'
+      if (nv !== hoverMode.value) hoverMode.value = nv
+    })
+    watch(() => props.headerBorderTop,    v => { const b = !!v; if (b !== headerBorderTop.value)    headerBorderTop.value = b })
+    watch(() => props.headerBorderBottom, v => { const b = !!v; if (b !== headerBorderBottom.value) headerBorderBottom.value = b })
+    watch(() => props.headerBorderLeft,   v => { const b = !!v; if (b !== headerBorderLeft.value)   headerBorderLeft.value = b })
+    watch(() => props.headerBorderRight,  v => { const b = !!v; if (b !== headerBorderRight.value)  headerBorderRight.value = b })
+    watch(() => props.bodyBorderTop,      v => { const b = !!v; if (b !== bodyBorderTop.value)      bodyBorderTop.value = b })
+    watch(() => props.bodyBorderBottom,   v => { const b = !!v; if (b !== bodyBorderBottom.value)   bodyBorderBottom.value = b })
+    watch(() => props.bodyBorderLeft,     v => { const b = !!v; if (b !== bodyBorderLeft.value)     bodyBorderLeft.value = b })
+    watch(() => props.bodyBorderRight,    v => { const b = !!v; if (b !== bodyBorderRight.value)    bodyBorderRight.value = b })
+    watch(() => props.footerBorderTop,    v => { const b = !!v; if (b !== footerBorderTop.value)    footerBorderTop.value = b })
+    watch(() => props.footerBorderBottom, v => { const b = !!v; if (b !== footerBorderBottom.value) footerBorderBottom.value = b })
+    watch(() => props.footerBorderLeft,   v => { const b = !!v; if (b !== footerBorderLeft.value)   footerBorderLeft.value = b })
+    watch(() => props.footerBorderRight,  v => { const b = !!v; if (b !== footerBorderRight.value)  footerBorderRight.value = b })
+    watch(() => props.headerTextAlign, v => { if (v && v !== headerTextAlign.value) headerTextAlign.value = v as any })
+    watch(() => props.bodyTextAlign,   v => { if (v && v !== bodyTextAlign.value)   bodyTextAlign.value   = v as any })
+    watch(() => props.footerTextAlign, v => { if (v && v !== footerTextAlign.value) footerTextAlign.value = v as any })
+    watch(() => props.headerVerticalAlign, v => { if (v && v !== headerVerticalAlign.value) headerVerticalAlign.value = v as any })
+    watch(() => props.bodyVerticalAlign,   v => { if (v && v !== bodyVerticalAlign.value)   bodyVerticalAlign.value   = v as any })
+    watch(() => props.footerVerticalAlign, v => { if (v && v !== footerVerticalAlign.value) footerVerticalAlign.value = v as any })
+    watch(() => props.headerCellClass, () => nextTick(applyHeaderBulk))
+    watch(() => props.headerCellStyle, () => nextTick(applyHeaderBulk))
+    watch(() => props.bodyCellClass,   () => nextTick(applyBodyBulk))
+    watch(() => props.bodyCellStyle,   () => nextTick(applyBodyBulk))
+    watch(() => props.footerCellClass, () => nextTick(applyFooterBulk))
+    watch(() => props.footerCellStyle, () => nextTick(applyFooterBulk))
+    watch(() => props.class, () => { refreshResponsiveClassList() })
 
     return {
       props,
