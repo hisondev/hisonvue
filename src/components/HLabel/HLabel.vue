@@ -23,11 +23,11 @@
         :title="title || undefined"
         :tabindex="tabIndex ?? undefined"
         v-bind="renderTag === 'a' ? computedAnchorAttrs : undefined"
-        @click.stop="onClick"
-        @mousedown.stop="$emit('mousedown', $event, labelMethods)"
-        @mouseup.stop="$emit('mouseup', $event, labelMethods)"
-        @mouseover.stop="$emit('mouseover', $event, labelMethods)"
-        @mouseout.stop="$emit('mouseout', $event, labelMethods)"
+        @click="onClick"
+        @mousedown="$emit('mousedown', $event, labelMethods)"
+        @mouseup="$emit('mouseup', $event, labelMethods)"
+        @mouseover="$emit('mouseover', $event, labelMethods)"
+        @mouseout="$emit('mouseout', $event, labelMethods)"
         @keydown.enter.prevent="onKeyActivate"
         @keydown.space.prevent="onKeyActivate"
     >
@@ -173,7 +173,7 @@ export default defineComponent({
         }
 
         const mount = () => {
-            if (hisonCloser.component.labelList[id]) throw new Error(`[Hisonvue] label id attribute was duplicated.`)
+            if (hisonCloser.component.labelList[id] && hisonCloser.component.labelList[id].isHisonvueComponent) console.warn(`[Hisonvue] The label ID is at risk of being duplicated. ${id}`)
             registerReloadable(reloadId, () => {
                 unmount()
                 nextTick(mount)
@@ -182,6 +182,7 @@ export default defineComponent({
             nextTick(() => attachButtonCssEvent(true))
 
             labelMethods.value = {
+                isHisonvueComponent: true,
                 getId: () => id,
                 getType: () => 'label',
                 isVisible: () => visible.value,
@@ -235,7 +236,7 @@ export default defineComponent({
             unregisterReloadable(reloadId)
             const el = labelRef.value
             if (el) removeButtonCssEvent(el)
-            if (hisonCloser.component.labelList) delete hisonCloser.component.labelList[id]
+            delete hisonCloser.component.labelList[id]
         }
 
         onMounted(mount)
@@ -249,6 +250,22 @@ export default defineComponent({
         watch(hasHref, (isLink) => {
             nextTick(() => attachButtonCssEvent(isLink))
         }, { flush: 'post' })
+
+        watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
+        watch(() => props.title, v => { const s = v ?? ''; if (s !== title.value) title.value = s })
+        watch(() => props.text, v => { if (!hasElementSlot.value) { const s = v ?? ''; if (s !== internalText.value) internalText.value = s } })
+        watch(slotNodes, nv => { if (isTextOnlySlot.value) { const text = nv.map(v => String(v.children ?? '')).join(''); if (text !== internalText.value) internalText.value = text } })
+        watch(() => props.href, v => { const s = v ?? null; if (s !== href.value) href.value = s })
+        watch(() => props.anchorAttrs, v => { const next = { ...(v || {}) }; if (JSON.stringify(next) !== JSON.stringify(rawAnchorAttrs.value)) rawAnchorAttrs.value = next })
+        watch(() => props.fontBold, v => { const b = !!v; if (b !== fontBold.value) fontBold.value = b })
+        watch(() => props.fontItalic, v => { const b = !!v; if (b !== fontItalic.value) fontItalic.value = b })
+        watch(() => props.fontThruline, v => { const b = !!v; if (b !== fontThruline.value) fontThruline.value = b })
+        watch(() => props.fontUnderline, v => { const b = !!v; if (b !== fontUnderline.value) fontUnderline.value = b })
+        watch(() => props.textAlign, v => { if (v && v !== textAlign.value && (v === TextAlign.left || v === TextAlign.center || v === TextAlign.right)) textAlign.value = v })
+        watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
+        watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
+        watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
+        watch(() => props.class, () => { refreshResponsiveClassList() })
 
         return {
             labelRef,
