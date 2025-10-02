@@ -1,4 +1,3 @@
-// src/core/createSSRClientOnly.ts
 import { defineComponent, ref, h, onMounted, markRaw, type Component } from 'vue'
 
 export function createSSRClientOnly(
