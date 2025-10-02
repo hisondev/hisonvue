@@ -4,14 +4,13 @@
       v-if="isOverlayVisible"
       class="hison-drawer-overlay"
       :style="overlayStyleWithZ"
-      @click.stop="onOverlayClick"
+      @click="onOverlayClick"
     ></div>
 
     <div
       ref="wrapperRef"
       :class="['hison-drawer-wrapper', `hison-pos-${position}`, ...responsiveClassList]"
       :style="wrapperStyle"
-      @click.stop
     >
       <div
         ref="drawerRef"
@@ -298,7 +297,7 @@ export default defineComponent({
     const drawerMethods = ref<HDrawerMethods | null>(null)
 
     const mount = () => {
-      if (hisonCloser.component.drawerList[id]) throw new Error('[Hisonvue] drawer id attribute was duplicated.')
+      if (hisonCloser.component.drawerList[id] && hisonCloser.component.drawerList[id].isHisonvueComponent) console.warn(`[Hisonvue] The drawer ID is at risk of being duplicated. ${id}`)
 
       registerReloadable(reloadId, () => {
         unmount()
@@ -313,6 +312,7 @@ export default defineComponent({
       }
 
       drawerMethods.value = {
+        isHisonvueComponent: true,
         getId: () => id,
         getType: () => 'drawer',
         isVisible: () => visible.value,
@@ -370,6 +370,23 @@ export default defineComponent({
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
     })
+
+    watch(() => props.visible, v => { if (!!v !== visible.value) (v ? open() : close()) })
+    watch(() => props.zIndex, v => { const n = Number(v); if (Number.isFinite(n) && n !== zIndex.value) zIndex.value = n })
+    watch(() => props.border, v => { const nv = !!v; if (nv !== border.value) border.value = nv })
+    watch(() => props.showOverlay, v => { const nv = !!v; if (nv !== showOverlay.value) showOverlay.value = nv })
+    watch(() => props.closeClickOverlay, v => { const nv = !!v; if (nv !== closeClickOverlay.value) closeClickOverlay.value = nv })
+    watch(() => props.scrollLock, v => { const nv = !!v; if (nv !== scrollLock.value) { scrollLock.value = nv; if (visible.value) (nv ? lockScroll() : unlockScroll()) } })
+    watch(() => props.position, v => { if (v && v !== position.value) { position.value = v as DrawerPos; if (!props.enterAnimationClass) enterClass.value = defaultEnterByPos[position.value]; if (!props.leaveAnimationClass) leaveClass.value = defaultLeaveByPos[position.value] } })
+    watch(() => props.width, v => { const n = v == null ? null : Number(v); if (n !== width.value) setWidthImpl(n, false) })
+    watch(() => props.height, v => { const n = v == null ? null : Number(v); if (n !== height.value) setHeightImpl(n, false) })
+    watch(() => props.closeButtonVisible, v => { const nv = !!v; if (nv !== closeButtonVisible.value) closeButtonVisible.value = nv })
+    watch(() => props.closeButtonText, v => { const t = v ?? 'X'; if (t !== closeButtonText.value) closeButtonText.value = t })
+    watch(() => props.closeButtonTitle, v => { const t = v ?? 'Close'; if (t !== closeButtonTitle.value) closeButtonTitle.value = t })
+    watch(() => props.swipeClose, v => { const nv = !!v; if (nv !== swipeClose.value) swipeClose.value = nv })
+    watch(() => props.enterAnimationClass, v => { const nc = v || defaultEnterByPos[position.value]; if (nc !== enterClass.value) enterClass.value = nc })
+    watch(() => props.leaveAnimationClass, v => { const nc = v || defaultLeaveByPos[position.value]; if (nc !== leaveClass.value) leaveClass.value = nc })
+    watch(() => props.class, () => refreshResponsiveClassList())
 
     return {
       id,
