@@ -12,7 +12,7 @@ const setVnConfigWithHisonConfig = (hisonConfig: HisonConfig) => {
     if(hisonCloser.componentStyle.primaryColor) {
         const primaryColor = normalizeToHex(hisonCloser.componentStyle.primaryColor)
         if (!isValidHexColor(primaryColor)) {
-          throw new Error(`[Hisonvue] Invalid mainColor: '${hisonCloser.componentStyle.primaryColor}'. Must be a valid hex color (e.g., '#ffffff').`)
+          console.warn(`[Hisonvue] Invalid mainColor: '${hisonCloser.componentStyle.primaryColor}'. Must be a valid hex color (e.g., '#ffffff').`)
         }
         hisonConfig.component.note.attributes.mainColor = primaryColor
     }
