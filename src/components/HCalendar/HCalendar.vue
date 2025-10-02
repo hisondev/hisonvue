@@ -247,7 +247,6 @@ export default defineComponent({
             }
           })
         } else {
-          //원복
           timeEls.forEach((timeEl)=>{
             timeEl.classList.forEach(cls => {
               if (cls !== 'vuecal__time-cell') {
@@ -314,7 +313,7 @@ export default defineComponent({
     }
 
     const mount = () => {
-      if (hisonCloser.component.calendarList[id]) throw new Error(`[Hisonvue] calendar id "${id}" is duplicated.`)
+      if (hisonCloser.component.calendarList[id] && hisonCloser.component.calendarList[id].isHisonvueComponent) console.warn(`[Hisonvue] The calendar ID is at risk of being duplicated. ${id}`)
       registerReloadable(reloadId, () => {
         unmount()
         nextTick(mount)
@@ -325,6 +324,7 @@ export default defineComponent({
       adjustStyleChangedDate()
       adjustStyleChangedView()
       calendarMethods.value = {
+        isHisonvueComponent: true,
         getId : () => id,
         getType : () => 'calendar',
         isDisable : () => disable.value,
@@ -504,6 +504,38 @@ export default defineComponent({
     watch(() => props.events, (newVal) => {
       events.value = newVal
     })
+
+    watch(() => props.visible, v => { if (v !== visible.value) visible.value = !!v })
+    watch(() => props.disable, v => { const nv = !!v; if (nv !== disable.value) { disable.value = nv; maxDate.value = nv ? '100-01-01' : props.maxDate; refreshResponsiveClassList() } })
+    watch(() => selectedDate.value, () => adjustStyleChangedDate())
+    watch(() => props.selectedDate, v => { const d = hison.utils.getJSDateObject(v) ?? new Date(); if (+d !== +selectedDate.value) { selectedDate.value = d; adjustStyleChangedDate() } })
+    watch(() => props.events, v => { if (v !== events.value) events.value = v ?? [] })
+    watch(() => props.weekendColor, v => { const c = v ? normalizeToRgba(v) : undefined; if (c !== weekendColor.value) { weekendColor.value = c; refreshResponsiveClassList(); if (calendarRef.value?.view?.id) adjustStyleWeekendColor(calendarRef.value.view.id) } })
+    watch(() => props.weekendDays, v => { if (v && v !== weekendDays.value) { weekendDays.value = v; if (calendarRef.value?.view?.id) adjustStyleWeekendColor(calendarRef.value.view.id) } })
+    watch(() => props.selectedColor, v => { const c = v ? normalizeToRgba(v) : undefined; if (c !== selectedColor.value) { selectedColor.value = c; refreshResponsiveClassList() } })
+    watch(() => props.showTodayColor, v => { const nv = !!v; if (nv !== showTodayColor.value) { showTodayColor.value = nv; refreshResponsiveClassList() } })
+    watch(() => props.specialTime, v => { if (v !== specialTime.value) { specialTime.value = v ?? {}; adjustStyleChangedDate() } })
+    watch(() => props.dateCellMinHeight, v => { if (v !== dateCellMinHeight.value) { dateCellMinHeight.value = v; adjustStyleCellContent(calendarRef.value?.view?.id || HCalendarView.month) } })
+    watch(() => props.dateCellMaxHeight, v => { if (v !== dateCellMaxHeight.value) { dateCellMaxHeight.value = v; adjustStyleCellContent(calendarRef.value?.view?.id || HCalendarView.month) } })
+    watch(() => props.disableDays, v => { if (v !== disableDays.value) disableDays.value = v })
+    watch(() => props.eventsOnMonthView, v => { if (v !== eventsOnMonthView.value) eventsOnMonthView.value = v as any })
+    watch(() => props.hideWeekdays, v => { if (v !== hideWeekdays.value) hideWeekdays.value = v })
+    watch(() => props.hideWeekends, v => { const nv = !!v; if (nv !== hideWeekends.value) hideWeekends.value = nv })
+    watch(() => props.locale, v => { if (v && v !== locale.value) locale.value = v })
+    watch(() => props.maxDate, v => { if (!disable.value && v !== maxDate.value) maxDate.value = v })
+    watch(() => props.minDate, v => { if (v !== minDate.value) minDate.value = v })
+    watch(() => props.startWeekOnSunday, v => { const nv = !!v; if (nv !== startWeekOnSunday.value) { startWeekOnSunday.value = nv; if (calendarRef.value?.view?.id) adjustStyleWeekendColor(calendarRef.value.view.id) } })
+    watch(() => props.time, v => { const nv = !!v; if (nv !== time.value) time.value = nv })
+    watch(() => props.timeCellHeight, v => { if (v !== timeCellHeight.value) timeCellHeight.value = v })
+    watch(() => props.timeFormat, v => { if (v && v !== timeFormat.value) timeFormat.value = v as any })
+    watch(() => props.timeFrom, v => { const n = Number(v); if ((v == null || (Number.isFinite(n) && n >= 0 && n <= 1440)) && v !== timeFrom.value) timeFrom.value = v as any })
+    watch(() => props.timeStep, v => { const n = Number(v); if ((v == null || (Number.isFinite(n) && n > 0 && n <= 1440)) && v !== timeStep.value) timeStep.value = v as any })
+    watch(() => props.timeTo, v => { const n = Number(v); if ((v == null || (Number.isFinite(n) && n >= 0 && n <= 1440)) && v !== timeTo.value) timeTo.value = v as any })
+    watch(() => props.hideTitleBar, v => { const nv = !!v; if (nv !== hideTitleBar.value) hideTitleBar.value = nv })
+    watch(() => props.twelveHour, v => { const nv = !!v; if (nv !== twelveHour.value) twelveHour.value = nv })
+    watch(() => props.activeView, v => { if (v && v !== calendarRef.value?.view?.id) { activeView.value = v as any; calendarRef.value?.switchView(v as any) } })
+    watch(() => props.disableViews, v => { if (v !== disableViews.value) { disableViews.value = v as any; if (calendarRef.value && Array.isArray(v) && v.includes(calendarRef.value.view.id)) { const fb = ['years','year','month','week','day'].find(x => !v.includes(x as any)); if (fb) calendarRef.value.switchView(fb as any) } } })
+    watch(() => props.class, () => refreshResponsiveClassList())
 
     return {
       VueCal,
