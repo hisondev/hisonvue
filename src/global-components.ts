@@ -1,6 +1,7 @@
 import type { 
   HAccordion,
   HBaggie,
+  HBanner,
   HButton,
   HCalendar,
   HCaption,
@@ -18,6 +19,7 @@ import type {
   HList,
   HModal,
   HNote,
+  HPagination,
   HParagraph,
   HPopup,
   HSpinner,
@@ -30,21 +32,21 @@ declare module 'vue' {
     /**
      * Hisonvue custom accordion component.
      *
-     * `HAccordion`은 상단 헤더가 항상 고정되고, 본문이 열렸다/닫혔다 하는 단순·가벼운 아코디언입니다.
-     * 헤더 타이틀은 `title` prop 또는 `#title` 슬롯으로 렌더링되며, 본문은 기본 슬롯을 통해 자유롭게
-     * 다른 컴포넌트(예: `HLayout`, `HInput`, `HButton`, `HDropdown`)를 배치할 수 있습니다.
-     * 열림/닫힘 애니메이션은 순수 CSS로 동작하며(0fr ↔ 1fr), 인스턴스별로 duration/easing을 제어할 수 있습니다.
+     * `HAccordion` is a lightweight accordion with a fixed header and a body that can expand/collapse.
+     * The header title is rendered via the `title` prop or the `#title` slot, while the body uses the
+     * default slot, allowing free placement of other components (e.g. `HLayout`, `HInput`, `HButton`, `HDropdown`).
+     * The expand/collapse animation is pure CSS (0fr ↔ 1fr), and each instance can control duration and easing.
      *
      * ---
      *
      * ### 🎯 Features
-     * - Header 고정 + Body 접기/펼치기
-     * - Content 슬롯으로 **임의 레이아웃/컴포넌트** 배치
-     * - Header 텍스트 정렬(`left` / `center` / `right`)
-     * - 순수 CSS 기반 애니메이션(기본 0.5s / `ease`) — 인스턴스별 `duration`, `easing` 제어
-     * - 런타임 제어 API: `hison.component.getAccordion(id)`
-     * - 기본 caret(▾) 제공, `#toggle` 슬롯으로 **토글 UI 교체 가능**
-     * - `hison-*` 반응형 클래스 처리 및 색/사이즈 테마(`hison-color-*`, `hison-size-*`) 자동 suffix 부여(`-accordion`)
+     * - Fixed header + collapsible body
+     * - Flexible content slot to embed **any layout/component**
+     * - Header text alignment (`left` / `center` / `right`)
+     * - Pure CSS transition (default 0.5s / `ease`) — controllable via `duration`, `easing` per instance
+     * - Runtime API access: `hison.component.getAccordion(id)`
+     * - Default caret (▾) included, replaceable via `#toggle` slot
+     * - Responsive class support (`hison-*`) and automatic color/size theme suffixes (`-accordion`)
      *
      * ---
      *
@@ -89,31 +91,31 @@ declare module 'vue' {
      *
      * ---
      *
-     * @slot title   헤더 타이틀 영역을 완전히 대체합니다. 미제공 시 `title` prop 사용.
-     * @slot toggle  우측 토글 UI를 대체합니다. 미제공 시 기본 caret(▾) 렌더링(HDropdown과 동일 클래스 사용).
-     * @slot default 본문 컨텐츠(slot). 임의의 컴포넌트를 배치할 수 있습니다.
+     * @slot title   Replaces the header title area completely. Falls back to `title` prop if not provided.
+     * @slot toggle  Replaces the toggle UI on the right. Defaults to caret (▾) with same class as `HDropdown`.
+     * @slot default Body content slot. Any component can be placed here.
      *
-     * @prop {string} id - 유니크한 식별자. `hison.component.getAccordion(id)`로 런타임 접근.
-     * @prop {string | string[] | Record<string, boolean>} [class] - 추가 클래스. `hison-*` 반응형 시스템 지원.
-     * @prop {string | CSSProperties | CSSProperties[]} [style] - 루트 컨테이너 인라인 스타일. (여기서 내려보낸 CSS 변수 `--hacc-duration`, `--hacc-easing`가 사용됨)
-     * @prop {string | CSSProperties | CSSProperties[]} [headerStyle] - 헤더 영역 인라인 스타일.
-     * @prop {string | CSSProperties | CSSProperties[]} [contentStyle] - 본문 컨테이너 인라인 스타일.
+     * @prop {string} id - Unique identifier. Access at runtime via `hison.component.getAccordion(id)`.
+     * @prop {string | string[] | Record<string, boolean>} [class] - Additional classes. Supports the `hison-*` responsive system.
+     * @prop {string | CSSProperties | CSSProperties[]} [style] - Root container inline style. Uses CSS vars `--hacc-duration`, `--hacc-easing`.
+     * @prop {string | CSSProperties | CSSProperties[]} [headerStyle] - Inline style for the header area.
+     * @prop {string | CSSProperties | CSSProperties[]} [contentStyle] - Inline style for the body container.
      *
-     * @prop {boolean} [visible=true] - 표시 여부.
-     * @prop {boolean} [defaultOpen=false] - 초기 열림 상태.
-     * @prop {string}  [title=''] - 헤더 타이틀(슬롯 `#title` 미사용 시 적용).
-     * @prop {('left'|'center'|'right')} [textAlign='left'] - 헤더 타이틀 정렬.
-     * @prop {boolean} [animate=true] - 열림/닫힘 애니메이션 활성화.
-     * @prop {number}  [duration=500] - 애니메이션 시간(ms). 인스턴스별로 CSS 변수 `--hacc-duration`로 전달.
-     * @prop {string}  [easing='ease'] - CSS timing function. 인스턴스별로 CSS 변수 `--hacc-easing`로 전달.
+     * @prop {boolean} [visible=true] - Visibility of the component.
+     * @prop {boolean} [defaultOpen=false] - Initial open state.
+     * @prop {string}  [title=''] - Header title (used if `#title` slot is not provided).
+     * @prop {('left'|'center'|'right')} [textAlign='left'] - Header title alignment.
+     * @prop {boolean} [animate=true] - Enable expand/collapse animation.
+     * @prop {number}  [duration=500] - Animation duration (ms). Passed via CSS var `--hacc-duration`.
+     * @prop {string}  [easing='ease'] - CSS timing function. Passed via CSS var `--hacc-easing`.
      *
      * ---
      *
-     * @event mounted - 마운트 시점에 발생. `(HAccordionMethods)`
-     * @event responsive-change - 디바이스 분기 변경 시 발생(`'mb'`, `'tb'`, `'pc'`, `'wd'`).
-     * @event open - 본문이 펼쳐질 때 발생. `(Event|null, HAccordionMethods)`
-     * @event close - 본문이 접힐 때 발생. `(Event|null, HAccordionMethods)`
-     * @event toggle - 헤더 클릭/Enter/Space로 토글될 때 발생. `(MouseEvent|KeyboardEvent, HAccordionMethods)`
+     * @event mounted - Fired when component is mounted. `(HAccordionMethods)`
+     * @event responsive-change - Fired when device breakpoint changes (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
+     * @event open - Fired when the body expands. `(Event|null, HAccordionMethods)`
+     * @event close - Fired when the body collapses. `(Event|null, HAccordionMethods)`
+     * @event toggle - Fired when toggled via header click/Enter/Space. `(MouseEvent|KeyboardEvent, HAccordionMethods)`
      *
      * ---
      *
@@ -123,8 +125,239 @@ declare module 'vue' {
      */
     HAccordion: typeof HAccordion
 
-    /** */
+    /**
+     * Hisonvue custom baggie (badge) component.
+     *
+     * `HBaggie` overlays a small badge on top of any target element (slot).
+     * It supports responsive classes, multiple screen positions, shape/background/border
+     * customization, and full runtime control via `HBaggieMethods`
+     * (visibility, z-index, position, text, etc.).
+     *
+     * ---
+     *
+     * ### 🎯 Features
+     * - Slot-based target element: consumer places any component/element as the badge anchor
+     * - 8-way positioning around the target (`top-left`, `top-center`, `top-right`, etc.)
+     * - Separate visibility for anchor (`visible`) vs. badge only (`baggieVisible`)
+     * - Shape customization: `square`, `rounded`, `circle`
+     * - Background types: `filled`, `empty`, `transparent`
+     * - Optional border/shadow styling
+     * - Button-like interaction support (`buttonEnabled`) with CSS states
+     * - Runtime registration using unique `id`, accessible via `hison.component.getBaggie(id)`
+     * - Responsive class extraction (`hison-col-*`, `hison-size-*`, `hison-color-*`)
+     *
+     * ---
+     *
+     * ### ⚙️ Usage
+     * ```vue
+     * <HBaggie
+     *   id="bag01"
+     *   class="hison-color-danger"
+     *   position="top-right"
+     *   text="9+"
+     *   shape="circle"
+     *   :border="true"
+     *   :buttonEnabled="true"
+     *   :visible="true"
+     *   :baggieVisible="true"
+     *   :zIndex="1200"
+     *   @click="onBadgeClick"
+     *   @mounted="onMounted"
+     * >
+     *   <!-- target element -->
+     *   <HButton
+     *     id="btn01"
+     *     class="hison-size-m"
+     *     text="Inbox"
+     *   />
+     *
+     *   <!-- replace badge content -->
+     *   <template #badge>
+     *     <IconBell />
+     *   </template>
+     * </HBaggie>
+     * ```
+     *
+     * ---
+     *
+     * ### 🛠 Runtime Usage
+     * Access the baggie programmatically using `hison.component.getBaggie(id)`:
+     *
+     * ```ts
+     * const baggie = hison.component.getBaggie('bag01');
+     * baggie.setText('99+');
+     * baggie.setShape('circle');
+     * baggie.setPosition('bottom-left');
+     * baggie.setButtonEnabled(true);
+     * baggie.setZIndex(2000);
+     * ```
+     *
+     * ---
+     *
+     * ### ⚠️ Notes on z-index & Visibility
+     * - `zIndex` applies to the anchor element; the badge is always rendered at `zIndex + 1`.
+     * - `visible=false` hides both target and badge.  
+     *   `baggieVisible=false` hides only the badge, leaving the target visible.
+     * - If the target element has width constraints (e.g. `hison-col-*`), the anchor enforces `width:100%`
+     *   to ensure alignment between target and badge.
+     *
+     * ---
+     *
+     * @prop {string} id - Unique baggie identifier for method registration (`hison.component.getBaggie(id)`).
+     * @prop {string | string[] | Record<string, boolean>} [class] - Responsive/custom classes (`hison-col-*`, etc.).
+     * @prop {string | CSSProperties | CSSProperties[]} [style] - Inline style for the badge element.
+     *
+     * @prop {boolean} [visible=true] - Anchor visibility (controls both target and badge).
+     * @prop {boolean} [baggieVisible=true] - Badge-only visibility (target remains visible).
+     *
+     * @prop {number} [zIndex=1000] - Base z-index (anchor); badge renders at `zIndex + 1`.
+     * @prop {('top-left'|'top-center'|'top-right'|'middle-left'|'middle-center'|'middle-right'|'bottom-left'|'bottom-center'|'bottom-right')} [position='top-right'] - Badge position relative to target.
+     *
+     * @prop {string} [text] - Text displayed inside the badge (ignored if slot `#badge` is used).
+     * @prop {('filled'|'empty'|'transparent')} [backgroundType='filled'] - Badge background style.
+     * @prop {boolean} [border=true] - Whether the badge has border/shadow styling.
+     * @prop {('square'|'rounded'|'circle')} [shape='rounded'] - Shape of the badge.
+     *
+     * @prop {number|string|null} [tabIndex=null] - Tab order; `null` removes focusability.
+     * @prop {boolean} [buttonEnabled=false] - Enables button-like interaction states.
+     *
+     * ---
+     *
+     * @event mounted - Emitted on mount. Returns `HBaggieMethods` instance for runtime control.
+     * @event click - Emitted when badge is clicked (if `buttonEnabled=true`).
+     * @event mousedown - Emitted on badge `mousedown`.
+     * @event mouseup - Emitted on badge `mouseup`.
+     * @event mouseover - Emitted on badge `mouseover`.
+     * @event mouseout - Emitted on badge `mouseout`.
+     * @event responsive-change - Emitted when device type changes (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
+     */
     HBaggie: typeof HBaggie
+
+    /**
+     * Hisonvue custom banner (carousel) component.
+     *
+     * `HBanner` is a lightweight, horizontal carousel inspired by Bootstrap’s Carousel.
+     * It renders each direct child of the default slot as a slide, supports prev/next
+     * navigation, page indicators (dots), autoplay/looping, and runtime control via
+     * `HBannerMethods`. Slides are centered within the viewport for clean presentation.
+     *
+     * ---
+     *
+     * ### 🎯 Features
+     * - Slot-based slides: each direct child of the default slot becomes one slide
+     * - Simple horizontal transition with configurable duration
+     * - Prev/Next navigation buttons (default or fully replaceable via slots)
+     * - Page indicators (● ● ●), optionally overlaid inside the banner
+     * - Autoplay with direction control and hover-pause
+     * - Looping at edges (optional)
+     * - Runtime registration using unique `id`, accessible via `hison.component.getBanner(id)`
+     * - Responsive class extraction (`hison-col-*`, `hison-size-*`, `hison-color-*`)
+     *
+     * ---
+     *
+     * ### ⚙️ Usage
+     * ```vue
+     * <HBanner
+     *   id="bn-basic"
+     *   class="hison-size-m hison-color-primary"
+     *   :initialIndex="0"
+     *   :transitionMs="400"
+     *   :showNavButtons="true"
+     *   :showIndicators="true"
+     * >
+     *   <HLayout class="hison-col-6">Slide 1</HLayout>
+     *   <HLayout class="hison-col-6">Slide 2</HLayout>
+     *   <HLayout class="hison-col-6">Slide 3</HLayout>
+     * </HBanner>
+     * ```
+     *
+     * ```vue
+     * <HBanner
+     *   id="bn-overlay"
+     *   class="hison-size-m hison-color-info"
+     *   :autoIntervalMs="3000"
+     *   autoDirection="next"
+     *   :pauseOnHover="true"
+     *   indicatorsPosition="overlay"
+     * >
+     *   <template #prev-button="{ prev, disabled }">
+     *     <HButton :disable="disabled"><template #icon>◀</template></HButton>
+     *   </template>
+     *   <template #next-button="{ next, disabled }">
+     *     <HButton :disable="disabled"><template #icon>▶</template></HButton>
+     *   </template>
+     *
+     *   <HLayout>One</HLayout>
+     *   <HLayout>Two</HLayout>
+     *   <HLayout>Three</HLayout>
+     * </HBanner>
+     * ```
+     *
+     * ---
+     *
+     * ### 🛠 Runtime Usage
+     * Access the banner programmatically using `hison.component.getBanner(id)`:
+     *
+     * ```ts
+     * const banner = hison.component.getBanner('bn-basic');
+     * banner.setInitialIndex(1);
+     * banner.setAutoInterval(2500);
+     * banner.startAuto();
+     * banner.setIndicatorsPosition('overlay');
+     * banner.next();
+     * ```
+     *
+     * ---
+     *
+     * ### ⚠️ Notes
+     * - Each **direct child** of the default slot is treated as a slide.
+     * - When `loop` is `false`, navigation is clamped at the first/last slide and
+     *   nav buttons may appear disabled.
+     * - Autoplay is disabled when `autoIntervalMs < 100`.
+     * - If `pauseOnHover` is `true`, hovering pauses autoplay.
+     * - Slides are centered inside the viewport for natural alignment of narrower content.
+     *
+     * ---
+     *
+     * @prop {string} id - Unique banner identifier for method registration (`hison.component.getBanner(id)`).
+     * @prop {string | string[] | Record<string, boolean>} [class] - Responsive/custom classes (`hison-col-*`, etc.).
+     * @prop {string | CSSProperties | CSSProperties[]} [style] - Inline style for the banner frame.
+     *
+     * @prop {boolean} [visible=true] - Banner frame visibility.
+     * @prop {('filled'|'empty'|'transparent')} [backgroundType='filled'] - Frame background style.
+     * @prop {boolean} [border=false] - Whether the frame shows border/shadow styling.
+     *
+     * @prop {number} [initialIndex=0] - Zero-based index of the first slide to show.
+     * @prop {number} [transitionMs=350] - Transition duration (ms) for slide movement.
+     *
+     * @prop {('chevron'|'triangle')} [navButtonStyle='chevron'] - Prev/Next button glyph style.
+     * @prop {boolean} [showNavButtons=true] - Show prev/next nav buttons.
+     * @prop {boolean} [showIndicators=true] - Show page indicators (dots).
+     * @prop {('bottom'|'overlay')} [indicatorsPosition='bottom'] - Position of indicators.
+     * @prop {boolean} [indicatorClickable=true] - Make indicators clickable.
+     *
+     * @prop {number} [autoIntervalMs=0] - Autoplay interval (ms); values < 100 disable autoplay.
+     * @prop {('next'|'prev')} [autoDirection='next'] - Autoplay direction.
+     * @prop {boolean} [loop=true] - Wrap around at edges.
+     * @prop {boolean} [pauseOnHover=true] - Pause autoplay on hover.
+     *
+     * ---
+     *
+     * @slot default - Slide content; each direct child becomes one slide.
+     * @slot prev-button - Fully replaces the default **Prev** button; receives `{ prev, disabled }`.
+     * @slot next-button - Fully replaces the default **Next** button; receives `{ next, disabled }`.
+     *
+     * ---
+     *
+     * @event mounted - Emitted on mount. Returns `HBannerMethods` instance for runtime control.
+     * @event change - Emitted after index change. Args: `(currentIndex, methods)`.
+     * @event next - Emitted when moving to next slide. Args: `(currentIndex, methods)`.
+     * @event prev - Emitted when moving to previous slide. Args: `(currentIndex, methods)`.
+     * @event autoplay-start - Emitted when autoplay starts. Args: `(methods)`.
+     * @event autoplay-stop - Emitted when autoplay stops. Args: `(methods)`.
+     * @event responsive-change - Emitted when device type changes (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
+     */
+    HBanner: typeof HBanner
 
     /**
      * Hisonvue custom button component.
@@ -591,7 +824,7 @@ declare module 'vue' {
      *   :height="null"
      *   :closeButtonVisible="true"
      *   closeButtonText="X"
-     *   closeButtonTitle="닫기"
+     *   closeButtonTitle="Close"
      *   :swipeClose="true"
      *   :closeClickOverlay="true"
      *   :showOverlay="true"
@@ -614,7 +847,7 @@ declare module 'vue' {
      *
      *   <!-- or override parts only -->
      *   <template #close-icon>❌</template>
-     *   <template #close-label>닫기</template>
+     *   <template #close-label>Close</template>
      * </HDrawer>
      * ```
      *
@@ -681,27 +914,28 @@ declare module 'vue' {
     /**
      * Hisonvue custom dropdown component.
      *
-     * `HDropdown`는 HInput 톤을 공유하는 가벼운 셀렉트/드롭다운입니다.
-     * 토글(열기/닫기), 선택/옵션 제어, 트리거 모드(click/hover), 텍스트 정렬, 편집 상태에 더해
-     * **아코디언과 동일한 애니메이션 시스템(0fr↔1fr Grid 전환 + caret 회전)**을 제공합니다.
-     * caret UI는 슬롯으로 교체 가능하며, 애니메이션은 인스턴스별로 제어할 수 있습니다.
+     * `HDropdown` is a lightweight select/dropdown that shares the tone and style of `HInput`.
+     * It supports toggling (open/close), option selection, trigger modes (click/hover), text alignment,
+     * and edit states. Additionally, it provides the **same animation system as HAccordion**
+     * (0fr↔1fr CSS Grid transition + caret rotation).
+     * The caret UI can be replaced via slot, and animations can be controlled per instance.
      *
      * ---
      *
      * ### 🎯 Features
-     * - 인풋처럼 보이는 깔끔한 룩(테두리 없음; 컬러 테마 그림자 틴트)
-     * - 트리거 모드: **click** or **hover**
-     * - 편집 상태:
-     *   - **editable**: 전체 상호작용 가능
-     *   - **readonly**: 텍스트처럼 보이며(캐럿/메뉴 숨김) 열 수 없음
-     *   - **disable**: 흐리게, 비활성
-     * - 토글/메뉴 **텍스트 정렬** (`left` / `center` / `right`)
-     * - **아코디언과 동일한 열림/닫힘 애니메이션**: CSS Grid `grid-template-rows: 0fr ↔ 1fr`
-     * - **Caret 회전 애니메이션**: 열릴 때 180° 회전
-     * - **애니메이션 제어**: `animate`, `duration`, `easing` (인스턴스별 CSS 변수 `--hdd-duration`, `--hdd-easing` 사용)
-     * - 내부 스크롤이 있는 **maxHeight** 지원
-     * - 런타임 API: `hison.component.getDropdown(id)`
-     * - 커스텀 캐럿: `<slot name="caret">`
+     * - Clean, input-like look (no border; themed shadow tint)
+     * - Trigger modes: **click** or **hover**
+     * - Edit states:
+     *   - **editable**: fully interactive
+     *   - **readonly**: looks like text (caret/menu hidden), cannot open
+     *   - **disable**: dimmed, inactive
+     * - Toggle/menu **text alignment** (`left` / `center` / `right`)
+     * - **Accordion-style expand/collapse animation** using CSS Grid `grid-template-rows: 0fr ↔ 1fr`
+     * - **Caret rotation animation**: rotates 180° when open
+     * - **Animation control**: `animate`, `duration`, `easing` (applied via CSS vars `--hdd-duration`, `--hdd-easing`)
+     * - Internal scrollable **maxHeight** support
+     * - Runtime API: `hison.component.getDropdown(id)`
+     * - Custom caret via `<slot name="caret">`
      *
      * ---
      *
@@ -745,7 +979,7 @@ declare module 'vue' {
      * dd.setTextAlign('center')
      * dd.setCloseOnSelect(false)
      * dd.setMaxHeight(180)
-     * // 애니메이션 제어 (Accordion과 동일)
+     * // Animation control (same as Accordion)
      * dd.setAnimate(true)
      * dd.setDuration(500)
      * dd.setEasing('ease-in-out')
@@ -753,40 +987,40 @@ declare module 'vue' {
      *
      * ---
      *
-     * @slot caret Override the toggle caret. If omitted, a default ▾ is shown.
+     * @slot caret Override the toggle caret. Defaults to ▾ if not provided.
      *
-     * @prop {string} id - Unique dropdown identifier. Enables runtime access via `hison.component.getDropdown(id)`.
-     * @prop {string | string[] | Record<string, boolean>} [class] - Additional class string. Supports the `hison-*` responsive system.
+     * @prop {string} id - Unique dropdown identifier. Accessible at runtime via `hison.component.getDropdown(id)`.
+     * @prop {string | string[] | Record<string, boolean>} [class] - Additional class string(s). Supports the `hison-*` responsive system.
      * @prop {string | CSSProperties | CSSProperties[]} [style] - Inline style for the root container.
      * @prop {string | CSSProperties | CSSProperties[]} [toggleStyle] - Inline style for the toggle area.
      * @prop {string | CSSProperties | CSSProperties[]} [menuStyle] - Inline style for the menu container.
      * @prop {string | CSSProperties | CSSProperties[]} [itemStyle] - Inline style for each menu item.
      *
-     * @prop {boolean} [visible=true] - Whether the dropdown is shown.
-     * @prop {('editable' | 'disable' | 'readonly')} [editMode='editable'] - Edit state: `'editable'`, `'readonly'`, `'disable'`.
-     * @prop {string} [placeholder=''] - Placeholder shown when no value is selected.
-     * @prop {('click'|'hover')} [trigger='click'] - How the menu opens.
+     * @prop {boolean} [visible=true] - Whether the dropdown is visible.
+     * @prop {('editable' | 'disable' | 'readonly')} [editMode='editable'] - Edit state.
+     * @prop {string} [placeholder=''] - Placeholder text shown when no value is selected.
+     * @prop {('click'|'hover')} [trigger='click'] - Defines how the menu opens.
      *
      * @prop {HDropdownModel} modelValue - v-model object `{ value: any, options: HDropdownOption[] }`.
-     * @prop {number} [maxHeight=240] - Max menu height (px). Overflow scrolls (applied to inner panel).
-     * @prop {boolean} [closeOnSelect=true] - Close menu after selecting an option.
+     * @prop {number} [maxHeight=240] - Maximum menu height (px). Overflow is scrollable.
+     * @prop {boolean} [closeOnSelect=true] - Whether to close the menu after selecting an option.
      * @prop {('left'|'center'|'right')} [textAlign='left'] - Text alignment for both toggle and menu.
      *
      * @prop {boolean} [animate=true] - Enable expand/collapse animation (CSS Grid 0fr↔1fr & caret rotation).
-     * @prop {number}  [duration=500] - Animation duration in ms. Reflected to CSS variable `--hdd-duration`.
-     * @prop {string}  [easing='ease'] - CSS timing function. Reflected to CSS variable `--hdd-easing`.
+     * @prop {number}  [duration=500] - Animation duration in ms. Reflected in CSS var `--hdd-duration`.
+     * @prop {string}  [easing='ease'] - CSS timing function. Reflected in CSS var `--hdd-easing`.
      *
      * ---
      *
-     * @event mounted - Emitted on mount. `(HDropdownMethods)`
-     * @event responsive-change - Emitted on device class change (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
-     * @event update:modelValue - Emitted when selection changes. `(HDropdownModel)`
+     * @event mounted - Fired on mount. `(HDropdownMethods)`
+     * @event responsive-change - Fired on device breakpoint change (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
+     * @event update:modelValue - Fired when the selection changes. `(HDropdownModel)`
      *
-     * @event open - Emitted when the menu opens. `(Event|null, HDropdownMethods)`
-     * @event close - Emitted when the menu closes. `(Event|null, HDropdownMethods)`
-     * @event toggle-click - Emitted when the toggle is clicked/Enter-pressed. `(MouseEvent|KeyboardEvent, HDropdownMethods)`
-     * @event item-click - Emitted when an item is clicked. `(MouseEvent, HDropdownMethods, HDropdownOption)`
-     * @event change - Emitted after selection changes. `(oldValue: any, newValue: any, HDropdownMethods)`
+     * @event open - Fired when the menu opens. `(Event|null, HDropdownMethods)`
+     * @event close - Fired when the menu closes. `(Event|null, HDropdownMethods)`
+     * @event toggle-click - Fired when toggle is clicked or activated via keyboard. `(MouseEvent|KeyboardEvent, HDropdownMethods)`
+     * @event item-click - Fired when a menu item is clicked. `(MouseEvent, HDropdownMethods, HDropdownOption)`
+     * @event change - Fired after the selection changes. `(oldValue: any, newValue: any, HDropdownMethods)`
      *
      * ---
      *
@@ -1288,84 +1522,91 @@ declare module 'vue' {
      * imagebox.setAllowedTypes(['.jpg'])
      * imagebox.setMaxFileSize(1024 * 1024)
      * imagebox.setValue({ fileName: 'avatar.jpg', ... })
-    * imagebox.focus()
-    *
-    * // Access control buttons if needed:
-    * const addBtn = hison.component.getButton(`hison_imagebox_add_button_${'profileImage'}`)
-    * const rmBtn  = hison.component.getButton(`hison_imagebox_remove_button_${'profileImage'}`)
-    * addBtn.setDisable(true)
-    * rmBtn.setDisable(true)
-    * ```
-    *
-    * ---
-    *
-    * @prop {string} [id] Unique identifier for the image box. Enables runtime access via `hison.vue.getInput(id)`. Duplicate IDs will throw an error.
-    * @prop {string | string[] | Record<string, boolean>} [class] Extra class string. Supports all hisonvue responsive, color, and size classes.
-    * @prop {string | CSSProperties | CSSProperties[]} [style] Inline CSS style for the container.
-    * @prop {string | CSSProperties | CSSProperties[]} [imgStyle] CSS style or string for the `<img>` element (image preview).
-    * @prop {boolean} [visible=true] Controls component visibility.
-    * @prop {('editable' | 'disable' | 'readonly')} [editMode='editable'] Edit mode: `'editable'`, `'readonly'`, or `'disable'`.
-    * @prop {AttachedFileItem | null} [modelValue=null] The current image file object (preloaded or new). Controlled via `v-model`.
-    * @prop {string} [attId=''] Group ID for backend image association.
-    * @prop {string} [addButtonText='Add'] Label for the add/upload button (if not using the `add-button` slot).
-    * @prop {string} [removeButtonText='Remove'] Label for the remove button (if not using the `remove-button` slot).
-    * @prop {string} [placeholder='There is no image'] Message shown when no image is present (shows in the empty slot unless overridden).
-    * @prop {boolean} [enableDrop=true] Enables drag-and-drop image upload area.
-    * @prop {string | string[]} [allowedTypes] Allowed MIME types or extensions (array or comma-separated string).
-    * @prop {string | string[]} [disallowedTypes] Disallowed MIME types or extensions (array or comma-separated string).
-    * @prop {number} [maxFileSize=Infinity] Maximum file size (bytes) for the image. Files larger than this are rejected.
-    * @prop {boolean} [border] - Whether to show border (box-shadow). Default: `false`.
-    * @prop {(file: File, allowed: string[]|null, disallowed: string[]|null) => void} [onDisallowedType] Callback when file type/extension is not allowed.
-    * @prop {(file: File, size: number, max: number) => void} [onMaxFileSizeExceeded] Callback when a file is too large.
-    *
-    * ---
-    *
-    * @event mounted Emitted on mount. Passes the `HImageboxMethods` instance.
-    * @event responsive-change Emitted when device class changes (mobile/tablet/pc/wide).
-    * @event update:modelValue Emitted when the image changes (add, remove, delete, etc).
-    * @event add Emitted when an image is added. Arguments: `(file: AttachedFileItem, methods: HImageboxMethods)`
-    * @event remove Emitted when an image is removed. Arguments: `(file: AttachedFileItem, methods: HImageboxMethods)`
-    * @event change Emitted whenever the image is changed. Arguments: `(newValue: AttachedFileItem|null, methods: HImageboxMethods)`
-    * @event focus Emitted when the add button or file input receives focus.
-    * @event blur Emitted when the image box loses focus.
-    *
-    * ---
-    *
-    * @slot empty
-    * Customizes the "no image" placeholder.  
-    * Default: placeholder text.
-    *
-    * @example
-    * <HImagebox>
-    *   <template #empty>
-    *     <div style="color:#ccc;">📷 No Image Selected</div>
-    *   </template>
-    * </HImagebox>
-    *
-    * @slot add-button
-    * Customizes the **inside** of the add button (`HButton`). Replaces only the button's content, not the button itself.
-    * Scoped props:
-    *   - `add: () => void` (opens file dialog)
-    *
-    * @example
-    * <HImagebox>
-    *   <template #add-button="{ add }">
-    *     <span><i class="fa fa-plus"></i> Add Image</span>
-    *   </template>
-    * </HImagebox>
-    *
-    * @slot remove-button
-    * Customizes the **inside** of the remove button (`HButton`). Replaces only the button's content, not the button itself.
-    * Scoped props:
-    *   - `remove: () => void` (removes the current image)
-    *
-    * @example
-    * <HImagebox>
-    *   <template #remove-button="{ remove }">
-    *     <span><i class="fa fa-trash"></i> Delete</span>
-    *   </template>
-    * </HImagebox>
-    */
+     * imagebox.focus()
+     *
+     * // Access control buttons if needed:
+     * const addBtn = hison.component.getButton(`hison_imagebox_add_button_${'profileImage'}`)
+     * const rmBtn  = hison.component.getButton(`hison_imagebox_remove_button_${'profileImage'}`)
+     * addBtn.setDisable(true)
+     * rmBtn.setDisable(true)
+     * ```
+     *
+     * ---
+     *
+     * @prop {string} [id] Unique identifier for the image box. Enables runtime access via `hison.vue.getInput(id)`. Duplicate IDs will throw an error.
+     * @prop {string | string[] | Record<string, boolean>} [class] Extra class string. Supports all hisonvue responsive, color, and size classes.
+     * @prop {string | CSSProperties | CSSProperties[]} [style] Inline CSS style for the container.
+     * @prop {string | CSSProperties | CSSProperties[]} [imgStyle] CSS style or string for the `<img>` element (image preview).
+     * @prop {boolean} [visible=true] Controls component visibility.
+     * @prop {('editable' | 'disable' | 'readonly')} [editMode='editable'] Edit mode: `'editable'`, `'readonly'`, or `'disable'`.
+     * @prop {AttachedFileItem | null} [modelValue=null] The current image file object (preloaded or new). Controlled via `v-model`.
+     * @prop {string} [attId=''] Group ID for backend image association.
+     * @prop {string} [addButtonText='Add'] Label for the add/upload button (if not using the `add-button` slot).
+     * @prop {string} [removeButtonText='Remove'] Label for the remove button (if not using the `remove-button` slot).
+     * @prop {string} [placeholder='There is no image'] Message shown when no image is present (shows in the empty slot unless overridden).
+     * @prop {boolean} [enableDrop=true] Enables drag-and-drop image upload area.
+     * @prop {string | string[]} [allowedTypes] Allowed MIME types or extensions (array or comma-separated string).
+     * @prop {string | string[]} [disallowedTypes] Disallowed MIME types or extensions (array or comma-separated string).
+     * @prop {number} [maxFileSize=Infinity] Maximum file size (bytes) for the image. Files larger than this are rejected.
+     * @prop {boolean} [border] - Whether to show border (box-shadow). Default: `false`.
+     * @prop {(file: File, allowed: string[]|null, disallowed: string[]|null) => void} [onDisallowedType] Callback when file type/extension is not allowed.
+     * @prop {(file: File, size: number, max: number) => void} [onMaxFileSizeExceeded] Callback when a file is too large.
+     *
+     * ---
+     *
+     * @event mounted Emitted on mount. Passes the `HImageboxMethods` instance.
+     * @event responsive-change Emitted when device class changes (mobile/tablet/pc/wide).
+     * @event update:modelValue Emitted when the image changes (add, remove, delete, etc).
+     * @event add Emitted when an image is added. Arguments: `(file: AttachedFileItem, methods: HImageboxMethods)`
+     * @event remove Emitted when an image is removed. Arguments: `(file: AttachedFileItem, methods: HImageboxMethods)`
+     * @event change Emitted whenever the image is changed. Arguments: `(newValue: AttachedFileItem|null, methods: HImageboxMethods)`
+     * @event focus Emitted when the add button or file input receives focus.
+     * @event blur Emitted when the image box loses focus.
+     * @event preview-click Emitted when the preview image (".preview-img") is clicked. Arguments: `({ event: MouseEvent, api: HImageboxMethods })`
+     * @event preview-dblclick Emitted on double-click on the preview image. Arguments: `({ event: MouseEvent, api: HImageboxMethods })`
+     * @event preview-contextmenu Emitted when the context menu is requested on the preview image. Arguments: `({ event: MouseEvent, api: HImageboxMethods })`
+     * @event preview-pointerenter Emitted when a pointer enters the preview image (hover start). Arguments: `({ event: PointerEvent, api: HImageboxMethods })`
+     * @event preview-pointerleave Emitted when a pointer leaves the preview image (hover end). Arguments: `({ event: PointerEvent, api: HImageboxMethods })`
+     * @event preview-pointerdown Emitted on pointer down over the preview image. Arguments: `({ event: PointerEvent, api: HImageboxMethods })`
+     * @event preview-pointerup Emitted on pointer up over the preview image. Arguments: `({ event: PointerEvent, api: HImageboxMethods })`
+     *
+     * ---
+     *
+     * @slot empty
+     * Customizes the "no image" placeholder.  
+     * Default: placeholder text.
+     *
+     * @example
+     * <HImagebox>
+     *   <template #empty>
+     *     <div style="color:#ccc;">📷 No Image Selected</div>
+     *   </template>
+     * </HImagebox>
+     *
+     * @slot add-button
+     * Customizes the **inside** of the add button (`HButton`). Replaces only the button's content, not the button itself.
+     * Scoped props:
+     *   - `add: () => void` (opens file dialog)
+     *
+     * @example
+     * <HImagebox>
+     *   <template #add-button="{ add }">
+     *     <span><i class="fa fa-plus"></i> Add Image</span>
+     *   </template>
+     * </HImagebox>
+     *
+     * @slot remove-button
+     * Customizes the **inside** of the remove button (`HButton`). Replaces only the button's content, not the button itself.
+     * Scoped props:
+     *   - `remove: () => void` (removes the current image)
+     *
+     * @example
+     * <HImagebox>
+     *   <template #remove-button="{ remove }">
+     *     <span><i class="fa fa-trash"></i> Delete</span>
+     *   </template>
+     * </HImagebox>
+     */
     HImagebox: typeof HImagebox
 
     /**
@@ -1380,20 +1621,20 @@ declare module 'vue' {
      * ### 🎯 Features
      * - Supports various `inputType` values:
      *   - **Text-based**: `'text'`, `'number'`, `'email'`, `'password'`, `'digit'`, `'mask'`
-     *   - **Date/time**: `'date'`, `'month'`
+     *   - **Date/time**: `'date'`, `'month'`, `'time'`
      *   - **Visual/UI**: `'color'`, `'range'`, `'textarea'`
-     *   - **Selection**: `'checkbox'`, `'select'`
+     *   - **Selection**: `'checkbox'`, `'radio'`, `'select'`
      * - Custom formatting via `format` (e.g., `#,##0.00`, date mask)
      * - Numeric constraints with `maxNumber`, `minNumber`, `roundNumber`
      * - Input length limits via `maxLength`, `maxByte`
      * - UI control via `editMode`, `visible`, `required`, and font styles
-     * - Reactive span view when not in editing mode
+     * - Reactive span-text view when not in editing mode
      * - All DOM events emit full `HInputMethods` for runtime control
      * - Integrated with `hison.component.getInput(id)` for external control
      *
      * ---
      *
-     * ### ⚙️ Usage
+     * ### ⚙️ Basic Usage
      * ```vue
      * <HInput
      *   id="userStatus"
@@ -1402,9 +1643,41 @@ declare module 'vue' {
      *     { text: 'Active', value: 'A' },
      *     { text: 'Inactive', value: 'I' }
      *   ]"
-     *   :modelValue="status"
+     *   v-model="status"
      * />
      * ```
+     *
+     * ---
+     *
+     * ### 🔘 Radio Usage & Grouping (with `name`)
+     * - For `inputType="radio"`, the HTML `name` attribute **defines the group**.
+     * - `HInputGroup` aggregates radios by `name` and exposes/accepts values in the shape:
+     *   ```ts
+     *   { [name: string]: selectedRadioId | null }
+     *   ```
+     *   where `selectedRadioId` is the `id` of the checked `HInput` in that group.
+     * - When the user checks a radio:
+     *   - The radio’s own `v-model` becomes `true` (others in the same group become `false`).
+     *   - The parent `HInputGroup` updates its mapping `{ [name]: id | null }`.
+     * - If there is **no initial value** (no `v-model` provided), radios/checkboxes default to:
+     *   - `getValue() === false`
+     *   - `getText() === uncheckedText`
+     *
+     * #### Example
+     * ```vue
+     * <HInputGroup id="prefForm" v-model="form">
+     *   <HInput id="r1" inputType="radio" name="lang" :modelValue="true" />
+     *   <HInput id="r2" inputType="radio" name="lang" />
+     *   <HInput id="r3" inputType="radio" name="theme" />
+     * </HInputGroup>
+     * ```
+     * - Group `lang` → `{ lang: "r1" }`
+     * - Group `theme` → `{ theme: null }` (none selected)
+     *
+     * #### Dynamic re-grouping
+     * - Calling `setName('newGroup')` on a radio **moves** it to another group at runtime.
+     * - `HInputGroup` re-registers the membership and preserves the radio’s checked state,
+     *   updating its `{ [name]: id | null }` mapping accordingly.
      *
      * ---
      *
@@ -1414,40 +1687,57 @@ declare module 'vue' {
      * input.setValue('A')
      * input.setVisible(true)
      * input.setEditMode('editable')
+     *
+     * // Radio: move r1 from "lang" to "locale"
+     * const r1 = hison.component.getInput('r1')
+     * r1.setName('locale')
      * ```
      *
      * ---
      *
+     * ### 📛 About `id` and `name`
+     * - `id` is applied to the **editable** input element and is used to access methods via
+     *   `hison.component.getInput(id)`. If `name` is not provided, it **defaults to** `id`.
+     * - For the **readonly display** (span-text) that uses a hidden text input for layout consistency
+     *   (i.e., for types other than `range`, `color`, `checkbox`, `radio`, `select`, `textarea`),
+     *   the component renders:
+     *   - `id="input_text_${id}"`
+     *   - `name="input_text_${name}"`
+     *   so you can reliably target the display node if needed.
+     *
+     * ---
+     *
      * @prop {string} id - Unique input identifier. Enables runtime access via `hison.component.getInput(id)`.
+     * @prop {string} [name] - HTML `name` attribute. Defaults to `id`.  
+     *   For `inputType="radio"`, this acts as the **group key**. `HInputGroup` will expose/accept the current
+     *   selection as `{ [name]: selectedRadioId | null }`. When radios share the same `name`, only one can be `true`.
+     *
      * @prop {string | string[] | Record<string, boolean>} [class] - Additional class string. Supports `hison-*` responsive system.
      * @prop {string | CSSProperties | CSSProperties[]} [style] - Inline CSS style.
-     * @prop {boolean} [visible='true'] - Whether the input is shown (`'true'` or `'false'`).
+     * @prop {boolean} [visible=true] - Whether the input is shown.
      * @prop {any} [modelValue] - Bound value for the input. Controlled via `v-model`.
-     * @prop {('text' | 'mask' | 'number' | 'digit' | 'date' | 'month' | 'time' | 'email' | 'password' | 'checkbox' | 'range' | 'color' | 'textarea' | 'select')} [inputType='text'] - Input type. Supports:
-     *   `'text'`, `'number'`, `'date'`, `'month'`, `'email'`, `'password'`, `'mask'`, `'digit'`,
-     *   `'checkbox'`, `'select'`, `'textarea'`, `'range'`, `'color'`
+     * @prop {('text' | 'mask' | 'number' | 'digit' | 'date' | 'month' | 'time' | 'email' | 'password' | 'checkbox' | 'radio' | 'range' | 'color' | 'textarea' | 'select')} [inputType='text'] - Input type.
      * @prop {string} [format] - Format string for numeric, date, or masked values.
      * @prop {string} [nullText] - Text to show when value is empty in readonly mode.
-     * @prop {String, Number} [maxNumber] - Maximum value for numeric input.
-     * @prop {String, Number} [minNumber] - Minimum value for numeric input.
-     * @prop {String, Number} [roundNumber] - Decimal rounding precision.
-     * @prop {String, Number} [maxLength] - Max number of characters.
-     * @prop {String, Number} [maxByte] - Max number of bytes (UTF-8).
+     * @prop {String|Number} [maxNumber] - Maximum value for numeric input.
+     * @prop {String|Number} [minNumber] - Minimum value for numeric input.
+     * @prop {String|Number} [roundNumber] - Decimal rounding precision.
+     * @prop {String|Number} [maxLength] - Max number of characters.
+     * @prop {String|Number} [maxByte] - Max number of bytes (UTF-8).
      * @prop {string} [placeholder] - Placeholder shown in input when empty.
-     * @prop {('editable' | 'disable' | 'readonly')} [editMode='editable'] - Edit state: `'editable'`, `'readonly'`, `'disable'`.
-     * @prop {boolean} [required='false'] - Whether the input is required.
-     * @prop {boolean} [fontBold='false'] - Whether span text is bold.
-     * @prop {boolean} [fontItalic='false'] - Whether span text is italic.
-     * @prop {boolean} [fontThruline='false'] - Whether span text is strikethrough.
-     * @prop {boolean} [fontUnderline='false'] - Whether span text is underlined.
+     * @prop {('editable' | 'disable' | 'readonly')} [editMode='editable'] - Edit state.
+     * @prop {boolean} [required=false] - Whether the input is required.
+     * @prop {boolean} [fontBold=false] - Whether span text is bold.
+     * @prop {boolean} [fontItalic=false] - Whether span text is italic.
+     * @prop {boolean} [fontThruline=false] - Whether span text is strikethrough.
+     * @prop {boolean} [fontUnderline=false] - Whether span text is underlined.
      * @prop {string} [title] - Tooltip text (HTML `title` attribute).
+     * @prop {{ text: string; value: any }[]} [options=[]] - Select items for `inputType='select'`.
+     * @prop {boolean} [border=true] - Whether to show border (box-shadow).
+     * @prop {string} [checkedText='Y'] - Display text for `true` value in checkbox/radio (span-text).
+     * @prop {string} [uncheckedText='N'] - Display text for `false` value in checkbox/radio (span-text).
+     * @prop {(value: any) => string} [inputTextdHandler] - Custom formatter for display text (span).
      *
-     * @prop {{ text: string; value: any }[]} [options=[]] - Selectable items for `inputType='select'`.
-     * @prop {boolean} [border] - Whether to show border (box-shadow). Default: `false`.
-     * @prop {string} [checkedText='Y'] - Display text for `true` value in `checkbox` (readonly mode).
-     * @prop {string} [uncheckedText='N'] - Display text for `false` value in `checkbox` (readonly mode).
-     * @prop {(value: any) => string} [inputTextdHandler] Custom formatter function for display text (span text) of the input component.
-     * 
      * ---
      *
      * @event mounted - Emitted on component mount. Passes `HInputMethods`.
@@ -1455,20 +1745,20 @@ declare module 'vue' {
      * @event update:modelValue - Emitted when the bound value changes.
      *
      * @event input - Emitted during input. `(Event, HInputMethods, value)`
-     * @event change - Emitted on blur or checkbox/select change. `(oldValue, newValue, HInputMethods)`
+     * @event change - Emitted on blur or checkbox/radio/select change. `(oldValue, newValue, HInputMethods)`
      * @event focus - Emitted on focus. `(FocusEvent, HInputMethods)`
      * @event blur - Emitted on blur. `(Event, HInputMethods)`
      *
      * @event click - Emitted on readonly span click. `(MouseEvent, HInputMethods)`
      * @event dblclick - Emitted on double-click. `(MouseEvent, HInputMethods)`
-     * @event mousedown / mouseup / mouseenter / mouseleave / mouseover / mouseout / mousemove - Standard mouse events
+     * @event mousedown / mouseup / mouseenter / mouseleave / mouseover / mouseout / mousemove - Mouse events
      * @event pointerdown / pointerup / pointermove / pointerenter / pointerleave - Pointer events
      * @event touchstart / touchend / touchmove / touchcancel - Touchscreen events
      * @event keydown / keyup - Keyboard events
      * @event compositionstart / compositionupdate / compositionend - IME composition events
      * @event dragstart / dragend / drag / drop - Drag-and-drop events
-     * @event copy / cut / paste - Clipboard interaction events
-     * @event wheel - Mouse wheel scroll event
+     * @event copy / cut / paste - Clipboard events
+     * @event wheel - Mouse wheel event
      * @event contextmenu - Right-click context menu event
      */
     HInput: typeof HInput
@@ -1477,28 +1767,83 @@ declare module 'vue' {
      * Hisonvue grouped input controller.
      *
      * `HInputGroup` is a lightweight component that wraps multiple `HInput` components
-     * and provides batch-level runtime control, such as loading data, resetting values,
+     * and provides group-level runtime control such as loading data, resetting values,
      * validating required fields, and checking modification state.
      *
-     * It is especially useful when working with structured form data, such as
-     * `Record<string, any>`, `DataWrapper`, or `DataModel`, and integrates with `hison.component.getInputGroup(id)`
-     * to expose runtime control methods like `.load()`, `.clear()`, `.getDataObject()` and more.
+     * It is especially useful for handling structured form data such as
+     * `Record<string, any>`, `DataWrapper`, or `DataModel`, and integrates with
+     * `hison.component.getInputGroup(id)` to expose runtime control methods like
+     * `.load()`, `.clear()`, `.getDataObject()`, and more.
      *
      * ---
      *
      * ### 🎯 Features
-     * - Auto-registers all child `<HInput>` components rendered inside its `<slot />`
+     * - Automatically registers all child `<HInput>` components rendered inside its `<slot />`.
      * - Supports loading data from:
      *   - `Record<string, any>`
      *   - `InterfaceDataWrapper`
      *   - `InterfaceDataModel`
-     * - Two-way binding with `v-model` for full-form data as `Record<string, any>`
-     * - Can reset all owned inputs via `.clear()`
-     * - Tracks whether any child `HInput` is modified via `.isModified()`
-     * - Applies or retrieves form-wide status (`C`, `R`, `U`, `D`) via `.getStatus()` and `.setStatus()`
-     * - Applies global edit mode to all child inputs (`editable`, `readonly`, `disable`)
-     * - Supports required field validation via `.checkRequired()`
-     * - Runtime methods available via `hison.component.getInputGroup(id)`
+     * - Two-way binding with `v-model` for entire form data as `Record<string, any>`.
+     * - Can reset all child inputs via `.clear()`.
+     * - Tracks if any child `HInput` is modified via `.isModified()`.
+     * - Applies or retrieves form-wide status (`C`, `R`, `U`, `D`) with `.getStatus()` and `.setStatus()`.
+     * - Applies global edit mode to all child inputs (`editable`, `readonly`, `disable`).
+     * - Supports required field validation with `.checkRequired()`.
+     * - Full runtime methods available via `hison.component.getInputGroup(id)`.
+     *
+     * ---
+     *
+     * ### 🔘 Radio Grouping by `name`
+     * - When a child `HInput` has `inputType="radio"`, its **HTML `name`** defines
+     *   the radio **group key** within this `HInputGroup`.
+     * - Radios sharing the same `name` behave as a single-choice set.
+     * - **Data shape (I/O)** for radios is normalized to:
+     *   ```ts
+     *   // Used in getDataObject(), v-model emits, load(), setDataObject()
+     *   { [radioGroupName: string]: selectedRadioId | null }
+     *   ```
+     *   - `radioGroupName`: the `name` of the radio group
+     *   - `selectedRadioId`: the `id` of the selected `HInput` in that group
+     *   - `null`: no selection in that group
+     * - Non-radio fields use their **input `id` as key**:
+     *   ```ts
+     *   { [inputId: string]: value }
+     *   ```
+     * - If no initial value is provided, each radio’s local `v-model` is `false`,
+     *   and the group entry becomes `{ [name]: null }` in the group-level object.
+     *
+     * #### Example
+     * ```vue
+     * <HInputGroup id="grp" v-model="form">
+     *   <!-- group: 'lang' -->
+     *   <HInput id="r1" inputType="radio" name="lang" :modelValue="true" />
+     *   <HInput id="r2" inputType="radio" name="lang" />
+     *
+     *   <!-- group: 'theme' -->
+     *   <HInput id="r3" inputType="radio" name="theme" />
+     *   <HInput id="r4" inputType="radio" name="theme" />
+     *
+     *   <!-- normal inputs -->
+     *   <HInput id="email" inputType="email" />
+     * </HInputGroup>
+     * ```
+     * - Example result of `getDataObject()` (or v-model binding object):
+     *   ```ts
+     *   {
+     *     // radios by group name
+     *     lang: "r1",
+     *     theme: null,
+     *     // non-radio by id
+     *     email: "user@example.com"
+     *   }
+     *   ```
+     *
+     * #### Dynamic re-grouping
+     * - When `setName('newGroup')` is called on a radio, that radio moves
+     *   **to the new group at runtime**. The `HInputGroup` re-registers membership
+     *   and immediately updates the `{ [name]: id | null }` mapping.
+     * - A previously checked radio will transfer to the new group,
+     *   and the old group’s selection will be reset (leaving `null` if applicable).
      *
      * ---
      *
@@ -1507,6 +1852,10 @@ declare module 'vue' {
      * <HInputGroup id="group1" v-model="formData" :editMode="'editable'">
      *   <HInput id="userid" inputType="text" required />
      *   <HInput id="email" inputType="email" />
+     *
+     *   <!-- radio group 'agree' -->
+     *   <HInput id="agreeY" inputType="radio" name="agree" />
+     *   <HInput id="agreeN" inputType="radio" name="agree" />
      * </HInputGroup>
      * ```
      *
@@ -1516,32 +1865,42 @@ declare module 'vue' {
      * Use `hison.component.getInputGroup(id)` to access and control the group:
      * ```ts
      * const group = hison.component.getInputGroup('group1');
-     * group.load({ userid: 'abc', email: 'test@example.com' });
+     * group.load({
+     *   userid: 'abc',
+     *   email: 'test@example.com',
+     *   agree: 'agreeY'  // radio by group name → selected radio id
+     * });
+     *
+     * const data = group.getDataObject(); // { userid, email, agree }
      * group.clear();
      * group.setStatus('U');
      * group.setEditMode('readonly');
-     * const dataModel = group.getDataModel(); // hison.data.dataModel
+     * const dataModel = group.getDataModel(); // hison.data.DataModel
      * const changed = group.isModified();
      * ```
      *
      * ---
      *
      * ### 🔒 Notes
-     * - `v-model` is now fully supported and emits changes when any child `HInput` is modified.
-     * - Child `HInput` components must have an `id` matching the corresponding data key.
+     * - `v-model` is fully supported and emits changes whenever any child `HInput` updates.
+     * - Child `HInput` components must have an `id` matching their corresponding data key
+     *   (except radios, which are keyed by group `name`).
+     * - Radios default to `false` when not initialized; group mapping defaults to `null`.
      * - Inputs auto-sync their values from `v-model` on registration and emit changes upward.
-     * - Modification tracking reflects user-triggered changes only.
-     * - Grouped `HInput` instances register themselves via `provide('registerToInputGroup')`.
+     * - Modification tracking reflects only user-triggered changes.
+     * - Grouped `HInput` instances self-register via `provide('registerToInputGroup')`.
      *
      * ---
      *
      * @prop {string} id - Unique group identifier. Enables runtime access via `hison.component.getInputGroup(id)`.
-     * @prop {('editable' | 'disable' | 'readonly')} [editMode='editable'] - Edit mode: `'editable'`, `'readonly'`, `'disable'`.
-     * @prop {('C' | 'R' | 'U' | 'D')} [status='R'] - Data status: `'C'`, `'R'`, `'U'`, `'D'`. Managed via `.getStatus()` / `.setStatus()`.
-     * @prop {Record<string, any>} [modelValue] - Used with `v-model` for two-way binding of grouped input values.
+     * @prop {('editable' | 'disable' | 'readonly')} [editMode='editable'] - Edit mode.
+     * @prop {('C' | 'R' | 'U' | 'D')} [status='R'] - Data status (`C`, `R`, `U`, `D`). Controlled via `.getStatus()` / `.setStatus()`.
+     * @prop {Record<string, any>} [modelValue] - Used with `v-model` for two-way binding.
+     *   - **Non-radio**: keyed by child input **`id`** → value
+     *   - **Radio**: keyed by radio **`name`** → **selected radio `id`** or `null`
      *
-     * @event mounted - Emitted after mount with `HInputGroupMethods` instance.
-     * @event update:modelValue - Emitted when any child `HInput` changes, propagating the updated object.
+     * @event mounted - Fired after mount with `HInputGroupMethods` instance.
+     * @event update:modelValue - Fired whenever any child `HInput` changes, emitting the updated object.
      */
     HInputGroup: typeof HInputGroup
 
@@ -1915,7 +2274,7 @@ declare module 'vue' {
      *
      *   <!-- or override parts only -->
      *   <template #close-icon>❌</template>
-     *   <template #close-label>닫기</template>
+     *   <template #close-label>Close</template>
      * </HModal>
      * ```
      *
@@ -2289,6 +2648,116 @@ declare module 'vue' {
     HNote: typeof HNote
 
     /**
+     * Hisonvue custom pagination component.
+     *
+     * `HPagination` is a lightweight, responsive pagination component that renders Bootstrap-like
+     * pagination UI using `HButton` internally. It supports v-model page control, windowed page display,
+     * and runtime method controls via `hisonCloser` for global access.
+     *
+     * ---
+     *
+     * ### 🎯 Features
+     * - Theme-aware styling via responsive class system (`hison-size-*`, `hison-color-*`, etc.)
+     * - **v-model page control** with clamping and `change` event emission
+     * - **Windowed page list** (no ellipsis): shows a sliding range around the current page
+     * - **First / Prev / Next / Last** controls with per-button visibility toggles
+     * - **Button styling passthrough** to `HButton`:
+     *   - Border toggle via `border`
+     *   - Background style via `backgroundType` (`"empty"` by default)
+     *   - Physical click interval limiting via `clickInterval`
+     * - **Adjustable spacing between buttons** via `gap` (e.g., `"0.25rem"`, `8`, `"10px"`)
+     * - Device-aware responsive reload (`@responsive-change`)
+     * - Seamless reload via internal `registerReloadable()` support
+     *
+     * ---
+     *
+     * ### ⚙️ Usage
+     * ```vue
+     * <HPagination
+     *   id="pg1"
+     *   class="hison-size-m hison-color-primary"
+     *   v-model="page"
+     *   :total-items="200"
+     *   :page-size="10"
+     *   :max-buttons="5"
+     *   gap="0.5rem"
+     *   :show-first="true"
+     *   :show-prev="true"
+     *   :show-next="true"
+     *   :show-last="true"
+     *   border
+     *   background-type="empty"
+     *   :click-interval="300"
+     *   @change="(p) => fetchList(p)"
+     * />
+     *
+     * <!-- Customizing control slots -->
+     * <HPagination v-model="page" :total-items="100">
+     *   <template #first>«</template>
+     *   <template #prev>‹</template>
+     *   <template #page="{ page: p, isActive }">
+     *     <span :style="{ fontWeight: isActive ? '700' : '400' }">{{ p }}</span>
+     *   </template>
+     *   <template #next>›</template>
+     *   <template #last>»</template>
+     * </HPagination>
+     * ```
+     *
+     * ---
+     *
+     * ### 🛠 Runtime Usage
+     * Use `hison.component.getPagination(id)` to retrieve control methods at runtime:
+     *
+     * ```ts
+     * const pg = hison.component.getPagination('pg1');
+     * pg.setCurrentPage(10);      // jump to page 10
+     * pg.goPrev();                // go to previous page
+     * pg.setShowFirst(false);     // hide the first button
+     * pg.setGap('12px');          // change spacing
+     * pg.setBackgroundType('filled');
+     * pg.setClickInterval(500);
+     * ```
+     *
+     * ---
+     *
+     * @prop {string} id - Unique pagination identifier. Enables runtime access via `hison.component.getPagination(id)`.
+     * @prop {string | string[] | Record<string, boolean>} [class] - Additional class string. Supports `hison-*` responsive system.
+     * @prop {string | CSSProperties | CSSProperties[]} [style] - Inline CSS style for the container.
+     * @prop {boolean} [visible] - Whether the pagination is shown. Default: `true`.
+     * @prop {boolean} [disable] - Whether all buttons are disabled. Default: `false`.
+     * @prop {number | string} [gap] - Spacing between buttons. Number is treated as px; string accepts any CSS length. Default: `"0.25rem"`.
+     * @prop {boolean} [border] - Whether to show border on buttons. Default: `true`.
+     * @prop {('filled'|'empty'|'transparent')} [backgroundType] - Button background style. Default: `'empty'`.
+     * @prop {number} [clickInterval] - Minimum interval (ms) between allowed button clicks.
+     * @prop {number} [modelValue] - **v-model** current page (1-based). Clamped to `[1..totalPages]`.
+     * @prop {number} [totalItems] - Total item count. Used with `pageSize` to compute total pages (ignored if `totalPages` > 0).
+     * @prop {number} [pageSize] - Items per page. Default: `10`.
+     * @prop {number} [totalPages] - Explicit total pages. If > 0, it takes precedence over `totalItems/pageSize`.
+     * @prop {number} [maxButtons] - Max number of page buttons to display (excluding nav buttons). Default: `5`.
+     * @prop {number|string|null} [tabIndex] - `tabindex` for buttons. `0` = natural focus order, `null` = not focusable.
+     * @prop {boolean} [showPrev] - Whether to show the "Prev" button. Default: `true`.
+     * @prop {boolean} [showNext] - Whether to show the "Next" button. Default: `true`.
+     * @prop {boolean} [showFirst] - Whether to show the "First" button. Default: `true`.
+     * @prop {boolean} [showLast] - Whether to show the "Last" button. Default: `true`.
+     *
+     * ---
+     *
+     * @slot first - Custom content for the **First** button.
+     * @slot prev - Custom content for the **Prev** button.
+     * @slot page - Custom content for numbered page buttons. Slot props: `{ page: number, isActive: boolean, goPage: (n:number)=>void }`
+     * @slot next - Custom content for the **Next** button.
+     * @slot last - Custom content for the **Last** button.
+     *
+     * ---
+     *
+     * @event mounted - Emitted after mounting. Passes `HPaginationMethods` instance.
+     * @event update:modelValue - Emitted when current page changes. Passes `number` (new page).
+     * @event change - Emitted together with page change for convenience. Passes `(number, HPaginationMethods)`.
+     * @event responsive-change - Emitted on device class change (`'mb'`, `'tb'`, `'pc'`, `'wd'`).
+     */
+    HPagination: typeof HPagination
+
+    /**
      * Hisonvue custom paragraph/text component.
      *
      * `HParagraph` renders plain text (safe, non-HTML) or slot content with rich,
@@ -2479,7 +2948,7 @@ declare module 'vue' {
      *
      *   <!-- or override parts only -->
      *   <template #close-icon>❌</template>
-     *   <template #close-label>닫기</template>
+     *   <template #close-label>Close</template>
      * </HPopup>
      * ```
      *
@@ -2789,20 +3258,5 @@ declare module 'vue' {
      * @event responsive-change - Emitted when device class changes (`'mb'|'tb'|'pc'|'wd'`).
      */
     HTable: typeof HTable
-
-
-    /** 
-     * HBaggie 배지, 특정 요소 좌우 또는 모서리 1000
-     * 
-     * HRadio 라디오 박스
-     * HGallery 이미지 출력 및 넘기기
-     * HProgress 진행도 표시창
-     * HStepBar 진행도 스텝 표시창
-     * HPagenation 페이지 선택
-     * 
-     * HTree => Grid로
-     * HGrid, HNote 오류수정
-     */
-
   }
 }
