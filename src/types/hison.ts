@@ -1,5 +1,5 @@
 import type { Hison as Hisonjs } from "hisonjs";
-import { HButtonMethods, HInputGroupMethods, HGridMethods, HInputMethods, HLayoutMethods, HNoteElement, HCalendarMethods, HChartInstance, HFilesetMethods, HImageboxMethods, HDropdownMethods, HAccordionMethods, HLabelMethods, HParagraphMethods, HCaptionMethods, HGapMethods, HListMethods, HTableMethods, HModalMethods, HPopupMethods, HDrawerMethods, HSpinnerMethods, HBaggieMethods } from "./component";
+import { HButtonMethods, HInputGroupMethods, HGridMethods, HInputMethods, HLayoutMethods, HNoteElement, HCalendarMethods, HChartInstance, HFilesetMethods, HImageboxMethods, HDropdownMethods, HAccordionMethods, HLabelMethods, HParagraphMethods, HCaptionMethods, HGapMethods, HListMethods, HTableMethods, HModalMethods, HPopupMethods, HDrawerMethods, HSpinnerMethods, HBaggieMethods, HBannerMethods, HPaginationMethods } from "./component";
 import { Size } from "../enums";
 
 /**
@@ -146,6 +146,7 @@ export interface Hison extends Hisonjs {
   component: {
     getAccordion(accordionId: string): HAccordionMethods | null
     getBaggie(baggieId: string): HBaggieMethods | null
+    getBanner(bannerId: string): HBannerMethods | null
     getButton(buttonId: string): HButtonMethods | null
     getCalendar(calendarId: string): HCalendarMethods | null
     getCaption(calendarId: string): HCaptionMethods | null
@@ -163,6 +164,7 @@ export interface Hison extends Hisonjs {
     getList(listtId: string): HListMethods | null
     getModal(listtId: string): HModalMethods | null
     getNote(noteId: string): HNoteElement | null
+    getPagination(paginationId: string): HPaginationMethods | null
     getParagraph(paragraphId: string): HParagraphMethods | null
     getPopup(popupId: string): HPopupMethods | null
     getSpinner(spinnerId: string): HSpinnerMethods | null
