@@ -218,6 +218,265 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
+/* HBaggie */
+.hison-baggie-anchor {
+  display: inline-grid;
+  position: relative;
+  vertical-align: middle;
+}
+.hison-baggie-target { grid-area: 1 / 1; }
+.hison-baggie-target > * { width: 100% !important; max-width: 100%; box-sizing: border-box; }
+
+.hison-baggie {
+  grid-area: 1 / 1;
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  padding: 0.2rem 0.4rem;
+  box-sizing: border-box;
+  font-family: var(--hison-font-family);
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: auto;
+  outline: none;
+}
+
+.hison-baggie-shape-square { border-radius: 3px; }
+.hison-baggie-shape-rounded { border-radius: 8px; }
+.hison-baggie-shape-circle { border-radius: 999px; padding: 0.25rem; min-width: 1.25rem; min-height: 1.25rem; }
+
+.hison-baggie-text { display: inline-block; text-align: center; }
+
+.hison-baggie-pos-top-left { place-self: start start; transform: translate(-25%, -25%); }
+.hison-baggie-pos-top-center { place-self: start center; transform: translate(0,   -25%); }
+.hison-baggie-pos-top-right { place-self: start end; transform: translate(25%, -25%); }
+
+.hison-baggie-pos-middle-left { place-self: center start; transform: translate(-25%, 0); }
+.hison-baggie-pos-middle-center { place-self: center center; transform: translate(0, 0); }
+.hison-baggie-pos-middle-right { place-self: center end; transform: translate(25%, 0); }
+
+.hison-baggie-pos-bottom-left { place-self: end start; transform: translate(-25%, 25%); }
+.hison-baggie-pos-bottom-center { place-self: end center; transform: translate(0,    25%); }
+.hison-baggie-pos-bottom-right { place-self: end end; transform: translate(25%,  25%); }
+
+.hison-color-primary > .hison-baggie.hison-bg-filled { background-color: var(--hison-primary-buttonColor); color: var(--hison-primary-filledTextColor); }
+.hison-color-muted > .hison-baggie.hison-bg-filled { background-color: var(--hison-muted-buttonColor); color: var(--hison-muted-filledTextColor); }
+.hison-color-info > .hison-baggie.hison-bg-filled { background-color: var(--hison-info-buttonColor); color: var(--hison-info-filledTextColor); }
+.hison-color-success > .hison-baggie.hison-bg-filled { background-color: var(--hison-success-buttonColor); color: var(--hison-success-filledTextColor); }
+.hison-color-danger > .hison-baggie.hison-bg-filled { background-color: var(--hison-danger-buttonColor); color: var(--hison-danger-filledTextColor); }
+.hison-color-warning > .hison-baggie.hison-bg-filled { background-color: var(--hison-warning-buttonColor); color: var(--hison-warning-filledTextColor); }
+
+.hison-color-primary > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-primary-buttonColor); }
+.hison-color-muted > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-muted-buttonColor); }
+.hison-color-info > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-info-buttonColor); }
+.hison-color-success > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-success-buttonColor); }
+.hison-color-danger > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-danger-buttonColor); }
+.hison-color-warning > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-warning-buttonColor); }
+
+.hison-color-primary > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-primary-buttonColor); }
+.hison-color-muted > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-muted-buttonColor); }
+.hison-color-info > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-info-buttonColor); }
+.hison-color-success > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-success-buttonColor); }
+.hison-color-danger > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-danger-buttonColor); }
+.hison-color-warning > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-warning-buttonColor); }
+
+/* border shadow */
+.hison-color-primary > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-primary-shadowColor); }
+.hison-color-muted > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-muted-shadowColor); }
+.hison-color-info > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-info-shadowColor); }
+.hison-color-success > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-success-shadowColor); }
+.hison-color-danger > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-danger-shadowColor); }
+.hison-color-warning > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-warning-shadowColor); }
+
+/* focus */
+.hison-color-primary > .hison-baggie.hison-border.hison-button-on-focus { box-shadow: 0 1px 2.5px 0 var(--hison-primary-shadowColor), 0 1px 2px 0 var(--hison-primary-shadowColor) !important; }
+.hison-color-muted > .hison-baggie.hison-border.hison-button-on-focus { box-shadow: 0 1px 2.5px 0 var(--hison-muted-shadowColor), 0 1px 2px 0 var(--hison-muted-shadowColor) !important; }
+.hison-color-info > .hison-baggie.hison-border.hison-button-on-focus { box-shadow: 0 1px 2.5px 0 var(--hison-info-shadowColor), 0 1px 2px 0 var(--hison-info-shadowColor) !important; }
+.hison-color-success > .hison-baggie.hison-border.hison-button-on-focus { box-shadow: 0 1px 2.5px 0 var(--hison-success-shadowColor), 0 1px 2px 0 var(--hison-success-shadowColor) !important; }
+.hison-color-danger > .hison-baggie.hison-border.hison-button-on-focus { box-shadow: 0 1px 2.5px 0 var(--hison-danger-shadowColor), 0 1px 2px 0 var(--hison-danger-shadowColor) !important; }
+.hison-color-warning > .hison-baggie.hison-border.hison-button-on-focus { box-shadow: 0 1px 2.5px 0 var(--hison-warning-shadowColor), 0 1px 2px 0 var(--hison-warning-shadowColor) !important; }
+/* focus empty */
+.hison-color-primary > .hison-baggie.hison-bg-empty.hison-button-on-focus { color: var(--hison-primary-hoverColor) !important; }
+.hison-color-muted > .hison-baggie.hison-bg-empty.hison-button-on-focus { color: var(--hison-muted-hoverColor) !important; }
+.hison-color-info > .hison-baggie.hison-bg-empty.hison-button-on-focus { color: var(--hison-info-hoverColor) !important; }
+.hison-color-success > .hison-baggie.hison-bg-empty.hison-button-on-focus { color: var(--hison-success-hoverColor) !important; }
+.hison-color-danger > .hison-baggie.hison-bg-empty.hison-button-on-focus { color: var(--hison-danger-hoverColor) !important; }
+.hison-color-warning > .hison-baggie.hison-bg-empty.hison-button-on-focus { color: var(--hison-warning-hoverColor) !important; }
+/* focus transparent */
+.hison-color-primary > .hison-baggie.hison-bg-transparent.hison-button-on-focus { color: var(--hison-primary-hoverColor) !important; }
+.hison-color-muted > .hison-baggie.hison-bg-transparent.hison-button-on-focus { color: var(--hison-muted-hoverColor) !important; }
+.hison-color-info > .hison-baggie.hison-bg-transparent.hison-button-on-focus { color: var(--hison-info-hoverColor) !important; }
+.hison-color-success > .hison-baggie.hison-bg-transparent.hison-button-on-focus { color: var(--hison-success-hoverColor) !important; }
+.hison-color-danger > .hison-baggie.hison-bg-transparent.hison-button-on-focus { color: var(--hison-danger-hoverColor) !important; }
+.hison-color-warning > .hison-baggie.hison-bg-transparent.hison-button-on-focus { color: var(--hison-warning-hoverColor) !important; }
+
+/* mouseover */
+.hison-color-primary > .hison-baggie.hison-border.hison-button-on-mouseover { box-shadow: 0 1px 2.5px 0 var(--hison-primary-shadowColor), 0 1px 2px 0 var(--hison-primary-shadowColor) !important; }
+.hison-color-muted > .hison-baggie.hison-border.hison-button-on-mouseover { box-shadow: 0 1px 2.5px 0 var(--hison-muted-shadowColor), 0 1px 2px 0 var(--hison-muted-shadowColor) !important; }
+.hison-color-info > .hison-baggie.hison-border.hison-button-on-mouseover { box-shadow: 0 1px 2.5px 0 var(--hison-info-shadowColor), 0 1px 2px 0 var(--hison-info-shadowColor) !important; }
+.hison-color-success > .hison-baggie.hison-border.hison-button-on-mouseover { box-shadow: 0 1px 2.5px 0 var(--hison-success-shadowColor), 0 1px 2px 0 var(--hison-success-shadowColor) !important; }
+.hison-color-danger > .hison-baggie.hison-border.hison-button-on-mouseover { box-shadow: 0 1px 2.5px 0 var(--hison-danger-shadowColor), 0 1px 2px 0 var(--hison-danger-shadowColor) !important; }
+.hison-color-warning > .hison-baggie.hison-border.hison-button-on-mouseover { box-shadow: 0 1px 2.5px 0 var(--hison-warning-shadowColor), 0 1px 2px 0 var(--hison-warning-shadowColor) !important; }
+/* mouseover empty */
+.hison-color-primary > .hison-baggie.hison-bg-empty.hison-button-on-mouseover { color: var(--hison-primary-hoverColor) !important; }
+.hison-color-muted > .hison-baggie.hison-bg-empty.hison-button-on-mouseover { color: var(--hison-muted-hoverColor) !important; }
+.hison-color-info > .hison-baggie.hison-bg-empty.hison-button-on-mouseover { color: var(--hison-info-hoverColor) !important; }
+.hison-color-success > .hison-baggie.hison-bg-empty.hison-button-on-mouseover { color: var(--hison-success-hoverColor) !important; }
+.hison-color-danger > .hison-baggie.hison-bg-empty.hison-button-on-mouseover { color: var(--hison-danger-hoverColor) !important; }
+.hison-color-warning > .hison-baggie.hison-bg-empty.hison-button-on-mouseover { color: var(--hison-warning-hoverColor) !important; }
+/* mouseover transparent */
+.hison-color-primary > .hison-baggie.hison-bg-transparent.hison-button-on-mouseover { color: var(--hison-primary-hoverColor) !important; }
+.hison-color-muted > .hison-baggie.hison-bg-transparent.hison-button-on-mouseover { color: var(--hison-muted-hoverColor) !important; }
+.hison-color-info > .hison-baggie.hison-bg-transparent.hison-button-on-mouseover { color: var(--hison-info-hoverColor) !important; }
+.hison-color-success > .hison-baggie.hison-bg-transparent.hison-button-on-mouseover { color: var(--hison-success-hoverColor) !important; }
+.hison-color-danger > .hison-baggie.hison-bg-transparent.hison-button-on-mouseover { color: var(--hison-danger-hoverColor) !important; }
+.hison-color-warning > .hison-baggie.hison-bg-transparent.hison-button-on-mouseover { color: var(--hison-warning-hoverColor) !important; }
+/* mouseover filled */
+.hison-color-primary > .hison-baggie.hison-bg-filled.hison-button-on-mouseover { background-color: var(--hison-primary-hoverColor) !important; }
+.hison-color-muted > .hison-baggie.hison-bg-filled.hison-button-on-mouseover { background-color: var(--hison-muted-hoverColor) !important; }
+.hison-color-info > .hison-baggie.hison-bg-filled.hison-button-on-mouseover { background-color: var(--hison-info-hoverColor) !important; }
+.hison-color-success > .hison-baggie.hison-bg-filled.hison-button-on-mouseover { background-color: var(--hison-success-hoverColor) !important; }
+.hison-color-danger > .hison-baggie.hison-bg-filled.hison-button-on-mouseover { background-color: var(--hison-danger-hoverColor) !important; }
+.hison-color-warning > .hison-baggie.hison-bg-filled.hison-button-on-mouseover { background-color: var(--hison-warning-hoverColor) !important; }
+
+/* active */
+.hison-color-primary > .hison-baggie.hison-border.hison-button-on-active { box-shadow: inset 0 0.5px 1px 0 var(--hison-primary-shadowColor), 0 1px 2px 0 var(--hison-primary-shadowColor) !important; }
+.hison-color-muted > .hison-baggie.hison-border.hison-button-on-active { box-shadow: inset 0 0.5px 1px 0 var(--hison-muted-shadowColor), 0 1px 2px 0 var(--hison-muted-shadowColor) !important; }
+.hison-color-info > .hison-baggie.hison-border.hison-button-on-active { box-shadow: inset 0 0.5px 1px 0 var(--hison-info-shadowColor), 0 1px 2px 0 var(--hison-info-shadowColor) !important; }
+.hison-color-success > .hison-baggie.hison-border.hison-button-on-active { box-shadow: inset 0 0.5px 1px 0 var(--hison-success-shadowColor), 0 1px 2px 0 var(--hison-success-shadowColor) !important; }
+.hison-color-danger > .hison-baggie.hison-border.hison-button-on-active { box-shadow: inset 0 0.5px 1px 0 var(--hison-danger-shadowColor), 0 1px 2px 0 var(--hison-danger-shadowColor) !important; }
+.hison-color-warning > .hison-baggie.hison-border.hison-button-on-active { box-shadow: inset 0 0.5px 1px 0 var(--hison-warning-shadowColor), 0 1px 2px 0 var(--hison-warning-shadowColor) !important; }
+/* active filled */
+.hison-color-primary > .hison-baggie.hison-bg-filled.hison-button-on-active { background-color: var(--hison-primary-activeColor) !important; }
+.hison-color-muted > .hison-baggie.hison-bg-filled.hison-button-on-active { background-color: var(--hison-muted-activeColor) !important; }
+.hison-color-info > .hison-baggie.hison-bg-filled.hison-button-on-active { background-color: var(--hison-info-activeColor) !important; }
+.hison-color-success > .hison-baggie.hison-bg-filled.hison-button-on-active { background-color: var(--hison-success-activeColor) !important; }
+.hison-color-danger > .hison-baggie.hison-bg-filled.hison-button-on-active { background-color: var(--hison-danger-activeColor) !important; }
+.hison-color-warning > .hison-baggie.hison-bg-filled.hison-button-on-active { background-color: var(--hison-warning-activeColor) !important; }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+/* HBanner */
+
+.hison-banner {
+    position: relative;
+    display: block;
+}
+.hison-banner-viewport {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.hison-banner-track {
+    will-change: transform;
+    display: flex;
+    flex-direction: row;
+}
+.hison-banner-slide {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 100%;
+    width: 100%;
+}
+.hison-banner-slide {
+    box-sizing: border-box;
+    flex: 0 0 100%;
+    width: 100%;
+}
+.hison-banner-nav {
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    pointer-events:none;
+}
+.hison-banner-nav > div { pointer-events:auto; }
+
+.hison-banner-indicators {
+    display:flex;
+    gap:.5rem;
+    justify-content:center;
+    align-items:center;
+    padding:.5rem 0;
+}
+.hison-banner-indicator {
+    background:transparent;
+    border:0;
+    cursor:pointer;
+    opacity:.6;
+}
+.hison-banner-indicators-bottom {
+    position: static;
+    padding: .5rem 0;
+}
+
+.hison-banner-indicators-overlay {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: .5rem;
+    z-index: 3;
+    pointer-events: auto;
+}
+.hison-banner-indicator.active {
+    transform:scale(1.15);
+    opacity:1;
+}
+.hison-banner-indicator.no-pointer {
+    cursor: default;
+    pointer-events: none;
+}
+
+.hison-color-primary > .hison-banner .hison-banner-indicator { color: var(--hison-primary-buttonColor); }
+.hison-color-muted > .hison-banner .hison-banner-indicator { color: var(--hison-muted-buttonColor); }
+.hison-color-info > .hison-banner .hison-banner-indicator { color: var(--hison-info-buttonColor); }
+.hison-color-success > .hison-banner .hison-banner-indicator { color: var(--hison-success-buttonColor); }
+.hison-color-danger > .hison-banner .hison-banner-indicator { color: var(--hison-danger-buttonColor); }
+.hison-color-warning > .hison-banner .hison-banner-indicator { color: var(--hison-warning-buttonColor); }
+
+.hison-color-primary > .hison-banner .hison-banner-indicator.active { color: var(--hison-primary-activeColor); }
+.hison-color-muted > .hison-banner .hison-banner-indicator.active { color: var(--hison-muted-activeColor); }
+.hison-color-info > .hison-banner .hison-banner-indicator.active { color: var(--hison-info-activeColor); }
+.hison-color-success > .hison-banner .hison-banner-indicator.active { color: var(--hison-success-activeColor); }
+.hison-color-danger > .hison-banner .hison-banner-indicator.active { color: var(--hison-danger-activeColor); }
+.hison-color-warning > .hison-banner .hison-banner-indicator.active { color: var(--hison-warning-activeColor); }
+
+.hison-color-primary > .hison-banner.hison-bg-filled .hison-banner-viewport { background-color: var(--hison-primary-buttonColor); color: var(--hison-primary-filledTextColor); }
+.hison-color-muted > .hison-banner.hison-bg-filled .hison-banner-viewport { background-color: var(--hison-muted-buttonColor); color: var(--hison-muted-filledTextColor); }
+.hison-color-info > .hison-banner.hison-bg-filled .hison-banner-viewport { background-color: var(--hison-info-buttonColor); color: var(--hison-info-filledTextColor); }
+.hison-color-success > .hison-banner.hison-bg-filled .hison-banner-viewport { background-color: var(--hison-success-buttonColor); color: var(--hison-success-filledTextColor); }
+.hison-color-danger > .hison-banner.hison-bg-filled .hison-banner-viewport { background-color: var(--hison-danger-buttonColor); color: var(--hison-danger-filledTextColor); }
+.hison-color-warning > .hison-banner.hison-bg-filled .hison-banner-viewport { background-color: var(--hison-warning-buttonColor); color: var(--hison-warning-filledTextColor); }
+
+.hison-color-primary > .hison-banner.hison-bg-empty .hison-banner-viewport { background-color: var(--hison-emptyColor); color: var(--hison-primary-buttonColor); }
+.hison-color-muted > .hison-banner.hison-bg-empty .hison-banner-viewport { background-color: var(--hison-emptyColor); color: var(--hison-muted-buttonColor); }
+.hison-color-info > .hison-banner.hison-bg-empty .hison-banner-viewport { background-color: var(--hison-emptyColor); color: var(--hison-info-buttonColor); }
+.hison-color-success > .hison-banner.hison-bg-empty .hison-banner-viewport { background-color: var(--hison-emptyColor); color: var(--hison-success-buttonColor); }
+.hison-color-danger > .hison-banner.hison-bg-empty .hison-banner-viewport { background-color: var(--hison-emptyColor); color: var(--hison-danger-buttonColor); }
+.hison-color-warning > .hison-banner.hison-bg-empty .hison-banner-viewport { background-color: var(--hison-emptyColor); color: var(--hison-warning-buttonColor); }
+
+.hison-color-primary > .hison-banner.hison-bg-transparent .hison-banner-viewport { background-color: transparent; color: var(--hison-primary-buttonColor); }
+.hison-color-muted > .hison-banner.hison-bg-transparent .hison-banner-viewport { background-color: transparent; color: var(--hison-muted-buttonColor); }
+.hison-color-info > .hison-banner.hison-bg-transparent .hison-banner-viewport { background-color: transparent; color: var(--hison-info-buttonColor); }
+.hison-color-success > .hison-banner.hison-bg-transparent .hison-banner-viewport { background-color: transparent; color: var(--hison-success-buttonColor); }
+.hison-color-danger > .hison-banner.hison-bg-transparent .hison-banner-viewport { background-color: transparent; color: var(--hison-danger-buttonColor); }
+.hison-color-warning > .hison-banner.hison-bg-transparent .hison-banner-viewport { background-color: transparent; color: var(--hison-warning-buttonColor); }
+
+.hison-color-primary > .hison-banner.hison-border { box-shadow: 0 1px 2px 0 var(--hison-primary-shadowColor); }
+.hison-color-muted > .hison-banner.hison-border { box-shadow: 0 1px 2px 0 var(--hison-muted-shadowColor); }
+.hison-color-info > .hison-banner.hison-border { box-shadow: 0 1px 2px 0 var(--hison-info-shadowColor); }
+.hison-color-success > .hison-banner.hison-border { box-shadow: 0 1px 2px 0 var(--hison-success-shadowColor); }
+.hison-color-danger > .hison-banner.hison-border { box-shadow: 0 1px 2px 0 var(--hison-danger-shadowColor); }
+.hison-color-warning > .hison-banner.hison-border { box-shadow: 0 1px 2px 0 var(--hison-warning-shadowColor); }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
 /* HButton */
 .hison-button {
     display: block;
@@ -763,7 +1022,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     overflow-y: auto;
     padding: 8px;
     box-sizing: border-box;
-    min-height: 0; /* 스크롤 되도록 안전하게 설정 */
+    min-height: 0;
 }
 .hison-fileset .file-list {
     display: flex;
@@ -799,7 +1058,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-fileset .file-list-wrapper {
     position: relative;
     width: 100%;
-    height: calc(95% - 40px); /* 버튼 높이 제외 */
+    height: calc(95% - 40px);
     overflow-y: auto;
     border: 1px dashed transparent;
     transition: border 0.2s ease;
@@ -1191,6 +1450,95 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-color-success > .hison-input input[type="checkbox"] { accent-color: var(--hison-success-buttonColor); }
 .hison-color-danger > .hison-input input[type="checkbox"] { accent-color: var(--hison-danger-buttonColor); }
 .hison-color-warning > .hison-input input[type="checkbox"] { accent-color: var(--hison-warning-buttonColor); }
+
+.hison-input-radio-div {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: none !important;
+  background-color: var(--hison-emptyColor);
+  color: var(--hison-emptyTextColor);
+}
+.hison-input-radio { cursor: pointer; }
+
+.hison-size-s > .hison-input input[type="radio"] { transform: scale(1.0); }
+.hison-size-s > .hison-input input[type="radio"]:focus { outline: none; transform: scale(1.2); }
+.hison-size-m > .hison-input input[type="radio"] { transform: scale(1.15); }
+.hison-size-m > .hison-input input[type="radio"]:focus { outline: none; transform: scale(1.35); }
+.hison-size-l > .hison-input input[type="radio"] { transform: scale(1.3); }
+.hison-size-l > .hison-input input[type="radio"]:focus { outline: none; transform: scale(1.5); }
+.hison-size-xl > .hison-input input[type="radio"] { transform: scale(1.45); }
+.hison-size-xl > .hison-input input[type="radio"]:focus { outline: none; transform: scale(1.65); }
+
+.hison-input input[type="radio"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: var(--hison-radio-size, 0.8rem);
+  height: var(--hison-radio-size, 0.8rem);
+  border-radius: 50%;
+  border: var(--hison-radio-border-w, 0.5px) solid var(--hison-radio-border, currentColor);
+  background: var(--hison-radio-bg, var(--hison-emptyColor));
+  display: inline-grid;
+  place-content: center;
+  vertical-align: middle;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .15s ease;
+}
+
+.hison-input input[type="radio"]::before {
+  content: "";
+  width: calc(var(--hison-radio-size, 0.8rem) * 0.55);
+  height: calc(var(--hison-radio-size, 0.8rem) * 0.55);
+  border-radius: 50%;
+  background: var(--hison-radio-color, currentColor);
+  transform: scale(0);
+  transition: transform 120ms ease-in-out;
+}
+
+.hison-input input[type="radio"]:checked::before {
+  transform: scale(1);
+}
+
+.hison-input input[type="radio"]:focus-visible {
+  outline: 2px solid var(--hison-radio-color, currentColor);
+  outline-offset: 2px;
+}
+.hison-input input[type="radio"]:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.hison-color-primary > .hison-input input[type="radio"] {
+  --hison-radio-color: var(--hison-primary-buttonColor);
+  --hison-radio-border: var(--hison-primary-buttonColor);
+}
+.hison-color-muted   > .hison-input input[type="radio"] {
+  --hison-radio-color: var(--hison-muted-buttonColor);
+  --hison-radio-border: var(--hison-muted-buttonColor);
+}
+.hison-color-info    > .hison-input input[type="radio"] {
+  --hison-radio-color: var(--hison-info-buttonColor);
+  --hison-radio-border: var(--hison-info-buttonColor);
+}
+.hison-color-success > .hison-input input[type="radio"] {
+  --hison-radio-color: var(--hison-success-buttonColor);
+  --hison-radio-border: var(--hison-success-buttonColor);
+}
+.hison-color-danger  > .hison-input input[type="radio"] {
+  --hison-radio-color: var(--hison-danger-buttonColor);
+  --hison-radio-border: var(--hison-danger-buttonColor);
+}
+.hison-color-warning > .hison-input input[type="radio"] {
+  --hison-radio-color: var(--hison-warning-buttonColor);
+  --hison-radio-border: var(--hison-warning-buttonColor);
+}
+
+.hison-input-radio-readonly {
+  pointer-events: none;
+  outline: none;
+}
+
 .hison-input-textarea {
   resize: none;
   height: 200px;
@@ -1331,6 +1679,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-color-success > .hison-label.hison-bg-filled.hison-button-on-active { background-color: var(--hison-success-activeColor) !important; }
 .hison-color-danger > .hison-label.hison-bg-filled.hison-button-on-active { background-color: var(--hison-danger-activeColor) !important; }
 .hison-color-warning > .hison-label.hison-bg-filled.hison-button-on-active { background-color: var(--hison-warning-activeColor) !important; }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 /* HLayout */
@@ -1679,6 +2028,38 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
+/* HPagination */
+.hison-pagination {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  padding: 1px 1px 2px 1px;
+}
+
+:host,
+.hison-pagination :deep(.hison-button) {
+  min-width: 2.25rem;
+  padding-left: .6rem;
+  padding-right: .6rem;
+}
+
+.hison-pagination-button-active.hison-color-primary > .hison-border { box-shadow: inset 0 0.5px 1px 0 var(--hison-primary-shadowColor), 0 1px 2px 0 var(--hison-primary-shadowColor) !important; }
+.hison-pagination-button-active.hison-color-muted > .hison-border { box-shadow: inset 0 0.5px 1px 0 var(--hison-muted-shadowColor), 0 1px 2px 0 var(--hison-muted-shadowColor) !important; }
+.hison-pagination-button-active.hison-color-info > .hison-border { box-shadow: inset 0 0.5px 1px 0 var(--hison-info-shadowColor), 0 1px 2px 0 var(--hison-info-shadowColor) !important; }
+.hison-pagination-button-active.hison-color-success > .hison-border { box-shadow: inset 0 0.5px 1px 0 var(--hison-success-shadowColor), 0 1px 2px 0 var(--hison-success-shadowColor) !important; }
+.hison-pagination-button-active.hison-color-danger > .hison-border { box-shadow: inset 0 0.5px 1px 0 var(--hison-danger-shadowColor), 0 1px 2px 0 var(--hison-danger-shadowColor) !important; }
+.hison-pagination-button-active.hison-color-warning > .hison-border { box-shadow: inset 0 0.5px 1px 0 var(--hison-warning-shadowColor), 0 1px 2px 0 var(--hison-warning-shadowColor) !important; }
+
+.hison-pagination-button-active.hison-color-primary > .hison-bg-filled { background-color: var(--hison-primary-activeColor) !important; }
+.hison-pagination-button-active.hison-color-muted > .hison-bg-filled { background-color: var(--hison-muted-activeColor) !important; }
+.hison-pagination-button-active.hison-color-info > .hison-bg-filled { background-color: var(--hison-info-activeColor) !important; }
+.hison-pagination-button-active.hison-color-success > .hison-bg-filled { background-color: var(--hison-success-activeColor) !important; }
+.hison-pagination-button-active.hison-color-danger > .hison-bg-filled { background-color: var(--hison-danger-activeColor) !important; }
+.hison-pagination-button-active.hison-color-warning > .hison-bg-filled { background-color: var(--hison-warning-activeColor) !important; }
+
+////////////////////////////////////////////////////////////////////////////////////////////////
 /* HParagraph */
 .hison-paragraph-wrapper { position: relative; }
 .hison-paragraph-copybtn {
@@ -1997,7 +2378,6 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-color-danger > .hison-table.hison-border { box-shadow: 0 1px 2px 0 var(--hison-danger-shadowColor); }
 .hison-color-warning > .hison-table.hison-border { box-shadow: 0 1px 2px 0 var(--hison-warning-shadowColor); }
 
-/* ==== striped: row (행 번갈아) — specificity 낮춤 ==== */
 /* filled */
 .hison-color-primary > .hison-table:where(.hison-bg-filled).is-striped-row tbody tr:where(:nth-child(odd)) { background: var(--hison-primary-shadowColor); }
 .hison-color-muted > .hison-table:where(.hison-bg-filled).is-striped-row tbody tr:where(:nth-child(odd)) { background: var(--hison-muted-shadowColor); }
@@ -2022,7 +2402,6 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-color-danger > .hison-table:where(.hison-bg-transparent).is-striped-row tbody tr:where(:nth-child(odd)) { background: var(--hison-danger-stripeColor); }
 .hison-color-warning > .hison-table:where(.hison-bg-transparent).is-striped-row tbody tr:where(:nth-child(odd)) { background: var(--hison-warning-stripeColor); }
 
-/* ==== striped: col (열 번갈아) — specificity 낮춤 ==== */
 /* filled */
 .hison-color-primary > .hison-table:where(.hison-bg-filled).is-striped-col tbody td:where(:nth-child(odd)) { background: var(--hison-primary-shadowColor); }
 .hison-color-muted > .hison-table:where(.hison-bg-filled).is-striped-col tbody td:where(:nth-child(odd)) { background: var(--hison-muted-shadowColor); }
@@ -2047,8 +2426,6 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-color-danger > .hison-table:where(.hison-bg-transparent).is-striped-col tbody td:where(:nth-child(odd)) { background: var(--hison-danger-stripeColor); }
 .hison-color-warning > .hison-table:where(.hison-bg-transparent).is-striped-col tbody td:where(:nth-child(odd)) { background: var(--hison-warning-stripeColor); }
 
-/* ==== hover: row/col  (striped 뒤에 둬야 함) ==== */
-/* row hover — tr와 td 모두 칠해 striped-col도 덮기 */
 .hison-color-primary > .hison-table.is-hover-row tbody tr:hover,
 .hison-color-primary > .hison-table.is-hover-row tbody tr:hover td { background: var(--hison-primary-rowHoverColor); }
 .hison-color-muted > .hison-table.is-hover-row tbody tr:hover,
@@ -2062,7 +2439,6 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-color-warning > .hison-table.is-hover-row tbody tr:hover,
 .hison-color-warning > .hison-table.is-hover-row tbody tr:hover td { background: var(--hison-warning-rowHoverColor); }
 
-/* col hover — JS가 .is-col-hover-cell 를 td에 붙여줌 */
 .hison-color-primary > .hison-table.is-hover-col tbody td.is-col-hover-cell { background: var(--hison-primary-rowHoverColor); }
 .hison-color-muted > .hison-table.is-hover-col tbody td.is-col-hover-cell { background: var(--hison-muted-rowHoverColor); }
 .hison-color-info > .hison-table.is-hover-col tbody td.is-col-hover-cell { background: var(--hison-info-rowHoverColor); }
@@ -2217,16 +2593,13 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     padding-right: 1px;
 }
 
-/* 레이어 호스트: 자체 박스 제거 → 레이아웃 영향 최소화 */
 .hison-layer-host {
     display: contents;
 }
 
-/* 수평 정렬 클래스 (한 라인만 해당) */
 .hison-pos-left { margin-right: auto; }
 .hison-pos-center { margin-left: auto; margin-right: auto; }
 .hison-pos-right { margin-left: auto; }
-/* 수직 정렬 클래스 (한 라인만 해당) */
 .hison-pos-vertical-top { margin-bottom: auto; }
 .hison-pos-vertical-center { margin-top: auto; margin-bottom: auto; }
 .hison-pos-vertical-bottom { margin-top: auto; }
@@ -2244,7 +2617,6 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 /* disable */
 .hison-disable { opacity: 0.5; cursor: not-allowed !important; }
 
-/* 가로 12분할 */
 .hison-col-1  { width: 8.3333%; box-sizing: border-box; }
 .hison-col-2  { width: 16.6667%; box-sizing: border-box; }
 .hison-col-3  { width: 25%; box-sizing: border-box; }
