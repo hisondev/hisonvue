@@ -1,6 +1,6 @@
 import { Vanillagrid } from "vanillagrid2"
 import { Vanillanote } from "vanillanote2"
-import { HAccordionMethods, HBaggieMethods, HButtonMethods, HCalendarMethods, HCaptionMethods, HChartInstance, HDrawerMethods, HDropdownMethods, HFilesetMethods, HGapMethods, HImageboxMethods, HInputGroupMethods, HInputMethods, HLabelMethods, HLayoutMethods, HListMethods, HModalMethods, HParagraphMethods, HPopupMethods, HSpinnerMethods, HTableMethods } from "./component"
+import { HAccordionMethods, HBaggieMethods, HBannerMethods, HButtonMethods, HCalendarMethods, HCaptionMethods, HChartInstance, HDrawerMethods, HDropdownMethods, HFilesetMethods, HGapMethods, HImageboxMethods, HInputGroupMethods, HInputMethods, HLabelMethods, HLayoutMethods, HListMethods, HModalMethods, HPaginationMethods, HParagraphMethods, HPopupMethods, HSpinnerMethods, HTableMethods } from "./component"
 import { ComponentConfig, ComponentStyleConfig, HisonvueEvent } from "./hisonConfig"
 
 export interface ComponentColor {
@@ -92,6 +92,7 @@ export interface HisonCloser {
     component: {
       accordionList: Record<string, HAccordionMethods>
       baggieList: Record<string, HBaggieMethods>
+      bannerList: Record<string, HBannerMethods>
       buttonList: Record<string, HButtonMethods>
       calendarList: Record<string, HCalendarMethods>
       captionList: Record<string, HCaptionMethods>
@@ -107,6 +108,7 @@ export interface HisonCloser {
       layoutList: Record<string, HLayoutMethods>
       listList: Record<string, HListMethods>
       modalList: Record<string, HModalMethods>
+      paginationList: Record<string, HPaginationMethods>
       paragraphList: Record<string, HParagraphMethods>
       popupList: Record<string, HPopupMethods>
       spinnerList: Record<string, HSpinnerMethods>
