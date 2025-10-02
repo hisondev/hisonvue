@@ -389,7 +389,7 @@ export default defineComponent({
     }
 
     const mount = () => {
-      if (hisonCloser.component.filesetList[id]) throw new Error(`[Hisonvue] fileset id attribute was duplicated.`)
+      if (hisonCloser.component.filesetList[id] && hisonCloser.component.filesetList[id].isHisonvueComponent) console.warn(`[Hisonvue] The fileset ID is at risk of being duplicated. ${id}`)
       registerReloadable(reloadId, () => {
         unmount()
         nextTick(mount)
@@ -397,6 +397,7 @@ export default defineComponent({
       if (!fileInputRef.value) return
       refreshResponsiveClassList()
       filesetMethods.value = {
+        isHisonvueComponent: true,
         getId: () => id,
         getType : () => 'fileset',
         isVisible : () => visible.value,
@@ -480,6 +481,27 @@ export default defineComponent({
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
     })
+
+    watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
+    watch(() => props.editMode, v => { if (v && v !== editMode.value) { editMode.value = v as any; nextTick(() => hisonCloser.component.buttonList[`hison_fileset_add_button_${id}`]?.setDisable(disable.value)) } })
+    watch(() => props.attId, v => { const s = v ?? ''; if (s !== attId.value) attId.value = s })
+    watch(() => props.addButtonText, v => { const s = v ?? ''; if (s !== addButtonText.value) addButtonText.value = s })
+    watch(() => props.removeButtonText, v => { const s = v ?? ''; if (s !== removeButtonText.value) removeButtonText.value = s })
+    watch(() => props.placeholder, v => { const s = v ?? ''; if (s !== placeholder.value) placeholder.value = s })
+    watch(() => props.enableDrop, v => { const nv = !!v; if (nv !== enableDrop.value) enableDrop.value = nv })
+    watch(() => props.downloadHandler, v => { const fn = typeof v === 'function' ? v : undefined; if (fn !== downloadHandler.value) downloadHandler.value = fn })
+    watch(() => props.multiCols, v => { const nv = !!v; if (nv !== multiCols.value) multiCols.value = nv })
+    watch(() => props.multiple, v => { const nv = !!v; if (nv !== multiple.value) multiple.value = nv })
+    watch(() => props.allowedTypes, v => { const arr = Array.isArray(v) ? v : (typeof v === 'string' ? v.split(',') : []); const norm = arr.map(s => String(s).trim()).filter(Boolean); if (JSON.stringify(norm) !== JSON.stringify(allowedTypes.value)) allowedTypes.value = norm })
+    watch(() => props.disallowedTypes, v => { const arr = Array.isArray(v) ? v : (typeof v === 'string' ? v.split(',') : []); const norm = arr.map(s => String(s).trim()).filter(Boolean); if (JSON.stringify(norm) !== JSON.stringify(disallowedTypes.value)) disallowedTypes.value = norm })
+    watch(() => props.maxFileSize, v => { const n = v === Infinity ? Infinity : Number(v); if ((Number.isFinite(n) || n === Infinity) && n !== maxFileSize.value) maxFileSize.value = n as number })
+    watch(() => props.maxTotalFileSize, v => { const n = v === Infinity ? Infinity : Number(v); if ((Number.isFinite(n) || n === Infinity) && n !== maxTotalSize.value) maxTotalSize.value = n as number })
+    watch(() => props.maxFileCount, v => { const n = Number(v); if (Number.isInteger(n) && n >= 0 && n !== maxFileCount.value) maxFileCount.value = n })
+    watch(() => props.onDisallowedType, v => { const fn = typeof v === 'function' ? v : undefined; if (fn !== onDisallowedType.value) onDisallowedType.value = fn })
+    watch(() => props.onMaxFileSizeExceeded, v => { const fn = typeof v === 'function' ? v : undefined; if (fn !== onMaxFileSizeExceeded.value) onMaxFileSizeExceeded.value = fn })
+    watch(() => props.onMaxTotalSizeExceeded, v => { const fn = typeof v === 'function' ? v : undefined; if (fn !== onMaxTotalSizeExceeded.value) onMaxTotalSizeExceeded.value = fn })
+    watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
+    watch(() => props.class, () => { refreshResponsiveClassList() })
 
     return {
       fileInputRef,
