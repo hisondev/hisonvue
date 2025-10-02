@@ -8,11 +8,11 @@
             borderClass,
         ]"
         :style="[props.style, computedBackStyle]"
-        @click.stop="$emit('click', $event, layoutMethods)"
-        @mousedown.stop="$emit('mousedown', $event, layoutMethods)"
-        @mouseup.stop="$emit('mouseup', $event, layoutMethods)"
-        @mouseover.stop="$emit('mouseover', $event, layoutMethods)"
-        @mouseout.stop="$emit('mouseout', $event, layoutMethods)"
+        @click="$emit('click', $event, layoutMethods)"
+        @mousedown="$emit('mousedown', $event, layoutMethods)"
+        @mouseup="$emit('mouseup', $event, layoutMethods)"
+        @mouseover="$emit('mouseover', $event, layoutMethods)"
+        @mouseout="$emit('mouseout', $event, layoutMethods)"
     >
         <div class="hison-layout-frame-adjust"></div>
         <slot>Hison Layout</slot>
@@ -72,7 +72,7 @@ setup(props, { emit }) {
     }
     
     const mount = () => {
-        if(hisonCloser.component.layoutList[id]) throw new Error(`[Hisonvue] layout id attribute was duplicated.`)
+        if (hisonCloser.component.layoutList[id] && hisonCloser.component.layoutList[id].isHisonvueComponent) console.warn(`[Hisonvue] The layout ID is at risk of being duplicated. ${id}`)
         registerReloadable(reloadId, () => {
             unmount()
             nextTick(mount)
@@ -81,6 +81,7 @@ setup(props, { emit }) {
 
         refreshResponsiveClassList()
         layoutMethods.value = {
+            isHisonvueComponent: true,
             getId : () => { return id },
             getType : () => 'layout',
             isVisible : () => visible.value,
@@ -144,6 +145,10 @@ setup(props, { emit }) {
         refreshResponsiveClassList()
         emit('responsive-change', newDevice)
     })
+    
+    watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
+    watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
+    watch(() => props.class, () => { refreshResponsiveClassList() })
 
     return {
         layoutRef,
