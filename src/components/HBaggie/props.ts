@@ -5,59 +5,119 @@ import {
 } from '../../enums'
 
 export const baggieProps = {
+  /**
+   * Unique identifier for the baggie instance.
+   * - You can later retrieve its methods via `hison.component.getBaggie(id)`
+   * - Duplicate `id` values will throw an error at mount time
+   */
   id: { type: String, required: false },
 
+  /**
+   * Custom class applied to the **anchor scope** (the wrapper that contains target + badge).
+   * - Accepts string/array/object (Vue class binding formats)
+   * - You can use responsive tokens such as `hison-col-*`, `hison-size-*`, `hison-color-*`
+   * - Processed internally to apply device-specific classes
+   */
   class: {
     type: [String, Array, Object] as PropType<string | string[] | Record<string, boolean>>,
     required: false,
   },
 
+  /**
+   * Inline style(s) applied to the **badge element** (not to the anchor).
+   * - Accepts string, object, or array of objects (Vue style binding formats)
+   * - Use this for badge-specific size/spacing overrides
+   */
   style: {
     type: [String, Object, Array] as PropType<string | CSSProperties | CSSProperties[]>,
     required: false,
   },
 
-  /** 표시/숨김 제어 */
+  /**
+   * Controls visibility of the **anchor block** (target + badge container).
+   * - When `false`, both target and badge area are hidden from layout via `hison-display-none`
+   * - Default: `true`
+   */
   visible: { type: Boolean, default: true },
 
-  /** stacking z-index (기본 1000) - 배지 요소에 적용 */
+  /**
+   * Controls visibility of the **badge only** (target stays visible).
+   * - Useful to keep the target interactive while toggling the badge bubble
+   * - Default: `true`
+   */
+  baggieVisible: { type: Boolean, default: true },
+
+  /**
+   * Stacking order base for the baggie.
+   * - Applied to the **anchor** as `z-index: zIndex`
+   * - The **badge** renders above the anchor using `zIndex + 1`
+   * - Default: `1000`
+   */
   zIndex: { type: Number, default: 1000 },
 
-  /** 배지 위치(가운데-가운데 제외). ScreenPosition 값 사용 가능하되 'middle-center'는 불가 */
+  /**
+   * On-target position where the badge is pinned (grid overlay).
+   * - Tokens: 'top-left' | 'top-center' | 'top-right' |
+   *           'middle-left' | 'middle-center' | 'middle-right' |
+   *           'bottom-left' | 'bottom-center' | 'bottom-right'
+   * - Default: `top-right`
+   */
   position: {
     type: String as PropType<ScreenPosition | ScreenPositionValue>,
     default: ScreenPosition.topRight,
-    validator: (v: any) =>
-      (SCREEN_POSITION_VALUES as readonly string[]).includes(v) && v !== 'middle-center',
+    validator: (v: any) => (SCREEN_POSITION_VALUES as readonly string[]).includes(v),
   },
 
-  /** 텍스트(슬롯 'badge' 미사용 시 렌더) */
+  /**
+   * Text content rendered inside the badge when the `badge` slot is not provided.
+   * - If slot `#badge` exists, this prop is ignored
+   */
   text: { type: String, required: false },
 
-  /** 라벨과 동일 규칙: filled | empty | transparent (기본 filled) */
+  /**
+   * Badge background mode.
+   * - One of: `'empty' | 'transparent' | 'filled'` (see `BackgroundType`)
+   * - Default: `filled`
+   */
   backgroundType: {
     type: String as PropType<BackgroundType | BackgroundTypeValue>,
     default: BackgroundType.filled,
     validator: (v: any) => (BACKGROUND_TYPE_VALUES as readonly string[]).includes(v),
   },
 
-  /** box-shadow 보더 유무 (기본 true) */
+  /**
+   * Whether the badge renders with border styling (component theme shadow).
+   * - Default: `true`
+   */
   border: { type: Boolean, default: true },
 
-  /** 모양: square | rounded | circle (기본 rounded) */
+  /**
+   * Badge shape.
+   * - Tokens: `'square' | 'rounded' | 'circle'`
+   * - Default: `'rounded'`
+   */
   shape: {
     type: String as PropType<'square' | 'rounded' | 'circle'>,
     default: 'rounded',
     validator: (v: any) => ['square','rounded','circle'].includes(v),
   },
 
-  /** 포커스 순서 제어(null이면 미지정) */
+  /**
+   * Controls keyboard focus order of the badge (if interactive).
+   * - `null` or `''` removes `tabindex` (not focusable)
+   * - `0` enables natural tab navigation; positive numbers set custom order
+   * - Default: `null`
+   */
   tabIndex: {
     type: [Number, String] as PropType<number | string | null>,
     default: null,
     validator: (v: any) => v === null || v === '' || (!isNaN(+v) && isFinite(+v)),
   },
 
-  /** 버튼형 인터랙션 활성화(addButtonCssEvent 적용) */
+  /**
+   * Enables button-like interaction styling/behavior on the badge.
+   * - Applies CSS state classes via `addButtonCssEvent` (focus/hover/active)
+   * - Default: `false`
+   */
   buttonEnabled: { type: Boolean, default: false },
 }
