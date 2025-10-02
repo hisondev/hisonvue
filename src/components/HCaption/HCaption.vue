@@ -20,11 +20,11 @@
       ]"
       :style="[textAlignStyle, props.style]"
       :title="title || undefined"
-      @click.stop="onClick"
-      @mousedown.stop="$emit('mousedown', $event, captionMethods)"
-      @mouseup.stop="$emit('mouseup', $event, captionMethods)"
-      @mouseover.stop="$emit('mouseover', $event, captionMethods)"
-      @mouseout.stop="$emit('mouseout', $event, captionMethods)"
+      @click="onClick"
+      @mousedown="$emit('mousedown', $event, captionMethods)"
+      @mouseup="$emit('mouseup', $event, captionMethods)"
+      @mouseover="$emit('mouseover', $event, captionMethods)"
+      @mouseout="$emit('mouseout', $event, captionMethods)"
     >
       <template v-if="hasElementSlot">
         <slot />
@@ -124,7 +124,7 @@ export default defineComponent({
       }
 
       const mount = () => {
-        if (hisonCloser.component.captionList[id]) throw new Error('[Hisonvue] caption id attribute was duplicated.')
+        if (hisonCloser.component.captionList[id] && hisonCloser.component.captionList[id].isHisonvueComponent) console.warn(`[Hisonvue] The caption ID is at risk of being duplicated. ${id}`)
         registerReloadable(reloadId, () => {
             unmount()
             nextTick(mount)
@@ -132,38 +132,39 @@ export default defineComponent({
         refreshResponsiveClassList()
 
         captionMethods.value = {
-            getId: () => id,
-            getType: () => 'caption',
-            isVisible: () => visible.value,
-            setVisible: (v: boolean) => { visible.value = v },
-            getTitle: () => title.value,
-            setTitle: (v: string) => { title.value = v },
-            getText: () => (hasElementSlot.value ? '' : internalText.value),
-            setText: (v: string) => { if (!hasElementSlot.value) internalText.value = v },
-            getLevel: () => level.value,
-            setLevel: (lv: number) => {
-            const n = Math.min(6, Math.max(1, Number(lv)))
-              level.value = n
-            },
-            getTextAlign: () => textAlign.value,
-            setTextAlign: (v: TextAlign | TextAlignValue) => {
-              if (v === TextAlign.left || v === TextAlign.center || v === TextAlign.right) {
-                  textAlign.value = v
-              }
-            },
-            isFontBold: () => fontBold.value,
-            setFontBold: (v: boolean) => { fontBold.value = v },
-            isFontItalic: () => fontItalic.value,
-            setFontItalic: (v: boolean) => { fontItalic.value = v },
-            isFontThruline: () => fontThruline.value,
-            setFontThruline: (v: boolean) => { fontThruline.value = v },
-            isFontUnderline: () => fontUnderline.value,
-            setFontUnderline: (v: boolean) => { fontUnderline.value = v },
-            isBorder: () => border.value,
-            setBorder: (v: boolean) => { border.value = v },
-            getBackgroundType: () => backgroundType.value as BackgroundTypeValue,
-            setBackgroundType: (t: BackgroundType | BackgroundTypeValue) => { backgroundType.value = t },
-            reload: () => reloadHisonComponent(reloadId),
+          isHisonvueComponent: true,
+          getId: () => id,
+          getType: () => 'caption',
+          isVisible: () => visible.value,
+          setVisible: (v: boolean) => { visible.value = v },
+          getTitle: () => title.value,
+          setTitle: (v: string) => { title.value = v },
+          getText: () => (hasElementSlot.value ? '' : internalText.value),
+          setText: (v: string) => { if (!hasElementSlot.value) internalText.value = v },
+          getLevel: () => level.value,
+          setLevel: (lv: number) => {
+          const n = Math.min(6, Math.max(1, Number(lv)))
+            level.value = n
+          },
+          getTextAlign: () => textAlign.value,
+          setTextAlign: (v: TextAlign | TextAlignValue) => {
+            if (v === TextAlign.left || v === TextAlign.center || v === TextAlign.right) {
+                textAlign.value = v
+            }
+          },
+          isFontBold: () => fontBold.value,
+          setFontBold: (v: boolean) => { fontBold.value = v },
+          isFontItalic: () => fontItalic.value,
+          setFontItalic: (v: boolean) => { fontItalic.value = v },
+          isFontThruline: () => fontThruline.value,
+          setFontThruline: (v: boolean) => { fontThruline.value = v },
+          isFontUnderline: () => fontUnderline.value,
+          setFontUnderline: (v: boolean) => { fontUnderline.value = v },
+          isBorder: () => border.value,
+          setBorder: (v: boolean) => { border.value = v },
+          getBackgroundType: () => backgroundType.value as BackgroundTypeValue,
+          setBackgroundType: (t: BackgroundType | BackgroundTypeValue) => { backgroundType.value = t },
+          reload: () => reloadHisonComponent(reloadId),
         }
 
         hisonCloser.component.captionList[id] = captionMethods.value
@@ -172,9 +173,7 @@ export default defineComponent({
 
       const unmount = () => {
         unregisterReloadable(reloadId)
-        if (hisonCloser.component.captionList) {
-            delete hisonCloser.component.captionList[id]
-        }
+        delete hisonCloser.component.captionList[id]
       }
 
       onMounted(mount)
@@ -184,6 +183,19 @@ export default defineComponent({
         refreshResponsiveClassList()
         emit('responsive-change', device.value)
       })
+
+      watch(() => props.visible, v => { if (v !== visible.value) visible.value = !!v })
+      watch(() => props.title, v => { const t = v ?? ''; if (t !== title.value) title.value = t })
+      watch(() => props.text, v => { if (!hasElementSlot.value) { const t = v ?? ''; if (t !== internalText.value) internalText.value = t } })
+      watch(() => props.level, v => { const n = Math.min(6, Math.max(1, Number(v ?? 3))); if (n !== level.value) level.value = n })
+      watch(() => props.textAlign, v => { if ((v === 'left' || v === 'center' || v === 'right') && v !== textAlign.value) textAlign.value = v as any })
+      watch(() => props.fontBold, v => { const nv = !!v; if (nv !== fontBold.value) fontBold.value = nv })
+      watch(() => props.fontItalic, v => { const nv = !!v; if (nv !== fontItalic.value) fontItalic.value = nv })
+      watch(() => props.fontThruline, v => { const nv = !!v; if (nv !== fontThruline.value) fontThruline.value = nv })
+      watch(() => props.fontUnderline, v => { const nv = !!v; if (nv !== fontUnderline.value) fontUnderline.value = nv })
+      watch(() => props.border, v => { const nv = !!v; if (nv !== border.value) border.value = nv })
+      watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
+      watch(() => props.class, () => refreshResponsiveClassList())
 
       return {
         captionRef,
