@@ -262,7 +262,7 @@ export default defineComponent({
     const onSelectStart = (e: Event) => { if (!copyEnabled.value) e.preventDefault() }
 
     const mount = () => {
-      if (hisonCloser.component.paragraphList[id]) throw new Error('[Hisonvue] paragraph id attribute was duplicated.')
+      if (hisonCloser.component.paragraphList[id] && hisonCloser.component.paragraphList[id].isHisonvueComponent) console.warn(`[Hisonvue] The paragraph ID is at risk of being duplicated. ${id}`)
       registerReloadable(reloadId, () => {
         unmount()
         nextTick(mount)
@@ -270,6 +270,7 @@ export default defineComponent({
       refreshResponsiveClassList()
 
       paragraphMethods.value = {
+        isHisonvueComponent: true,
         getId: () => id,
         getType: () => 'paragraph',
         isVisible: () => visible.value,
@@ -314,7 +315,7 @@ export default defineComponent({
 
     const unmount = () => {
       unregisterReloadable(reloadId)
-      if (hisonCloser.component.paragraphList) delete hisonCloser.component.paragraphList[id]
+      delete hisonCloser.component.paragraphList[id]
     }
 
     onMounted(mount)
@@ -324,6 +325,23 @@ export default defineComponent({
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
     })
+
+    watch(() => props.visible, v => { const b = !!v; if (b !== visible.value) visible.value = b })
+    watch(() => props.title, v => { const s = v ?? ''; if (s !== title.value) title.value = s })
+    watch(() => props.text, v => { const s = v ?? ''; if (!hasElementSlot.value && s !== internalText.value) internalText.value = s })
+    watch(() => props.fontBold, v => { const b = !!v; if (b !== fontBold.value) fontBold.value = b })
+    watch(() => props.fontItalic, v => { const b = !!v; if (b !== fontItalic.value) fontItalic.value = b })
+    watch(() => props.fontThruline, v => { const b = !!v; if (b !== fontThruline.value) fontThruline.value = b })
+    watch(() => props.fontUnderline, v => { const b = !!v; if (b !== fontUnderline.value) fontUnderline.value = b })
+    watch(() => props.textAlign, v => { if (v && v !== textAlign.value && (v === 'left' || v === 'center' || v === 'right')) textAlign.value = v as any })
+    watch(() => props.verticalAlign, v => { if (v && v !== verticalAlign.value && (v === 'top' || v === 'middle' || v === 'bottom')) verticalAlign.value = v as any })
+    watch(() => props.whiteSpace, v => { const n = (v ?? null) as any; if (n !== whiteSpace.value) whiteSpace.value = n })
+    watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
+    watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
+    watch(() => props.copyEnabled, v => { const b = !!v; if (b !== copyEnabled.value) copyEnabled.value = b })
+    watch(() => props.showCopyButton, v => { const b = !!v; if (b !== showCopyButton.value) showCopyButton.value = b })
+    watch(() => props.copyButtonText, v => { const s = v ?? 'copy'; if (s !== copyButtonText.value) copyButtonText.value = s })
+    watch(() => props.class, () => { refreshResponsiveClassList() })
 
     return {
       paraRef,
