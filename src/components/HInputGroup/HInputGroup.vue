@@ -32,6 +32,9 @@ export default defineComponent({
 
     const ownedInputIds = ref<string[]>([])
 
+    const radioGroups = ref<Record<string, string[]>>({})
+    const radioSelection = ref<Record<string, string | null>>({})
+
     provide('registerToInputGroup', (inputId: string) => {
       if (!ownedInputIds.value.includes(inputId)) {
         ownedInputIds.value.push(inputId)
@@ -41,9 +44,85 @@ export default defineComponent({
         if (model && Object.prototype.hasOwnProperty.call(model, inputId)) {
           hison.component.getInput(inputId)?.setValue?.(model[inputId])
         }
+
+        const input = hison.component.getInput(inputId)
+        if (input?.getInputType?.() === 'radio') {
+          const name = (input as any).getName?.() || inputId
+          if (!radioGroups.value[name]) radioGroups.value[name] = []
+          if (!radioGroups.value[name].includes(inputId)) {
+            radioGroups.value[name].push(inputId)
+          }
+          
+          if (input.getValue?.()) {
+            radioSelection.value[name] = inputId
+          } else if (!Object.prototype.hasOwnProperty.call(radioSelection.value, name)) {
+            radioSelection.value[name] = null
+          }
+        }
       }
     })
+
+    provide('radioMembershipChanged', (
+      inputId: string,
+      oldName: string,
+      newName: string,
+      checked: boolean
+    ) => {
+      if (oldName === newName) return
+
+      if (oldName && radioGroups.value[oldName]) {
+        radioGroups.value[oldName] = radioGroups.value[oldName].filter(id => id !== inputId)
+        if (radioSelection.value[oldName] === inputId) {
+          radioSelection.value[oldName] = null
+          const updated = { ...(props.modelValue || {}) }
+          updated[oldName] = null
+          emit('update:modelValue', updated)
+        }
+        if (radioGroups.value[oldName].length === 0) {
+          delete radioGroups.value[oldName]
+          delete radioSelection.value[oldName]
+        }
+      }
+
+      if (!radioGroups.value[newName]) radioGroups.value[newName] = []
+      if (!radioGroups.value[newName].includes(inputId)) {
+        radioGroups.value[newName].push(inputId)
+      }
+
+      if (checked) {
+        radioSelection.value[newName] = inputId
+        for (const id of radioGroups.value[newName]) {
+          hison.component.getInput(id)?.setValue?.(id === inputId)
+        }
+        const updated = { ...(props.modelValue || {}) }
+        updated[newName] = inputId
+        emit('update:modelValue', updated)
+        if (status.value !== DataStatus.U) status.value = DataStatus.U
+      } else {
+        if (!Object.prototype.hasOwnProperty.call(radioSelection.value, newName)) {
+          radioSelection.value[newName] = null
+        }
+      }
+    })
+
     provide('notifyInputGroupStatus', (inputId: string, newVal: any) => {
+      if (radioGroups.value[inputId]) {
+        const name = inputId
+        const selectedId = newVal as string | null
+        radioSelection.value[name] = selectedId
+
+        for (const id of radioGroups.value[name]) {
+          hison.component.getInput(id)?.setValue?.(id === selectedId)
+        }
+
+        const updated = { ...(props.modelValue || {}) }
+        updated[name] = selectedId
+        emit('update:modelValue', updated)
+
+        if (status.value !== DataStatus.U) status.value = DataStatus.U
+        return
+      }
+
       if (status.value !== DataStatus.U) status.value = DataStatus.U
       const updated = {
         ...props.modelValue,
@@ -55,25 +134,49 @@ export default defineComponent({
     const _getDataObject = () => {
       const obj: Record<string, any> = {}
       if(!ownedInputIds.value) return obj
-      ownedInputIds.value.forEach((key)=>{
-        const input = hison.component.getInput(key)
-        if(input )obj[key] = input.getValue()
+      
+      ownedInputIds.value.forEach((id) => {
+        const input = hison.component.getInput(id)
+        if (!input) return
+        if (input.getInputType?.() !== 'radio') {
+          obj[id] = input.getValue?.()
+        }
       })
+
+      for (const [name, ids] of Object.entries(radioGroups.value)) {
+        let selectedId: string | null = radioSelection.value[name] ?? null
+        if (selectedId && !ids.includes(selectedId)) selectedId = null
+        obj[name] = selectedId
+      }
       return obj
     }
+
     const _setDataObject = (dataObject: Record<string, any>) => {
       if (!dataObject || typeof dataObject !== 'object') return
+
       Object.keys(dataObject).forEach((key) => {
         if (ownedInputIds.value.includes(key)) {
           const value = dataObject[key]
-          const input = hison.component.getInput(key)
-          if (input) input.setValue(value)
+          hison.component.getInput(key)?.setValue?.(value)
         }
       })
+
+      for (const [name, ids] of Object.entries(radioGroups.value)) {
+        if (!Object.prototype.hasOwnProperty.call(dataObject, name)) continue
+        const selectedId = dataObject[name] as string | null
+
+        ids.forEach((id) => {
+          const input = hison.component.getInput(id)
+          if (!input) return
+          const checked = selectedId === id
+          ;(input as any).setValue?.(checked)
+        })
+        radioSelection.value[name] = selectedId ?? null
+      }
     }
 
     const mount = () => {
-      if (hisonCloser.component.inputGroupList[id]) throw new Error(`[Hisonvue] button id attribute was duplicated.`)
+      if (hisonCloser.component.inputGroupList[id] && hisonCloser.component.inputGroupList[id].isHisonvueComponent) console.warn(`[Hisonvue] The input group ID is at risk of being duplicated. ${id}`)
       registerReloadable(reloadId, () => {
         unmount()
         setTimeout(mount)
@@ -81,6 +184,7 @@ export default defineComponent({
 
       if (!inputGroupRef.value) return
       inputGroupMethods.value = {
+        isHisonvueComponent: true,
         getId : () => id,
         getType : () => 'inputGroup',
         clear : (autoSetStatus = true) => {
@@ -171,6 +275,10 @@ export default defineComponent({
       _setDataObject(newVal)
     }, { deep: true })
 
+    watch(() => props.modelValue, nv => { _setDataObject(nv) }, { deep: true })
+    watch(() => props.editMode, v => { if (v && v !== editMode.value) { editMode.value = v as EditMode; ownedInputIds.value.forEach((inputId) => hison.component.getInput(inputId)?.setEditMode?.(editMode.value)) } })
+    watch(() => props.status, v => { if (v && v !== status.value) status.value = v as DataStatus })
+
     return {
       inputGroupRef,
       props
@@ -179,5 +287,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
