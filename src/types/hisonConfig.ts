@@ -655,7 +655,6 @@ export interface ComponentStyleConfig {
 }
 
 export interface CssEvent {
-  //클릭 등 이벤트가 활성화되는 빈 배경의 textbox 이벤트
   textbox_onBeforeFocus: (e: FocusEvent) => boolean;
   textbox_onAfterFocus: (e: FocusEvent) => void;
   textbox_onBeforeBlur: (e: FocusEvent) => boolean;
