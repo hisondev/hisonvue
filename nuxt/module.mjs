@@ -1,4 +1,3 @@
-// nuxt/module.mjs
 import { defineNuxtModule, addPlugin, createResolver, addTypeTemplate } from '@nuxt/kit'
 import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
