@@ -180,7 +180,7 @@ export const extractResponsiveClasses = (
       if (bp) map[category]![bp] = base
       else map[category]!.default = base
     } else {
-      staticClasses.push(cls) // 일반 클래스는 그대로 유지
+      staticClasses.push(cls)
     }
   }
 
