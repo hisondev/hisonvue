@@ -15,8 +15,8 @@
         backgroundTypeClass
       ]"
       :style="props.style"
-      @keydown.stop.enter.prevent="onItemClick"
-      @keydown.stop.space.prevent="onItemClick"
+      @keydown.enter.prevent="onItemClick"
+      @keydown.space.prevent="onItemClick"
     >
       <template v-if="hasElementSlot">
         <li
@@ -30,11 +30,11 @@
           :style="props.listItemStyle"
           :ref="setItemRef"
           :tabindex="tabIndex ?? undefined"
-          @click.stop="onItemClick"
-          @mousedown.stop="emitItem('mousedown', $event)"
-          @mouseup.stop="emitItem('mouseup', $event)"
-          @mouseover.stop="emitItem('mouseover', $event)"
-          @mouseout.stop="emitItem('mouseout', $event)"
+          @click="onItemClick"
+          @mousedown="emitItem('mousedown', $event)"
+          @mouseup="emitItem('mouseup', $event)"
+          @mouseover="emitItem('mouseover', $event)"
+          @mouseout="emitItem('mouseout', $event)"
         >
           <div
             class="hison-list-item-inner"
@@ -63,11 +63,11 @@
           ]"
           :ref="setItemRef"
           :tabindex="tabIndex ?? undefined"
-          @click.stop="onItemClick"
-          @mousedown.stop="emitItem('mousedown', $event)"
-          @mouseup.stop="emitItem('mouseup', $event)"
-          @mouseover.stop="emitItem('mouseover', $event)"
-          @mouseout.stop="emitItem('mouseout', $event)"
+          @click="onItemClick"
+          @mousedown="emitItem('mousedown', $event)"
+          @mouseup="emitItem('mouseup', $event)"
+          @mouseover="emitItem('mouseover', $event)"
+          @mouseout="emitItem('mouseout', $event)"
         >
           <div
             class="hison-list-item-inner"
@@ -214,7 +214,7 @@ export default defineComponent({
     }
 
     const mount = () => {
-      if (hisonCloser.component.listList[id]) throw new Error(`[Hisonvue] list id attribute was duplicated.`)
+      if (hisonCloser.component.listList[id] && hisonCloser.component.listList[id].isHisonvueComponent) console.warn(`[Hisonvue] The list ID is at risk of being duplicated. ${id}`)
 
       registerReloadable(reloadId, () => {
         unmount()
@@ -225,6 +225,7 @@ export default defineComponent({
       attachItemCssEvents(true)
 
       listMethods.value = {
+        isHisonvueComponent: true,
         getId: () => id,
         getType: () => 'list',
         isVisible: () => visible.value,
@@ -279,16 +280,11 @@ export default defineComponent({
     const unmount = () => {
       unregisterReloadable(reloadId)
       itemRefs.value.forEach(el => el && removeButtonCssEvent(el))
-      if (hisonCloser.component.listList) delete hisonCloser.component.listList[id]
+      delete hisonCloser.component.listList[id]
     }
 
     onMounted(mount)
     onBeforeUnmount(unmount)
-
-    const stop1 = watch(device, (d) => {
-      refreshResponsiveClassList()
-      emit('responsive-change', d)
-    })
 
     const toHTMLElement = (v: Element | ComponentPublicInstance | null): HTMLElement | null => {
       if (!v) return null
@@ -307,6 +303,26 @@ export default defineComponent({
       if (!html) return
       if (!itemInnerRefs.value.includes(html)) itemInnerRefs.value.push(html)
     }
+  
+    watch(device, (newDevice) => {
+        refreshResponsiveClassList()
+        emit('responsive-change', newDevice)
+    })
+
+    watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
+    watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
+    watch(() => props.listBorder, v => { const b = !!v; if (b !== listBorder.value) listBorder.value = b })
+    watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
+    watch(() => props.listBackgroundType, v => { if (v && v !== listBackgroundType.value) listBackgroundType.value = v as any })
+    watch(() => props.listType, v => { const t = v === 'ol' ? 'ol' : 'ul'; if (t !== listType.value) listType.value = t })
+    watch(() => props.bulletChar, v => { const s = v ?? '•'; if (s !== bulletChar.value) bulletChar.value = s })
+    watch(() => props.showMarker, v => { const b = v !== false; if (b !== showMarker.value) showMarker.value = b })
+    watch(() => props.textList, v => { internalItems.value = Array.isArray(v) ? v : [] })
+    watch(() => props.addEvent, v => { const b = !!v; if (b !== addEventEnabled.value) { addEventEnabled.value = b; attachItemCssEvents(true) } })
+    watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
+    watch(() => props.class, () => { refreshResponsiveClassList() })
+    watch(elementNodes, () => { attachItemCssEvents(true) })
+    watch(internalItems, () => { attachItemCssEvents(true) }, { deep: true })
 
     return {
       props,
