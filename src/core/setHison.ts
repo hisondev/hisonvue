@@ -165,6 +165,7 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
     (hison as any).component = {}
     hison.component.getAccordion = (accordionId: string) => { return hisonCloser.component.accordionList[accordionId] }
     hison.component.getBaggie = (baggieId: string) => { return hisonCloser.component.baggieList[baggieId] }
+    hison.component.getBanner = (bannerId: string) => { return hisonCloser.component.bannerList[bannerId] }
     hison.component.getButton = (buttonId: string) => { return hisonCloser.component.buttonList[buttonId] }
     hison.component.getCalendar = (calendarId: string) => { return hisonCloser.component.calendarList[calendarId] }
     hison.component.getCaption = (captionId: string) => { return hisonCloser.component.captionList[captionId] }
@@ -182,6 +183,7 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
     hison.component.getList = (listId: string) => { return hisonCloser.component.listList[listId] }
     hison.component.getModal = (modalId: string) => { return hisonCloser.component.modalList[modalId] }
     hison.component.getNote = (noteId: string) => { return hisonCloser.note.getNote(noteId) as HNoteElement | null }
+    hison.component.getPagination = (paginationId: string) => { return hisonCloser.component.paginationList[paginationId] }
     hison.component.getParagraph = (paragraphId: string) => { return hisonCloser.component.paragraphList[paragraphId] }
     hison.component.getPopup = (popupId: string) => { return hisonCloser.component.popupList[popupId] }
     hison.component.getSpinner = (spinnerId: string) => { return hisonCloser.component.spinnerList[spinnerId] }
