@@ -13,6 +13,20 @@ export const inputProps = {
      */
     id: { type: String, required: false },
     /**
+     * HTML `name` attribute.
+     * - Default: same as `id` when omitted.
+     * - Radio usage (`inputType: 'radio'`):
+     *   - All `HInput` with the same `name` form one radio group.
+     *   - Each radio’s own `id` is treated as the group’s candidate value.
+     *   - The radio’s local `modelValue` is boolean (`true`/`false`) and drives its `checked` state.
+     *   - When wrapped by `HInputGroup`, radios are aggregated per `name` and exposed as
+     *     `{ [name]: selectedRadioId | null }` via `getDataObject()` / `v-model`.
+     *   - To set a selection programmatically (load/set), pass `{ [name]: <radioId> }` to `HInputGroup`.
+     *   - Changing `name` at runtime via `setName()` re-registers group membership with `HInputGroup`.
+     * - Non-radio inputs: `name` only sets the underlying HTML attribute (no grouping behavior).
+     */
+    name: { type: String, required: false },
+    /**
      * Bound value for the input field.
      * - Controlled via `v-model`
      * - Supports multiple types depending on `inputType`:
@@ -30,7 +44,7 @@ export const inputProps = {
     /**
      * Custom class string applied to the input container.
      * - Supports responsive classes like `hison-col-*`, `hison-pos-*`, `hison-size-*`
-     * - Accepts string / array / object (Vue 표준) 형태
+     * - Accepts string / array / object (Vue standard) form
      */
     class: {
         type: [String, Array, Object] as PropType<
