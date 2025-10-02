@@ -8,6 +8,7 @@ export const buttonProps = {
      * - ⚠️ Duplicate `id` values will throw an error at mount time
      */
     id: { type: String, required: false },
+    
     /**
      * Custom class applied to the button (string / array / object all supported).
      * - Works with responsive classes like `hison-col-*`, `hison-size-*`, etc.
@@ -18,6 +19,7 @@ export const buttonProps = {
         >,
         required: false,
     },
+
     /**
      * Inline style for the button (string, object, or an array of objects).
      */
@@ -27,34 +29,41 @@ export const buttonProps = {
         >,
         required: false,
     },
+
     /**
      * Controls visibility of the button.
      * - Boolean only. Use `:visible="false"` (with a colon).
      */
     visible: { type: Boolean, default: true },
+
     /**
      * Whether the button is disabled.
      * - Boolean only. Use `:disable="true"` (with a colon).
      */
     disable: { type: Boolean, default: false },
+
     /**
      * Tooltip text shown on hover (maps to `title` attribute).
      */
     title: { type: String, required: false },
+
     /**
      * Text content of the button (alternative to default slot).
      */
     text: { type: String, required: false },
+
     /**
      * Minimum interval (ms) between button clicks.
      * - 0 disables the limit.
      */
     clickInterval: { type: Number, default: 0 },
+
     /**
      * Whether to show border (rendered as subtle box-shadow).
      * - Default: true (border)
      */
     border: { type: Boolean, default: true },
+
     /**
      * Button background type.
      * - 'filled' | 'empty' | 'transparent'
@@ -64,6 +73,7 @@ export const buttonProps = {
         default: BackgroundType.filled,
         validator: (v: any) => (BACKGROUND_TYPE_VALUES as readonly string[]).includes(v),
     },
+
     /**
      * Controls keyboard focus order of the element.
      * - `0` enables natural tab navigation, positive numbers set custom order.
