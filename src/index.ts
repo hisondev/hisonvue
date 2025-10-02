@@ -1,4 +1,3 @@
-// src/index.ts
 import { App } from 'vue'
 import type { Hison, HisonCloser, HisonConfig } from './types'
 import { createHison } from 'hisonjs'
@@ -14,6 +13,7 @@ import './styles/hisonvue.scss'
 
 const HAccordionClientOnly = createSSRClientOnly(() => import('./components/HAccordion/HAccordion.vue'), 'HAccordion')
 const HBaggieClientOnly = createSSRClientOnly(() => import('./components/HBaggie/HBaggie.vue'), 'HBaggie')
+const HBannerClientOnly = createSSRClientOnly(() => import('./components/HBanner/HBanner.vue'), 'HBanner')
 const HButtonClientOnly = createSSRClientOnly(() => import('./components/HButton/HButton.vue'), 'HButton')
 const HCalendarClientOnly = createSSRClientOnly(() => import('./components/HCalendar/HCalendar.vue'), 'HCalendar')
 const HCaptionClientOnly = createSSRClientOnly(() => import('./components/HCaption/HCaption.vue'), 'HCaption')
@@ -31,6 +31,7 @@ const HLayoutClientOnly = createSSRClientOnly(() => import('./components/HLayout
 const HListClientOnly = createSSRClientOnly(() => import('./components/HList/HList.vue'), 'HList')
 const HModalClientOnly = createSSRClientOnly(() => import('./components/HModal/HModal.vue'), 'HModal')
 const HNoteClientOnly = createSSRClientOnly(() => import('./components/HNote/HNote.vue'), 'HNote')
+const HPaginationClientOnly = createSSRClientOnly(() => import('./components/HPagination/HPagination.vue'), 'HPagination')
 const HParagraphClientOnly = createSSRClientOnly(() => import('./components/HParagraph/HParagraph.vue'), 'HParagraph')
 const HPopupClientOnly = createSSRClientOnly(() => import('./components/HPopup/HPopup.vue'), 'HPopup')
 const HSpinnerClientOnly = createSSRClientOnly(() => import('./components/HSpinner/HSpinner.vue'), 'HSpinner')
@@ -42,8 +43,6 @@ export const hisonCloser = {
 export const hison = createHison() as Hison
 export const hisonvue = {
   install(app: App, hisonConfig?: HisonConfig) {
-    console.log('test no.',1)
-    console.log('index.ts!!!',hisonConfig)
     const defaultHisonConfig = getDefaultHisonConfig()
     if (hisonConfig) {
       Object.keys(defaultHisonConfig).forEach((key) => {
@@ -64,6 +63,7 @@ export const hisonvue = {
     app.provide('hison', hison)
     app.component('HAccordion', HAccordionClientOnly)
     app.component('HBaggie', HBaggieClientOnly)
+    app.component('HBanner', HBannerClientOnly)
     app.component('HButton', HButtonClientOnly)
     app.component('HCalendar', HCalendarClientOnly)
     app.component('HCaption', HCaptionClientOnly)
@@ -81,6 +81,7 @@ export const hisonvue = {
     app.component('HList', HListClientOnly)
     app.component('HModal', HModalClientOnly)
     app.component('HNote', HNoteClientOnly)
+    app.component('HPagination', HPaginationClientOnly)
     app.component('HParagraph', HParagraphClientOnly)
     app.component('HPopup', HPopupClientOnly)
     app.component('HSpinner', HSpinnerClientOnly)
@@ -90,6 +91,7 @@ export const hisonvue = {
 
 export type { default as HAccordion } from './components/HAccordion/HAccordion.vue'
 export type { default as HBaggie } from './components/HBaggie/HBaggie.vue'
+export type { default as HBanner } from './components/HBanner/HBanner.vue'
 export type { default as HButton } from './components/HButton/HButton.vue'
 export type { default as HCalendar } from './components/HCalendar/HCalendar.vue'
 export type { default as HCaption } from './components/HCaption/HCaption.vue'
@@ -107,6 +109,7 @@ export type { default as HLayout } from './components/HLayout/HLayout.vue'
 export type { default as HList } from './components/HList/HList.vue'
 export type { default as HModal } from './components/HModal/HModal.vue'
 export type { default as HNote } from './components/HNote/HNote.vue'
+export type { default as HPagination } from './components/HPagination/HPagination.vue'
 export type { default as HParagraph } from './components/HParagraph/HParagraph.vue'
 export type { default as HPopup } from './components/HPopup/HPopup.vue'
 export type { default as HSpinner } from './components/HSpinner/HSpinner.vue'
@@ -114,6 +117,7 @@ export type { default as HTable } from './components/HTable/HTable.vue'
 export {
   HAccordionClientOnly,
   HBaggieClientOnly,
+  HBannerClientOnly,
   HButtonClientOnly,
   HCalendarClientOnly,
   HCaptionClientOnly,
@@ -131,6 +135,7 @@ export {
   HListClientOnly,
   HModalClientOnly,
   HNoteClientOnly,
+  HPaginationClientOnly,
   HParagraphClientOnly,
   HPopupClientOnly,
   HSpinnerClientOnly,
@@ -154,6 +159,7 @@ export type {
   ComponentMethods,
   HAccordionMethods,
   HBaggieMethods,
+  HBannerMethods,
   HButtonMethods,
   HCalendarMethods,
   HCaptionMethods,
@@ -170,6 +176,7 @@ export type {
   HListMethods,
   HModalMethods,
   HNoteElement,
+  HPaginationMethods,
   HParagraphMethods,
   HPopupMethods,
   HSpinnerMethods,
