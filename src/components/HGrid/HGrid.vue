@@ -38,6 +38,8 @@ setup(props, { emit }) {
     const forceRecomputeBindAttrs = () => {
         triggerRef(bindAttrsTrigger)
     }
+    const gridColor = ref<string>('')
+
     const bindAttrs = computed(() => {
         bindAttrsTrigger.value
         const classList = extractResponsiveClasses(toClassString(props.class) || '', device.value)
@@ -67,6 +69,7 @@ setup(props, { emit }) {
         if (props.invertColor || hisonCloser.componentStyle.invertColor) {
             attrs['invert-color'] = 'true'
         }
+        gridColor.value = attrs.color
         return attrs
     })
     
@@ -105,21 +108,21 @@ setup(props, { emit }) {
             gridElement.appendChild(colDiv)
         })
         vg.mountGrid(editorWrap.value)
-        const color = getHexCodeFromColorText(props.color ?? 'primary') ?? props.color
         gridElement.style.border = 'none'
-        gridElement.style.boxShadow = `0 0.5px 1px 0.5px ${color}`
+        gridElement.style.boxShadow = `0 0.5px 1px 0.5px ${gridColor.value}`
         const gridMethod: any = vg.getGrid(id)
         if(gridMethod) gridMethod.getId = () => { return id }
         gridInstance.value = gridMethod as HGridMethods
         //methods
         if (gridInstance.value) {
+            gridInstance.value.isHisonvueComponent = true
             gridInstance.value.getId = () => id
             gridInstance.value.getType = () => 'grid'
             if ('isGridVisible' in gridInstance.value) {
-                delete (gridInstance.value as any).isGridVisible;
+                delete (gridInstance.value as any).isGridVisible
             }
             if ('setGridVisible' in gridInstance.value) {
-                delete (gridInstance.value as any).setGridVisible;
+                delete (gridInstance.value as any).setGridVisible
             }
             gridInstance.value.isVisible = () => visible.value,
             gridInstance.value.setVisible = (val: boolean) => { visible.value = val }
@@ -131,7 +134,7 @@ setup(props, { emit }) {
                 return gridInstance.value!.load(dataModel)
             }
             gridInstance.value.reload = () => reloadHisonComponent(reloadId)
-            const originGridMethodLoad = gridInstance.value.load.bind(gridInstance.value);
+            const originGridMethodLoad = gridInstance.value.load.bind(gridInstance.value)
             gridInstance.value.load = <T extends Record<string, any>>(keyValueOrDatas: Record<string, any> | Record<string, any>[] | InterfaceDataModel<T>) => {
                 if (keyValueOrDatas && (keyValueOrDatas as InterfaceDataModel).getIsDataModel && (keyValueOrDatas as InterfaceDataModel).getIsDataModel()) {
                     return originGridMethodLoad((keyValueOrDatas as InterfaceDataModel<T>).getRows())
@@ -212,6 +215,9 @@ setup(props, { emit }) {
         emit('responsive-change', newDevice)
     })
 
+    watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
+    watch(() => props.class, () => { forceRecomputeBindAttrs() })
+
     return {
         editorWrap,
         props,
@@ -224,4 +230,3 @@ setup(props, { emit }) {
 </script>
 
 <style scoped></style>
-  
