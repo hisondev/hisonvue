@@ -1564,9 +1564,11 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     border-radius: 2px;
     font-family: var(--hison-font-family);
     padding: 0.3rem 0.6rem;
+    width: 100%;
 }
 .hison-label-text {
-  white-space: pre-wrap;
+    white-space: pre-wrap;
+    width: 100%;
 }
 
 .hison-size-s > .hison-label{ min-height: calc(var(--hison-s-min-height) * 1rem); font-size: calc(var(--hison-s-font-size) * 1rem); }
@@ -1694,7 +1696,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     box-sizing: border-box;
     /*border: 1px dotted black;*/
 }
-.hison-layout-frame-adjust { height: 0; width: 100%; display: list-item; }
+.hison-layout-frame-adjust { height: 0; width: 100%; display: block; flex-basis: 100%; }
 .hison-layout > * { align-self: flex-start; margin: 0; }
 
 .hison-color-primary.hison-layout.hison-border { box-shadow: 0 1px 2px 0 var(--hison-primary-shadowColor); }
