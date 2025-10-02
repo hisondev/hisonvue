@@ -6,14 +6,12 @@
         v-if="visible"
         class="hison-spinner-overlay"
         :style="overlayStyleWithZ"
-        @click.stop
     ></div>
 
     <div
         ref="wrapperRef"
         :class="['hison-spinner-wrapper', ...responsiveClassList]"
         :style="wrapperStyle"
-        @click.stop
     >
         <div
             ref="spinnerRef"
@@ -191,7 +189,7 @@ export default defineComponent({
         const spinnerMethods = ref<HSpinnerMethods | null>(null)
 
         const mount = () => {
-            if (hisonCloser.component.spinnerList[id]) throw new Error('[Hisonvue] spinner id attribute was duplicated.')
+            if (hisonCloser.component.spinnerList[id] && hisonCloser.component.spinnerList[id].isHisonvueComponent) console.warn(`[Hisonvue] The spinner ID is at risk of being duplicated. ${id}`)
             registerReloadable(reloadId, () => {
                 unmount()
                 nextTick(mount)
@@ -205,6 +203,7 @@ export default defineComponent({
             }
 
             spinnerMethods.value = {
+                isHisonvueComponent: true,
                 getId: () => id,
                 getType: () => 'spinner',
                 isVisible: () => visible.value,
@@ -244,6 +243,19 @@ export default defineComponent({
             refreshResponsiveClassList()
             emit('responsive-change', newDevice)
         })
+        watch(() => props.visible, v => { const b = !!v; if (b !== visible.value) b ? open() : close() })
+        watch(() => props.zIndex, v => { const n = Number(v ?? 1400); if (n !== zIndex.value) zIndex.value = n })
+        watch(() => props.position, v => { if (v && v !== position.value) position.value = v as any })
+        watch(() => props.overlayStyle, v => { if (v !== overlayStyleProp.value) overlayStyleProp.value = v as any })
+        watch(() => props.timeoutMs, v => {
+        const n = Math.max(0, Number(v) || 0)
+        if (n !== timeoutMs.value) {
+            timeoutMs.value = n
+            if (visible.value) armTimeout()
+        }
+        })
+        watch(() => props.spinnerType, v => { if (v && v !== spinnerType.value) spinnerType.value = v as any })
+        watch(() => props.class, () => { refreshResponsiveClassList() })
 
         return {
             id,
