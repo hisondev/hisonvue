@@ -9,7 +9,7 @@
       v-if="isOverlayVisible"
       class="hison-modal-overlay"
       :style="overlayStyleWithZ"
-      @click.stop="onOverlayClick"
+      @click="onOverlayClick"
     ></div>
 
     <div
@@ -29,7 +29,6 @@
         ]"
         :style="props.style"
         role="dialog"
-        @click.stop
       >
         <HLayout
           v-if="headerVisibleComputed"
@@ -524,8 +523,7 @@ export default defineComponent({
     const toggle = async () => (visible.value ? close() : open())
 
     const mount = () => {
-      if (!hisonCloser.component.modalList) hisonCloser.component.modalList = {} as any
-      if (hisonCloser.component.modalList[id]) throw new Error('[Hisonvue] modal id attribute was duplicated.')
+      if (hisonCloser.component.modalList[id] && hisonCloser.component.modalList[id].isHisonvueComponent) console.warn(`[Hisonvue] The modal ID is at risk of being duplicated. ${id}`)
       registerReloadable(reloadId, () => {
         unmount()
         nextTick(mount)
@@ -539,6 +537,7 @@ export default defineComponent({
       }
 
       modalMethods.value = {
+        isHisonvueComponent: true,
         getId: () => id,
         getType: () => 'modal',
         isVisible: () => visible.value,
@@ -607,6 +606,28 @@ export default defineComponent({
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
     })
+    
+    watch(() => props.visible, v => { const b = !!v; if (b && !visible.value) open(); else if (!b && visible.value) close() })
+    watch(() => props.headerVisible, v => { const b = !!v; if (b !== headerVisible.value) headerVisible.value = b })
+    watch(() => props.footerVisible, v => { const b = !!v; if (b !== footerVisible.value) footerVisible.value = b })
+    watch(() => props.closeButtonVisible, v => { const b = !!v; if (b !== closeBtnVisible.value) closeBtnVisible.value = b })
+    watch(() => props.caption, v => { const s = v ?? null; if (s !== caption.value) caption.value = s })
+    watch(() => props.captionBorder, v => { const b = !!v; if (b !== captionBorder.value) captionBorder.value = b })
+    watch(() => props.captionBackgroundType, v => { if (v && v !== captionBackgroundType.value) captionBackgroundType.value = v as any })
+    watch(() => props.closeButtonBorder, v => { const b = !!v; if (b !== closeButtonBorder.value) closeButtonBorder.value = b })
+    watch(() => props.closeButtonBackgroundType, v => { if (v && v !== closeButtonBackgroundType.value) closeButtonBackgroundType.value = v as any })
+    watch(() => props.closeButtonPlacement, v => { if (v && v !== buttonPlacement.value) buttonPlacement.value = v })
+    watch(() => props.captionPlacement, v => { if (v && v !== captionPlacement.value) captionPlacement.value = v })
+    watch(() => props.closeClickOverlay, v => { const b = !!v; if (b !== closeClickOverlay.value) closeClickOverlay.value = b })
+    watch(() => props.showOverlay, v => { const b = !!v; if (b !== showOverlay.value) showOverlay.value = b })
+    watch(() => props.scrollLock, v => { const b = !!v; if (b !== scrollLock.value) { scrollLock.value = b; if (visible.value) (b ? lockScroll() : unlockScroll()) } })
+    watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
+    watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
+    watch(() => props.zIndex, v => { const n = Number(v ?? 1300); if (n !== zIndex.value) zIndex.value = n })
+    watch(() => props.position, v => { if (v && v !== modalPosition.value) modalPosition.value = v as any })
+    watch(() => props.enterAnimationClass, v => { const s = v || 'hison-modal-enter'; if (s !== enterClass.value) enterClass.value = s })
+    watch(() => props.leaveAnimationClass, v => { const s = v || 'hison-modal-leave'; if (s !== leaveClass.value) leaveClass.value = s })
+    watch(() => props.class, () => { refreshResponsiveClassList() })
 
     return {
       id,
