@@ -3,7 +3,7 @@ import { hisonCloser } from ".."
 import { configureChartDefaults, getVg, getVn } from "../plugins"
 
 export const createHisonCloser = (hisonConfig: HisonConfig) => {
-  // 이벤트 설정
+
   if(hisonConfig.event.cssEvent.textbox_onBeforeFocus) hisonCloser.event.cssEvent.textbox_onBeforeFocus = hisonConfig.event.cssEvent.textbox_onBeforeFocus
   if(hisonConfig.event.cssEvent.textbox_onAfterFocus) hisonCloser.event.cssEvent.textbox_onAfterFocus = hisonConfig.event.cssEvent.textbox_onAfterFocus
   if(hisonConfig.event.cssEvent.textbox_onBeforeBlur) hisonCloser.event.cssEvent.textbox_onBeforeBlur = hisonConfig.event.cssEvent.textbox_onBeforeBlur
@@ -47,7 +47,6 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
   if(hisonConfig.event.cssEvent.input_onBeforeTouchend) hisonCloser.event.cssEvent.input_onBeforeTouchend = hisonConfig.event.cssEvent.input_onBeforeTouchend
   if(hisonConfig.event.cssEvent.input_onAfterTouchend) hisonCloser.event.cssEvent.input_onAfterTouchend = hisonConfig.event.cssEvent.input_onAfterTouchend
 
-  //컴포넌트 스타일 설정 
   hisonCloser.componentStyle = {
     size : hisonConfig.componentStyle.size,
     filledColor : hisonConfig.componentStyle.filledColor,
@@ -137,23 +136,21 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
     }
   } as any
   
-  //컴포넌트 설정
   hisonCloser.componentConfig = {
     filesetSize : hisonConfig.component.filesetSize ?? Infinity,
     filesetTotalSize : hisonConfig.component.filesetTotalSize ?? Infinity,
   }
 
-  // plugin설정
   const vn = getVn(hisonConfig)
   const vg = getVg(hisonConfig)
   hisonCloser.note = vn
   hisonCloser.grid = vg
   configureChartDefaults(hisonConfig)
 
-  // 컴포넌트 리스트 생성
   hisonCloser.component = {
     accordionList: {},
     baggieList: {},
+    bannerList: {},
     buttonList: {},
     calendarList: {},
     captionList: {},
@@ -169,6 +166,7 @@ export const createHisonCloser = (hisonConfig: HisonConfig) => {
     layoutList: {},
     listList: {},
     modalList: {},
+    paginationList: {},
     paragraphList: {},
     popupList: {},
     spinnerList: {},
