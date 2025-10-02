@@ -22,6 +22,13 @@
         :src="previewUrl"
         class="preview-img"
         :style="[imgStyle]"
+        @click="onPreviewClick"
+        @dblclick="onPreviewDblClick"
+        @contextmenu="onPreviewContextMenu"
+        @pointerenter="onPreviewPointerEnter"
+        @pointerleave="onPreviewPointerLeave"
+        @pointerdown="onPreviewPointerDown"
+        @pointerup="onPreviewPointerUp"
       />
       <template v-else>
         <slot name="empty">
@@ -117,6 +124,13 @@ export default defineComponent({
     'focus',
     'blur',
     'change',
+    'preview-click',
+    'preview-dblclick',
+    'preview-contextmenu',
+    'preview-pointerenter',
+    'preview-pointerleave',
+    'preview-pointerdown',
+    'preview-pointerup',
   ],
   setup(props, { emit }) {
     const fileInputRef = ref<HTMLInputElement | null>(null)
@@ -176,6 +190,19 @@ export default defineComponent({
       }
     }
     setPreviewUrl(imageValue.value)
+
+    const emitPreview = (name: string, ev: Event) => {
+      emit(name as any, { event: ev, api: imageboxMethods.value! })
+    }
+
+    const onPreviewClick = (e: MouseEvent) => emitPreview('preview-click', e)
+    const onPreviewDblClick = (e: MouseEvent) => emitPreview('preview-dblclick', e)
+    const onPreviewContextMenu = (e: MouseEvent) => emitPreview('preview-contextmenu', e)
+
+    const onPreviewPointerEnter = (e: PointerEvent) => emitPreview('preview-pointerenter', e)
+    const onPreviewPointerLeave = (e: PointerEvent) => emitPreview('preview-pointerleave', e)
+    const onPreviewPointerDown  = (e: PointerEvent) => emitPreview('preview-pointerdown', e)
+    const onPreviewPointerUp    = (e: PointerEvent) => emitPreview('preview-pointerup', e)
 
     const tabIndex = ref<number | null>(
       props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
@@ -305,7 +332,7 @@ export default defineComponent({
     }
 
     const mount = () => {
-      if (hisonCloser.component.imageboxList[id]) throw new Error(`[Hisonvue] imagebox id attribute was duplicated.`)
+      if (hisonCloser.component.imageboxList[id] && hisonCloser.component.imageboxList[id].isHisonvueComponent) console.warn(`[Hisonvue] The imagebox ID is at risk of being duplicated. ${id}`)
       registerReloadable(reloadId, () => {
         unmount()
         nextTick(mount)
@@ -313,6 +340,7 @@ export default defineComponent({
       if (!fileInputRef.value) return
       refreshResponsiveClassList()
       imageboxMethods.value = {
+        isHisonvueComponent: true,
         getId: () => id,
         getType: () => 'imagebox',
         isVisible: () => visible.value,
@@ -370,9 +398,7 @@ export default defineComponent({
       emit('mounted', imageboxMethods.value)
     }
     const unmount = () => {
-      if (hisonCloser.component.imageboxList && hisonCloser.component.imageboxList[id]) {
-        delete hisonCloser.component.imageboxList[id]
-      }
+      delete hisonCloser.component.imageboxList[id]
     }
 
     onMounted(mount)
@@ -388,6 +414,23 @@ export default defineComponent({
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
     })
+
+    watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
+    watch(() => props.editMode, v => { if (v && v !== editMode.value) { editMode.value = v as any; nextTick(() => { hisonCloser.component.buttonList[`hison_imagebox_add_button_${id}`]?.setDisable(disable.value); hisonCloser.component.buttonList[`hison_imagebox_remove_button_${id}`]?.setDisable(disable.value) }) } })
+    watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
+    watch(() => props.attId, v => { const s = v || ''; if (s !== attId.value) attId.value = s })
+    watch(() => props.allowedTypes, v => { const nv = Array.isArray(v) ? v : v ? String(v).split(',') : []; if (nv.toString() !== allowedTypes.value.toString()) allowedTypes.value = nv })
+    watch(() => props.disallowedTypes, v => { const nv = Array.isArray(v) ? v : v ? String(v).split(',') : []; if (nv.toString() !== disallowedTypes.value.toString()) disallowedTypes.value = nv })
+    watch(() => props.maxFileSize, v => { const n = Number(v); if ((Number.isFinite(n) || n === Infinity) && n !== maxFileSize.value) maxFileSize.value = n })
+    watch(() => props.onDisallowedType, v => { const fn = typeof v === 'function' ? v : undefined; if (fn !== onDisallowedType.value) onDisallowedType.value = fn })
+    watch(() => props.onMaxFileSizeExceeded, v => { const fn = typeof v === 'function' ? v : undefined; if (fn !== onMaxFileSizeExceeded.value) onMaxFileSizeExceeded.value = fn })
+    watch(() => props.placeholder, v => { const s = v ?? ''; if (s !== placeholder.value) placeholder.value = s })
+    watch(() => props.addButtonText, v => { const s = v ?? ''; if (s !== addButtonText.value) addButtonText.value = s })
+    watch(() => props.removeButtonText, v => { const s = v ?? ''; if (s !== removeButtonText.value) removeButtonText.value = s })
+    watch(() => props.enableDrop, v => { const b = !!v; if (b !== enableDrop.value) enableDrop.value = b })
+    watch(() => props.modelValue, v => { if (v !== imageValue.value) { imageValue.value = v; setPreviewUrl(v) } })
+    watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
+    watch(() => props.class, () => { refreshResponsiveClassList() })
 
     return {
       fileInputRef,
@@ -418,6 +461,14 @@ export default defineComponent({
       openFileDialog,
       removeImage,
       onFileChange,
+
+      onPreviewClick,
+      onPreviewDblClick,
+      onPreviewContextMenu,
+      onPreviewPointerEnter,
+      onPreviewPointerLeave,
+      onPreviewPointerDown,
+      onPreviewPointerUp,
     }
   },
 })
