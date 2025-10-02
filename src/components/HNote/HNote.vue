@@ -54,7 +54,6 @@ export default defineComponent({
     const updateTabbableChildren = (rootEl: HTMLElement, disable: boolean) => {
       if (!rootEl) return
 
-      // Define list of focusable selectors
       const focusableSelectors = [
         'a[href]',
         'area[href]',
@@ -75,7 +74,6 @@ export default defineComponent({
         if (disable) {
           el.setAttribute('tabindex', '-1')
         } else {
-          // Only remove tabindex if we set it ourselves before
           if (el.getAttribute('tabindex') === '-1') {
             el.removeAttribute('tabindex')
           }
@@ -217,12 +215,11 @@ export default defineComponent({
         note.setNoteData(props.modelValue)
       }
       if(tabIndex.value && note._elements.textarea) {
-        console.log('note!!! template',note._elements.template)
-        console.log('note!!! textarea',note._elements.textarea)
         note._elements.textarea.setAttribute('tabIndex', String(tabIndex.value))
       }
 
       if (note) {
+        note.isHisonvueComponent = true
         note.getId = () => id
         note.getType = () => 'note'
         note.getRequired = () => required.value
@@ -267,13 +264,11 @@ export default defineComponent({
         note.reload = () => reloadHisonComponent(reloadId)
       }
 
-      //v-model
       if (note) {
         const textarea = note._elements?.textarea
         mutationObserver.observe(textarea, { characterData: true, childList: true, subtree: true })
       }
 
-      //이벤트 바인딩
       if (note) {
         note._cssEvents.target_onBeforeClick = hisonCloser.event.cssEvent.button_onBeforeClick
         note._cssEvents.target_onAfterClick = hisonCloser.event.cssEvent.button_onAfterClick
@@ -579,6 +574,19 @@ export default defineComponent({
         noteInstance.value.setNoteData(newVal!)
       }
     })
+
+    watch(() => props.visible, v => { const b = !!v; if (b !== visible.value) visible.value = b })
+    watch(() => props.editMode, v => { if (v && v !== editMode.value) { editMode.value = v as any; applyEditMode() } })
+    watch(() => props.required, v => { const b = !!v; if (b !== required.value) required.value = b })
+    watch(() => props.tabIndex, v => { const n = (v === null || v === '') ? null : Number(v); if (n !== tabIndex.value) { tabIndex.value = n; const t = noteInstance.value?._elements?.textarea as HTMLElement | undefined; if (t) { if (n == null) t.removeAttribute('tabIndex'); else t.setAttribute('tabIndex', String(n)) } } })
+    watch(() => props.class, () => { reload() })
+    watch(() => [props.noteModeByDevice, props.toolPosition, props.toolDefaultLine, props.toolToggle], () => reload())
+    watch(() => [props.textareaWidth, props.textareaHeight, props.textareaMaxWidth, props.textareaMaxHeight, props.textareaHeightIsModify], () => reload())
+    watch(() => [props.placeholderIsVisible, props.placeholderAddTop, props.placeholderAddLeft, props.placeholderWidth, props.placeholderColor, props.placeholderBackgroundColor, props.placeholderTitle, props.placeholderTextContent], () => reload())
+    watch(() => [props.attFilePreventTypes, props.attFileAcceptTypes, props.attFileMaxSize, props.attImagePreventTypes, props.attImageAcceptTypes, props.attImageMaxSize], () => reload())
+    watch(() => [props.defaultFontSize, props.defaultLineHeight, props.defaultFontFamily, props.defaultToolFontFamily, props.addFontFamily, props.removeFontFamily, props.language, props.recodeLimit], () => reload())
+    watch(() => [props.sizeLevelDesktop, props.sizeLevelMobile, props.color, props.invertColor], () => reload())
+    watch(() => [props.usingParagraphStyle, props.usingBold, props.usingUnderline, props.usingItalic, props.usingUl, props.usingOl, props.usingTextAlign, props.usingAttLink, props.usingAttFile, props.usingAttImage, props.usingAttVideo, props.usingFontSize, props.usingLetterSpacing, props.usingLineHeight, props.usingFontFamily, props.usingColorText, props.usingColorBack, props.usingFormatClear, props.usingUndo, props.usingRedo, props.usingHelp, props.usingParagraphAllStyle, props.usingCharacterStyle, props.usingCharacterSize, props.usingAttachFile, props.usingDo], () => reload())
 
     return {
       editorWrap,
