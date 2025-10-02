@@ -14,7 +14,6 @@
       ]"
       :style="[rootInlineStyle, props.style]"
     >
-      <!-- Header -->
       <div
         ref="headerRef"
         class="hison-accordion-header"
@@ -71,7 +70,7 @@ import {
   addComponentNameToClass
 } from '../../utils'
 import { useDevice } from '../../core'
-import { TextAlign, hisonCloser } from '../..'
+import { TextAlign, TextAlignValue, hisonCloser } from '../..'
 import type { HAccordionMethods } from '../../types'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
 
@@ -92,7 +91,7 @@ export default defineComponent({
     const title    = ref(props.title ?? '')
     const isOpen   = ref(!!props.defaultOpen)
 
-    const textAlign = ref<TextAlign>((props.textAlign as TextAlign) ?? 'left')
+    const textAlign = ref<TextAlignValue>((props.textAlign as TextAlign) ?? 'left')
 
     const animate  = ref(props.animate ?? true)
     const duration = ref(props.duration ?? 500)
@@ -132,11 +131,10 @@ export default defineComponent({
     const close = (e?: Event | null) => {
       if (!isOpen.value) return
 
-      // 🔒 닫히는 순간, 내부에 포커스가 남아있다면 헤더로 이동
       const active = document.activeElement as HTMLElement | null
       const contentEl = contentRef.value
       if (contentEl && active && contentEl.contains(active)) {
-        headerRef.value?.focus()       // 헤더로 초점 이동
+        headerRef.value?.focus()
       }
 
       isOpen.value = false
@@ -153,7 +151,7 @@ export default defineComponent({
     const accordionMethods = ref<HAccordionMethods | null>(null)
 
     const mount = () => {
-      if (hisonCloser.component.accordionList[id]) throw new Error('[Hisonvue] accordion id attribute was duplicated.')
+      if (hisonCloser.component.accordionList[id] && hisonCloser.component.accordionList[id].isHisonvueComponent) console.warn(`[Hisonvue] The accordion ID is at risk of being duplicated. ${id}`)
       registerReloadable(reloadId, () => {
         unmount()
         nextTick(mount)
@@ -162,6 +160,7 @@ export default defineComponent({
       refreshResponsiveClassList()
 
       accordionMethods.value = {
+        isHisonvueComponent: true,
         getId: () => id,
         getType: () => 'accordion',
         isVisible: () => visible.value,
@@ -212,6 +211,16 @@ export default defineComponent({
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
     })
+
+    watch(() => props.visible, v => { if (v !== visible.value) visible.value = !!v })
+    watch(() => props.title, v => { const t = v ?? ''; if (t !== title.value) title.value = t })
+    watch(() => props.defaultOpen, v => v ? open(null) : close(null))
+    watch(() => props.textAlign, v => { if ((v === 'left' || v === 'center' || v === 'right') && v !== textAlign.value) textAlign.value = v as any })
+    watch(() => props.animate, v => { const nv = !!v; if (nv !== animate.value) animate.value = nv })
+    watch(() => props.duration, v => { const n = Number(v); if (Number.isFinite(n) && n >= 0 && n !== duration.value) duration.value = n })
+    watch(() => props.easing, v => { if (typeof v === 'string' && v !== easing.value) easing.value = v })
+    watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
+    watch(() => props.class, () => refreshResponsiveClassList())
 
     return {
       headerRef, contentRef,
