@@ -4,14 +4,13 @@
         v-if="isOverlayVisible"
         class="hison-popup-overlay"
         :style="overlayStyleWithZ"
-        @click.stop="onOverlayClick"
+        @click="onOverlayClick"
         ></div>
 
         <div
         ref="popupWrapperRef"
         :class="['hison-popup-wrapper', ...responsiveClassList]"
         :style="wrapperStyle"
-        @click.stop
         >
             <div
                 ref="popupRef"
@@ -48,7 +47,7 @@
                     </slot>
                 </div>
 
-                <div :class="['hison-popup-body']" @click.stop>
+                <div :class="['hison-popup-body']">
                     <slot />
                 </div>
             </div>
@@ -300,7 +299,7 @@ export default defineComponent({
         const popupMethods = ref<HPopupMethods | null>(null)
 
         const mount = () => {
-            if (hisonCloser.component.popupList[id]) throw new Error('[Hisonvue] popup id attribute was duplicated.')
+            if (hisonCloser.component.popupList[id] && hisonCloser.component.popupList[id].isHisonvueComponent) console.warn(`[Hisonvue] The popup ID is at risk of being duplicated. ${id}`)
             registerReloadable(reloadId, () => {
                 unmount()
                 nextTick(mount)
@@ -314,6 +313,7 @@ export default defineComponent({
             }
 
             popupMethods.value = {
+                isHisonvueComponent: true,
                 getId: () => id,
                 getType: () => 'popup',
                 isVisible: () => visible.value,
@@ -374,6 +374,34 @@ export default defineComponent({
             refreshResponsiveClassList()
             emit('responsive-change', newDevice)
         })
+
+        watch(() => props.visible, v => { const b = !!v; if (b !== visible.value) b ? open() : close() })
+        watch(() => props.zIndex, v => { const n = Number(v ?? 1100); if (n !== zIndex.value) zIndex.value = n })
+        watch(() => props.position, v => { if (v && v !== popupPosition.value) popupPosition.value = v as any })
+        watch(() => props.left, v => { const n = v == null ? null : Number(v); if (n !== left.value) left.value = n })
+        watch(() => props.top, v => { const n = v == null ? null : Number(v); if (n !== top.value) top.value = n })
+        watch(() => props.width, v => { const n = v == null ? null : Number(v); if (n !== width.value) width.value = n })
+        watch(() => props.height, v => { const n = v == null ? null : Number(v); if (n !== height.value) height.value = n })
+        watch(() => props.draggable, v => {
+        const b = !!v
+        if (b !== draggable.value) {
+            draggable.value = b
+            if (!b) cleanupDrag()
+        }
+        })
+        watch(() => props.showOverlay, v => { const b = !!v; if (b !== showOverlay.value) showOverlay.value = b })
+        watch(() => props.closeClickOverlay, v => { const b = !!v; if (b !== closeClickOverlay.value) closeClickOverlay.value = b })
+        watch(() => props.scrollLock, v => {
+        const b = !!v
+        if (b !== scrollLock.value) {
+            scrollLock.value = b
+            if (visible.value) (b ? lockScroll() : unlockScroll())
+        }
+        })
+        watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
+        watch(() => props.enterAnimationClass, v => { const s = v || 'hison-popup-enter'; if (s !== enterClass.value) enterClass.value = s })
+        watch(() => props.leaveAnimationClass, v => { const s = v || 'hison-popup-leave'; if (s !== leaveClass.value) leaveClass.value = s })
+        watch(() => props.class, () => { refreshResponsiveClassList() })
 
         return {
             id,
