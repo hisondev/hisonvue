@@ -17,8 +17,8 @@
     >
       <input
         ref="inputRef"
-        :id="`hison_input_${id}`"
-        :name="`hison_input_${id}`"
+        :id="`${id}`"
+        :name="`${nameAttr}`"
         type="range"
         :class="[
           `hison-input-${inputType}`,
@@ -30,32 +30,32 @@
         :readonly="readonly"
         :title="title || undefined"
         :tabindex="tabIndex ?? undefined"
-        @change.stop="onRangeChange"
-        @focus.stop="onFocus"
-        @blur.stop="onBlur"
-        @keydown.stop="onKeydown"
+        @change="onRangeChange"
+        @focus="onFocus"
+        @blur="onBlur"
+        @keydown="onKeydown"
 
-        @click.stop="$emit('click', $event, inputMethods)"
-        @dblclick.stop="$emit('dblclick', $event, inputMethods)"
-        @mousedown.stop="$emit('mousedown', $event, inputMethods)"
-        @mouseup.stop="$emit('mouseup', $event, inputMethods)"
-        @mouseenter.stop="$emit('mouseenter', $event, inputMethods)"
-        @mouseleave.stop="$emit('mouseleave', $event, inputMethods)"
-        @mouseover.stop="$emit('mouseover', $event, inputMethods)"
-        @mouseout.stop="$emit('mouseout', $event, inputMethods)"
+        @click="$emit('click', $event, inputMethods)"
+        @dblclick="$emit('dblclick', $event, inputMethods)"
+        @mousedown="$emit('mousedown', $event, inputMethods)"
+        @mouseup="$emit('mouseup', $event, inputMethods)"
+        @mouseenter="$emit('mouseenter', $event, inputMethods)"
+        @mouseleave="$emit('mouseleave', $event, inputMethods)"
+        @mouseover="$emit('mouseover', $event, inputMethods)"
+        @mouseout="$emit('mouseout', $event, inputMethods)"
 
-        @pointerdown.stop="$emit('pointerdown', $event, inputMethods)"
-        @pointerup.stop="$emit('pointerup', $event, inputMethods)"
-        @pointermove.stop="$emit('pointermove', $event, inputMethods)"
-        @pointerenter.stop="$emit('pointerenter', $event, inputMethods)"
-        @pointerleave.stop="$emit('pointerleave', $event, inputMethods)"
+        @pointerdown="$emit('pointerdown', $event, inputMethods)"
+        @pointerup="$emit('pointerup', $event, inputMethods)"
+        @pointermove="$emit('pointermove', $event, inputMethods)"
+        @pointerenter="$emit('pointerenter', $event, inputMethods)"
+        @pointerleave="$emit('pointerleave', $event, inputMethods)"
 
-        @touchstart.stop="$emit('touchstart', $event, inputMethods)"
-        @touchend.stop="$emit('touchend', $event, inputMethods)"
-        @touchmove.stop="$emit('touchmove', $event, inputMethods)"
-        @touchcancel.stop="$emit('touchcancel', $event, inputMethods)"
+        @touchstart="$emit('touchstart', $event, inputMethods)"
+        @touchend="$emit('touchend', $event, inputMethods)"
+        @touchmove="$emit('touchmove', $event, inputMethods)"
+        @touchcancel="$emit('touchcancel', $event, inputMethods)"
 
-        @contextmenu.stop="$emit('contextmenu', $event, inputMethods)"
+        @contextmenu="$emit('contextmenu', $event, inputMethods)"
       />
     </div>
 
@@ -69,8 +69,8 @@
     >
       <input
         ref="inputRef"
-        :id="`hison_input_${id}`"
-        :name="`hison_input_${id}`"
+        :id="`${id}`"
+        :name="`${nameAttr}`"
         type="color"
         :class="[
           `hison-input-${inputType}`,
@@ -83,32 +83,32 @@
         :checked="inputValue === true"
         :title="title || undefined"
         :tabindex="tabIndex ?? undefined"
-        @change.stop="onColorChange"
-        @focus.stop="onFocus"
-        @blur.stop="onBlur"
-        @keydown.stop="onKeydown"
+        @change="onColorChange"
+        @focus="onFocus"
+        @blur="onBlur"
+        @keydown="onKeydown"
 
-        @click.stop="$emit('click', $event, inputMethods)"
-        @dblclick.stop="$emit('dblclick', $event, inputMethods)"
-        @mousedown.stop="$emit('mousedown', $event, inputMethods)"
-        @mouseup.stop="$emit('mouseup', $event, inputMethods)"
-        @mouseenter.stop="$emit('mouseenter', $event, inputMethods)"
-        @mouseleave.stop="$emit('mouseleave', $event, inputMethods)"
-        @mouseover.stop="$emit('mouseover', $event, inputMethods)"
-        @mouseout.stop="$emit('mouseout', $event, inputMethods)"
+        @click="$emit('click', $event, inputMethods)"
+        @dblclick="$emit('dblclick', $event, inputMethods)"
+        @mousedown="$emit('mousedown', $event, inputMethods)"
+        @mouseup="$emit('mouseup', $event, inputMethods)"
+        @mouseenter="$emit('mouseenter', $event, inputMethods)"
+        @mouseleave="$emit('mouseleave', $event, inputMethods)"
+        @mouseover="$emit('mouseover', $event, inputMethods)"
+        @mouseout="$emit('mouseout', $event, inputMethods)"
 
-        @pointerdown.stop="$emit('pointerdown', $event, inputMethods)"
-        @pointerup.stop="$emit('pointerup', $event, inputMethods)"
-        @pointermove.stop="$emit('pointermove', $event, inputMethods)"
-        @pointerenter.stop="$emit('pointerenter', $event, inputMethods)"
-        @pointerleave.stop="$emit('pointerleave', $event, inputMethods)"
+        @pointerdown="$emit('pointerdown', $event, inputMethods)"
+        @pointerup="$emit('pointerup', $event, inputMethods)"
+        @pointermove="$emit('pointermove', $event, inputMethods)"
+        @pointerenter="$emit('pointerenter', $event, inputMethods)"
+        @pointerleave="$emit('pointerleave', $event, inputMethods)"
 
-        @touchstart.stop="$emit('touchstart', $event, inputMethods)"
-        @touchend.stop="$emit('touchend', $event, inputMethods)"
-        @touchmove.stop="$emit('touchmove', $event, inputMethods)"
-        @touchcancel.stop="$emit('touchcancel', $event, inputMethods)"
+        @touchstart="$emit('touchstart', $event, inputMethods)"
+        @touchend="$emit('touchend', $event, inputMethods)"
+        @touchmove="$emit('touchmove', $event, inputMethods)"
+        @touchcancel="$emit('touchcancel', $event, inputMethods)"
 
-        @contextmenu.stop="$emit('contextmenu', $event, inputMethods)"
+        @contextmenu="$emit('contextmenu', $event, inputMethods)"
       />
     </div>
 
@@ -122,8 +122,8 @@
     >
       <input
         ref="inputRef"
-        :id="`hison_input_${id}`"
-        :name="`hison_input_${id}`"
+        :id="`${id}`"
+        :name="`${nameAttr}`"
         type="checkbox"
         :class="[
           `hison-input-${inputType}`,
@@ -135,40 +135,89 @@
         :checked="inputValue === true"
         :title="title || undefined"
         :tabindex="tabIndex ?? undefined"
-        @change.stop="onCheckboxChange"
-        @focus.stop="onFocus"
-        @blur.stop="onBlur"
-        @keydown.stop="onKeydown"
+        @change="onCheckboxChange"
+        @focus="onFocus"
+        @blur="onBlur"
+        @keydown="onKeydown"
 
-        @click.stop="$emit('click', $event, inputMethods)"
-        @dblclick.stop="$emit('dblclick', $event, inputMethods)"
-        @mousedown.stop="$emit('mousedown', $event, inputMethods)"
-        @mouseup.stop="$emit('mouseup', $event, inputMethods)"
-        @mouseenter.stop="$emit('mouseenter', $event, inputMethods)"
-        @mouseleave.stop="$emit('mouseleave', $event, inputMethods)"
-        @mouseover.stop="$emit('mouseover', $event, inputMethods)"
-        @mouseout.stop="$emit('mouseout', $event, inputMethods)"
+        @click="$emit('click', $event, inputMethods)"
+        @dblclick="$emit('dblclick', $event, inputMethods)"
+        @mousedown="$emit('mousedown', $event, inputMethods)"
+        @mouseup="$emit('mouseup', $event, inputMethods)"
+        @mouseenter="$emit('mouseenter', $event, inputMethods)"
+        @mouseleave="$emit('mouseleave', $event, inputMethods)"
+        @mouseover="$emit('mouseover', $event, inputMethods)"
+        @mouseout="$emit('mouseout', $event, inputMethods)"
 
-        @pointerdown.stop="$emit('pointerdown', $event, inputMethods)"
-        @pointerup.stop="$emit('pointerup', $event, inputMethods)"
-        @pointermove.stop="$emit('pointermove', $event, inputMethods)"
-        @pointerenter.stop="$emit('pointerenter', $event, inputMethods)"
-        @pointerleave.stop="$emit('pointerleave', $event, inputMethods)"
+        @pointerdown="$emit('pointerdown', $event, inputMethods)"
+        @pointerup="$emit('pointerup', $event, inputMethods)"
+        @pointermove="$emit('pointermove', $event, inputMethods)"
+        @pointerenter="$emit('pointerenter', $event, inputMethods)"
+        @pointerleave="$emit('pointerleave', $event, inputMethods)"
 
-        @touchstart.stop="$emit('touchstart', $event, inputMethods)"
-        @touchend.stop="$emit('touchend', $event, inputMethods)"
-        @touchmove.stop="$emit('touchmove', $event, inputMethods)"
-        @touchcancel.stop="$emit('touchcancel', $event, inputMethods)"
+        @touchstart="$emit('touchstart', $event, inputMethods)"
+        @touchend="$emit('touchend', $event, inputMethods)"
+        @touchmove="$emit('touchmove', $event, inputMethods)"
+        @touchcancel="$emit('touchcancel', $event, inputMethods)"
 
-        @contextmenu.stop="$emit('contextmenu', $event, inputMethods)"
+        @contextmenu="$emit('contextmenu', $event, inputMethods)"
+      />
+    </div>
+
+    <div
+      v-else-if="inputType === 'radio'"
+      :class="['hison-input','hison-input-radio-div']"
+      :style="[textAlignStyle, props.style]"
+    >
+      <input
+        ref="inputRef"
+        :id="`${id}`"
+        :name="`${nameAttr}`"
+        type="radio"
+        :class="[
+          `hison-input-${inputType}`,
+          ...editModeClassList,
+          ...requiredClassList,
+        ]"
+        :disabled="disable"
+        :readonly="readonly"
+        :checked="inputValue === true"
+        :title="title || undefined"
+        :tabindex="tabIndex ?? undefined"
+        @change="onRadioChange"
+        @focus="onFocus"
+        @blur="onBlur"
+        @keydown="onKeydown"
+
+        @click="$emit('click', $event, inputMethods)"
+        @dblclick="$emit('dblclick', $event, inputMethods)"
+        @mousedown="$emit('mousedown', $event, inputMethods)"
+        @mouseup="$emit('mouseup', $event, inputMethods)"
+        @mouseenter="$emit('mouseenter', $event, inputMethods)"
+        @mouseleave="$emit('mouseleave', $event, inputMethods)"
+        @mouseover="$emit('mouseover', $event, inputMethods)"
+        @mouseout="$emit('mouseout', $event, inputMethods)"
+
+        @pointerdown="$emit('pointerdown', $event, inputMethods)"
+        @pointerup="$emit('pointerup', $event, inputMethods)"
+        @pointermove="$emit('pointermove', $event, inputMethods)"
+        @pointerenter="$emit('pointerenter', $event, inputMethods)"
+        @pointerleave="$emit('pointerleave', $event, inputMethods)"
+
+        @touchstart="$emit('touchstart', $event, inputMethods)"
+        @touchend="$emit('touchend', $event, inputMethods)"
+        @touchmove="$emit('touchmove', $event, inputMethods)"
+        @touchcancel="$emit('touchcancel', $event, inputMethods)"
+
+        @contextmenu="$emit('contextmenu', $event, inputMethods)"
       />
     </div>
 
     <select
       v-else-if="inputType === 'select'"
       ref="inputRef"
-      :id="`hison_select_${id}`"
-      :name="`hison_select_${id}`"
+      :id="`${id}`"
+      :name="`${nameAttr}`"
       :style="[textAlignStyle, props.style]"
       :class="[
         'hison-input',
@@ -186,32 +235,32 @@
       :readonly="readonly"
       :title="title || undefined"
       :tabindex="tabIndex ?? undefined"
-      @change.stop="onSelectChange"
-      @focus.stop="onFocus"
-      @blur.stop="onBlur"
-      @keydown.stop="onKeydown"
+      @change="onSelectChange"
+      @focus="onFocus"
+      @blur="onBlur"
+      @keydown="onKeydown"
 
-      @click.stop="$emit('click', $event, inputMethods)"
-      @dblclick.stop="$emit('dblclick', $event, inputMethods)"
-      @mousedown.stop="$emit('mousedown', $event, inputMethods)"
-      @mouseup.stop="$emit('mouseup', $event, inputMethods)"
-      @mouseenter.stop="$emit('mouseenter', $event, inputMethods)"
-      @mouseleave.stop="$emit('mouseleave', $event, inputMethods)"
-      @mouseover.stop="$emit('mouseover', $event, inputMethods)"
-      @mouseout.stop="$emit('mouseout', $event, inputMethods)"
+      @click="$emit('click', $event, inputMethods)"
+      @dblclick="$emit('dblclick', $event, inputMethods)"
+      @mousedown="$emit('mousedown', $event, inputMethods)"
+      @mouseup="$emit('mouseup', $event, inputMethods)"
+      @mouseenter="$emit('mouseenter', $event, inputMethods)"
+      @mouseleave="$emit('mouseleave', $event, inputMethods)"
+      @mouseover="$emit('mouseover', $event, inputMethods)"
+      @mouseout="$emit('mouseout', $event, inputMethods)"
 
-      @pointerdown.stop="$emit('pointerdown', $event, inputMethods)"
-      @pointerup.stop="$emit('pointerup', $event, inputMethods)"
-      @pointermove.stop="$emit('pointermove', $event, inputMethods)"
-      @pointerenter.stop="$emit('pointerenter', $event, inputMethods)"
-      @pointerleave.stop="$emit('pointerleave', $event, inputMethods)"
+      @pointerdown="$emit('pointerdown', $event, inputMethods)"
+      @pointerup="$emit('pointerup', $event, inputMethods)"
+      @pointermove="$emit('pointermove', $event, inputMethods)"
+      @pointerenter="$emit('pointerenter', $event, inputMethods)"
+      @pointerleave="$emit('pointerleave', $event, inputMethods)"
 
-      @touchstart.stop="$emit('touchstart', $event, inputMethods)"
-      @touchend.stop="$emit('touchend', $event, inputMethods)"
-      @touchmove.stop="$emit('touchmove', $event, inputMethods)"
-      @touchcancel.stop="$emit('touchcancel', $event, inputMethods)"
+      @touchstart="$emit('touchstart', $event, inputMethods)"
+      @touchend="$emit('touchend', $event, inputMethods)"
+      @touchmove="$emit('touchmove', $event, inputMethods)"
+      @touchcancel="$emit('touchcancel', $event, inputMethods)"
 
-      @contextmenu.stop="$emit('contextmenu', $event, inputMethods)"
+      @contextmenu="$emit('contextmenu', $event, inputMethods)"
     >
       <option
         v-for="opt in props.options"
@@ -220,12 +269,11 @@
       >{{ opt.text }}</option>
     </select>
 
-    <!-- ✅ textarea: 항상 렌더링 -->
     <textarea
       v-else-if="inputType === 'textarea'"
       ref="inputRef"
-      :id="`hison_input_${id}`"
-      :name="`hison_input_${id}`"
+      :id="`${id}`"
+      :name="`${nameAttr}`"
       :class="[
         'hison-input',
         `hison-input-${inputType}`,
@@ -245,16 +293,16 @@
       :title="title || undefined"
       :maxlength="maxLength || undefined"
       :tabindex="tabIndex ?? undefined"
-      @input.stop="onInput"
-      @focus.stop="onFocus"
-      @blur.stop="onBlur"
+      @input="onInput"
+      @focus="onFocus"
+      @blur="onBlur"
     >{{ inputValue }}</textarea>
 
     <template v-else>
       <input
         ref="inputTextRef"
-        :id="`hison_input_text_${id}`"
-        :name="`hison_input_text_${id}`"
+        :id="`input_text_${id}`"
+        :name="`input_text_${nameAttr}`"
         v-show="!editing"
         :class="[
           'hison-input',
@@ -275,32 +323,32 @@
         :title="title || undefined"
         :placeholder="placeholder || undefined"
         :tabindex="tabIndex ?? undefined"
-        @focus.stop="onTextInputFocus"
-        @click.stop="$emit('click', $event, inputMethods)"
-        @dblclick.stop="$emit('dblclick', $event, inputMethods)"
-        @mousedown.stop="$emit('mousedown', $event, inputMethods)"
-        @mouseup.stop="$emit('mouseup', $event, inputMethods)"
-        @mouseenter.stop="$emit('mouseenter', $event, inputMethods)"
-        @mouseleave.stop="$emit('mouseleave', $event, inputMethods)"
-        @mouseover.stop="$emit('mouseover', $event, inputMethods)"
-        @mouseout.stop="$emit('mouseout', $event, inputMethods)"
-        @mousemove.stop="$emit('mousemove', $event, inputMethods)"
+        @focus="onTextInputFocus"
+        @click="$emit('click', $event, inputMethods)"
+        @dblclick="$emit('dblclick', $event, inputMethods)"
+        @mousedown="$emit('mousedown', $event, inputMethods)"
+        @mouseup="$emit('mouseup', $event, inputMethods)"
+        @mouseenter="$emit('mouseenter', $event, inputMethods)"
+        @mouseleave="$emit('mouseleave', $event, inputMethods)"
+        @mouseover="$emit('mouseover', $event, inputMethods)"
+        @mouseout="$emit('mouseout', $event, inputMethods)"
+        @mousemove="$emit('mousemove', $event, inputMethods)"
     
-        @pointerdown.stop="$emit('pointerdown', $event, inputMethods)"
-        @pointerup.stop="$emit('pointerup', $event, inputMethods)"
-        @pointermove.stop="$emit('pointermove', $event, inputMethods)"
-        @pointerenter.stop="$emit('pointerenter', $event, inputMethods)"
-        @pointerleave.stop="$emit('pointerleave', $event, inputMethods)"
-        @touchstart.stop="$emit('touchstart', $event, inputMethods)"
-        @touchend.stop="$emit('touchend', $event, inputMethods)"
-        @touchmove.stop="$emit('touchmove', $event, inputMethods)"
-        @touchcancel.stop="$emit('touchcancel', $event, inputMethods)"
+        @pointerdown="$emit('pointerdown', $event, inputMethods)"
+        @pointerup="$emit('pointerup', $event, inputMethods)"
+        @pointermove="$emit('pointermove', $event, inputMethods)"
+        @pointerenter="$emit('pointerenter', $event, inputMethods)"
+        @pointerleave="$emit('pointerleave', $event, inputMethods)"
+        @touchstart="$emit('touchstart', $event, inputMethods)"
+        @touchend="$emit('touchend', $event, inputMethods)"
+        @touchmove="$emit('touchmove', $event, inputMethods)"
+        @touchcancel="$emit('touchcancel', $event, inputMethods)"
       />
       <input
         v-show="editing"
         ref="inputRef"
-        :id="`hison_input_${id}`"
-        :name="`hison_input_${id}`"
+        :id="`${id}`"
+        :name="`${nameAttr}`"
         :class="[
           'hison-input',
           `hison-input-${inputType}`,
@@ -317,34 +365,34 @@
         :max="maxNumber || undefined"
         :min="minNumber || undefined"
         :tabindex="tabIndex ?? undefined"
-        @focus.stop="onFocus"
-        @blur.stop="onBlur"
-        @input.stop="onInput"
-        @compositionstart.stop="$emit('compositionstart', $event, inputMethods)"
-        @compositionupdate.stop="$emit('compositionupdate', $event, inputMethods)"
-        @compositionend.stop="$emit('compositionend', $event, inputMethods)"
-        @keydown.stop="$emit('keydown', $event, inputMethods)"
-        @keyup.stop="$emit('keyup', $event, inputMethods)"
-        @dragstart.stop="$emit('dragstart', $event, inputMethods)"
-        @dragend.stop="$emit('dragend', $event, inputMethods)"
-        @drag.stop="$emit('drag', $event, inputMethods)"
-        @drop.stop="$emit('drop', $event, inputMethods)"
-        @copy.stop="$emit('copy', $event, inputMethods)"
-        @cut.stop="$emit('cut', $event, inputMethods)"
-        @paste.stop="$emit('paste', $event, inputMethods)"
-        @wheel.stop="$emit('wheel', $event, inputMethods)"
-        @contextmenu.stop="$emit('contextmenu', $event, inputMethods)"
+        @focus="onFocus"
+        @blur="onBlur"
+        @input="onInput"
+        @compositionstart="$emit('compositionstart', $event, inputMethods)"
+        @compositionupdate="$emit('compositionupdate', $event, inputMethods)"
+        @compositionend="$emit('compositionend', $event, inputMethods)"
+        @keydown="$emit('keydown', $event, inputMethods)"
+        @keyup="$emit('keyup', $event, inputMethods)"
+        @dragstart="$emit('dragstart', $event, inputMethods)"
+        @dragend="$emit('dragend', $event, inputMethods)"
+        @drag="$emit('drag', $event, inputMethods)"
+        @drop="$emit('drop', $event, inputMethods)"
+        @copy="$emit('copy', $event, inputMethods)"
+        @cut="$emit('cut', $event, inputMethods)"
+        @paste="$emit('paste', $event, inputMethods)"
+        @wheel="$emit('wheel', $event, inputMethods)"
+        @contextmenu="$emit('contextmenu', $event, inputMethods)"
       />
     </template>
   </div>
 </template>
 
+
 <script lang="ts">
-//Focus 기능 필요!!!!!!!!!!!!
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, unref, inject } from 'vue'
 import type { HInputMethods } from '../../types'
 import { inputProps } from './props'
-import { DateFormat, hison, hisonCloser, EditMode, InputType, YearMonthFormat, TimeFormat, TextAlign, TextAlignValue } from '../..'
+import { DateFormat, hison, hisonCloser, EditMode, InputType, YearMonthFormat, TimeFormat, TextAlign, TextAlignValue, InputTypeValue } from '../..'
 import { extractResponsiveClasses, getDigitsOnly, getIndexSpecificClassNameFromClassList, getMaskValue, getUUID, isNullOrUndefined, addComponentNameToClass, registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 import { addInputCssEvent, addInputTextCssEvent, removeInputCssEvent, removeInputTextCssEvent } from '../common/setInputCssEvent'
@@ -358,7 +406,6 @@ export default defineComponent({
     'update:modelValue',
     'mounted',
     'responsive-change',
-    //input text
     'click',
     'dblclick',
     'mousedown',
@@ -377,7 +424,6 @@ export default defineComponent({
     'touchend',
     'touchmove',
     'touchcancel',
-    //input
     'focus',
     'blur',
     'input',
@@ -402,6 +448,8 @@ export default defineComponent({
     const inputTextRef = ref<HTMLInputElement | null>(null)
     const inputMethods = ref<HInputMethods | null>(null)
     const id = props.id ? props.id : getUUID()
+    const name = ref(props.name ?? id)
+    const nameAttr = computed(() => name.value)
     const reloadId = `hinput:${id}`
     const device = useDevice()
 
@@ -418,6 +466,8 @@ export default defineComponent({
       switch (inputType.value) {
         case InputType.checkbox:
           return 'checkbox'
+        case InputType.radio:
+          return 'radio'
         case InputType.select:
           return 'select'
         case InputType.range:
@@ -444,7 +494,7 @@ export default defineComponent({
     const roundNumber = ref(hison.utils.isInteger(props.roundNumber) || hison.utils.isNegativeInteger(props.roundNumber) || props.roundNumber === '0' ? Number(props.roundNumber) : null)
     const maxLength = ref(hison.utils.isPositiveInteger(props.maxLength) ? Number(props.maxLength) : null)
     const maxByte = ref(hison.utils.isPositiveInteger(props.maxByte) ? Number(props.maxByte) : null)
-    const computeDefaultTextAlign = (inputType: InputType): TextAlign => {
+    const computeDefaultTextAlign = (inputType: InputTypeValue): TextAlign => {
       switch (inputType) {
         case InputType.number:
         case InputType.digit:
@@ -473,9 +523,13 @@ export default defineComponent({
       if(roundNumber.value) value = hison.utils.getRound(value, roundNumber.value)
       return value
     }
-    //modelValue를 가져올 때 우선적용 필요함
     const computeValue = (value: any) => {
-      if(isNullOrUndefined(value)) return value
+      if (isNullOrUndefined(value)) {
+        if (inputType.value === InputType.checkbox || inputType.value === InputType.radio) {
+          return false
+        }
+        return value
+      }
       try {
         switch (inputType.value) {
           case InputType.text:
@@ -500,6 +554,9 @@ export default defineComponent({
           case InputType.time:
             if(value) value = hison.utils.getDateWithFormat(value, TimeFormat['HH:mm:ss'])
             break
+          case InputType.checkbox:
+          case InputType.radio:
+            value = !!value
           default:
             break
         } 
@@ -559,11 +616,14 @@ export default defineComponent({
       props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
     )
 
-    //HInputGroup에 주입
     const registerToInputGroup = inject<((inputId: string) => void) | null>('registerToInputGroup', null)
     const notifyInputGroupStatus = inject<((inputId: string, newVal: any) => void) | null>('notifyInputGroupStatus', null)
+    const radioMembershipChanged = inject<((inputId: string, oldName: string, newName: string, checked: boolean) => void) | null>('radioMembershipChanged', null)
 
     const computeSpanText = (value: any) => {
+      if (inputType.value === InputType.checkbox || inputType.value === InputType.radio) {
+        return value ? props.checkedText : props.uncheckedText
+      }
       if (isNullOrUndefined(value) || value === '') return nullText.value ?? ''
       if (props.inputTextdHandler) {
         return props.inputTextdHandler(value)
@@ -586,9 +646,6 @@ export default defineComponent({
           case InputType.time:
             text = hison.utils.getDateWithFormat(value, format.value ?? hison.getTimeFormat())
             break;
-          case InputType.checkbox:
-            text = modelValue.value ? props.checkedText : props.uncheckedText
-            break;
           case InputType.select:
             const selectEl = inputRef.value as HTMLSelectElement
             const selectedIndex = selectEl.selectedIndex
@@ -601,7 +658,7 @@ export default defineComponent({
       }
       return text
     }
-    const spanText = ref('')// 최초에 mount시 spanText를 update처리함
+    const spanText = ref('')
     const onTextInputFocus = (e: Event) => {
       if(editMode.value === EditMode.editable) editing.value = true
       nextTick(() => {
@@ -625,6 +682,7 @@ export default defineComponent({
       isModified.value = true
       notifyInputGroupStatus?.(id, modelValue.value)
       emit('input', e, inputMethods.value, modelValue.value)
+      emit('update:modelValue', modelValue.value)
     }
     const onFocus = (e: FocusEvent) => {
       oldValue.value = modelValue.value
@@ -640,21 +698,16 @@ export default defineComponent({
       emit('blur', e, inputMethods.value)
     }
     const updateValue = (value: any, doComputeValue = true, doCallChangeEmit = false) => {
-      if(doComputeValue) modelValue.value = computeValue(value)
-      else modelValue.value = value
-      inputRef.value!.value = modelValue.value
+      modelValue.value = doComputeValue ? computeValue(value) : value
       spanText.value = computeSpanText(modelValue.value)
 
-      switch (inputType.value) {
-        case InputType.checkbox:
-          (inputRef.value as HTMLInputElement).checked = modelValue.value
-          break;
-      
-        default:
-          break;
+      if (inputType.value === InputType.checkbox || inputType.value === InputType.radio) {
+        (inputRef.value as HTMLInputElement).checked = !!modelValue.value
+      } else {
+        ;(inputRef.value as any).value = modelValue.value
       }
 
-      if(doCallChangeEmit) emit('change', oldValue.value, modelValue.value, inputMethods.value)
+      if (doCallChangeEmit) emit('change', oldValue.value, modelValue.value, inputMethods.value)
     }
 
     const onRangeChange = (e: Event) => {
@@ -662,27 +715,39 @@ export default defineComponent({
       updateValue(target.value, false, true)
       isModified.value = true
       notifyInputGroupStatus?.(id, modelValue.value)
+      emit('update:modelValue', modelValue.value)
     }
     const onColorChange = (e: Event) => {
       const target = e.target as HTMLSelectElement
       updateValue(target.value, false, true)
-      console.log('target.value',target.value)
-      console.log('modelValue.value',modelValue.value)
-      console.log('inputValue.value',inputValue.value)
       isModified.value = true
       notifyInputGroupStatus?.(id, modelValue.value)
+      emit('update:modelValue', modelValue.value)
     }
     const onCheckboxChange = (e: Event) => {
       const target = e.target as HTMLInputElement
       updateValue(target.checked, false, true)
       isModified.value = true
       notifyInputGroupStatus?.(id, modelValue.value)
+      emit('update:modelValue', modelValue.value)
+    }
+    const onRadioChange = (e: Event) => {
+      const target = e.target as HTMLInputElement
+      updateValue(target.checked, false, true)
+      isModified.value = true
+      if (notifyInputGroupStatus && name.value) {
+        notifyInputGroupStatus(name.value, target.checked ? id : null)
+      } else {
+        notifyInputGroupStatus?.(id, modelValue.value)
+      }
+      emit('update:modelValue', modelValue.value)
     }
     const onSelectChange = (e: Event) => {
       const target = e.target as HTMLSelectElement
       updateValue(target.value, false, true)
       isModified.value = true
       notifyInputGroupStatus?.(id, modelValue.value)
+      emit('update:modelValue', modelValue.value)
     }
     const onKeydown = (e: KeyboardEvent) => {
       if (readonly.value && (e.code === 'Space' || e.code === 'Enter')) {
@@ -694,7 +759,7 @@ export default defineComponent({
     }
 
     const mount = () => {
-      if (hisonCloser.component.inputList[id]) throw new Error(`[Hisonvue] input id attribute was duplicated.`)
+      if (hisonCloser.component.inputList[id] && hisonCloser.component.inputList[id].isHisonvueComponent) console.warn(`[Hisonvue] The input ID is at risk of being duplicated. ${id}`)
       registerReloadable(reloadId, () => {
         unmount()
         nextTick(mount)
@@ -704,14 +769,25 @@ export default defineComponent({
       refreshResponsiveClassList()
       if(inputTextRef.value) addInputTextCssEvent(inputTextRef.value)
       if(inputType.value !== InputType.checkbox
+        && inputType.value !== InputType.radio
         && inputType.value !== InputType.range
         && inputType.value !== InputType.color
       ) addInputCssEvent(inputRef.value!)
 
       updateValue(modelValue.value, false)
       inputMethods.value = {
+        isHisonvueComponent: true,
         getId : () => id,
         getType : () => 'input',
+        getName : () => name.value,
+        setName : (val: string) => {
+          if (val === name.value) return
+          const prev = name.value
+          name.value = val
+          if (inputType.value === InputType.radio) {
+            radioMembershipChanged?.(id, prev, val, !!modelValue.value)
+          }
+        },
         getText : () => { return spanText.value },
         getValue : () => { return modelValue.value },
         setValue : (val: any) => {
@@ -823,6 +899,7 @@ export default defineComponent({
       unregisterReloadable(reloadId)
       delete hisonCloser.component.inputList[id]
       if(inputType.value !== InputType.checkbox
+        && inputType.value !== InputType.radio
         && inputType.value !== InputType.range
         && inputType.value !== InputType.color
       ) removeInputCssEvent(inputRef.value!)
@@ -836,10 +913,42 @@ export default defineComponent({
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
     })
-
+    
     watch(() => props.modelValue, (newVal) => {
-      updateValue(newVal)
+      updateValue(newVal, false)
     })
+
+    watch(() => props.name, (v) => {
+      if (v && v !== name.value) {
+        const prev = name.value
+        name.value = v
+        if (inputType.value === InputType.radio) {
+          radioMembershipChanged?.(id, prev, v, !!modelValue.value)
+        }
+      }
+    })
+
+    watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
+    watch(() => props.title, v => { const s = v ?? ''; if (s !== title.value) title.value = s })
+    watch(() => props.nullText, v => { const s = v ?? ''; if (s !== nullText.value) { nullText.value = s; if (isNullOrUndefined(modelValue.value) || modelValue.value === '') spanText.value = computeSpanText(modelValue.value) } })
+    watch(() => props.inputType, v => { if (v && v !== inputType.value) { inputType.value = v as any; if (props.textAlign == null) textAlign.value = computeDefaultTextAlign(inputType.value); updateValue(modelValue.value) } })
+    watch(() => props.format, v => { const s = v ?? null; if (s !== format.value) { format.value = s; updateValue(modelValue.value) } })
+    watch(() => props.maxNumber, v => { const n = hison.utils.isNumeric(v) ? Number(v) : null; if (n !== maxNumber.value) { maxNumber.value = n; if (inputType.value === InputType.number) updateValue(modelValue.value) } })
+    watch(() => props.minNumber, v => { const n = hison.utils.isNumeric(v) ? Number(v) : null; if (n !== minNumber.value) { minNumber.value = n; if (inputType.value === InputType.number) updateValue(modelValue.value) } })
+    watch(() => props.roundNumber, v => { const n = (hison.utils.isInteger(v) || hison.utils.isNegativeInteger(v) || v === '0') ? Number(v) : null; if (n !== roundNumber.value) { roundNumber.value = n; if (inputType.value === InputType.number) updateValue(modelValue.value) } })
+    watch(() => props.maxLength, v => { const n = hison.utils.isPositiveInteger(v) ? Number(v) : null; if (n !== maxLength.value) { maxLength.value = n; updateValue(modelValue.value) } })
+    watch(() => props.maxByte, v => { const n = hison.utils.isPositiveInteger(v) ? Number(v) : null; if (n !== maxByte.value) { maxByte.value = n; updateValue(modelValue.value) } })
+    watch(() => props.textAlign, v => { if (v && v !== textAlign.value && (v === TextAlign.left || v === TextAlign.center || v === TextAlign.right)) textAlign.value = v })
+    watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
+    watch(() => props.placeholder, v => { const s = v ?? ''; if (s !== placeholder.value) placeholder.value = s })
+    watch(() => props.required, v => { const b = !!v; if (b !== required.value) required.value = b })
+    watch(() => props.fontBold, v => { const b = !!v; if (b !== fontBold.value) fontBold.value = b })
+    watch(() => props.fontItalic, v => { const b = !!v; if (b !== fontItalic.value) fontItalic.value = b })
+    watch(() => props.fontThruline, v => { const b = !!v; if (b !== fontThruline.value) fontThruline.value = b })
+    watch(() => props.fontUnderline, v => { const b = !!v; if (b !== fontUnderline.value) fontUnderline.value = b })
+    watch(() => props.editMode, v => { if (v && v !== editMode.value) editMode.value = v as any })
+    watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
+    watch(() => props.class, () => { refreshResponsiveClassList() })
 
     return {
         inputRef,
@@ -849,6 +958,7 @@ export default defineComponent({
         editing,
         props,
         id,
+        nameAttr,
         responsiveClassList,
         visibleClass,
         editModeClassList,
@@ -877,6 +987,7 @@ export default defineComponent({
         onRangeChange,
         onColorChange,
         onCheckboxChange,
+        onRadioChange,
         onSelectChange,
         onKeydown,
     }
