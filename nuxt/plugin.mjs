@@ -1,4 +1,3 @@
-// nuxt/plugin.mjs
 import { defineNuxtPlugin, useAppConfig, useRuntimeConfig } from '#app'
 import { hisonvue, getDefaultHisonConfig } from 'hisonvue'
 import 'hisonvue/style.css'
