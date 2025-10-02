@@ -1,23 +1,19 @@
 <template>
-  <div :class="['hison-layer-host', visibleClass]">
-    <!-- 앵커: 타겟과 배지를 같은 grid 셀(1/1)에 겹쳐 올림 -->
     <span
       ref="anchorRef"
-      :class="['hison-baggie-anchor', ...responsiveClassList]"
-      @click.stop
-      @mousedown.stop="$emit('mousedown', $event, baggieMethods)"
-      @mouseup.stop="$emit('mouseup', $event, baggieMethods)"
-      @mouseover.stop="$emit('mouseover', $event, baggieMethods)"
-      @mouseout.stop="$emit('mouseout', $event, baggieMethods)"
+      :class="['hison-baggie-anchor', visibleClass, ...responsiveClassList]"
+      :style="anchorStyle"
+      @mousedown="$emit('mousedown', $event, baggieMethods)"
+      @mouseup="$emit('mouseup', $event, baggieMethods)"
+      @mouseover="$emit('mouseover', $event, baggieMethods)"
+      @mouseout="$emit('mouseout', $event, baggieMethods)"
     >
-      <!-- 타겟 슬롯: 소비자가 넣는 원본 요소/컴포넌트 -->
       <span class="hison-baggie-target">
         <slot />
       </span>
 
-      <!-- 배지 박스: 같은 셀 위에 겹침 -->
       <div
-        v-if="visible"
+        v-if="baggieVisible"
         ref="baggieRef"
         :class="[
           'hison-baggie',
@@ -25,14 +21,15 @@
           backgroundTypeClass,
           borderClass,
           shapeClass,
+          baggieVisibleClass,
           buttonEnabled ? 'hison-baggie-button' : null,
         ]"
         :style="[badgeStyle, props.style]"
         role="status"
         :tabindex="tabIndex ?? undefined"
-        @click.stop="onClick"
-        @keydown.enter.stop.prevent="onKeyActivate"
-        @keydown.space.stop.prevent="onKeyActivate"
+        @click="onClick"
+        @keydown.enter.prevent="onKeyActivate"
+        @keydown.space.prevent="onKeyActivate"
       >
         <template v-if="$slots.badge">
           <slot name="badge" />
@@ -42,7 +39,6 @@
         </template>
       </div>
     </span>
-  </div>
 </template>
 
 <script lang="ts">
@@ -78,6 +74,7 @@ export default defineComponent({
     const baggieRef  = ref<HTMLDivElement | null>(null)
 
     const visible   = ref<boolean>(props.visible)
+    const baggieVisible   = ref<boolean>(props.baggieVisible)
     const zIndex    = ref<number>(props.zIndex ?? 1000)
     const position  = ref<ScreenPositionValue>(props.position as ScreenPositionValue)
 
@@ -91,6 +88,7 @@ export default defineComponent({
     const buttonEnabled = ref<boolean>(props.buttonEnabled ?? false)
 
     const visibleClass = computed(() => (visible.value ? '' : 'hison-display-none'))
+    const baggieVisibleClass = computed(() => (baggieVisible.value ? '' : 'hison-display-none'))
     const borderClass = computed(() => (border.value ? 'hison-border' : ''))
     const backgroundTypeClass = computed(() => {
       switch (backgroundType.value) {
@@ -105,7 +103,6 @@ export default defineComponent({
       return 'hison-baggie-shape-rounded'
     })
 
-    // responsive classes (size, color)
     const responsiveClassList = ref<string[]>([])
     const refreshResponsiveClassList = () => {
       responsiveClassList.value = extractResponsiveClasses(toClassString(props.class) || '', device.value)
@@ -114,9 +111,9 @@ export default defineComponent({
     }
 
     const positionClass = computed(() => `hison-baggie-pos-${position.value}`)
-    const badgeStyle = computed(() => ({ zIndex: zIndex.value }))
+    const anchorStyle = computed(() => ({ zIndex: zIndex.value }))
+    const badgeStyle = computed(() => ({ zIndex: zIndex.value + 1 }))
 
-    // 버튼형 인터랙션(선택적)
     const attachButtonCssEvent = (add = true) => {
       const el = baggieRef.value
       if (!el) return
@@ -125,6 +122,7 @@ export default defineComponent({
     }
 
     const onClick = (e: MouseEvent) => {
+      if (!buttonEnabled.value) return
       emit('click', e, unref(baggieMethods)!)
     }
     const onKeyActivate = () => {
@@ -132,12 +130,10 @@ export default defineComponent({
       onClick(new MouseEvent('click'))
     }
 
-    // methods
     const baggieMethods = ref<HBaggieMethods | null>(null)
 
     const mount = () => {
-      if (!hisonCloser.component.baggieList) hisonCloser.component.baggieList = {} as any
-      if (hisonCloser.component.baggieList[id]) throw new Error('[Hisonvue] baggie id attribute was duplicated.')
+      if (hisonCloser.component.baggieList[id] && hisonCloser.component.baggieList[id].isHisonvueComponent) console.warn(`[Hisonvue] The baggie ID is at risk of being duplicated. ${id}`)
       registerReloadable(reloadId, () => {
         unmount()
         nextTick(mount)
@@ -147,10 +143,13 @@ export default defineComponent({
       nextTick(() => attachButtonCssEvent(true))
 
       baggieMethods.value = {
+        isHisonvueComponent: true,
         getId: () => id,
         getType: () => 'baggie',
         isVisible: () => visible.value,
         setVisible: (v: boolean) => { visible.value = v },
+        isBaggieVisible: () => baggieVisible.value,
+        setBaggieVisible: (v: boolean) => { baggieVisible.value = v },
         getZIndex: () => zIndex.value,
         setZIndex: (v: number) => { zIndex.value = v },
         getPosition: () => position.value,
@@ -178,7 +177,7 @@ export default defineComponent({
       unregisterReloadable(reloadId)
       const el = baggieRef.value
       if (el) removeButtonCssEvent(el)
-      if (hisonCloser.component.baggieList) delete hisonCloser.component.baggieList[id]
+      delete hisonCloser.component.baggieList[id]
     }
 
     onMounted(mount)
@@ -189,27 +188,34 @@ export default defineComponent({
       emit('responsive-change', newDevice)
     })
 
+    watch(() => props.visible, v => { if (v !== visible.value) visible.value = !!v })
+    watch(() => props.baggieVisible, v => { if (v !== baggieVisible.value) { baggieVisible.value = !!v; nextTick(() => attachButtonCssEvent(true)) } })
+    watch(() => props.zIndex, v => { const n = Number(v); if (Number.isFinite(n) && n !== zIndex.value) zIndex.value = n })
+    watch(() => props.position, v => { if (typeof v === 'string' && v !== position.value) position.value = v as ScreenPositionValue })
+    watch(() => props.text, v => { const t = v ?? ''; if (t !== text.value) text.value = t })
+    watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
+    watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
+    watch(() => props.shape, v => { if ((v === 'square' || v === 'rounded' || v === 'circle') && v !== shape.value) shape.value = v })
+    watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
+    watch(() => props.buttonEnabled, v => { const nv = !!v; if (nv !== buttonEnabled.value) { buttonEnabled.value = nv; nextTick(() => attachButtonCssEvent(true)) } })
+    watch(() => props.class, () => refreshResponsiveClassList())
+
     return {
       id,
       props,
       anchorRef,
       baggieRef,
-
-      // state out
       text,
-
-      // classes/styles
       visibleClass,
+      baggieVisibleClass,
       responsiveClassList,
       backgroundTypeClass,
       borderClass,
       shapeClass,
       positionClass,
+      anchorStyle,
       badgeStyle,
-
-      // methods for slot/consumers
       baggieMethods: computed(() => unref(baggieMethods)),
-
       tabIndex,
       buttonEnabled,
       onClick,
@@ -219,78 +225,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-/* Anchor: 타겟과 배지를 같은 grid 셀(1/1)에 겹쳐놓기 */
-.hison-baggie-anchor {
-  display: inline-grid;
-  position: relative;
-  vertical-align: middle;
-}
-.hison-baggie-target { grid-area: 1 / 1; }
-
-/* 배지 박스: 같은 셀 위에 뜸 */
-.hison-baggie {
-  grid-area: 1 / 1;
-  display: inline-grid;
-  place-items: center;
-  min-width: 1.25rem;
-  min-height: 1.25rem;
-  padding: 0.2rem 0.4rem;
-  box-sizing: border-box;
-  font-family: var(--hison-font-family);
-  line-height: 1;
-  white-space: nowrap;
-  user-select: none;
-  pointer-events: auto;
-}
-
-/* 모양 */
-.hison-baggie-shape-square  { border-radius: 3px; }
-.hison-baggie-shape-rounded { border-radius: 8px; }
-.hison-baggie-shape-circle  { border-radius: 999px; padding: 0.25rem; min-width: 1.25rem; min-height: 1.25rem; }
-
-/* 텍스트 */
-.hison-baggie-text { display: inline-block; text-align: center; }
-
-/* 8방향 포지션 + 살짝 겹치기(translate) */
-.hison-baggie-pos-top-left      { place-self: start start;   transform: translate(-35%, -35%); }
-.hison-baggie-pos-top-center    { place-self: start center;  transform: translate(0,   -35%); }
-.hison-baggie-pos-top-right     { place-self: start end;     transform: translate(35%, -35%); }
-
-.hison-baggie-pos-middle-left   { place-self: center start;  transform: translate(-35%, 0); }
-.hison-baggie-pos-middle-right  { place-self: center end;    transform: translate(35%, 0); }
-
-.hison-baggie-pos-bottom-left   { place-self: end start;     transform: translate(-35%, 35%); }
-.hison-baggie-pos-bottom-center { place-self: end center;    transform: translate(0,    35%); }
-.hison-baggie-pos-bottom-right  { place-self: end end;       transform: translate(35%,  35%); }
-
-/* 색/배경 (HLabel 규칙 재사용) */
-.hison-color-primary > .hison-baggie.hison-bg-filled { background-color: var(--hison-primary-buttonColor); color: var(--hison-primary-filledTextColor); }
-.hison-color-muted   > .hison-baggie.hison-bg-filled { background-color: var(--hison-muted-buttonColor); color: var(--hison-muted-filledTextColor); }
-.hison-color-info    > .hison-baggie.hison-bg-filled { background-color: var(--hison-info-buttonColor); color: var(--hison-info-filledTextColor); }
-.hison-color-success > .hison-baggie.hison-bg-filled { background-color: var(--hison-success-buttonColor); color: var(--hison-success-filledTextColor); }
-.hison-color-danger  > .hison-baggie.hison-bg-filled { background-color: var(--hison-danger-buttonColor); color: var(--hison-danger-filledTextColor); }
-.hison-color-warning > .hison-baggie.hison-bg-filled { background-color: var(--hison-warning-buttonColor); color: var(--hison-warning-filledTextColor); }
-
-.hison-color-primary > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-primary-buttonColor); }
-.hison-color-muted   > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-muted-buttonColor); }
-.hison-color-info    > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-info-buttonColor); }
-.hison-color-success > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-success-buttonColor); }
-.hison-color-danger  > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-danger-buttonColor); }
-.hison-color-warning > .hison-baggie.hison-bg-empty { background-color: var(--hison-emptyColor); color: var(--hison-warning-buttonColor); }
-
-.hison-color-primary > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-primary-buttonColor); }
-.hison-color-muted   > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-muted-buttonColor); }
-.hison-color-info    > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-info-buttonColor); }
-.hison-color-success > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-success-buttonColor); }
-.hison-color-danger  > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-danger-buttonColor); }
-.hison-color-warning > .hison-baggie.hison-bg-transparent { background-color: transparent; color: var(--hison-warning-buttonColor); }
-
-/* border shadow (라벨 규칙 재사용) */
-.hison-color-primary > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-primary-shadowColor); }
-.hison-color-muted   > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-muted-shadowColor); }
-.hison-color-info    > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-info-shadowColor); }
-.hison-color-success > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-success-shadowColor); }
-.hison-color-danger  > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-danger-shadowColor); }
-.hison-color-warning > .hison-baggie.hison-border { box-shadow: 0 1px 2px 0 var(--hison-warning-shadowColor); }
-</style>
+<style scoped></style>
