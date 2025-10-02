@@ -108,7 +108,7 @@ export default defineComponent({
         }
 
         const mount = () => {
-            if (hisonCloser.component.gapList[id]) throw new Error('[Hisonvue] gap id attribute was duplicated.')
+            if (hisonCloser.component.gapList[id] && hisonCloser.component.gapList[id].isHisonvueComponent) console.warn(`[Hisonvue] The gap ID is at risk of being duplicated. ${id}`)
 
             registerReloadable(reloadId, () => {
                 unmount()
@@ -118,6 +118,7 @@ export default defineComponent({
             refreshResponsiveClassList()
 
             gapMethods.value = {
+                isHisonvueComponent: true,
                 getId: () => id,
                 getType: () => 'gap',
                 isVisible: () => visible.value,
@@ -150,9 +151,7 @@ export default defineComponent({
 
         const unmount = () => {
             unregisterReloadable(reloadId)
-            if (hisonCloser.component.gapList) {
-                delete hisonCloser.component.gapList[id]
-            }
+            delete hisonCloser.component.gapList[id]
         }
 
         onMounted(mount)
@@ -162,6 +161,15 @@ export default defineComponent({
             refreshResponsiveClassList()
             emit('responsive-change', d)
         })
+
+        watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
+        watch(() => props.border, v => { const nv = !!v; if (nv !== border.value) border.value = nv })
+        watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
+        watch(() => props.line, v => { if ((v === 'none' || v === 'horizontal' || v === 'vertical') && v !== line.value) line.value = v })
+        watch(() => props.lineStyle, v => { if (['solid','dashed','dotted','double','groove','ridge','inset','outset'].includes(v as any) && v !== lineStyle.value) lineStyle.value = v as HGapLineStyleValue })
+        watch(() => props.lineWidth, v => { const nv = (typeof v === 'number' && Number.isFinite(v) && v >= 0) ? v : (typeof v === 'string' ? v : lineWidthRaw.value); if (nv !== lineWidthRaw.value) lineWidthRaw.value = nv as any })
+        watch(() => props.lineColor, v => { const s = (v ?? '').toString(); if (s !== lineColor.value) lineColor.value = s })
+        watch(() => props.class, () => { refreshResponsiveClassList() })
 
         return {
         gapRef,
