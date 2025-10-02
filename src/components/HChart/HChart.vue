@@ -42,7 +42,6 @@ export default defineComponent({
         const isPending = ref(false)
         const loadDelay = ref(props.loadDelay ?? 500)
 
-        // 타이밍/생명주기 가드
         let timerId: number | null = null
         let isAlive = true
         let isUnmounting = false
@@ -56,7 +55,6 @@ export default defineComponent({
             addComponentNameToClass(responsiveClassList.value, 'color', 'primary')
         }
 
-        // Chart data deep color 변환
         const resolveChartColors = (input: any): any => {
             if (Array.isArray(input)) {
                 return input.map((item) => {
@@ -98,7 +96,6 @@ export default defineComponent({
             return options
         }
 
-        // 실제로 chart를 생성
         function mountChart() {
             if (!isAlive || isUnmounting) return
             if (!canvasRef.value) {
@@ -111,8 +108,8 @@ export default defineComponent({
                 data: getSafeChartData(resolveChartColors(toRaw(props.modelValue))),
                 options: getSafeChartOptions(resolveChartColors(toRaw(props.options))),
             }))
-            // ChartInstance 확장
             const hChartInstance = chartInstance.value as HChartInstance
+            hChartInstance.isHisonvueComponent = true
             hChartInstance.getId = () => id
             hChartInstance.getType = () => 'chart'
             hChartInstance.isVisible = () => visible.value
@@ -120,28 +117,25 @@ export default defineComponent({
             hChartInstance.getLoadDelay = () => loadDelay.value
             hChartInstance.setLoadDelay = (ms: number) => { loadDelay.value = ms }
             hChartInstance.reload = () => reloadHisonComponent(reloadId)
+            if (hisonCloser.component.chartList[id] && hisonCloser.component.chartList[id].isHisonvueComponent) console.warn(`[Hisonvue] The chart ID is at risk of being duplicated. ${id}`)
             hisonCloser.component.chartList[id] = hChartInstance
             emit('mounted', hisonCloser.component.chartList[id])
         }
 
-        // 안전한 destroy
         const unmount = async () => {
             isUnmounting = true
 
-            // 타이머 정리
             if (timerId !== null) {
                 clearTimeout(timerId)
                 timerId = null
             }
 
-            // 업데이트/옵션 재할당 없이 즉시 정지 후 파괴
             const chart = chartInstance.value
             if (chart) {
                 try {
                     try { (chart as any).stop?.() } catch {}
                     chart.destroy()
                 } catch {
-                    // 파괴 중 에러 무시
                 } finally {
                     chartInstance.value = null
                 }
@@ -153,13 +147,11 @@ export default defineComponent({
             await nextTick()
         }
 
-        // 안전한 mount (언제든 재사용)
         const mount = async () => {
             if (!isPending.value) return
             if (!isAlive || isUnmounting) return
             isPending.value = false
             await nextTick()
-            // 마운트 타이밍: loadDelay + RAF 2회
             timerId = window.setTimeout(() => {
                 if (!isAlive || isUnmounting) return
                 requestAnimationFrame(() => {
@@ -170,7 +162,6 @@ export default defineComponent({
             }, loadDelay.value)
         }
 
-        // 반드시 destroy → DOM flush → mount 순서
         registerReloadable(reloadId, async () => {
             await unmount()
             await mount()
@@ -206,7 +197,6 @@ export default defineComponent({
             emit('responsive-change', device.value)
         })
 
-        // modelValue 변경 감지 및 유효성 검사
         watch(() => props.modelValue, (newVal) => {
             if (
                 isPending.value ||
@@ -220,7 +210,6 @@ export default defineComponent({
             chartInstance.value.update('none')
         }, { deep: true })
 
-        // options 변경 감지 및 유효성 검사
         watch(() => props.options, (newVal) => {
             if (
                 isPending.value ||
@@ -232,6 +221,11 @@ export default defineComponent({
             chartInstance.value.options = getSafeChartOptions(resolveChartColors(toRaw(newVal)))
             chartInstance.value.update('none')
         }, { deep: true })
+
+        watch(() => props.visible, v => { if (v !== visible.value) visible.value = !!v })
+        watch(() => props.loadDelay, v => { const n = Number(v); if (Number.isFinite(n) && n >= 0 && n !== loadDelay.value) loadDelay.value = n })
+        watch(() => props.class, () => refreshResponsiveClassList())
+        watch(() => props.type, () => { if (!isUnmounting) reloadHisonComponent(reloadId) })
 
         return {
             canvasRef,
@@ -245,5 +239,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
