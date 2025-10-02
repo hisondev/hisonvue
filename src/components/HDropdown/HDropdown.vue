@@ -85,7 +85,7 @@ import {
   addComponentNameToClass
 } from '../../utils'
 import { useDevice } from '../../core'
-import { DropdownTrigger, EditMode, hisonCloser, TextAlign } from '../..'
+import { DropdownTrigger, EditMode, hisonCloser, TextAlign, TextAlignValue } from '../..'
 import type { HDropdownMethods, HDropdownModel, HDropdownOption } from '../../types'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
 
@@ -114,10 +114,9 @@ export default defineComponent({
     const isReadonly = computed(() => editMode.value === EditMode.readonly)
     const placeholder = ref(props.placeholder || '')
     const trigger     = ref(props.trigger)
-    const textAlign = ref<TextAlign>((props.textAlign as TextAlign) ?? TextAlign.left)
+    const textAlign = ref<TextAlignValue>((props.textAlign as TextAlign) ?? TextAlign.left)
     const textAlignStyle = computed(() => ({ textAlign: textAlign.value }))
 
-    // ✅ Animation controls (Accordion과 동일한 인터페이스)
     const animate  = ref(props.animate ?? true)
     const duration = ref(props.duration ?? 500)
     const easing   = ref(props.easing ?? 'ease')
@@ -126,7 +125,6 @@ export default defineComponent({
       props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
     )
 
-    // 인스턴스별 CSS 변수
     const rootInlineStyle = computed(() => ({
       '--hdd-duration': `${duration.value}ms`,
       '--hdd-easing': easing.value
@@ -148,7 +146,6 @@ export default defineComponent({
       return found?.label ?? ''
     })
 
-    // 메뉴 내부 스크롤은 inner에서 처리 (grid 애니메이션과 충돌 방지)
     const maxHeight = ref<number>(props.maxHeight ?? 240)
     const menuInlineStyle = computed(() => ({
       maxHeight: `${maxHeight.value}px`,
@@ -180,7 +177,6 @@ export default defineComponent({
     const close = (e?: Event | null) => {
       if (!isOpen.value) return
 
-      // 🔒 메뉴 내부 포커스가 남아있으면 토글로 이동
       const active = document.activeElement as HTMLElement | null
       const menuEl = menuRef.value
       if (menuEl && active && menuEl.contains(active)) {
@@ -218,7 +214,7 @@ export default defineComponent({
     const dropdownMethods = ref<HDropdownMethods | null>(null)
 
     const mount = () => {
-      if (hisonCloser.component.dropdownList[id]) throw new Error('[Hisonvue] dropdown id attribute was duplicated.')
+      if (hisonCloser.component.dropdownList[id] && hisonCloser.component.dropdownList[id].isHisonvueComponent) console.warn(`[Hisonvue] The dropdown ID is at risk of being duplicated. ${id}`)
       registerReloadable(reloadId, () => {
         unmount()
         nextTick(mount)
@@ -227,6 +223,7 @@ export default defineComponent({
       refreshResponsiveClassList()
 
       dropdownMethods.value = {
+        isHisonvueComponent: true,
         getId: () => id,
         getType: () => 'dropdown',
         isVisible: () => visible.value,
@@ -256,7 +253,6 @@ export default defineComponent({
             textAlign.value = v
           }
         },
-        // Animation runtime controls (Accordion과 동일)
         getAnimate: () => animate.value,
         setAnimate: (v: boolean) => { animate.value = !!v },
         getDuration: () => duration.value,
@@ -302,6 +298,19 @@ export default defineComponent({
       emit('responsive-change', newDevice)
     })
 
+    watch(() => props.visible, v => { if (!!v !== visible.value) visible.value = !!v })
+    watch(() => props.editMode, v => { if (v && v !== editMode.value) editMode.value = v as any })
+    watch(() => props.placeholder, v => { const t = v ?? ''; if (t !== placeholder.value) placeholder.value = t })
+    watch(() => props.trigger, v => { if (v && v !== trigger.value) trigger.value = v as any })
+    watch(() => props.textAlign, v => { if ((v === TextAlign.left || v === TextAlign.center || v === TextAlign.right) && v !== textAlign.value) textAlign.value = v })
+    watch(() => props.animate, v => { const nv = !!v; if (nv !== animate.value) animate.value = nv })
+    watch(() => props.duration, v => { const n = Number(v); if (Number.isFinite(n) && n >= 0 && n !== duration.value) duration.value = n })
+    watch(() => props.easing, v => { const s = typeof v === 'string' ? v : 'ease'; if (s !== easing.value) easing.value = s })
+    watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
+    watch(() => props.maxHeight, v => { const n = Number(v); if (Number.isFinite(n) && n >= 0 && n !== maxHeight.value) maxHeight.value = n })
+    watch(() => props.closeOnSelect, v => { const nv = !!v; if (nv !== closeOnSelect.value) closeOnSelect.value = nv })
+    watch(() => props.class, () => { refreshResponsiveClassList() })
+
     return {
       toggleRef, menuRef,
       props,
@@ -321,5 +330,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
