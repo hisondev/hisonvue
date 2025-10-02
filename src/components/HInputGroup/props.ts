@@ -1,6 +1,6 @@
 import { PropType } from "vue";
 import { DataStatus, EditMode } from "../../enums";
-import type { DataStatusValue } from "../../enums"; // 위에서 추가한 타입
+import type { DataStatusValue } from "../../enums";
 import { DATA_STATUS_VALUES, EDIT_MODE_VALUES } from "../../enums";
 
 export const inputGroupProps = {
