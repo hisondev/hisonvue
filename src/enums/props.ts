@@ -1,5 +1,3 @@
-import { ColorSet, DateFormat, MonthFormat, SelectionPolicy, VerticalAlign as GridVerticalAlign } from "vanillagrid2"
-
 export const BACK_IMAGE_ALIGN_VALUES = ['left', 'center', 'right'] as const
 export type BackImageAlignValue = 'left' | 'center' | 'right'
 export enum BackImageAlign {
@@ -113,6 +111,8 @@ export enum HGapLineStyle {
   outset = 'outset'
 }
 
+export const INPUT_TYPE_VALUES = ['text', 'mask', 'number', 'digit', 'date', 'month', 'time', 'email', 'password', 'checkbox', 'range', 'color', 'textarea', 'select', 'radio'] as const
+export type InputTypeValue = typeof INPUT_TYPE_VALUES[number]
 export enum InputType {
     text = 'text',
     mask = 'mask',
@@ -128,14 +128,8 @@ export enum InputType {
     color = 'color',
     textarea = 'textarea',
     select = 'select',
+    radio = 'radio',
 }
-export const INPUT_TYPE_VALUES = [
-  InputType.text, InputType.mask, InputType.number, InputType.digit,
-  InputType.date, InputType.month, InputType.time, InputType.email,
-  InputType.password, InputType.checkbox, InputType.range, InputType.color,
-  InputType.textarea, InputType.select,
-] as const
-export type InputTypeValue = typeof INPUT_TYPE_VALUES[number]
 
 export const EDIT_MODE_VALUES = ['editable', 'disable', 'readonly'] as const
 export type EditModeValue = typeof EDIT_MODE_VALUES[number]
@@ -161,61 +155,68 @@ export enum TextAlign {
 }
 
 export const SELECTION_POLICY_VALUES = [
-  SelectionPolicy.single,
-  SelectionPolicy.range,
-  SelectionPolicy.none,
+  'single',
+  'range',
+  'none',
 ] as const
 
 export const GRID_DATE_FORMAT_VALUES = [
-  DateFormat["yyyy-mm-dd"],
-  DateFormat["yyyy/mm/dd"],
-  DateFormat["yyyy. mm. dd"],
-  DateFormat["yyyymmdd"],
-  DateFormat["mm-dd-yyyy"],
-  DateFormat["mm/dd/yyyy"],
-  DateFormat["mm. dd. yyyy"],
-  DateFormat["mmddyyyy"],
-  DateFormat["dd-mm-yyyy"],
-  DateFormat["dd/mm/yyyy"],
-  DateFormat["dd. mm. yyyy"],
-  DateFormat["ddmmyyyy"],
+  'yyyy-mm-dd',
+  'yyyy/mm/dd',
+  'yyyy. mm. dd',
+  'yyyymmdd',
+  'mm-dd-yyyy',
+  'mm/dd/yyyy',
+  'mm. dd. yyyy',
+  'mmddyyyy',
+  'dd-mm-yyyy',
+  'dd/mm/yyyy',
+  'dd. mm. yyyy',
+  'ddmmyyyy',
 ] as const
 
 export const GRID_MONTH_FORMAT_VALUES = [
-  MonthFormat["yyyymm"],
-  MonthFormat["yyyy-mm"],
-  MonthFormat["yyyy/mm"],
-  MonthFormat["yyyy. mm"],
-  MonthFormat["mmyyyy"],
-  MonthFormat["mm-yyyy"],
-  MonthFormat["mm/yyyy"],
-  MonthFormat["mm. yyyy"],
+  'yyyymm',
+  'yyyy-mm',
+  'yyyy/mm',
+  'yyyy. mm',
+  'mmyyyy',
+  'mm-yyyy',
+  'mm/yyyy',
+  'mm. yyyy',
 ] as const
 
 
+export const GRID_ALIGN_VALUES = [
+  'left',
+  'center',
+  'right',
+] as const
+
 export const GRID_VERTICAL_ALIGN_VALUES = [
-  GridVerticalAlign.top,
-  GridVerticalAlign.center,
-  GridVerticalAlign.bottom,
+  'top',
+  'center',
+  'bottom',
 ] as const
 
 export const COLOR_SET_VALUES = [
-  ColorSet.skyblue,
-  ColorSet.blue,
-  ColorSet.light_red,
-  ColorSet.red,
-  ColorSet.light_green,
-  ColorSet.green,
-  ColorSet.orange,
-  ColorSet.yellow,
-  ColorSet.purple,
-  ColorSet.brown,
-  ColorSet.black,
+  'skyblue',
+  'blue',
+  'light_red',
+  'red',
+  'light_green',
+  'green',
+  'orange',
+  'yellow',
+  'purple',
+  'brown',
+  'black',
 ] as const
 
 export type SelectionPolicyValue = typeof SELECTION_POLICY_VALUES[number]
 export type GridDateFormatValue = typeof GRID_DATE_FORMAT_VALUES[number]
 export type GridMonthFormatValue = typeof GRID_MONTH_FORMAT_VALUES[number]
+export type GridAlignValue = typeof GRID_ALIGN_VALUES[number]
 export type GridVerticalAlignValue = typeof GRID_VERTICAL_ALIGN_VALUES[number]
 
 export const HEX_COLOR_RE = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i
