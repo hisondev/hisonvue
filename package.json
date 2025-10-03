@@ -1,6 +1,6 @@
 {
   "name": "hisonvue",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "./dist/hisonvue.cjs.js",
   "module": "./dist/hisonvue.es.js",
   "types": "./dist/hisonvue.d.ts",

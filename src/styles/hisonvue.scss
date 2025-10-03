@@ -1557,7 +1557,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 ////////////////////////////////////////////////////////////////////////////////////////////////
 /* HLabel */
 .hison-label {
-    display: inline-flex;
+    display: block;
     align-items: center;
     border: none;
     box-sizing: border-box;
