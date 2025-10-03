@@ -9,4 +9,7 @@ export default defineNuxtConfig({
   plugins: ['@/plugins/hisonvue.client.ts'],
   modules: ['hisonvue/nuxt'],
   components: true,
+  css: [
+    '@/assets/css/style.css',
+  ]
 })

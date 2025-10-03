@@ -37,6 +37,6 @@ playground-nuxt/.nuxt/
 .env.local
 
 # pack
-hisonvue-1.0.0.tgz
+*.tgz
 
 package-lock.json

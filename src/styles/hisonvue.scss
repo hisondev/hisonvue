@@ -1690,11 +1690,11 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     flex-wrap: wrap;
     align-content: flex-start;
     align-items: flex-start;
+    vertical-align: top;
     background-color: var(--hison-emptyColor);
     color: var(--hison-emptyTextColor);
     overflow: auto;
     box-sizing: border-box;
-    /*border: 1px dotted black;*/
 }
 .hison-layout-frame-adjust { height: 0; width: 100%; display: block; flex-basis: 100%; }
 .hison-layout > * { align-self: flex-start; margin: 0; }

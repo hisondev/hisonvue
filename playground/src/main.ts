@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import { getDefaultHisonConfig, hisonvue, Size, type HisonConfig } from 'hisonvue'
 import 'hisonvue/style.css'
+import './style.css'
 import router from './router'
 
 const app = createApp(App)
