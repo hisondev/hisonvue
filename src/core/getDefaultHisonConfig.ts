@@ -7,7 +7,7 @@ import { hison } from "..";
 import { Chart } from "chart.js";
 import { getIsColorLight, normalizeToRgba } from "../utils";
 
-export const primaryColorRGBA = 'rgba(147,191,207,1)'
+export const primaryColorRGBA = 'rgba(19,70,134,1)'
 export const mutedColorRGBA = 'rgba(158,158,158,1)'
 export const infoColorRGBA = 'rgba(96,150,180,1)'
 export const successColorRGBA = 'rgba(95,141,78,1)'

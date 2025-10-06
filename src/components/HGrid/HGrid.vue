@@ -43,7 +43,7 @@ setup(props, { emit }) {
     const bindAttrs = computed(() => {
         bindAttrsTrigger.value
         const classList = extractResponsiveClasses(toClassString(props.class) || '', device.value)
-        const color = getSpecificClassValueFromClassList(classList, 'color')
+        const color = getSpecificClassValueFromClassList(classList, 'color') ?? 'primary'
         const size = getSpecificClassValueFromClassList(classList, 'size')
         if (getIndexSpecificClassNameFromClassList(classList, 'col') === -1) classList.push('hison-col-12')
         responsiveClassList.value = classList

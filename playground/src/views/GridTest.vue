@@ -9,9 +9,9 @@
     :columns="columns"
     class="hison-col-4"
     :height="'200px'"
-    :rownumVisible="'false'"
-    :statusVisible="'false'"
-    :visible="'true'"
+    :rownumVisible="false"
+    :statusVisible="false"
+    :visible="true"
     :activeRow="onActiveRow"
     :activeCol="onActiveCol"
     @mounted="mountGrid1"
@@ -21,8 +21,8 @@
     class="hison-col-4"
     :columns="columns"
     :height="'200px'"
-    :rownumVisible="'false'"
-    :statusVisible="'false'"
+    :rownumVisible="false"
+    :statusVisible="false"
     :color="'danger'"
     @mounted="mountGrid2"
   />
@@ -31,8 +31,8 @@
     class="hison-col-4"
     :columns="columns"
     :height="'200px'"
-    :rownumVisible="'false'"
-    :statusVisible="'false'"
+    :rownumVisible="false"
+    :statusVisible="false"
     :color="'warning'"
     :activeCell="onActiveCell"
     :activeCells="onActiveCells"
@@ -56,10 +56,10 @@
   import { hison, type HGridColumn, GridAlign } from 'hisonvue'
   import { Align, type GridMethods } from 'vanillagrid2'
 
-  const onActiveRow = (row: number) => {console.log('onActiveRow',row)}
-  const onActiveCol = (colId: string) => {console.log('onActiveCol',colId)}
-  const onActiveCell = (row: number, colId: string) => {console.log('onActiveCell',row, colId)}
-  const onActiveCells = (startRow: number, startColId: string, endRow: number, endColId: string) => {console.log('onActiveCells',startRow,startColId,endRow,endColId)}
+  const onActiveRow = (row: number) => {console.log('onActiveRow',row); return true;}
+  const onActiveCol = (colId: string) => {console.log('onActiveCol',colId); return true;}
+  const onActiveCell = (row: number, colId: string) => {console.log('onActiveCell',row, colId); return true;}
+  const onActiveCells = (startRow: number, startColId: string, endRow: number, endColId: string) => {console.log('onActiveCells',startRow,startColId,endRow,endColId); return true;}
 
   // 라우터
   const router = useRouter()
