@@ -172,6 +172,7 @@ export type {
   HImageboxMethods,
   HInputMethods,
   HInputGroupMethods,
+  HLabelMethods,
   HLayoutMethods,
   HListMethods,
   HModalMethods,
