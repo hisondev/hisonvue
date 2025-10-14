@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "hisonvue": "^1.0.5",
+    "hisonvue": "^1.0.6",
     "vue": "^3.5.13",
     "vue-cal": "^4.10.2",
     "vue-router": "^4.5.0"

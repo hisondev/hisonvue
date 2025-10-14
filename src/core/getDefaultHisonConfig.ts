@@ -9,7 +9,7 @@ import { getIsColorLight, normalizeToRgba } from "../utils";
 
 export const primaryColorRGBA = 'rgba(19,70,134,1)'
 export const mutedColorRGBA = 'rgba(158,158,158,1)'
-export const infoColorRGBA = 'rgba(96,150,180,1)'
+export const infoColorRGBA = 'rgba(147,191,207,1)'
 export const successColorRGBA = 'rgba(95,141,78,1)'
 export const dangerColorRGBA = 'rgba(247,113,109,1)'
 export const warningColorRGBA = 'rgba(255,193,98,1)'
