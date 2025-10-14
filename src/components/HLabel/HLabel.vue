@@ -117,9 +117,9 @@ export default defineComponent({
         const fontItalic = ref(props.fontItalic)
         const fontItalicClass = computed(()=>{ if (fontItalic.value) return 'hison-font-italic' })
         const fontThruline = ref(props.fontThruline)
-        const fontThrulineClass = computed(()=>{ if (fontThruline.value) return 'hison-font-thruline' })
+        const fontThrulineClass = computed(()=>{ if (fontThruline.value) return 'hison-font-thruline-important' })
         const fontUnderline = ref(props.fontUnderline)
-        const fontUnderlineClass = computed(()=>{ if (fontUnderline.value) return 'hison-font-underline' })
+        const fontUnderlineClass = computed(()=>{ if (fontUnderline.value) return 'hison-font-underline-important' })
         const border = ref<boolean>(props.border ?? false)
         const backgroundType = ref(props.backgroundType || BackgroundType.empty)
 

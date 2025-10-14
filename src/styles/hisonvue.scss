@@ -2610,8 +2610,12 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-font-bold-important { font-weight: bold !important; } /* for header tag in HCaption */
 .hison-font-bold { font-weight: bold; }
 .hison-font-italic { font-style: italic; }
+.hison-font-thruline-important { text-decoration: line-through !important; } /* for a tag in HLabel */
 .hison-font-thruline { text-decoration: line-through; }
+.hison-font-underline-important { text-decoration: underline !important; } /* for a tag in HLabel */
 .hison-font-underline { text-decoration: underline; }
+
+
 
 /* display helpers */
 .hison-display-none { display: none !important; }
