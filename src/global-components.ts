@@ -1005,6 +1005,7 @@ declare module 'vue' {
      * @prop {number} [maxHeight=240] - Maximum menu height (px). Overflow is scrollable.
      * @prop {boolean} [closeOnSelect=true] - Whether to close the menu after selecting an option.
      * @prop {('left'|'center'|'right')} [textAlign='left'] - Text alignment for both toggle and menu.
+     * @prop {number} [zIndex=1050] - Stacking context for the dropdown menu.
      *
      * @prop {boolean} [animate=true] - Enable expand/collapse animation (CSS Grid 0fr↔1fr & caret rotation).
      * @prop {number}  [duration=500] - Animation duration in ms. Reflected in CSS var `--hdd-duration`.

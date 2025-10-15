@@ -40,3 +40,5 @@ playground-nuxt/.nuxt/
 *.tgz
 
 package-lock.json
+
+*.bak

@@ -89,7 +89,7 @@ export default defineComponent({
     const drawerRef = ref<HTMLDivElement | null>(null)
 
     const visible = ref<boolean>(props.visible)
-    const zIndex = ref<number>(props.zIndex ?? 1050)
+    const zIndex = ref<number>(props.zIndex ?? 1100)
     const border = ref<boolean>(props.border)
     const showOverlay = ref<boolean>(props.showOverlay)
     const closeClickOverlay = ref<boolean>(props.closeClickOverlay)
@@ -138,7 +138,7 @@ export default defineComponent({
 
     const isOverlayVisible = computed(() => visible.value && showOverlay.value)
     const overlayStyleWithZ = computed(() => {
-      const zi = (zIndex.value ?? 1050) - 1
+      const zi = (zIndex.value ?? 1100) - 1
       const base = { zIndex: zi } as Record<string, string|number>
       const s = props.overlayStyle
       if (!s) return base

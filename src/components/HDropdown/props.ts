@@ -146,4 +146,10 @@ export const dropdownProps = {
         validator: (v: any) =>
         v === null || v === '' || (!isNaN(+v) && isFinite(+v))
     },
+    /**
+     * Stacking order for this dropdown **wrapper** (fixed container).
+     * - Applied to `.hison-dropdown-wrapper`;
+     * - Default: `1100`
+     */
+    zIndex: { type: Number, default: 1050 },
 }

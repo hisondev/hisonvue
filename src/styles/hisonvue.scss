@@ -750,13 +750,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     cursor: default;
 }
 
-.hison-dropdown.hison-readonly .hison-dropdown-caret {
-    display: none !important;
-}
-
-.hison-dropdown.hison-readonly .hison-dropdown-menu {
-    display: none !important;
-}
+.hison-dropdown.hison-readonly .hison-dropdown-caret { display: none !important; }
 
 .hison-dropdown-toggle {
     display: flex;
@@ -789,46 +783,59 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     display: inline-block;
     transition: transform var(--hdd-duration) var(--hdd-easing);
 }
-.hison-dropdown.hison-open .hison-dropdown-caret {
-    transform: rotate(180deg);
-}
+.hison-dropdown.hison-open .hison-dropdown-caret { transform: rotate(180deg); }
 
-.hison-dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 1.2px;
-    right: 1.2px;
-    width: auto;
-    box-sizing: border-box;
-    z-index: 100;
-    border-radius: 2px;
-    font-size: inherit;
+/* fixed 전략 */
+.hison-dropdown-menu-fixed {
+  position: fixed;
+  top: auto; left: auto; right: auto; /* 좌표/폭은 inline style */
+  z-index: 1200;
+  transform: scaleY(0.98);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transition:
+    transform var(--hdd-duration) var(--hdd-easing),
+    opacity   var(--hdd-duration) var(--hdd-easing),
+    visibility 0s linear 0s;
 }
-.hison-dropdown.hison-open .hison-dropdown-menu {
-    transform: scaleY(1);
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transition:
-        transform var(--hdd-duration) var(--hdd-easing),
-        opacity   var(--hdd-duration) var(--hdd-easing),
-        visibility 0s;
+.hison-dropdown-menu-fixed.hison-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: scaleY(1);
 }
+.hison-dropdown-menu-fixed:not(.hison-open) {
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    transform var(--hdd-duration) var(--hdd-easing),
+    opacity   var(--hdd-duration) var(--hdd-easing),
+    visibility 0s linear var(--hdd-duration); /* 닫힐 때만 지연 */
+}
+/* 플립 방향에 맞춰 자연스러운 origin */
+.hison-dropdown-menu-fixed.hison-open-below { transform-origin: top center; }
+.hison-dropdown-menu-fixed.hison-open-above { transform-origin: bottom center; }
 
 .hison-dropdown-panel {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows var(--hdd-duration) var(--hdd-easing);
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--hdd-duration) var(--hdd-easing);
 }
-.hison-dropdown.hison-open .hison-dropdown-panel {
-    grid-template-rows: 1fr;
+.hison-dropdown.hison-open .hison-dropdown-panel,
+.hison-dropdown-menu-fixed.hison-open .hison-dropdown-panel {
+  grid-template-rows: 1fr;
 }
-.hison-dropdown-panel-inner {
-    overflow: hidden;
-}
+.hison-dropdown-panel-inner { overflow: hidden; }
 
+/* animate=false 일 때 모든 전환 제거 */
 .hison-no-anim .hison-dropdown-panel,
-.hison-no-anim .hison-dropdown-caret { transition: none !important; }
+.hison-no-anim .hison-dropdown-caret,
+.hison-no-anim .hison-dropdown-menu-fixed {
+  transition: none !important;
+}
+/* fixed 전략 */
 
 .hison-dropdown.hison-readonly .hison-dropdown-caret { display: none !important; }
 .hison-dropdown.hison-readonly .hison-dropdown-menu { display: none !important; }

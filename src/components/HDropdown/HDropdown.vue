@@ -38,10 +38,15 @@
       </slot>
     </div>
 
+    <!-- 메뉴: 같은 트리에 두되 화면 기준 fixed 좌표 -->
     <div
       ref="menuRef"
-      class="hison-dropdown-menu"
-      :style="[textAlignStyle, props.menuStyle]"
+      class="hison-dropdown-menu hison-dropdown-menu-fixed"
+      :class="[
+        isOpen ? 'hison-open' : '',
+        openBelow ? 'hison-open-below' : 'hison-open-above'
+      ]"
+      :style="[fixedMenuStyle, textAlignStyle, props.menuStyle]"
       role="listbox"
       :aria-activedescendant="activeDescId"
       :inert="!isOpen || undefined"
@@ -124,6 +129,7 @@ export default defineComponent({
     const tabIndex = ref<number | null>(
       props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
     )
+    const zIndex = ref<number>(props.zIndex ?? 1100)
 
     const rootInlineStyle = computed(() => ({
       '--hdd-duration': `${duration.value}ms`,
@@ -159,6 +165,55 @@ export default defineComponent({
       return idx >= 0 ? `opt-${idx}` : undefined
     })
 
+    // ---------- 화면 기준(FIXED) 좌표 ----------
+    const fixedMenuStyle = ref<Record<string, string>>({})
+    const openBelow = ref(true) // 애니메이션 origin에 쓰기
+    const OFFSET_Y = 0   // 정확히 맞추려면 0, 필요시 미세조정
+    const MIN_SHOW_PX = 120
+
+    function positionMenu() {
+      if (!isOpen.value || !toggleRef.value) return
+      const r = toggleRef.value.getBoundingClientRect()
+      const vh = window.innerHeight
+
+      // 가로 정렬: 토글과 "완전히 동일"
+      const width = r.width
+      const left = r.left
+
+      // 세로 플립 판단
+      const spaceBelow = vh - r.bottom
+      const spaceAbove = r.top
+      openBelow.value = spaceBelow >= MIN_SHOW_PX
+
+      // 가능한 최대 높이(뷰포트 내에서만 잘림 방지)
+      let menuMaxH = openBelow.value
+        ? Math.min(maxHeight.value, Math.max(0, spaceBelow - OFFSET_Y))
+        : Math.min(maxHeight.value, Math.max(0, spaceAbove - OFFSET_Y))
+
+      // transform-origin을 위해 top 계산
+      const topPx = openBelow.value
+        ? (r.bottom + OFFSET_Y)
+        : (r.top - menuMaxH - OFFSET_Y)
+
+      const fs = getComputedStyle(toggleRef.value).fontSize || 'inherit'
+
+      fixedMenuStyle.value = {
+        position: 'fixed',
+        left: `${left}px`,
+        top: `${topPx}px`,
+        width: `${width}px`,
+        maxHeight: `${menuMaxH}px`,
+        overflowY: 'auto',
+        zIndex: String(zIndex.value),
+        fontSize: fs,
+        transformOrigin: openBelow.value ? 'top center' : 'bottom center'
+      }
+    }
+
+    function onScrollOrResize() {
+      if (isOpen.value) positionMenu()
+    }
+
     const onDocMousedown = (e: MouseEvent) => {
       if (!isOpen.value) return
       const t = e.target as Node | null
@@ -171,6 +226,7 @@ export default defineComponent({
       if (isDisabled.value || isReadonly.value || !visible.value) return
       if (isOpen.value) return
       isOpen.value = true
+      nextTick(positionMenu)
       emit('open', e ?? null, dropdownMethods.value)
     }
 
@@ -243,6 +299,7 @@ export default defineComponent({
           const n = Number(px)
           if (!Number.isFinite(n) || n < 0) return
           maxHeight.value = n
+          nextTick(positionMenu)
         },
         isCloseOnSelect: () => closeOnSelect.value,
         setCloseOnSelect: (v: boolean) => { closeOnSelect.value = !!v },
@@ -251,6 +308,7 @@ export default defineComponent({
         setTextAlign: (v: TextAlign) => {
           if (v === TextAlign.left || v === TextAlign.center || v === TextAlign.right) {
             textAlign.value = v
+            nextTick(positionMenu)
           }
         },
         getAnimate: () => animate.value,
@@ -266,11 +324,18 @@ export default defineComponent({
         setTabIndex: (v: number | null) => {
           tabIndex.value = v !== null && v !== undefined ? Number(v) : null
         },
+        getZIndex: () => zIndex.value,
+        setZIndex: (v: number) => { zIndex.value = v },
         focus: () => { toggleRef.value?.focus() },
         reload: () => reloadHisonComponent(reloadId),
       }
       hisonCloser.component.dropdownList[id] = dropdownMethods.value
+
       document.addEventListener('mousedown', onDocMousedown)
+      window.addEventListener('scroll', onScrollOrResize, true)
+      window.addEventListener('resize', onScrollOrResize)
+
+      nextTick(positionMenu)
 
       emit('mounted', dropdownMethods.value)
     }
@@ -278,6 +343,8 @@ export default defineComponent({
     const unmount = () => {
       unregisterReloadable(reloadId)
       try { document.removeEventListener('mousedown', onDocMousedown) } catch {}
+      try { window.removeEventListener('scroll', onScrollOrResize, true) } catch {}
+      try { window.removeEventListener('resize', onScrollOrResize) } catch {}
       if (toggleRef.value) removeButtonCssEvent(toggleRef.value)
       if (hisonCloser.component?.dropdownList) {
         delete hisonCloser.component.dropdownList[id]
@@ -291,25 +358,28 @@ export default defineComponent({
       if (!nv || typeof nv !== 'object') return
       if (Array.isArray(nv.options)) options.value = nv.options
       selectedValue.value = (nv as any).value
+      nextTick(positionMenu)
     }, { deep: true })
 
     watch(device, (newDevice) => {
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
+      nextTick(positionMenu)
     })
 
     watch(() => props.visible, v => { if (!!v !== visible.value) visible.value = !!v })
     watch(() => props.editMode, v => { if (v && v !== editMode.value) editMode.value = v as any })
     watch(() => props.placeholder, v => { const t = v ?? ''; if (t !== placeholder.value) placeholder.value = t })
     watch(() => props.trigger, v => { if (v && v !== trigger.value) trigger.value = v as any })
-    watch(() => props.textAlign, v => { if ((v === TextAlign.left || v === TextAlign.center || v === TextAlign.right) && v !== textAlign.value) textAlign.value = v })
+    watch(() => props.textAlign, v => { if ((v === TextAlign.left || v === TextAlign.center || v === TextAlign.right) && v !== textAlign.value) { textAlign.value = v; nextTick(positionMenu) } })
     watch(() => props.animate, v => { const nv = !!v; if (nv !== animate.value) animate.value = nv })
     watch(() => props.duration, v => { const n = Number(v); if (Number.isFinite(n) && n >= 0 && n !== duration.value) duration.value = n })
     watch(() => props.easing, v => { const s = typeof v === 'string' ? v : 'ease'; if (s !== easing.value) easing.value = s })
     watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
-    watch(() => props.maxHeight, v => { const n = Number(v); if (Number.isFinite(n) && n >= 0 && n !== maxHeight.value) maxHeight.value = n })
+    watch(() => props.maxHeight, v => { const n = Number(v); if (Number.isFinite(n) && n >= 0 && n !== maxHeight.value) { maxHeight.value = n; nextTick(positionMenu) } })
     watch(() => props.closeOnSelect, v => { const nv = !!v; if (nv !== closeOnSelect.value) closeOnSelect.value = nv })
-    watch(() => props.class, () => { refreshResponsiveClassList() })
+    watch(() => props.class, () => { refreshResponsiveClassList(); nextTick(positionMenu) })
+    watch(() => props.zIndex, v => { const n = Number(v); if (Number.isFinite(n) && n !== zIndex.value) zIndex.value = n })
 
     return {
       toggleRef, menuRef,
@@ -323,6 +393,8 @@ export default defineComponent({
       options,
       animate, rootInlineStyle,
       tabIndex,
+      fixedMenuStyle,
+      openBelow,
       onToggleClick, onSelect, textAlignStyle,
       open, close, toggle
     }

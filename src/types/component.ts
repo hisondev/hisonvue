@@ -1873,6 +1873,14 @@ export interface HDropdownMethods extends ComponentMethods {
    */
   setTabIndex(v: number | null): void
   /**
+   * Gets the current z-index of the dropdwon wrapper.
+   */
+  getZIndex(): number
+  /**
+   * Sets the z-index of the dropdwon wrapper
+   */
+  setZIndex(v: number): void
+  /**
    * Moves focus to the toggle element.
    */
   focus(): void
