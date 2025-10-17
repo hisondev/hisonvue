@@ -122,7 +122,7 @@ export const paragraphProps = {
      * Enables content copy.
      * - When true: Ctrl/Cmd+C works on focus; `copy()` API is available
      */
-    copyEnabled: { type: Boolean, default: false },
+    copyEnabled: { type: Boolean, default: true },
 
     /**
      * Shows the copy button on the top-right corner.

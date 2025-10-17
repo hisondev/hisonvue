@@ -21,7 +21,7 @@
           :class="[...buttonClassList, 'hison-size-s']"
           :border="true"
           :text="copyButtonText"
-          background-type="transparent"
+          :background-type="backgroundType"
           @click="onCopyButtonClick"
           title="Copy content"
         >
@@ -352,6 +352,7 @@ export default defineComponent({
       title,
       visibleClass,
       borderClass,
+      backgroundType,
       backgroundTypeClass,
       fontBoldClass,
       fontItalicClass,
