@@ -1,7 +1,7 @@
 import { Vanillagrid } from "vanillagrid2"
 import { Vanillanote } from "vanillanote2"
-import { HAccordionMethods, HBaggieMethods, HBannerMethods, HButtonMethods, HCalendarMethods, HCaptionMethods, HChartInstance, HDrawerMethods, HDropdownMethods, HFilesetMethods, HGapMethods, HImageboxMethods, HInputGroupMethods, HInputMethods, HLabelMethods, HLayoutMethods, HListMethods, HModalMethods, HPaginationMethods, HParagraphMethods, HPopupMethods, HSpinnerMethods, HTableMethods } from "./component"
-import { ComponentConfig, ComponentStyleConfig, HisonvueEvent } from "./hisonConfig"
+import { HAccordionMethods, HBaggieMethods, HBannerMethods, HButtonMethods, HCalendarMethods, HCaptionMethods, HChartInstance, HDrawerMethods, HDropdownMethods, HFilesetMethods, HGapMethods, HImageboxMethods, HInputGroupMethods, HInputMethods, HLabelMethods, HLayoutMethods, HListMethods, HModalMethods, HPaginationMethods, HParagraphMethods, HPopupMethods, HSpinnerMethods, HTableMethods } from "../types/component"
+import { ComponentConfig, ComponentStyleConfig, HisonvueEvent } from "../types/hisonConfig"
 
 export interface ComponentColor {
   primary: {

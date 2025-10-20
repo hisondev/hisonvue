@@ -741,3 +741,10 @@ export interface HisonConfig extends UtilsConfig, ShieldConfig, DataConfig, Link
   component: ComponentConfig;
   event: HisonvueEvent;
 }
+
+export type {
+    Utils, DateObject, TimeObject, DateTimeObject, Shield, Data, InterfaceDataWrapper, InterfaceDataModel, DataModelFormatter, DataModelValidator, DataModelFillter, Link, InterfaceCachingModule, InterfaceApiGet, InterfaceApiPost, InterfaceApiPut, InterfaceApiPatch, InterfaceApiDelete, InterfaceApiGetUrl, InterfaceApiPostUrl, InterfaceApiPutUrl, InterfaceApiPatchUrl, InterfaceApiDeleteUrl
+} from "hisonjs"
+export {
+    createHison, DataWrapper, DataModel, CachingModule, ApiGet, ApiPost, ApiPut, ApiPatch, ApiDelete, ApiGetUrl, ApiPostUrl, ApiPutUrl, ApiPatchUrl, ApiDeleteUrl
+} from "hisonjs";

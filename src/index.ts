@@ -1,5 +1,6 @@
 import { App } from 'vue'
-import type { Hison, HisonCloser, HisonConfig } from './types'
+import type { Hison, HisonConfig } from './types'
+import { HisonCloser } from './types-hide'
 import { createHison } from 'hisonjs'
 import {
   createSSRClientOnly,
@@ -142,45 +143,10 @@ export {
   HTableClientOnly,
 }
 export { getDefaultHisonConfig } from './core'
-export type {
-  Hison,
-  HisonConfig,
-
-  DeviceType,
-  AttachedFileItem,
-  HCalendarSpecialTime,
-  HCalendarSpecialTimeMap,
-  HCalendarEvent,
-  HGridColumn,
-  HDropdownOption,
-  HDropdownModel,
-  HLabelAnchorAttrs,
-
-  ComponentMethods,
-  HAccordionMethods,
-  HBaggieMethods,
-  HBannerMethods,
-  HButtonMethods,
-  HCalendarMethods,
-  HCaptionMethods,
-  HChartInstance,
-  HDrawerMethods,
-  HDropdownMethods,
-  HFilesetMethods,
-  HGapMethods,
-  HGridMethods,
-  HImageboxMethods,
-  HInputMethods,
-  HInputGroupMethods,
-  HLabelMethods,
-  HLayoutMethods,
-  HListMethods,
-  HModalMethods,
-  HNoteElement,
-  HPaginationMethods,
-  HParagraphMethods,
-  HPopupMethods,
-  HSpinnerMethods,
-  HTableMethods,
-} from './types'
+export * from './types'
 export * from './enums'
+
+import type * as VuecalNS from 'vue-cal';
+export type { VuecalNS };
+import type * as ChartNS from 'chart.js';
+export type { ChartNS };
