@@ -2609,9 +2609,6 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-pos-left { margin-right: auto; }
 .hison-pos-center { margin-left: auto; margin-right: auto; }
 .hison-pos-right { margin-left: auto; }
-.hison-layout > .hison-pos-vertical-top    { align-self: flex-start; }
-.hison-layout > .hison-pos-vertical-center { align-self: center; }
-.hison-layout > .hison-pos-vertical-bottom { align-self: flex-end; }
 
 /* font decoretion */
 .hison-font-bold-important { font-weight: bold !important; } /* for header tag in HCaption */
@@ -2621,8 +2618,6 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-font-thruline { text-decoration: line-through; }
 .hison-font-underline-important { text-decoration: underline !important; } /* for a tag in HLabel */
 .hison-font-underline { text-decoration: underline; }
-
-
 
 /* display helpers */
 .hison-display-none { display: none !important; }

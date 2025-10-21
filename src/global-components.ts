@@ -29,7 +29,6 @@ import type {
 declare module 'vue' {
   export interface GlobalComponents {
     /**
-     * Layout vertical 위치 조정
      * HDropdown 방향 위일때 위치 조정
      * HModal 사이즈 조정
      * HLabel, HParagraph등 font-size 조정
