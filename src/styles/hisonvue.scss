@@ -2609,9 +2609,9 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-pos-left { margin-right: auto; }
 .hison-pos-center { margin-left: auto; margin-right: auto; }
 .hison-pos-right { margin-left: auto; }
-.hison-pos-vertical-top { margin-bottom: auto; }
-.hison-pos-vertical-center { margin-top: auto; margin-bottom: auto; }
-.hison-pos-vertical-bottom { margin-top: auto; }
+.hison-layout > .hison-pos-vertical-top    { align-self: flex-start; }
+.hison-layout > .hison-pos-vertical-center { align-self: center; }
+.hison-layout > .hison-pos-vertical-bottom { align-self: flex-end; }
 
 /* font decoretion */
 .hison-font-bold-important { font-weight: bold !important; } /* for header tag in HCaption */
