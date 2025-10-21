@@ -40,6 +40,22 @@
           Go to Grid<br>(right-button)
         </HButton>
     </HLayout>
+    <HLayout
+      :border="true"
+      style="height: 200px;"
+    >
+      <HDropdown
+        class="hison-col-12 hison-pos-vertical-center"
+        :modelValue="{ value: 'l1', options: [
+          { label: 'label1', value: 'l1' },
+          { label: 'label2', value: 'l2' },
+          { label: 'label3', value: 'l3' },
+          { label: 'label4', value: 'l4' },
+          { label: 'label5', value: 'l5' },
+          { label: 'label6', value: 'l6' },
+          { label: 'label7', value: 'l7' }
+      ]}"/>
+    </HLayout>
 </template>
 
 <script setup lang="ts">
