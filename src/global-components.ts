@@ -29,12 +29,6 @@ import type {
 declare module 'vue' {
   export interface GlobalComponents {
     /**
-     * HDropdown 방향 위일때 위치 조정
-     * HModal 사이즈 조정
-     * HLabel, HParagraph등 font-size 조정
-     */
-
-    /**
      * Hisonvue custom accordion component.
      *
      * `HAccordion` is a lightweight accordion with a fixed header and a body that can expand/collapse.

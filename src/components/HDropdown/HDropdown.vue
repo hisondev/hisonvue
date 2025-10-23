@@ -171,29 +171,38 @@ export default defineComponent({
     const OFFSET_Y = 0   // 정확히 맞추려면 0, 필요시 미세조정
     const MIN_SHOW_PX = 120
 
+    function getContentNaturalHeight(): number {
+      if (!menuRef.value) return 0
+      // 실제 컨텐츠 영역의 자연 높이
+      const inner = menuRef.value.querySelector('.hison-dropdown-panel-inner') as HTMLElement | null
+      if (!inner) return 0
+      // 스크롤 가능한 전체 내용 높이
+      return inner.scrollHeight || 0
+    }
+
     function positionMenu() {
       if (!isOpen.value || !toggleRef.value) return
-      const r = toggleRef.value.getBoundingClientRect()
+      const r  = toggleRef.value.getBoundingClientRect()
       const vh = window.innerHeight
 
-      // 가로 정렬: 토글과 "완전히 동일"
       const width = r.width
-      const left = r.left
+      const left  = r.left
 
-      // 세로 플립 판단
       const spaceBelow = vh - r.bottom
       const spaceAbove = r.top
       openBelow.value = spaceBelow >= MIN_SHOW_PX
 
-      // 가능한 최대 높이(뷰포트 내에서만 잘림 방지)
-      let menuMaxH = openBelow.value
-        ? Math.min(maxHeight.value, Math.max(0, spaceBelow - OFFSET_Y))
-        : Math.min(maxHeight.value, Math.max(0, spaceAbove - OFFSET_Y))
+      // 실제 컨텐츠 높이(자연 높이)
+      const naturalH = getContentNaturalHeight()
 
-      // transform-origin을 위해 top 계산
+      // 가용 공간과 maxHeight로 클램프
+      const capByViewport = openBelow.value ? spaceBelow - OFFSET_Y : spaceAbove - OFFSET_Y
+      const desiredH = Math.max(0, Math.min(naturalH || maxHeight.value, maxHeight.value, capByViewport))
+
+      // 위/아래 별 top 계산
       const topPx = openBelow.value
         ? (r.bottom + OFFSET_Y)
-        : (r.top - menuMaxH - OFFSET_Y)
+        : (r.top - desiredH - OFFSET_Y)
 
       const fs = getComputedStyle(toggleRef.value).fontSize || 'inherit'
 
@@ -202,7 +211,12 @@ export default defineComponent({
         left: `${left}px`,
         top: `${topPx}px`,
         width: `${width}px`,
-        maxHeight: `${menuMaxH}px`,
+
+        // 중요: 위로 열릴 때는 컨테이너 높이를 '고정'해서 기준점이 안 흔들리게
+        // (아래로 열릴 때는 auto여도 무방)
+        height: openBelow.value ? 'auto' : `${desiredH}px`,
+        maxHeight: `${desiredH}px`,
+
         overflowY: 'auto',
         zIndex: String(zIndex.value),
         fontSize: fs,
@@ -226,7 +240,11 @@ export default defineComponent({
       if (isDisabled.value || isReadonly.value || !visible.value) return
       if (isOpen.value) return
       isOpen.value = true
-      nextTick(positionMenu)
+      nextTick(() => {
+        positionMenu()
+        // 폰트/스크롤바 반영 후 재보정
+        requestAnimationFrame(() => positionMenu())
+      })
       emit('open', e ?? null, dropdownMethods.value)
     }
 

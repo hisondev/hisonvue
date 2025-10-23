@@ -161,7 +161,7 @@ export default defineComponent({
       addComponentNameToClass(responsiveClassList.value, 'color', 'primary')
     }
     const buttonClassList = computed(() => {
-      const classList = []
+      const classList: string[] = []
       classList.push(...extractPrefixedClasses(toClassString(props.class) || '', 'color'))
       return classList
     })
@@ -199,6 +199,11 @@ export default defineComponent({
       const el = paraRef.value
       if (!el) return ''
       return (el as HTMLElement).innerText ?? ''
+    }
+
+    function hasNonEmptySelection(): boolean {
+      const sel = typeof window !== 'undefined' ? window.getSelection() : null
+      return !!sel && !sel.isCollapsed && sel.toString().length > 0
     }
 
     const doCopy = async () => {
@@ -248,6 +253,8 @@ export default defineComponent({
         return
       }
       if (copyEnabled.value && isCopy) {
+        if (hasNonEmptySelection()) return
+
         e.preventDefault(); e.stopPropagation()
         await handleCopyIntent('keyboard', e)
       }
@@ -255,6 +262,8 @@ export default defineComponent({
 
     const onCopyEvent = async (e: ClipboardEvent) => {
       if (!copyEnabled.value) { e.preventDefault(); return }
+      if (hasNonEmptySelection()) return
+
       e.preventDefault()
       await handleCopyIntent('native', e)
     }

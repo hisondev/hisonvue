@@ -56,65 +56,66 @@ export const toUpperCase = (value: string | null) => {
  * - 예: format = 'AA-9999', value = 'ab1234' → 'AB-1234'
  */
 export const getMaskValue = (value: string, format: string) => {
-  if(typeof format !== 'string') return null;
-  if(typeof value !== 'string') return null;
-  const formatArr = format.split('');
-  const valueArr = value.split('');
-  let lastValue = '';
-  let isValid;
-  formatArr.every((formatPiece, idx) => {
-      isValid = false;
-      switch (formatPiece) {
-        case 'A':
-            if (/^[A-Z]$/.test(valueArr[idx])) {
-                lastValue += valueArr[idx];
-                isValid = true;
-            }
-            else if (/^[a-z]$/.test(valueArr[idx])) {
-                lastValue += toUpperCase(valueArr[idx]);
-                isValid = true;
-            }
-            break;
-        case 'a':
-            if (/^[a-z]$/.test(valueArr[idx])) {
-                lastValue += valueArr[idx];
-                isValid = true;
-            }
-            else if (/^[A-Z]$/.test(valueArr[idx])) {
-                lastValue += toLowerCase(valueArr[idx]);
-                isValid = true;
-            }
-            break;
-        case '9':
-            if (/^[0-9]$/.test(valueArr[idx])) {
-                lastValue += valueArr[idx];
-                isValid = true;
-            }
-            break;
-        default:
-            if (formatPiece === valueArr[idx]) {
-                lastValue += valueArr[idx];
-                isValid = true;
-            }
-            break;
-      }
-      return isValid;
-  })
-  return lastValue;
+    if(typeof format !== 'string') return null;
+    if(typeof value !== 'string') return null;
+    const formatArr = format.split('');
+    const valueArr = value.split('');
+    let lastValue = '';
+    let isValid;
+    formatArr.every((formatPiece, idx) => {
+        isValid = false;
+        switch (formatPiece) {
+            case 'A':
+                if (/^[A-Z]$/.test(valueArr[idx])) {
+                    lastValue += valueArr[idx];
+                    isValid = true;
+                }
+                else if (/^[a-z]$/.test(valueArr[idx])) {
+                    lastValue += toUpperCase(valueArr[idx]);
+                    isValid = true;
+                }
+                break;
+            case 'a':
+                if (/^[a-z]$/.test(valueArr[idx])) {
+                    lastValue += valueArr[idx];
+                    isValid = true;
+                }
+                else if (/^[A-Z]$/.test(valueArr[idx])) {
+                    lastValue += toLowerCase(valueArr[idx]);
+                    isValid = true;
+                }
+                break;
+            case '9':
+                if (/^[0-9]$/.test(valueArr[idx])) {
+                    lastValue += valueArr[idx];
+                    isValid = true;
+                }
+                break;
+            default:
+                if (formatPiece === valueArr[idx]) {
+                    lastValue += valueArr[idx];
+                    isValid = true;
+                }
+                break;
+        }
+        return isValid;
+    })
+    return lastValue;
 };
 
 
 /** 숫자만 추출 (0~9) */
-export const getDigitsOnly = (value: string) => {
-  return value.replace(/[^0-9]/g, '');
+export const getDigitsOnly = (value: string | number) => {
+    value = String(value)
+    return value.replace(/[^0-9]/g, '');
 }
 
 /** 화면 너비에 따른 디바이스 타입 반환 ('mb' | 'tb' | 'pc' | 'wd') */
 export const getDeviceType = (width: number): DeviceType => {
-  if (width < 768) return 'mb'
-  if (width < 1200) return 'tb'
-  if (width < 1980) return 'pc'
-  return 'wd'
+    if (width < 768) return 'mb'
+    if (width < 1200) return 'tb'
+    if (width < 1980) return 'pc'
+    return 'wd'
 }
 
 /**
@@ -145,7 +146,7 @@ export const getSpecificClassValueFromClassList = (classList: DOMTokenList | str
 
 /** 클래스 배열에서 특정 접두어에 해당하는 클래스 인덱스 반환 */
 export const getIndexSpecificClassNameFromClassList = (classList: string[], classStarts: string) => {
-  return classList.findIndex(cls => cls.startsWith(`hison-${classStarts}-`))
+    return classList.findIndex(cls => cls.startsWith(`hison-${classStarts}-`))
 }
 
 export const toClassString = (cls: any): string => {
@@ -166,39 +167,39 @@ export const extractResponsiveClasses = (
   classStr: string,
   device: 'mb' | 'tb' | 'pc' | 'wd'
 ): string[] => {
-  const parts = classStr.trim().split(/\s+/)
-  const map: Record<string, Partial<Record<'mb' | 'tb' | 'pc' | 'wd' | 'default', string>>> = {}
-  const staticClasses: string[] = []
+    const parts = classStr.trim().split(/\s+/)
+    const map: Record<string, Partial<Record<'mb' | 'tb' | 'pc' | 'wd' | 'default', string>>> = {}
+    const staticClasses: string[] = []
 
-  for (const cls of parts) {
-    const match = cls.match(/^(hison-(color|size|col|pos|layout-vertical-align)-[\w]+?)(?:-(mb|tb|pc|wd))?$/)
-    if (match) {
-      const base = match[1] // 예: hison-col-6
-      const category = match[2] // col, pos, layout-vertical-align
-      const bp = match[3] as 'mb' | 'tb' | 'pc' | 'wd' | undefined
-      if (!map[category]) map[category] = {}
-      if (bp) map[category]![bp] = base
-      else map[category]!.default = base
-    } else {
-      staticClasses.push(cls)
+    for (const cls of parts) {
+        const match = cls.match(/^(hison-(color|size|col|pos|layout-vertical-align)-[\w]+?)(?:-(mb|tb|pc|wd))?$/)
+        if (match) {
+        const base = match[1] // 예: hison-col-6
+        const category = match[2] // col, pos, layout-vertical-align
+        const bp = match[3] as 'mb' | 'tb' | 'pc' | 'wd' | undefined
+        if (!map[category]) map[category] = {}
+        if (bp) map[category]![bp] = base
+        else map[category]!.default = base
+        } else {
+        staticClasses.push(cls)
+        }
     }
-  }
 
-  const responsiveClasses: string[] = []
+    const responsiveClasses: string[] = []
 
-  for (const bpMap of Object.values(map)) {
-    const value =
-      bpMap[device] ||
-      (device === 'mb' ? bpMap.tb : undefined) ||
-      (device === 'tb' ? bpMap.mb : undefined) ||
-      (device === 'pc' ? bpMap.wd : undefined) ||
-      (device === 'wd' ? bpMap.pc : undefined) ||
-      bpMap.default
+    for (const bpMap of Object.values(map)) {
+        const value =
+        bpMap[device] ||
+        (device === 'mb' ? bpMap.tb : undefined) ||
+        (device === 'tb' ? bpMap.mb : undefined) ||
+        (device === 'pc' ? bpMap.wd : undefined) ||
+        (device === 'wd' ? bpMap.pc : undefined) ||
+        bpMap.default
 
-    if (value) responsiveClasses.push(value)
-  }
+        if (value) responsiveClasses.push(value)
+    }
 
-  return [...staticClasses, ...responsiveClasses].filter(Boolean)
+    return [...staticClasses, ...responsiveClasses].filter(Boolean)
 }
 
 export const addComponentNameToClass = (classList: string[], classStarts: string, defaultAttrName: string) => {
@@ -242,11 +243,11 @@ export const extractNumberAndUnit = (val: string) => {
  * @returns 해당 prefix에 매칭되는 클래스 문자열 배열
  */
 export const extractPrefixedClasses = (classStr: string, targetPrefix: string): string[] => {
-  if (!classStr || !targetPrefix) return []
+    if (!classStr || !targetPrefix) return []
 
-  const prefix = `hison-${targetPrefix}-`
-  return classStr
-    .trim()
-    .split(/\s+/)
-    .filter(cls => cls.startsWith(prefix))
+    const prefix = `hison-${targetPrefix}-`
+    return classStr
+        .trim()
+        .split(/\s+/)
+        .filter(cls => cls.startsWith(prefix))
 }
