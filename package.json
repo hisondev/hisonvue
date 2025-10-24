@@ -1,6 +1,6 @@
 {
   "name": "hisonvue",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "main": "./dist/hisonvue.cjs.js",
   "module": "./dist/hisonvue.es.js",
   "types": "./dist/hisonvue.d.ts",
@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "chart.js": "^4.5.0",
-    "hisonjs": "^1.2.6",
+    "hisonjs": "^1.2.7",
     "vanillagrid2": "^1.0.8",
     "vanillanote2": "^1.1.0",
     "vue-cal": "^4.10.2"
