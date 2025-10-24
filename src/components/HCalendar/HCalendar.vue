@@ -130,6 +130,10 @@ export default defineComponent({
     const disableViews = ref(props.disableViews)
     
     const responsiveClassList = ref<string[]>([])
+    const isAlive = ref(true)
+    const isUnmounting = ref(false)
+    const destroyed = ref(false)
+
     const refreshResponsiveClassList = () => {
       responsiveClassList.value = extractResponsiveClasses(toClassString(props.class) || '', device.value)
 
@@ -221,7 +225,7 @@ export default defineComponent({
     }
 
     const adjustStyleChangedDate = (viewDate?: Date) => {
-      if(!calendarRef.value) return
+      if(!calendarRef.value || destroyed.value) return
       const calendarEl = calendarRef.value.$el
       const showDate = viewDate ?? hison.utils.getJSDateObject(selectedDate.value)
       if(specialTime.value && showDate) {
@@ -260,6 +264,7 @@ export default defineComponent({
     }
 
     const adjustStyleWeekendColor = (activeView: string) => {
+      if(destroyed.value) return
       if(activeView === HCalendarView.month || activeView === HCalendarView.week) {
         const calendarEl = calendarRef.value.$el
         const weekendNumber = weekendDays.value ? weekendDays.value : (startWeekOnSunday.value ? [0, 6] : [5, 6])
@@ -274,6 +279,7 @@ export default defineComponent({
     }
 
     const adjustStyleCellContent = (activeView: string) => {
+      if(!calendarRef.value || destroyed.value) return
       const calendarEl = calendarRef.value.$el
       calendarEl.style.setProperty('--vuecal-cell-content-min_heihgt', activeView === 'month' && dateCellMinHeight.value ? dateCellMinHeight.value + 'px' : null)
       calendarEl.style.setProperty('--vuecal-cell-content-max_heihgt', activeView === 'month' && dateCellMaxHeight.value ? dateCellMaxHeight.value + 'px' : null)
@@ -281,7 +287,7 @@ export default defineComponent({
     }
 
     const adjustStyleChangedView = (view?: string) => {
-      if(!calendarRef.value) return
+      if(!calendarRef.value || destroyed.value) return
       const activeView = view ?? calendarRef.value.view.id
       if(weekendColor.value) {
         nextTick(() => adjustStyleWeekendColor(activeView))
@@ -290,6 +296,7 @@ export default defineComponent({
     }
 
     const onViewChange = (event: any) => {
+      if (destroyed.value) return
       adjustStyleChangedView(event.view)
       if(event.view === HCalendarView.day) {
         adjustStyleChangedDate(event.startDate)
@@ -301,6 +308,7 @@ export default defineComponent({
     }
 
     const onCellClick = (_date: any) => {
+      if (destroyed.value) return
       const date = _date instanceof Date ? _date : _date.date
       if(!disable.value) {
         selectedDate.value = date
@@ -313,10 +321,17 @@ export default defineComponent({
     }
 
     const mount = () => {
+      if (!isAlive.value || isUnmounting.value || destroyed.value) return
       if (hisonCloser.component.calendarList[id] && hisonCloser.component.calendarList[id].isHisonvueComponent) console.warn(`[Hisonvue] The calendar ID is at risk of being duplicated. ${id}`)
+      unregisterReloadable(reloadId)
       registerReloadable(reloadId, () => {
+        if (!isAlive.value) return
+        unregisterReloadable(reloadId)
         unmount()
-        nextTick(mount)
+        nextTick(() => {
+          if (!isAlive.value) return
+          mount()
+        })
       })
 
       if (!calendarRef.value) return
@@ -478,30 +493,45 @@ export default defineComponent({
         reload: () => reloadHisonComponent(reloadId)
       }
       hisonCloser.component.calendarList[id] = calendarMethods.value
+      destroyed.value = false
       emit('mounted', calendarMethods.value)
     }
 
     const unmount = () => {
+      if (isUnmounting.value || destroyed.value) {
+        unregisterReloadable(reloadId)
+        delete hisonCloser.component.calendarList[id]
+        return
+      }
+      isUnmounting.value = true
       unregisterReloadable(reloadId)
       delete hisonCloser.component.calendarList[id]
+      destroyed.value = true
     }
 
     onMounted(mount)
-    onBeforeUnmount(unmount)
+    onBeforeUnmount(() => {
+      isAlive.value = false
+      unmount()
+    })
 
     watch(device, (newDevice) => {
+      if (isUnmounting.value || destroyed.value) return
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
     })
 
     watch(() => selectedDate.value, () => {
+      if (destroyed.value) return
       adjustStyleChangedDate()
     })
     watch(() => props.selectedDate, (newVal) => {
+      if (destroyed.value) return
       selectedDate.value = hison.utils.getJSDateObject(newVal) ?? new Date()
       adjustStyleChangedDate()
     })
     watch(() => props.events, (newVal) => {
+      if (destroyed.value) return
       events.value = newVal
     })
 

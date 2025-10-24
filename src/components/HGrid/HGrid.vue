@@ -1,7 +1,11 @@
 <template>
-    <div ref="editorWrap" :class="['hison-grid', 'hison-wrapper', ...responsiveClassList, visibleClass]" :style="props.style">
-      <div data-vanillagrid v-bind="bindAttrs"></div>
-    </div>
+  <div
+    ref="editorWrap"
+    :class="['hison-grid', 'hison-wrapper', ...responsiveClassList, visibleClass]"
+    :style="props.style"
+  >
+    <div data-vanillagrid v-bind="bindAttrs"></div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -9,36 +13,50 @@ import { defineComponent, computed, onMounted, onBeforeUnmount, ref, nextTick, t
 import type { Vanillagrid } from 'vanillagrid2'
 import type { HGridColumn, HGridMethods } from '../../types'
 import { gridEventProps, gridProps } from './props'
-import { extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getSpecificClassValueFromClassList, getUUID, registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable } from '../../utils'
+import {
+    extractResponsiveClasses,
+    getHexCodeFromColorText,
+    getIndexSpecificClassNameFromClassList,
+    getSpecificClassValueFromClassList,
+    getUUID,
+    registerReloadable,
+    reloadHisonComponent,
+    toClassString,
+    unregisterReloadable
+} from '../../utils'
 import { hison, hisonCloser, Size } from '../..'
 import { useDevice } from '../../core'
 import { InterfaceDataModel } from 'hisonjs'
 
 export default defineComponent({
-name: 'HGrid',
-props: {
+  name: 'HGrid',
+  props: {
     ...gridProps,
     ...gridEventProps
-},
-emits: ['mounted', 'responsive-change'],
-setup(props, { emit }) {
+  },
+  emits: ['mounted', 'responsive-change'],
+  setup(props, { emit }) {
     const vg: Vanillagrid = hisonCloser.grid
     const editorWrap = ref<HTMLElement | null>(null)
     const gridInstance = ref<HGridMethods | null>(null)
-    const id = props.id ? props.id : getUUID();
+    const id = props.id ? props.id : getUUID()
     const reloadId = `hgrid:${id}`
     const device = useDevice()
     const visible = ref(props.visible)
-    const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
+    const visibleClass = computed(() => (visible.value ? '' : 'hison-display-none'))
 
     const responsiveClassList = ref<string[]>([])
 
     const EXCLUDED_KEYS = ['columns', 'id', 'class', 'style', 'visible'] as const
     const bindAttrsTrigger = ref(0)
     const forceRecomputeBindAttrs = () => {
-        triggerRef(bindAttrsTrigger)
+      triggerRef(bindAttrsTrigger)
     }
     const gridColor = ref<string>('')
+
+    const destroyed = ref(false)
+    const alive = ref(true)
+    let vgInited = false
 
     const bindAttrs = computed(() => {
         bindAttrsTrigger.value
@@ -55,12 +73,13 @@ setup(props, { emit }) {
             if (EXCLUDED_KEYS.includes(key as any)) continue
             if (value === undefined || value === null) continue
 
-            attrs[key.replace(/[A-Z]/g, m => '-' + m.toLowerCase())] = String(value)
+            attrs[key.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())] = String(value)
         }
 
-        attrs['size-level'] = attrs['size-level'] && hison.utils.isNumber(attrs['size-level'])
-        ? String(Math.min(Math.max(Number(attrs['size-level']), 1), 9))
-        : getSizeLevel(5, size)
+        attrs['size-level'] =
+            attrs['size-level'] && hison.utils.isNumber(attrs['size-level'])
+            ? String(Math.min(Math.max(Number(attrs['size-level']), 1), 9))
+            : getSizeLevel(5, size)
 
         if (color && !attrs.color) attrs.color = color
         if (attrs.color) {
@@ -72,34 +91,58 @@ setup(props, { emit }) {
         gridColor.value = attrs.color
         return attrs
     })
-    
+
     const getSizeLevel = (sizeLevel: number, size: string | null) => {
-      size = size ?? hisonCloser.componentStyle.size
-      switch (size) {
-        case Size.s: sizeLevel -= 2; break
-        case Size.m: break
-        case Size.l: sizeLevel += 2; break
-        case Size.xl: sizeLevel += 3; break
-      }
-      return String(Math.min(Math.max(sizeLevel, 1), 9))
+        size = size ?? hisonCloser.componentStyle.size
+        switch (size) {
+            case Size.s:
+                sizeLevel -= 2
+                break
+            case Size.m:
+                break
+            case Size.l:
+                sizeLevel += 2
+                break
+            case Size.xl:
+                sizeLevel += 3
+                break
+        }
+        return String(Math.min(Math.max(sizeLevel, 1), 9))
     }
 
     const mount = () => {
+        if (!alive.value) return
+
+        unregisterReloadable(reloadId)
+
         registerReloadable(reloadId, () => {
+            if (!alive.value) return
+            unregisterReloadable(reloadId)
             unmount()
             forceRecomputeBindAttrs()
-            nextTick(mount)
+            nextTick(() => {
+                if (!alive.value) return
+                mount()
+            })
         })
-        vg.init()
-        if (!editorWrap.value) return
-        const gridElement = editorWrap.value.querySelector('[data-vanillagrid]') as HTMLElement
+
+        if (!vgInited) {
+            vg.init()
+            vgInited = true
+        }
+
+        const root = editorWrap.value
+        if (!root) return
+        const gridElement = root.querySelector('[data-vanillagrid]') as HTMLElement | null
         if (!gridElement) return
 
-        props.columns!.forEach(col => {
+        Array.from(gridElement.querySelectorAll('[data-col]')).forEach((el) => el.remove())
+
+        props.columns!.forEach((col) => {
             const colDiv = document.createElement('div')
             colDiv.setAttribute('data-col', '')
             for (const key in col) {
-                const value = col[key as keyof HGridColumn]
+            const value = col[key as keyof HGridColumn]
                 if (value !== undefined && value !== null) {
                     const kebabKey = key.replace(/([A-Z])/g, '-$1').toLowerCase()
                     colDiv.setAttribute(kebabKey, String(value))
@@ -107,13 +150,16 @@ setup(props, { emit }) {
             }
             gridElement.appendChild(colDiv)
         })
-        vg.mountGrid(editorWrap.value)
+
+        vg.mountGrid(root)
         gridElement.style.border = 'none'
         gridElement.style.boxShadow = `0 0.5px 1px 0.5px ${gridColor.value}`
         const gridMethod: any = vg.getGrid(id)
-        if(gridMethod) gridMethod.getId = () => { return id }
+        if (gridMethod) gridMethod.getId = () => {
+            return id
+        }
         gridInstance.value = gridMethod as HGridMethods
-        //methods
+
         if (gridInstance.value) {
             gridInstance.value.isHisonvueComponent = true
             gridInstance.value.getId = () => id
@@ -124,27 +170,35 @@ setup(props, { emit }) {
             if ('setGridVisible' in gridInstance.value) {
                 delete (gridInstance.value as any).setGridVisible
             }
-            gridInstance.value.isVisible = () => visible.value,
-            gridInstance.value.setVisible = (val: boolean) => { visible.value = val }
+            gridInstance.value.isVisible = () => visible.value
+            gridInstance.value.setVisible = (val: boolean) => {
+                visible.value = val
+            }
             gridInstance.value.getDataModel = () => {
                 return new hison.data.DataModel(gridInstance.value!.getValues())
             }
             gridInstance.value.setDataModel = <T extends Record<string, any>>(dataModel: InterfaceDataModel<T>) => {
-                if(!dataModel || dataModel.getRowCount() == 0) return 
+            if (!dataModel || dataModel.getRowCount() == 0) return
                 return gridInstance.value!.load(dataModel)
             }
             gridInstance.value.reload = () => reloadHisonComponent(reloadId)
             const originGridMethodLoad = gridInstance.value.load.bind(gridInstance.value)
-            gridInstance.value.load = <T extends Record<string, any>>(keyValueOrDatas: Record<string, any> | Record<string, any>[] | InterfaceDataModel<T>) => {
-                if (keyValueOrDatas && (keyValueOrDatas as InterfaceDataModel).getIsDataModel && (keyValueOrDatas as InterfaceDataModel).getIsDataModel()) {
+            gridInstance.value.load = <T extends Record<string, any>>(
+                keyValueOrDatas: Record<string, any> | Record<string, any>[] | InterfaceDataModel<T>
+            ) => {
+                if (
+                    keyValueOrDatas &&
+                    (keyValueOrDatas as InterfaceDataModel).getIsDataModel &&
+                    (keyValueOrDatas as InterfaceDataModel).getIsDataModel()
+                ) {
                     return originGridMethodLoad((keyValueOrDatas as InterfaceDataModel<T>).getRows())
                 } else {
                     return originGridMethodLoad(keyValueOrDatas)
                 }
             }
         }
-        //event
-        if(gridInstance.value) {
+
+        if (gridInstance.value) {
             if (typeof props.activeCell === 'function') gridInstance.value.setOnActiveCell(props.activeCell)
             if (typeof props.activeCells === 'function') gridInstance.value.setOnActiveCells(props.activeCells)
             if (typeof props.activeRow === 'function') gridInstance.value.setOnActiveRow(props.activeRow)
@@ -178,36 +232,62 @@ setup(props, { emit }) {
             if (typeof props.keydownGrid === 'function') gridInstance.value.setOnKeydownGrid(props.keydownGrid)
         }
 
+        destroyed.value = false
+        ;(root as any).__hgridDestroyed = false
+
         emit('mounted', gridInstance.value)
     }
+
     const unmount = () => {
         unregisterReloadable(reloadId)
-        if (!editorWrap.value) return
-        vg.unmountGrid(editorWrap.value)
+        const root = editorWrap.value
+        if (!root || destroyed.value) return
+        if (!(root as any).isConnected) {
+            destroyed.value = true
+            return
+        }
+        try {
+            vg.unmountGrid(root)
+        } catch (e) {
+            console.warn('[HGrid] unmountGrid skipped:', e)
+        }
+        destroyed.value = true
+        ;(root as any).__hgridDestroyed = true
+        gridInstance.value = null
     }
 
     onMounted(mount)
-    onBeforeUnmount(unmount)
+
+    onBeforeUnmount(() => {
+        alive.value = false
+        unmount()
+    })
 
     watch(device, (newDevice) => {
-        const grid = gridInstance.value
-        if(grid) {
-            const classList = extractResponsiveClasses(toClassString(props.class) || '', device.value)
-            const color = getSpecificClassValueFromClassList(classList, 'color')
-            const size = getSpecificClassValueFromClassList(classList, 'size')
+        if (destroyed.value) return
+        const grid: any = gridInstance.value
+        if (!grid) return
+        if (typeof grid.setGridSizeLevel !== 'function') return
 
-            const sizeLevel = props.sizeLevel && hison.utils.isNumber(String(props.sizeLevel))
+        const classList = extractResponsiveClasses(toClassString(props.class) || '', device.value)
+        const color = getSpecificClassValueFromClassList(classList, 'color')
+        const size = getSpecificClassValueFromClassList(classList, 'size')
+
+        const sizeLevel =
+            props.sizeLevel && hison.utils.isNumber(String(props.sizeLevel))
             ? String(Math.min(Math.max(Number(props.sizeLevel), 1), 9))
             : getSizeLevel(5, size)
-            grid.setGridSizeLevel(Number(sizeLevel))
+        grid.setGridSizeLevel(Number(sizeLevel))
 
-            let hexColor = ''
-            if (color && !props.color) hexColor = color
-            if (hexColor) {
-                hexColor = getHexCodeFromColorText(hexColor) ?? hexColor
+        let hexColor = ''
+        if (color && !props.color) hexColor = color
+        if (hexColor) {
+            hexColor = getHexCodeFromColorText(hexColor) ?? hexColor
+            if (typeof grid.setGridColor === 'function') {
                 grid.setGridColor(hexColor)
-
-                if (props.invertColor || hisonCloser.componentStyle.invertColor) {
+            }
+            if (props.invertColor || hisonCloser.componentStyle.invertColor) {
+                if (typeof grid.invertColor === 'function') {
                     grid.invertColor(true)
                 }
             }
@@ -215,8 +295,19 @@ setup(props, { emit }) {
         emit('responsive-change', newDevice)
     })
 
-    watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
-    watch(() => props.class, () => { forceRecomputeBindAttrs() })
+    watch(
+        () => props.visible,
+        (v) => {
+            const nv = !!v
+            if (nv !== visible.value) visible.value = nv
+        }
+    )
+    watch(
+        () => props.class,
+        () => {
+            forceRecomputeBindAttrs()
+        }
+    )
 
     return {
         editorWrap,
@@ -225,7 +316,7 @@ setup(props, { emit }) {
         responsiveClassList,
         visibleClass
     }
-}
+  }
 })
 </script>
 

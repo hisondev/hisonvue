@@ -42,3 +42,5 @@ playground-nuxt/.nuxt/
 package-lock.json
 
 *.bak
+
+github/

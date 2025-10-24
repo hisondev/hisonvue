@@ -108,7 +108,6 @@ export const labelProps = {
      * - Default: `null`
      */
     toggleTarget: {
-        /** When set, clicking the label (or Enter/Space) will toggle the target HInput (checkbox/radio) by id. */
         type: String as PropType<string | null>,
         default: null,
     },

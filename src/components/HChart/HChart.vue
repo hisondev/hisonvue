@@ -45,6 +45,7 @@ export default defineComponent({
         let timerId: number | null = null
         let isAlive = true
         let isUnmounting = false
+        const destroyed = ref(false)
 
         const refreshResponsiveClassList = () => {
             responsiveClassList.value = extractResponsiveClasses(toClassString(props.class) || '', device.value)
@@ -97,7 +98,7 @@ export default defineComponent({
         }
 
         function mountChart() {
-            if (!isAlive || isUnmounting) return
+            if (!isAlive || isUnmounting || destroyed.value) return
             if (!canvasRef.value) {
                 console.warn('[mountChart] canvasRef.value is null')
                 return
@@ -119,10 +120,19 @@ export default defineComponent({
             hChartInstance.reload = () => reloadHisonComponent(reloadId)
             if (hisonCloser.component.chartList[id] && hisonCloser.component.chartList[id].isHisonvueComponent) console.warn(`[Hisonvue] The chart ID is at risk of being duplicated. ${id}`)
             hisonCloser.component.chartList[id] = hChartInstance
+            destroyed.value = false
             emit('mounted', hisonCloser.component.chartList[id])
         }
 
         const unmount = async () => {
+            if (isUnmounting || destroyed.value) {
+                isUnmounting = true
+                if (timerId !== null) {
+                    clearTimeout(timerId)
+                    timerId = null
+                }
+                return
+            }
             isUnmounting = true
 
             if (timerId !== null) {
@@ -144,16 +154,17 @@ export default defineComponent({
             delete hisonCloser.component.chartList[id]
 
             isPending.value = true
+            destroyed.value = true
             await nextTick()
         }
 
         const mount = async () => {
-            if (!isPending.value) return
             if (!isAlive || isUnmounting) return
+            if (!isPending.value) return
             isPending.value = false
             await nextTick()
             timerId = window.setTimeout(() => {
-                if (!isAlive || isUnmounting) return
+                if (!isAlive || isUnmounting || destroyed.value) return
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         mountChart()
@@ -163,15 +174,30 @@ export default defineComponent({
         }
 
         registerReloadable(reloadId, async () => {
+            if (!isAlive) return
+            unregisterReloadable(reloadId)
             await unmount()
             await mount()
+            registerReloadable(reloadId, async () => {
+                if (!isAlive) return
+                unregisterReloadable(reloadId)
+                await unmount()
+                await mount()
+                registerReloadable(reloadId, async () => {
+                    if (!isAlive) return
+                    unregisterReloadable(reloadId)
+                    await unmount()
+                    await mount()
+                })
+            })
         })
 
         onMounted(async () => {
             isPending.value = false
+            destroyed.value = false
             await nextTick()
             timerId = window.setTimeout(() => {
-                if (!isAlive || isUnmounting) return
+                if (!isAlive || isUnmounting || destroyed.value) return
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         mountChart()
@@ -191,9 +217,11 @@ export default defineComponent({
         })
 
         watch(device, () => {
-            if (isUnmounting) return
+            if (isUnmounting || destroyed.value) return
             refreshResponsiveClassList()
-            chartInstance.value?.resize()
+            if (chartInstance.value && (canvasRef.value?.isConnected ?? true)) {
+                chartInstance.value.resize()
+            }
             emit('responsive-change', device.value)
         })
 
@@ -201,6 +229,7 @@ export default defineComponent({
             if (
                 isPending.value ||
                 isUnmounting ||
+                destroyed.value ||
                 !chartInstance.value ||
                 !newVal ||
                 typeof newVal !== 'object' ||
@@ -214,6 +243,7 @@ export default defineComponent({
             if (
                 isPending.value ||
                 isUnmounting ||
+                destroyed.value ||
                 !chartInstance.value ||
                 !newVal ||
                 typeof newVal !== 'object'
@@ -225,7 +255,7 @@ export default defineComponent({
         watch(() => props.visible, v => { if (v !== visible.value) visible.value = !!v })
         watch(() => props.loadDelay, v => { const n = Number(v); if (Number.isFinite(n) && n >= 0 && n !== loadDelay.value) loadDelay.value = n })
         watch(() => props.class, () => refreshResponsiveClassList())
-        watch(() => props.type, () => { if (!isUnmounting) reloadHisonComponent(reloadId) })
+        watch(() => props.type, () => { if (!isUnmounting && !destroyed.value) reloadHisonComponent(reloadId) })
 
         return {
             canvasRef,

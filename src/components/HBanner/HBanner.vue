@@ -20,77 +20,77 @@
             @touchmove.prevent="onTouchMove"
             @touchend.passive="onTouchEnd"
         >
-            <div class="hison-banner-viewport">
+          <div class="hison-banner-viewport">
+            <div
+                ref="trackRef"
+                class="hison-banner-track"
+                :style="trackStyle"
+            >
                 <div
-                    ref="trackRef"
-                    class="hison-banner-track"
-                    :style="trackStyle"
+                v-for="(node, i) in slideNodes"
+                :key="i"
+                class="hison-banner-slide"
                 >
-                    <div
-                    v-for="(node, i) in slideNodes"
-                    :key="i"
-                    class="hison-banner-slide"
-                    >
-                    <component :is="node" />
-                    </div>
+                <component :is="node" />
                 </div>
             </div>
-            <div
-            v-if="showNavButtons && slideCount > 1"
-            class="hison-banner-nav"
-            >
-                <div class="hison-banner-nav-prev">
-                    <slot name="prev-button" :prev="goPrev" :disabled="isPrevDisabled">
-                    <HButton
-                        :id="`hison_banner_prev_button_${id}`"
-                        :disable="isPrevDisabled"
-                        :class="['hison-col-12', ...buttonClassList]"
-                        :background-type="'transparent'"
-                        :border="false"
-                        @click="goPrev"
-                    >
-                        <template #icon>
-                        <span v-if="navButtonStyle === 'chevron'">〈</span>
-                        <span v-else-if="navButtonStyle === 'triangle'">◀</span>
-                        </template>
-                    </HButton>
-                    </slot>
-                </div>
-                <div class="hison-banner-nav-next">
-                    <slot name="next-button" :next="goNext" :disabled="isNextDisabled">
-                    <HButton
-                        :id="`hison_banner_next_button_${id}`"
-                        :disable="isNextDisabled"
-                        :class="['hison-col-12', ...buttonClassList]"
-                        :background-type="'transparent'"
-                        :border="false"
-                        @click="goNext"
-                    >
-                        <template #icon>
-                        <span v-if="navButtonStyle === 'chevron'">〉</span>
-                        <span v-else-if="navButtonStyle === 'triangle'">▶</span>
-                        </template>
-                    </HButton>
-                    </slot>
-                </div>
-            </div>
-            <div
-                v-if="showIndicators && slideCount > 0"
-                class="hison-banner-indicators"
-                :class="[indicatorsPositionClass]"
-            >
-                <button
-                    v-for="i in slideCount"
-                    :key="i"
-                    class="hison-banner-indicator"
-                    :class="{ active: currentIndex === (i - 1), 'no-pointer': !indicatorClickable }"
-                    :title="`Go to ${i}`"
-                    type="button"
-                    @click="indicatorClickable ? goTo(i - 1) : null"
+          </div>
+          <div
+          v-if="showNavButtons && slideCount > 1"
+          class="hison-banner-nav"
+          >
+            <div class="hison-banner-nav-prev">
+                <slot name="prev-button" :prev="goPrev" :disabled="isPrevDisabled">
+                <HButton
+                    :id="`hison_banner_prev_button_${id}`"
+                    :disable="isPrevDisabled"
+                    :class="['hison-col-12', ...buttonClassList]"
+                    :background-type="'transparent'"
+                    :border="false"
+                    @click="goPrev"
                 >
-                    ●
-                </button>
+                    <template #icon>
+                    <span v-if="navButtonStyle === 'chevron'">〈</span>
+                    <span v-else-if="navButtonStyle === 'triangle'">◀</span>
+                    </template>
+                </HButton>
+                </slot>
             </div>
+            <div class="hison-banner-nav-next">
+                <slot name="next-button" :next="goNext" :disabled="isNextDisabled">
+                <HButton
+                    :id="`hison_banner_next_button_${id}`"
+                    :disable="isNextDisabled"
+                    :class="['hison-col-12', ...buttonClassList]"
+                    :background-type="'transparent'"
+                    :border="false"
+                    @click="goNext"
+                >
+                    <template #icon>
+                    <span v-if="navButtonStyle === 'chevron'">〉</span>
+                    <span v-else-if="navButtonStyle === 'triangle'">▶</span>
+                    </template>
+                </HButton>
+                </slot>
+            </div>
+          </div>
+          <div
+              v-if="showIndicators && slideCount > 0"
+              class="hison-banner-indicators"
+              :class="[indicatorsPositionClass]"
+          >
+            <button
+                v-for="i in slideCount"
+                :key="i"
+                class="hison-banner-indicator"
+                :class="{ active: currentIndex === (i - 1), 'no-pointer': !indicatorClickable }"
+                :title="`Go to ${i}`"
+                type="button"
+                @click="indicatorClickable ? goTo(i - 1) : null"
+            >
+                ●
+            </button>
+          </div>
         </div>
     </div>
 </template>

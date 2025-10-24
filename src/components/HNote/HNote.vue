@@ -3,10 +3,10 @@
     ref="editorWrap"
     :class="['hison-note', 'hison-wrap', ...responsiveClassList, visibleClass, requiredClass, editModeClass]"
     :style="props.style"
-    >
+  >
     <div
-    data-vanillanote
-    v-bind="bindAttrs"
+      data-vanillanote
+      v-bind="bindAttrs"
     ></div>
   </div>
 </template>
@@ -16,7 +16,17 @@ import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, next
 import type { Vanillanote, VanillanoteElement, NoteData } from 'vanillanote2'
 import { noteEventProps, noteProps } from './props'
 import { EditMode, Size } from '../../enums'
-import { extractResponsiveClasses, getSpecificClassValueFromClassList, getHexCodeFromColorText, getUUID, registerReloadable, getIndexSpecificClassNameFromClassList, unregisterReloadable, reloadHisonComponent, toClassString } from '../../utils'
+import {
+  extractResponsiveClasses,
+  getSpecificClassValueFromClassList,
+  getHexCodeFromColorText,
+  getUUID,
+  registerReloadable,
+  getIndexSpecificClassNameFromClassList,
+  unregisterReloadable,
+  reloadHisonComponent,
+  toClassString
+} from '../../utils'
 import { hison, hisonCloser } from '../..'
 import { useDevice } from '../../core'
 import { HNoteElement } from '../../types'
@@ -33,23 +43,26 @@ export default defineComponent({
     const vn: Vanillanote = hisonCloser.note
     const editorWrap = ref<HTMLElement | null>(null)
     const noteInstance = ref<HNoteElement | null>(null)
-    const id = props.id ? props.id : getUUID();
+    const id = props.id ? props.id : getUUID()
     const reloadId = `hnote:${id}`
+
+    const destroyed = ref(false)
+    const alive = ref(true)
+    let vnInited = false
+
     const required = ref(props.required)
-    const requiredClass = computed(()=>{
-      if(required.value) return 'hison-note-required'
+    const requiredClass = computed(() => {
+      if (required.value) return 'hison-note-required'
     })
     const device = useDevice()
     const visible = ref(props.visible)
-    const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
+    const visibleClass = computed(() => (visible.value ? '' : 'hison-display-none'))
     const editMode = ref(props.editMode)
     const editModeClass = computed(() => {
-      if(editMode.value !== EditMode.editable) return `hison-note-${editMode.value}`
+      if (editMode.value !== EditMode.editable) return `hison-note-${editMode.value}`
     })
     const isModified = ref(false)
-    const tabIndex = ref<number | null>(
-      props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
-    )
+    const tabIndex = ref<number | null>(props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null)
 
     const updateTabbableChildren = (rootEl: HTMLElement, disable: boolean) => {
       if (!rootEl) return
@@ -82,25 +95,25 @@ export default defineComponent({
     }
 
     const applyEditMode = () => {
-      const note = noteInstance.value
-      if(!note) return
-      const textarea = note._elements.textarea
-      
-      if(editMode.value !== EditMode.editable) {
+      const note = noteInstance.value as any
+      if (!note) return
+      const textarea: HTMLElement | undefined = note._elements?.textarea
+      if (!textarea) return
+
+      if (editMode.value !== EditMode.editable) {
         textarea.removeAttribute('contenteditable')
         textarea.removeAttribute('role')
         textarea.removeAttribute('aria-multiline')
         textarea.removeAttribute('spellcheck')
         textarea.removeAttribute('autocorrect')
-        updateTabbableChildren(note, true)
-      }
-      else {
+        updateTabbableChildren(note as unknown as HTMLElement, true)
+      } else {
         textarea.setAttribute('contenteditable', 'true')
         textarea.setAttribute('role', 'textbox')
         textarea.setAttribute('aria-multiline', 'true')
         textarea.setAttribute('spellcheck', 'true')
         textarea.setAttribute('autocorrect', 'true')
-        updateTabbableChildren(note, false)
+        updateTabbableChildren(note as unknown as HTMLElement, false)
       }
     }
 
@@ -124,21 +137,22 @@ export default defineComponent({
       for (const [key, value] of Object.entries(props)) {
         if (EXCLUDED_KEYS.includes(key as any)) continue
         if (value === undefined || value === null) continue
-
-        attrs[key.replace(/[A-Z]/g, m => '-' + m.toLowerCase())] = String(value)
+        attrs[key.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())] = String(value)
       }
-      
-      attrs['size-level-desktop'] = attrs['size-level-desktop'] && hison.utils.isNumber(attrs['size-level-desktop'])
-        ? String(Math.min(Math.max(Number(attrs['size-level-desktop']), 1), 9))
-        : getSizeLevel(3, size)
-      attrs['size-level-mobile'] = attrs['size-level-mobile'] && hison.utils.isNumber(attrs['size-level-mobile'])
-        ? String(Math.min(Math.max(Number(attrs['size-level-mobile']), 1), 9))
-        : getSizeLevel(5, size)
+
+      attrs['size-level-desktop'] =
+        attrs['size-level-desktop'] && hison.utils.isNumber(attrs['size-level-desktop'])
+          ? String(Math.min(Math.max(Number(attrs['size-level-desktop']), 1), 9))
+          : getSizeLevel(3, size)
+      attrs['size-level-mobile'] =
+        attrs['size-level-mobile'] && hison.utils.isNumber(attrs['size-level-mobile'])
+          ? String(Math.min(Math.max(Number(attrs['size-level-mobile']), 1), 9))
+          : getSizeLevel(5, size)
 
       if (color && !attrs.color) attrs.color = color
       if (attrs.color) {
-        attrs.color = getHexCodeFromColorText(attrs.color) ?? attrs.color
-        attrs['main-color'] = attrs.color
+        const hex = getHexCodeFromColorText(attrs.color) ?? attrs.color
+        attrs['main-color'] = hex
         delete attrs.color
       }
 
@@ -152,26 +166,36 @@ export default defineComponent({
     const getSizeLevel = (sizeLevel: number, size: string | null) => {
       size = size ?? hisonCloser.componentStyle.size
       switch (size) {
-        case Size.s: sizeLevel -= 2; break
-        case Size.m: break
-        case Size.l: sizeLevel += 2; break
-        case Size.xl: sizeLevel += 3; break
+        case Size.s:
+          sizeLevel -= 2
+          break
+        case Size.m:
+          break
+        case Size.l:
+          sizeLevel += 2
+          break
+        case Size.xl:
+          sizeLevel += 3
+          break
       }
       return String(Math.min(Math.max(sizeLevel, 1), 9))
     }
 
     const mutationObserver = new MutationObserver((mutations) => {
-      const el = mutations[0]?.target
+      const el = mutations[0]?.target as HTMLElement | undefined
       if (!el) return
-      const note = getNoteElement(el as HTMLElement)
+      if (destroyed.value) return
+      const note = getNoteElement(el)
       if (!note) return
       syncNoteData()
     })
+
     const getNoteElement = (targetElement: HTMLElement): VanillanoteElement | null => {
       let target: any = targetElement
-      while (!(target instanceof Element)) target = target.parentNode
-      return target.closest?.('[data-vanillanote]') || null
+      while (target && !(target instanceof Element)) target = target.parentNode
+      return target?.closest?.('[data-vanillanote]') || null
     }
+
     const isNoteDataEqual = (a: NoteData, b: NoteData) => {
       if (!a || !b) return false
       if (a.html !== b.html || a.plainText !== b.plainText) return false
@@ -181,12 +205,13 @@ export default defineComponent({
       if (JSON.stringify(a.videos) !== JSON.stringify(b.videos)) return false
       const fileKeysA = Object.keys(a.fileObjects || {})
       const fileKeysB = Object.keys(b.fileObjects || {})
-      if (fileKeysA.length !== fileKeysB.length || !fileKeysA.every(k => fileKeysB.includes(k))) return false
+      if (fileKeysA.length !== fileKeysB.length || !fileKeysA.every((k) => fileKeysB.includes(k))) return false
       const imageKeysA = Object.keys(a.imageObjects || {})
       const imageKeysB = Object.keys(b.imageObjects || {})
-      if (imageKeysA.length !== imageKeysB.length || !imageKeysA.every(k => imageKeysB.includes(k))) return false
+      if (imageKeysA.length !== imageKeysB.length || !imageKeysA.every((k) => imageKeysB.includes(k))) return false
       return true
     }
+
     const syncNoteData = () => {
       if (noteInstance.value) {
         isModified.value = true
@@ -194,27 +219,48 @@ export default defineComponent({
       }
     }
 
-    const reload = () => {
-        unmount()
-        forceRecomputeBindAttrs()
-        nextTick(mount)
+    const reloadSafe = () => {
+      if (!alive.value) return
+      unregisterReloadable(reloadId)
+      unmount()
+      forceRecomputeBindAttrs()
+      nextTick(() => {
+        if (!alive.value) return
+        mount()
+      })
     }
 
     const mount = () => {
-      registerReloadable(reloadId, reload)
-      vn.init()
-      if (!editorWrap.value) return
-      vn.mountNote(editorWrap.value)
+      if (!alive.value) return
+
+      unregisterReloadable(reloadId)
+
+      registerReloadable(reloadId, () => {
+        if (!alive.value) return
+        reloadSafe()
+      })
+
+      if (!vnInited) {
+        vn.init()
+        vnInited = true
+      }
+
+      const root = editorWrap.value
+      if (!root) return
+
+      if (destroyed.value) return
+
+      vn.mountNote(root)
 
       const noteElement: any = vn.getNote(id)
-      noteElement.getId = () => { return id }
+      if (noteElement) noteElement.getId = () => id
       noteInstance.value = noteElement as HNoteElement
-      const note = noteInstance.value
-      
+      const note = noteInstance.value as any
+
       if (props.modelValue && note) {
         note.setNoteData(props.modelValue)
       }
-      if(tabIndex.value && note._elements.textarea) {
+      if (tabIndex.value && note?._elements?.textarea) {
         note._elements.textarea.setAttribute('tabIndex', String(tabIndex.value))
       }
 
@@ -223,25 +269,33 @@ export default defineComponent({
         note.getId = () => id
         note.getType = () => 'note'
         note.getRequired = () => required.value
-        note.setRequired = (val: boolean) => { required.value = val }
-        note.isVisible = () => visible.value,
-        note.setVisible = (val: boolean) => { visible.value = val }
+        note.setRequired = (val: boolean) => {
+          required.value = val
+        }
+        note.isVisible = () => visible.value
+        note.setVisible = (val: boolean) => {
+          visible.value = val
+        }
         note.getEditMode = () => editMode.value
         note.setEditMode = (val: EditMode) => {
           editMode.value = val
           applyEditMode()
         }
         note.isModified = () => isModified.value
-        note.initModified = () => isModified.value = false
+        note.initModified = () => (isModified.value = false)
         note.getTabIndex = () => tabIndex.value
-        note.setTabIndex = (v: number | null) => { tabIndex.value = v !== null && v !== undefined ? Number(v) : null }
-        note.focus = () => { note._elements?.textarea?.focus() }
+        note.setTabIndex = (v: number | null) => {
+          tabIndex.value = v !== null && v !== undefined ? Number(v) : null
+        }
+        note.focus = () => {
+          note._elements?.textarea?.focus?.()
+        }
         note.getDataModel = () => {
           const noteData = note.getNoteData()
           return new hison.data.DataModel(noteData)
         }
         note.setDataModel = <T extends NoteData>(dataModel: InterfaceDataModel<T>) => {
-          if(!dataModel || dataModel.getRowCount() == 0) return 
+          if (!dataModel || dataModel.getRowCount() == 0) return
           const noteData: NoteData = {
             html: dataModel.hasColumn('html') ? dataModel.getValue<'html'>(0, 'html') : '',
             plainText: dataModel.hasColumn('plainText') ? dataModel.getValue<'plainText'>(0, 'plainText') : '',
@@ -250,7 +304,7 @@ export default defineComponent({
             images: dataModel.hasColumn('images') ? dataModel.getValue<'images'>(0, 'images') : [],
             videos: dataModel.hasColumn('videos') ? dataModel.getValue<'videos'>(0, 'videos') : [],
             fileObjects: dataModel.hasColumn('fileObjects') ? dataModel.getValue<'fileObjects'>(0, 'fileObjects') : {},
-            imageObjects: dataModel.hasColumn('imageObjects') ? dataModel.getValue<'imageObjects'>(0, 'imageObjects') : {},
+            imageObjects: dataModel.hasColumn('imageObjects') ? dataModel.getValue<'imageObjects'>(0, 'imageObjects') : {}
           }
           return note.setNoteData(noteData)
         }
@@ -265,8 +319,10 @@ export default defineComponent({
       }
 
       if (note) {
-        const textarea = note._elements?.textarea
-        mutationObserver.observe(textarea, { characterData: true, childList: true, subtree: true })
+        const textarea = note._elements?.textarea as HTMLElement | undefined
+        if (textarea) {
+          mutationObserver.observe(textarea, { characterData: true, childList: true, subtree: true })
+        }
       }
 
       if (note) {
@@ -550,43 +606,109 @@ export default defineComponent({
       }
 
       applyEditMode()
-      emit('mounted', note)
+
+      destroyed.value = false
+      ;(root as any).__hnoteDestroyed = false
+
+      emit('mounted', note as HNoteElement)
     }
+
     const unmount = () => {
       unregisterReloadable(reloadId)
-      if (!editorWrap.value) return
-      vn.unmountNote(editorWrap.value)
+      const root = editorWrap.value
+      if (!root || destroyed.value) {
+        mutationObserver.disconnect()
+        return
+      }
+      if (!(root as any).isConnected) {
+        destroyed.value = true
+        mutationObserver.disconnect()
+        noteInstance.value = null
+        return
+      }
+
+      try {
+        vn.unmountNote(root)
+      } catch (e) {
+        console.warn('[HNote] unmountNote skipped:', e)
+      }
       mutationObserver.disconnect()
+      destroyed.value = true
+      ;(root as any).__hnoteDestroyed = true
+      noteInstance.value = null
     }
 
     onMounted(mount)
-    onBeforeUnmount(unmount)
-    
+
+    onBeforeUnmount(() => {
+      alive.value = false
+      unmount()
+    })
+
     watch(device, (newDevice) => {
-      reload()
+      if (!alive.value || destroyed.value) return
+      reloadSafe()
       emit('responsive-change', newDevice)
     })
 
-    watch(() => props.modelValue, (newVal) => {
-      if (!noteInstance.value) return
-      const current = noteInstance.value.getNoteData()
-      if (!isNoteDataEqual(current, newVal!)) {
-        noteInstance.value.setNoteData(newVal!)
+    watch(
+      () => props.modelValue,
+      (newVal) => {
+        if (destroyed.value) return
+        if (!noteInstance.value) return
+        const current = noteInstance.value.getNoteData()
+        if (!isNoteDataEqual(current, newVal!)) {
+          noteInstance.value.setNoteData(newVal!)
+        }
       }
-    })
+    )
 
-    watch(() => props.visible, v => { const b = !!v; if (b !== visible.value) visible.value = b })
-    watch(() => props.editMode, v => { if (v && v !== editMode.value) { editMode.value = v as any; applyEditMode() } })
-    watch(() => props.required, v => { const b = !!v; if (b !== required.value) required.value = b })
-    watch(() => props.tabIndex, v => { const n = (v === null || v === '') ? null : Number(v); if (n !== tabIndex.value) { tabIndex.value = n; const t = noteInstance.value?._elements?.textarea as HTMLElement | undefined; if (t) { if (n == null) t.removeAttribute('tabIndex'); else t.setAttribute('tabIndex', String(n)) } } })
-    watch(() => props.class, () => { reload() })
-    watch(() => [props.noteModeByDevice, props.toolPosition, props.toolDefaultLine, props.toolToggle], () => reload())
-    watch(() => [props.textareaWidth, props.textareaHeight, props.textareaMaxWidth, props.textareaMaxHeight, props.textareaHeightIsModify], () => reload())
-    watch(() => [props.placeholderIsVisible, props.placeholderAddTop, props.placeholderAddLeft, props.placeholderWidth, props.placeholderColor, props.placeholderBackgroundColor, props.placeholderTitle, props.placeholderTextContent], () => reload())
-    watch(() => [props.attFilePreventTypes, props.attFileAcceptTypes, props.attFileMaxSize, props.attImagePreventTypes, props.attImageAcceptTypes, props.attImageMaxSize], () => reload())
-    watch(() => [props.defaultFontSize, props.defaultLineHeight, props.defaultFontFamily, props.defaultToolFontFamily, props.addFontFamily, props.removeFontFamily, props.language, props.recodeLimit], () => reload())
-    watch(() => [props.sizeLevelDesktop, props.sizeLevelMobile, props.color, props.invertColor], () => reload())
-    watch(() => [props.usingParagraphStyle, props.usingBold, props.usingUnderline, props.usingItalic, props.usingUl, props.usingOl, props.usingTextAlign, props.usingAttLink, props.usingAttFile, props.usingAttImage, props.usingAttVideo, props.usingFontSize, props.usingLetterSpacing, props.usingLineHeight, props.usingFontFamily, props.usingColorText, props.usingColorBack, props.usingFormatClear, props.usingUndo, props.usingRedo, props.usingHelp, props.usingParagraphAllStyle, props.usingCharacterStyle, props.usingCharacterSize, props.usingAttachFile, props.usingDo], () => reload())
+    watch(
+      () => props.visible,
+      (v) => {
+        const b = !!v
+        if (b !== visible.value) visible.value = b
+      }
+    )
+    watch(
+      () => props.editMode,
+      (v) => {
+        if (v && v !== editMode.value) {
+          editMode.value = v as any
+          applyEditMode()
+        }
+      }
+    )
+    watch(
+      () => props.required,
+      (v) => {
+        const b = !!v
+        if (b !== required.value) required.value = b
+      }
+    )
+    watch(
+      () => props.tabIndex,
+      (v) => {
+        const n = v === null || v === '' ? null : Number(v)
+        if (n !== tabIndex.value) {
+          tabIndex.value = n
+          const t = noteInstance.value?._elements?.textarea as HTMLElement | undefined
+          if (t) {
+            if (n == null) t.removeAttribute('tabIndex')
+            else t.setAttribute('tabIndex', String(n))
+          }
+        }
+      }
+    )
+
+    watch(() => props.class, () => { if (!alive.value || destroyed.value) return; reloadSafe() })
+    watch(() => [props.noteModeByDevice, props.toolPosition, props.toolDefaultLine, props.toolToggle], () => { if (!alive.value || destroyed.value) return; reloadSafe() })
+    watch(() => [props.textareaWidth, props.textareaHeight, props.textareaMaxWidth, props.textareaMaxHeight, props.textareaHeightIsModify], () => { if (!alive.value || destroyed.value) return; reloadSafe() })
+    watch(() => [props.placeholderIsVisible, props.placeholderAddTop, props.placeholderAddLeft, props.placeholderWidth, props.placeholderColor, props.placeholderBackgroundColor, props.placeholderTitle, props.placeholderTextContent], () => { if (!alive.value || destroyed.value) return; reloadSafe() })
+    watch(() => [props.attFilePreventTypes, props.attFileAcceptTypes, props.attFileMaxSize, props.attImagePreventTypes, props.attImageAcceptTypes, props.attImageMaxSize], () => { if (!alive.value || destroyed.value) return; reloadSafe() })
+    watch(() => [props.defaultFontSize, props.defaultLineHeight, props.defaultFontFamily, props.defaultToolFontFamily, props.addFontFamily, props.removeFontFamily, props.language, props.recodeLimit], () => { if (!alive.value || destroyed.value) return; reloadSafe() })
+    watch(() => [props.sizeLevelDesktop, props.sizeLevelMobile, props.invertColor, props.color], () => { if (!alive.value || destroyed.value) return; reloadSafe() })
+    watch(() => [props.usingParagraphStyle, props.usingBold, props.usingUnderline, props.usingItalic, props.usingUl, props.usingOl, props.usingTextAlign, props.usingAttLink, props.usingAttFile, props.usingAttImage, props.usingAttVideo, props.usingFontSize, props.usingLetterSpacing, props.usingLineHeight, props.usingFontFamily, props.usingColorText, props.usingColorBack, props.usingFormatClear, props.usingUndo, props.usingRedo, props.usingHelp, props.usingParagraphAllStyle, props.usingCharacterStyle, props.usingCharacterSize, props.usingAttachFile, props.usingDo], () => { if (!alive.value || destroyed.value) return; reloadSafe() })
 
     return {
       editorWrap,
@@ -595,7 +717,7 @@ export default defineComponent({
       responsiveClassList,
       visibleClass,
       requiredClass,
-      editModeClass,
+      editModeClass
     }
   }
 })

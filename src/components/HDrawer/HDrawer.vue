@@ -44,9 +44,7 @@
           </HButton>
         </slot>
 
-        <div class="hison-drawer-body">
-          <slot />
-        </div>
+        <slot />
       </div>
     </div>
   </div>
