@@ -1,6 +1,6 @@
 # HisonVue
 
-More detailed information can be found on the homepage below.
+More detailed information can be found on the this.
 [Homepage](https://hisondev.github.io/)
 
 A **Vue 3 UI component library** designed for enterprise-grade apps.
