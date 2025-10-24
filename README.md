@@ -1,5 +1,8 @@
 # HisonVue
 
+## More detailed information can be found on the homepage below.
+[Homepage](https://hisondev.github.io/)
+
 A **Vue 3 UI component library** designed for enterprise-grade apps.
 Built on top of [**hisonjs**](https://github.com/hisondev/hisonjs), it bridges **frontend components** and **backend-ready data utilities** into one unified ecosystem.
 
