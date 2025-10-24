@@ -271,4 +271,17 @@ export const inputProps = {
         type: Function as PropType<(value: any) => string>,
         default: undefined,
     },
+    /**
+     * Defines the **visual style** for toggle-type inputs (`checkbox` or `radio`).
+     * 
+     * - `'default'` : Uses the standard circular (radio) or square (checkbox) design.
+     * - `'switch'`  : Renders a modern switch-style toggle (sliding thumb on a track).
+     * 
+     * @default 'default'
+     */
+    toggleStyle: {
+        type: String as PropType<'default' | 'switch'>,
+        default: 'default',
+        validator: (v: any) => ['default', 'switch'].includes(v),
+    },
 }

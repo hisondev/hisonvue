@@ -1737,6 +1737,7 @@ declare module 'vue' {
      * @prop {string} [checkedText='Y'] - Display text for `true` value in checkbox/radio (span-text).
      * @prop {string} [uncheckedText='N'] - Display text for `false` value in checkbox/radio (span-text).
      * @prop {(value: any) => string} [inputTextdHandler] - Custom formatter for display text (span).
+     * @prop {('default' | 'switch')} [toggleStyle='default'] - Visual style for `checkbox`/`radio`.
      *
      * ---
      *
@@ -2000,6 +2001,7 @@ declare module 'vue' {
      * @prop {('left'|'center'|'right')} [textAlign] - Text alignment. Can be changed via methods.
      * @prop {boolean} [border] - Whether to show border (box-shadow). Default: `false`.
      * @prop {('filled'|'empty'|'transparent')} [backgroundType] - Background style. `'empty'` (default), `'filled'`, or `'transparent'`.
+     * @prop {string} [toggleTarget=null] - ID of the target `HInput` (`checkbox` or `radio`) to toggle when the label is clicked or activated by keyboard.
      *
      * ---
      *

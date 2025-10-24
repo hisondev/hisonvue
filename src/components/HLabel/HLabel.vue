@@ -12,6 +12,7 @@
         :class="[
             'hison-label',
             hasHref ? 'hison-label-link' : null,
+            hasToggleTarget ? 'hison-label-has-toggle-target' : null,
             fontBoldClass,
             fontItalicClass,
             fontThrulineClass,
@@ -140,6 +141,9 @@ export default defineComponent({
                 internalText.value = text
             }
         })
+
+        const toggleTarget = ref<string | null>(props.toggleTarget ?? null)
+        const hasToggleTarget = computed(() => !!(toggleTarget.value && String(toggleTarget.value).trim()))
         
         const tabIndex = ref<number | null>(
             props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
@@ -152,23 +156,47 @@ export default defineComponent({
             addComponentNameToClass(responsiveClassList.value, 'color', 'primary')
         }
 
+        const toggleTargetInput = () => {
+            if (!hasToggleTarget.value) return
+
+            const tgtId = String(toggleTarget.value)
+            const api = (hisonCloser.component.inputList as any)?.[tgtId]
+            if (!api || !api.isHisonvueComponent) return
+
+            const t = api.getInputType?.()
+            const em = api.getEditMode?.()
+            if ((t !== 'checkbox' && t !== 'radio') || em !== 'editable') return
+
+            const cur = !!api.getValue?.()
+            if (t === 'checkbox') {
+                api.setValue?.(!cur)
+            } else {
+                api.setValue?.(true)
+            }
+        }
+
         const onClick = (e: MouseEvent) => {
-          if (!hasHref.value) return
-          emit('click', e, labelMethods.value!)
+            if (hasToggleTarget.value) toggleTargetInput()
+            emit('click', e, labelMethods.value!)
         }
 
         const onKeyActivate = (e: KeyboardEvent) => {
-          if (!hasHref.value) return
-          const el = labelRef.value as HTMLAnchorElement | null
-          if (el && el.tagName === 'A') {
-            el.click()
-          }
+            if (hasToggleTarget.value) toggleTargetInput()
+            if (!hasHref.value) return
+            const el = labelRef.value as HTMLAnchorElement | null
+            if (el && el.tagName === 'A') {
+                el.click()
+            }
         }
 
         const attachButtonCssEvent = (add = true) => {
             const el = labelRef.value
             if (!el) return
             removeButtonCssEvent(el)
+            if (hasToggleTarget.value) {
+                addButtonCssEvent(el)
+                return
+            }
             if (add && hasHref.value && el.tagName === 'A') addButtonCssEvent(el)
         }
 
@@ -216,6 +244,8 @@ export default defineComponent({
                 setBorder: (val: boolean) => { border.value = val },
                 getBackgroundType: () => backgroundType.value,
                 setBackgroundType: (type) => { backgroundType.value = type as any },
+                getToggleTarget: () => toggleTarget.value,
+                setToggleTarget: (id: string | null) => { toggleTarget.value = id },
                 reload: () => reloadHisonComponent(reloadId),
                 getTabIndex: () => tabIndex.value,
                 setTabIndex: (v: number | null) => {
@@ -250,6 +280,9 @@ export default defineComponent({
         watch(hasHref, (isLink) => {
             nextTick(() => attachButtonCssEvent(isLink))
         }, { flush: 'post' })
+        watch(hasToggleTarget, (on) => {
+            nextTick(() => attachButtonCssEvent(on))
+        }, { flush: 'post' })
 
         watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
         watch(() => props.title, v => { const s = v ?? ''; if (s !== title.value) title.value = s })
@@ -264,6 +297,10 @@ export default defineComponent({
         watch(() => props.textAlign, v => { if (v && v !== textAlign.value && (v === TextAlign.left || v === TextAlign.center || v === TextAlign.right)) textAlign.value = v })
         watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
         watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
+        watch(() => props.toggleTarget, v => {
+            const nv = v ?? null
+            if (nv !== toggleTarget.value) toggleTarget.value = nv
+        })
         watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
         watch(() => props.class, () => { refreshResponsiveClassList() })
 
@@ -273,6 +310,7 @@ export default defineComponent({
             props,
             title,
             hasHref,
+            hasToggleTarget,
             hasElementSlot,
             renderTag,
             internalText,

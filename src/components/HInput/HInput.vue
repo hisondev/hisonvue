@@ -113,55 +113,110 @@
     </div>
 
     <div
-    v-else-if="inputType === 'checkbox'"
-    :class="[
-      'hison-input',
-      'hison-input-checkbox-div',
-    ]"
-    :style="[textAlignStyle, props.style]"
+      v-else-if="inputType === 'checkbox'"
+      :class="[
+        'hison-input',
+        'hison-input-checkbox-div',
+      ]"
+      :style="[textAlignStyle, props.style]"
     >
-      <input
-        ref="inputRef"
-        :id="`${id}`"
-        :name="`${nameAttr}`"
-        type="checkbox"
-        :class="[
-          `hison-input-${inputType}`,
-          ...editModeClassList,
-          ...requiredClassList,
-        ]"
-        :disabled="disable"
-        :readonly="readonly"
-        :checked="inputValue === true"
-        :title="title || undefined"
-        :tabindex="tabIndex ?? undefined"
-        @change="onCheckboxChange"
-        @focus="onFocus"
-        @blur="onBlur"
-        @keydown="onKeydown"
+      <!-- default -->
+      <template v-if="toggleStyle !== 'switch'">
+        <input
+          ref="inputRef"
+          :id="`${id}`"
+          :name="`${nameAttr}`"
+          type="checkbox"
+          :class="[
+            `hison-input-${inputType}`,
+            ...editModeClassList,
+            ...requiredClassList,
+          ]"
+          :disabled="disable"
+          :readonly="readonly"
+          :checked="inputValue === true"
+          :title="title || undefined"
+          :tabindex="tabIndex ?? undefined"
+          @change="onCheckboxChange"
+          @focus="onFocus"
+          @blur="onBlur"
+          @keydown="onKeydown"
 
-        @click="$emit('click', $event, inputMethods)"
-        @dblclick="$emit('dblclick', $event, inputMethods)"
-        @mousedown="$emit('mousedown', $event, inputMethods)"
-        @mouseup="$emit('mouseup', $event, inputMethods)"
-        @mouseenter="$emit('mouseenter', $event, inputMethods)"
-        @mouseleave="$emit('mouseleave', $event, inputMethods)"
-        @mouseover="$emit('mouseover', $event, inputMethods)"
-        @mouseout="$emit('mouseout', $event, inputMethods)"
+          @click="$emit('click', $event, inputMethods)"
+          @dblclick="$emit('dblclick', $event, inputMethods)"
+          @mousedown="$emit('mousedown', $event, inputMethods)"
+          @mouseup="$emit('mouseup', $event, inputMethods)"
+          @mouseenter="$emit('mouseenter', $event, inputMethods)"
+          @mouseleave="$emit('mouseleave', $event, inputMethods)"
+          @mouseover="$emit('mouseover', $event, inputMethods)"
+          @mouseout="$emit('mouseout', $event, inputMethods)"
 
-        @pointerdown="$emit('pointerdown', $event, inputMethods)"
-        @pointerup="$emit('pointerup', $event, inputMethods)"
-        @pointermove="$emit('pointermove', $event, inputMethods)"
-        @pointerenter="$emit('pointerenter', $event, inputMethods)"
-        @pointerleave="$emit('pointerleave', $event, inputMethods)"
+          @pointerdown="$emit('pointerdown', $event, inputMethods)"
+          @pointerup="$emit('pointerup', $event, inputMethods)"
+          @pointermove="$emit('pointermove', $event, inputMethods)"
+          @pointerenter="$emit('pointerenter', $event, inputMethods)"
+          @pointerleave="$emit('pointerleave', $event, inputMethods)"
 
-        @touchstart="$emit('touchstart', $event, inputMethods)"
-        @touchend="$emit('touchend', $event, inputMethods)"
-        @touchmove="$emit('touchmove', $event, inputMethods)"
-        @touchcancel="$emit('touchcancel', $event, inputMethods)"
+          @touchstart="$emit('touchstart', $event, inputMethods)"
+          @touchend="$emit('touchend', $event, inputMethods)"
+          @touchmove="$emit('touchmove', $event, inputMethods)"
+          @touchcancel="$emit('touchcancel', $event, inputMethods)"
 
-        @contextmenu="$emit('contextmenu', $event, inputMethods)"
-      />
+          @contextmenu="$emit('contextmenu', $event, inputMethods)"
+        />
+      </template>
+
+      <!-- switch -->
+      <template v-else>
+        <label :class="['hison-input-checkbox-switch', ...editModeClassList]">
+          <input
+            ref="inputRef"
+            :id="`${id}`"
+            :name="`${nameAttr}`"
+            type="checkbox"
+            class="hison-cswitch-input"
+            :disabled="disable"
+            :readonly="readonly"
+            :checked="inputValue === true"
+            :title="title || undefined"
+            :tabindex="tabIndex ?? undefined"
+            @change="onCheckboxChange"
+            @focus="onFocus"
+            @blur="onBlur"
+            @keydown="onKeydown"
+
+            @click="$emit('click', $event, inputMethods)"
+            @dblclick="$emit('dblclick', $event, inputMethods)"
+            @mousedown="$emit('mousedown', $event, inputMethods)"
+            @mouseup="$emit('mouseup', $event, inputMethods)"
+            @mouseenter="$emit('mouseenter', $event, inputMethods)"
+            @mouseleave="$emit('mouseleave', $event, inputMethods)"
+            @mouseover="$emit('mouseover', $event, inputMethods)"
+            @mouseout="$emit('mouseout', $event, inputMethods)"
+
+            @pointerdown="$emit('pointerdown', $event, inputMethods)"
+            @pointerup="$emit('pointerup', $event, inputMethods)"
+            @pointermove="$emit('pointermove', $event, inputMethods)"
+            @pointerenter="$emit('pointerenter', $event, inputMethods)"
+            @pointerleave="$emit('pointerleave', $event, inputMethods)"
+
+            @touchstart="$emit('touchstart', $event, inputMethods)"
+            @touchend="$emit('touchend', $event, inputMethods)"
+            @touchmove="$emit('touchmove', $event, inputMethods)"
+            @touchcancel="$emit('touchcancel', $event, inputMethods)"
+
+            @contextmenu="$emit('contextmenu', $event, inputMethods)"
+          />
+          <span
+            class="hison-switch-visual"
+            :class="[
+              ...editModeClassList,
+              ...requiredClassList
+            ]"
+            aria-hidden="true"
+          />
+        </label>
+      </template>
     </div>
 
     <div
@@ -169,48 +224,104 @@
       :class="['hison-input','hison-input-radio-div']"
       :style="[textAlignStyle, props.style]"
     >
-      <input
-        ref="inputRef"
-        :id="`${id}`"
-        :name="`${nameAttr}`"
-        type="radio"
-        :class="[
-          `hison-input-${inputType}`,
-          ...editModeClassList,
-          ...requiredClassList,
-        ]"
-        :disabled="disable"
-        :readonly="readonly"
-        :checked="inputValue === true"
-        :title="title || undefined"
-        :tabindex="tabIndex ?? undefined"
-        @change="onRadioChange"
-        @focus="onFocus"
-        @blur="onBlur"
-        @keydown="onKeydown"
+      <template v-if="toggleStyle !== 'switch'">
+        <input
+          ref="inputRef"
+          :id="`${id}`"
+          :name="`${nameAttr}`"
+          type="radio"
+          :class="[
+            `hison-input-${inputType}`,
+            'hison-input-radio--default',
+            ...editModeClassList,
+            ...requiredClassList,
+          ]"
+          :disabled="disable || readonly"
+          :readonly="readonly"
+          :checked="inputValue === true"
+          :title="title || undefined"
+          :tabindex="tabIndex ?? undefined"
+          @change="onRadioChange"
+          @focus="onFocus"
+          @blur="onBlur"
+          @keydown="onKeydown"
 
-        @click="$emit('click', $event, inputMethods)"
-        @dblclick="$emit('dblclick', $event, inputMethods)"
-        @mousedown="$emit('mousedown', $event, inputMethods)"
-        @mouseup="$emit('mouseup', $event, inputMethods)"
-        @mouseenter="$emit('mouseenter', $event, inputMethods)"
-        @mouseleave="$emit('mouseleave', $event, inputMethods)"
-        @mouseover="$emit('mouseover', $event, inputMethods)"
-        @mouseout="$emit('mouseout', $event, inputMethods)"
+          @click="$emit('click', $event, inputMethods)"
+          @dblclick="$emit('dblclick', $event, inputMethods)"
+          @mousedown="$emit('mousedown', $event, inputMethods)"
+          @mouseup="$emit('mouseup', $event, inputMethods)"
+          @mouseenter="$emit('mouseenter', $event, inputMethods)"
+          @mouseleave="$emit('mouseleave', $event, inputMethods)"
+          @mouseover="$emit('mouseover', $event, inputMethods)"
+          @mouseout="$emit('mouseout', $event, inputMethods)"
 
-        @pointerdown="$emit('pointerdown', $event, inputMethods)"
-        @pointerup="$emit('pointerup', $event, inputMethods)"
-        @pointermove="$emit('pointermove', $event, inputMethods)"
-        @pointerenter="$emit('pointerenter', $event, inputMethods)"
-        @pointerleave="$emit('pointerleave', $event, inputMethods)"
+          @pointerdown="$emit('pointerdown', $event, inputMethods)"
+          @pointerup="$emit('pointerup', $event, inputMethods)"
+          @pointermove="$emit('pointermove', $event, inputMethods)"
+          @pointerenter="$emit('pointerenter', $event, inputMethods)"
+          @pointerleave="$emit('pointerleave', $event, inputMethods)"
 
-        @touchstart="$emit('touchstart', $event, inputMethods)"
-        @touchend="$emit('touchend', $event, inputMethods)"
-        @touchmove="$emit('touchmove', $event, inputMethods)"
-        @touchcancel="$emit('touchcancel', $event, inputMethods)"
+          @touchstart="$emit('touchstart', $event, inputMethods)"
+          @touchend="$emit('touchend', $event, inputMethods)"
+          @touchmove="$emit('touchmove', $event, inputMethods)"
+          @touchcancel="$emit('touchcancel', $event, inputMethods)"
 
-        @contextmenu="$emit('contextmenu', $event, inputMethods)"
-      />
+          @contextmenu="$emit('contextmenu', $event, inputMethods)"
+        />
+      </template>
+
+      <!-- switch 모양: input은 그대로 두고, 시각화 span 추가 -->
+      <template v-else>
+        <label :class="['hison-input-radio-switch', ...editModeClassList]">
+          <input
+            ref="inputRef"
+            :id="`${id}`"
+            :name="`${nameAttr}`"
+            type="radio"
+            class="hison-radio-switch-input"
+            :disabled="disable || readonly"
+            :readonly="readonly"
+            :checked="inputValue === true"
+            :title="title || undefined"
+            :tabindex="tabIndex ?? undefined"
+            @change="onRadioChange"
+            @focus="onFocus"
+            @blur="onBlur"
+            @keydown="onKeydown"
+
+            @click="$emit('click', $event, inputMethods)"
+            @dblclick="$emit('dblclick', $event, inputMethods)"
+            @mousedown="$emit('mousedown', $event, inputMethods)"
+            @mouseup="$emit('mouseup', $event, inputMethods)"
+            @mouseenter="$emit('mouseenter', $event, inputMethods)"
+            @mouseleave="$emit('mouseleave', $event, inputMethods)"
+            @mouseover="$emit('mouseover', $event, inputMethods)"
+            @mouseout="$emit('mouseout', $event, inputMethods)"
+
+            @pointerdown="$emit('pointerdown', $event, inputMethods)"
+            @pointerup="$emit('pointerup', $event, inputMethods)"
+            @pointermove="$emit('pointermove', $event, inputMethods)"
+            @pointerenter="$emit('pointerenter', $event, inputMethods)"
+            @pointerleave="$emit('pointerleave', $event, inputMethods)"
+
+            @touchstart="$emit('touchstart', $event, inputMethods)"
+            @touchend="$emit('touchend', $event, inputMethods)"
+            @touchmove="$emit('touchmove', $event, inputMethods)"
+            @touchcancel="$emit('touchcancel', $event, inputMethods)"
+
+            @contextmenu="$emit('contextmenu', $event, inputMethods)"
+          />
+          <!-- 시각화 -->
+          <span
+            class="hison-switch-visual"
+            :class="[
+              ...editModeClassList,
+              ...requiredClassList
+            ]"
+            aria-hidden="true"
+          />
+        </label>
+      </template>
     </div>
 
     <select
@@ -487,6 +598,7 @@ export default defineComponent({
           return inputType.value
       }
     })
+    const toggleStyle = ref<'default' | 'switch'>(props.toggleStyle ?? 'default')
 
     const format = ref(props.format ?? null)
     const maxNumber = ref(hison.utils.isNumeric(props.maxNumber) ? Number(props.maxNumber) : null)
@@ -878,6 +990,12 @@ export default defineComponent({
         setBorder: (val: boolean) => { border.value = val },
         isModified : () => { return isModified.value },
         setModified : (val: boolean) => { isModified.value = val},
+        getToggleStyle: () => toggleStyle.value,
+        setToggleStyle: (style: 'default' | 'switch') => {
+          if (style === 'default' || style === 'switch') {
+            toggleStyle.value = style
+          }
+        },
         getTabIndex: () => tabIndex.value,
         setTabIndex: (v: number | null) => {
           tabIndex.value = v !== null && v !== undefined ? Number(v) : null
@@ -949,6 +1067,12 @@ export default defineComponent({
     watch(() => props.editMode, v => { if (v && v !== editMode.value) editMode.value = v as any })
     watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
     watch(() => props.class, () => { refreshResponsiveClassList() })
+    watch(() => props.toggleStyle, v => {
+      const s = (v ?? 'default') as any
+      if (s !== toggleStyle.value && (s === 'default' || s === 'switch')) {
+        toggleStyle.value = s
+      }
+    })
 
     return {
         inputRef,
@@ -979,6 +1103,7 @@ export default defineComponent({
         maxNumber,
         minNumber,
         spanText,
+        toggleStyle,
         tabIndex,
         onInput,
         onTextInputFocus,

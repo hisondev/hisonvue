@@ -3007,6 +3007,16 @@ export interface HInputMethods extends ComponentMethods {
    */
   setModified(modified: boolean): void;
   /**
+   * Returns the current toggle style of the input (`checkbox` or `radio`).
+   * @returns `'default'` for standard style, or `'switch'` for switch-type toggle.
+   */
+  getToggleStyle(): 'default' | 'switch'
+  /**
+   * Sets the toggle style for the input (`checkbox` or `radio`).
+   * @param style - `'default'` for standard style, or `'switch'` for switch-type toggle.
+   */
+  setToggleStyle(style: 'default' | 'switch'): void
+  /**
    * Gets the current `tabIndex` applied to element.
    * - `null`: no `tabindex` attribute (items not focusable).
    * - `0` or positive number: items can be focused via keyboard navigation.
@@ -3342,6 +3352,17 @@ export interface HLabelMethods extends ComponentMethods {
    * - Accepts 'filled' | 'empty' | 'transparent'.
    */
   setBackgroundType(type: BackgroundType | BackgroundTypeValue): void
+  /**
+   * Gets the current toggle target id.
+   * - Returns the id of the `HInput` (checkbox/radio) linked to this label, or `null` if none.
+   */
+  getToggleTarget(): string | null
+  /**
+   * Sets or changes the toggle target id.
+   * - When assigned, clicking the label (or pressing Enter/Space) will toggle the specified `HInput`.
+   * - Accepts `null` to remove toggle linkage.
+   */
+  setToggleTarget(id: string | null): void
   /**
    * Gets the current `tabIndex` applied to element.
    * - `null`: no `tabindex` attribute (items not focusable).

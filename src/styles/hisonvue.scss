@@ -1472,6 +1472,288 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 }
 .hison-input-radio { cursor: pointer; }
 
+/* add toggle style */
+.hison-input-checkbox-switch {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  width: 2.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+}
+
+.hison-input-checkbox-switch > .hison-cswitch-input {
+  position: absolute;
+  opacity: 0;
+  width: 0; height: 0;
+}
+
+.hison-input-checkbox-switch > .hison-switch-visual {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  transition: background-color .2s ease;
+}
+
+.hison-input-checkbox-switch > .hison-switch-visual::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: calc(1.1rem - 6px);
+  height: calc(1.1rem - 6px);
+  border-radius: 50%;
+  background: #fff;
+  transform: translateY(-50%);
+  transition: left .2s ease, background-color .2s ease, box-shadow .2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,.2);
+}
+
+.hison-input-checkbox-switch > .hison-cswitch-input:checked + .hison-switch-visual {
+  background: currentColor;
+}
+
+.hison-input-checkbox-switch > .hison-cswitch-input:checked + .hison-switch-visual::after {
+  left: calc(100% - (1.1rem - 6px) - 2px);
+}
+
+.hison-input-checkbox-switch > .hison-cswitch-input:focus-visible + .hison-switch-visual {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.hison-size-s > .hison-input .hison-input-checkbox-switch {
+  width: 1.9rem;
+  height: 1.0rem;
+}
+.hison-size-s > .hison-input .hison-input-checkbox-switch > .hison-switch-visual::after {
+  width: calc(1.0rem - 6px);
+  height: calc(1.0rem - 6px);
+}
+.hison-size-s > .hison-input .hison-input-checkbox-switch > .hison-cswitch-input:checked + .hison-switch-visual::after {
+  left: calc(100% - (1.0rem - 6px) - 2px);
+}
+
+.hison-size-l > .hison-input .hison-input-checkbox-switch {
+  width: 2.3rem;
+  height: 1.2rem;
+}
+.hison-size-l > .hison-input .hison-input-checkbox-switch > .hison-switch-visual::after {
+  width: calc(1.2rem - 6px);
+  height: calc(1.2rem - 6px);
+}
+.hison-size-l > .hison-input .hison-input-checkbox-switch > .hison-cswitch-input:checked + .hison-switch-visual::after {
+  left: calc(100% - (1.2rem - 6px) - 2px);
+}
+
+.hison-size-xl > .hison-input .hison-input-checkbox-switch {
+  width: 2.6rem;
+  height: 1.3rem;
+}
+.hison-size-xl > .hison-input .hison-input-checkbox-switch > .hison-switch-visual::after {
+  width: calc(1.3rem - 6px);
+  height: calc(1.3rem - 6px);
+}
+.hison-size-xl > .hison-input .hison-input-checkbox-switch > .hison-cswitch-input:checked + .hison-switch-visual::after {
+  left: calc(100% - (1.3rem - 6px) - 2px);
+}
+
+.hison-color-primary > .hison-input .hison-input-checkbox-switch { color: var(--hison-primary-buttonColor); }
+.hison-color-muted   > .hison-input .hison-input-checkbox-switch { color: var(--hison-muted-buttonColor); }
+.hison-color-info    > .hison-input .hison-input-checkbox-switch { color: var(--hison-info-buttonColor); }
+.hison-color-success > .hison-input .hison-input-checkbox-switch { color: var(--hison-success-buttonColor); }
+.hison-color-danger  > .hison-input .hison-input-checkbox-switch { color: var(--hison-danger-buttonColor); }
+.hison-color-warning > .hison-input .hison-input-checkbox-switch { color: var(--hison-warning-buttonColor); }
+
+.hison-input-checkbox-switch.hison-input-disable,
+.hison-input-checkbox-switch .hison-input-disable {
+  opacity: .5;
+  cursor: not-allowed !important;
+}
+.hison-input-checkbox-switch.hison-input-disable *,
+.hison-input-checkbox-switch .hison-input-disable * {
+  pointer-events: none;
+  user-select: none;
+  outline: none;
+}
+
+.hison-input-checkbox-switch.hison-input-readonly,
+.hison-input-checkbox-switch .hison-input-readonly {
+  cursor: default;
+}
+.hison-input-checkbox-switch.hison-input-readonly *,
+.hison-input-checkbox-switch .hison-input-readonly * {
+  pointer-events: none;
+  outline: none;
+}
+
+.hison-input .hison-input-radio-switch > .hison-radio-switch-input {
+  position: absolute;
+  opacity: 0;
+  width: 0 !important;
+  height: 0 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  display: block !important;
+  overflow: hidden !important;
+  pointer-events: none;
+}
+
+.hison-input .hison-input-radio-switch > .hison-radio-switch-input::before {
+  content: none !important;
+}
+
+.hison-input .hison-input-radio-switch > .hison-radio-switch-input:focus-visible {
+  outline: none !important;
+}
+
+.hison-input-radio-switch {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  width: 2.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+}
+
+.hison-input-radio-switch > .hison-radio-switch-input {
+  position: absolute;
+  opacity: 0;
+  width: 0; height: 0;
+}
+
+.hison-input-radio-switch > .hison-switch-visual {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  transition: background-color .2s ease;
+}
+
+.hison-input-radio-switch > .hison-switch-visual::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: calc(1.1rem - 6px);
+  height: calc(1.1rem - 6px);
+  border-radius: 50%;
+  background: #fff;
+  transform: translateY(-50%);
+  transition: left .2s ease, background-color .2s ease, box-shadow .2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,.2);
+}
+
+.hison-input-radio-switch > .hison-radio-switch-input:checked + .hison-switch-visual {
+  background: currentColor;
+}
+
+.hison-input-radio-switch > .hison-radio-switch-input:checked + .hison-switch-visual::after {
+  left: calc(100% - (1.1rem - 6px) - 2px);
+}
+
+.hison-input-radio-switch > .hison-radio-switch-input:focus-visible + .hison-switch-visual {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.hison-size-s > .hison-input .hison-input-radio-switch {
+  width: 1.9rem;
+  height: 1.0rem;
+}
+.hison-size-s > .hison-input .hison-input-radio-switch > .hison-switch-visual::after {
+  width: calc(1.0rem - 6px);
+  height: calc(1.0rem - 6px);
+}
+.hison-size-s > .hison-input .hison-input-radio-switch > .hison-radio-switch-input:checked + .hison-switch-visual::after {
+  left: calc(100% - (1.0rem - 6px) - 2px);
+}
+
+.hison-size-l > .hison-input .hison-input-radio-switch {
+  width: 2.3rem;
+  height: 1.2rem;
+}
+.hison-size-l > .hison-input .hison-input-radio-switch > .hison-switch-visual::after {
+  width: calc(1.2rem - 6px);
+  height: calc(1.2rem - 6px);
+}
+.hison-size-l > .hison-input .hison-input-radio-switch > .hison-radio-switch-input:checked + .hison-switch-visual::after {
+  left: calc(100% - (1.2rem - 6px) - 2px);
+}
+
+.hison-size-xl > .hison-input .hison-input-radio-switch {
+  width: 2.6rem;
+  height: 1.3rem;
+}
+.hison-size-xl > .hison-input .hison-input-radio-switch > .hison-switch-visual::after {
+  width: calc(1.3rem - 6px);
+  height: calc(1.3rem - 6px);
+}
+.hison-size-xl > .hison-input .hison-input-radio-switch > .hison-radio-switch-input:checked + .hison-switch-visual::after {
+  left: calc(100% - (1.3rem - 6px) - 2px);
+}
+
+.hison-color-primary > .hison-input .hison-input-radio-switch { color: var(--hison-primary-buttonColor); }
+.hison-color-muted   > .hison-input .hison-input-radio-switch { color: var(--hison-muted-buttonColor); }
+.hison-color-info    > .hison-input .hison-input-radio-switch { color: var(--hison-info-buttonColor); }
+.hison-color-success > .hison-input .hison-input-radio-switch { color: var(--hison-success-buttonColor); }
+.hison-color-danger  > .hison-input .hison-input-radio-switch { color: var(--hison-danger-buttonColor); }
+.hison-color-warning > .hison-input .hison-input-radio-switch { color: var(--hison-warning-buttonColor); }
+
+.hison-input-radio-switch.hison-input-disable,
+.hison-input-radio-switch .hison-input-disable {
+  opacity: .5;
+  cursor: not-allowed !important;
+}
+.hison-input-radio-switch.hison-input-disable *,
+.hison-input-radio-switch .hison-input-disable * {
+  pointer-events: none;
+  user-select: none;
+  outline: none;
+}
+
+.hison-input-radio-switch.hison-input-readonly,
+.hison-input-radio-switch .hison-input-readonly {
+  cursor: default;
+}
+.hison-input-radio-switch.hison-input-readonly *,
+.hison-input-radio-switch .hison-input-readonly * {
+  pointer-events: none;
+  outline: none;
+}
+
+.hison-input .hison-input-radio-switch.hison-input-disable,
+.hison-input .hison-input-checkbox-switch.hison-input-disable,
+.hison-input input[type="radio"].hison-input-disable,
+.hison-input input[type="checkbox"].hison-input-disable {
+  opacity: 0.8;
+  cursor: not-allowed !important;
+}
+
+.hison-input-radio-switch.hison-input-disable *,
+.hison-input-checkbox-switch.hison-input-disable *,
+.hison-input input[type="radio"].hison-input-disable ~ *,
+.hison-input input[type="checkbox"].hison-input-disable ~ * {
+  pointer-events: none;
+  user-select: none;
+}
+
+.hison-input-disable {
+  opacity: 0.8;
+  cursor: not-allowed !important;
+}
+.hison-input-disable * {
+  pointer-events: none;
+  user-select: none;
+}
+
 .hison-size-s > .hison-input input[type="radio"] { transform: scale(1.0); }
 .hison-size-s > .hison-input input[type="radio"]:focus { outline: none; transform: scale(1.2); }
 .hison-size-m > .hison-input input[type="radio"] { transform: scale(1.15); }
@@ -1515,20 +1797,16 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
   outline: 2px solid var(--hison-radio-color, currentColor);
   outline-offset: 2px;
 }
-.hison-input input[type="radio"]:disabled {
-  opacity: .5;
-  cursor: not-allowed;
-}
 
 .hison-color-primary > .hison-input input[type="radio"] {
   --hison-radio-color: var(--hison-primary-buttonColor);
   --hison-radio-border: var(--hison-primary-buttonColor);
 }
-.hison-color-muted   > .hison-input input[type="radio"] {
+.hison-color-muted > .hison-input input[type="radio"] {
   --hison-radio-color: var(--hison-muted-buttonColor);
   --hison-radio-border: var(--hison-muted-buttonColor);
 }
-.hison-color-info    > .hison-input input[type="radio"] {
+.hison-color-info > .hison-input input[type="radio"] {
   --hison-radio-color: var(--hison-info-buttonColor);
   --hison-radio-border: var(--hison-info-buttonColor);
 }
@@ -1536,7 +1814,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
   --hison-radio-color: var(--hison-success-buttonColor);
   --hison-radio-border: var(--hison-success-buttonColor);
 }
-.hison-color-danger  > .hison-input input[type="radio"] {
+.hison-color-danger > .hison-input input[type="radio"] {
   --hison-radio-color: var(--hison-danger-buttonColor);
   --hison-radio-border: var(--hison-danger-buttonColor);
 }
@@ -1610,14 +1888,26 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 
 /* HLabel link reset */
 .hison-label.hison-label-link {
-    color: inherit;
-    text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 .hison-label.hison-label-link:hover,
 .hison-label.hison-label-link:active,
 .hison-label.hison-label-link:focus {
-    text-decoration: none;
-    outline: none;
+  text-decoration: none;
+  outline: none;
+}
+/* HLabel has toggle target reset */
+.hison-label.hison-label-has-toggle-target {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+.hison-label.hison-label-has-toggle-target:hover,
+.hison-label.hison-label-has-toggle-target:active,
+.hison-label.hison-label-has-toggle-target:focus {
+  text-decoration: none;
+  outline: none;
 }
 
 .hison-color-primary > .hison-label.hison-border { box-shadow: 0 1px 2px 0 var(--hison-primary-shadowColor); }
@@ -2612,6 +2902,10 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-pos-left { margin-right: auto; }
 .hison-pos-center { margin-left: auto; margin-right: auto; }
 .hison-pos-right { margin-left: auto; }
+
+.hison-pos-vertical-top { margin-bottom: auto; }
+.hison-pos-vertical-center { margin-top: auto; margin-bottom: auto; }
+.hison-pos-vertical-bottom { margin-top: auto; }
 
 /* font decoretion */
 .hison-font-bold-important { font-weight: bold !important; } /* for header tag in HCaption */

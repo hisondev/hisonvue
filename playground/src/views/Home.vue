@@ -43,17 +43,12 @@
 </template>
 
 <script setup lang="ts">
-import { hison } from 'hisonvue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const onClickCenterButton2 = () => {
-  const b1 = hison.component.getButton('b1')!
-  b1.setBorder(!b1.isBorder())
 }
 const onClickCenterButton3 = () => {
-  const b4 = hison.component.getButton('b4')!
-  b4.setBorder(!b4.isBorder())
 }
 const goToGridTest = () => {
   router.push('/gridTest')

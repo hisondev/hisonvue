@@ -103,6 +103,16 @@ export const labelProps = {
         validator: (v: any) => (BACKGROUND_TYPE_VALUES as readonly string[]).includes(v),
     },
     /**
+     * ID of the target `HInput` (checkbox/radio) to toggle when the label is clicked or activated by keyboard.
+     * - Links label interaction to an external input component.
+     * - Default: `null`
+     */
+    toggleTarget: {
+        /** When set, clicking the label (or Enter/Space) will toggle the target HInput (checkbox/radio) by id. */
+        type: String as PropType<string | null>,
+        default: null,
+    },
+    /**
      * Controls keyboard focus order of the element.
      * - `0` enables natural tab navigation, positive numbers set custom order.
      * - `null` or `''` removes tabindex (not focusable).
