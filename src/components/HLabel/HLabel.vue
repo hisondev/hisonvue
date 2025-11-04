@@ -18,11 +18,13 @@
             fontThrulineClass,
             fontUnderlineClass,
             borderClass,
-            backgroundTypeClass
+            backgroundTypeClass,
+            translateClass
         ]"
         :style="[textAlignStyle, props.style]"
         :title="title || undefined"
         :tabindex="tabIndex ?? undefined"
+        :translate="translateAttr"
         v-bind="renderTag === 'a' ? computedAnchorAttrs : undefined"
         @click="onClick"
         @mousedown="$emit('mousedown', $event, labelMethods)"
@@ -144,6 +146,10 @@ export default defineComponent({
 
         const toggleTarget = ref<string | null>(props.toggleTarget ?? null)
         const hasToggleTarget = computed(() => !!(toggleTarget.value && String(toggleTarget.value).trim()))
+
+        const translateGuard = ref<boolean>(props.translate)
+        const translateClass = computed(() => (translateGuard.value === false ? 'notranslate' : ''))
+        const translateAttr  = computed<undefined | 'no'>(() => (translateGuard.value === false ? 'no' : undefined))
         
         const tabIndex = ref<number | null>(
             props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
@@ -246,6 +252,8 @@ export default defineComponent({
                 setBackgroundType: (type) => { backgroundType.value = type as any },
                 getToggleTarget: () => toggleTarget.value,
                 setToggleTarget: (id: string | null) => { toggleTarget.value = id },
+                isTranslate: () => translateGuard.value,
+                setTranslate: (v: boolean) => { translateGuard.value = v },
                 reload: () => reloadHisonComponent(reloadId),
                 getTabIndex: () => tabIndex.value,
                 setTabIndex: (v: number | null) => {
@@ -297,10 +305,8 @@ export default defineComponent({
         watch(() => props.textAlign, v => { if (v && v !== textAlign.value && (v === TextAlign.left || v === TextAlign.center || v === TextAlign.right)) textAlign.value = v })
         watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
         watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
-        watch(() => props.toggleTarget, v => {
-            const nv = v ?? null
-            if (nv !== toggleTarget.value) toggleTarget.value = nv
-        })
+        watch(() => props.toggleTarget, v => { const nv = v ?? null; if (nv !== toggleTarget.value) toggleTarget.value = nv })
+        watch(() => props.translate, v => { const b = !!v; if (b !== translateGuard.value) translateGuard.value = b })
         watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
         watch(() => props.class, () => { refreshResponsiveClassList() })
 
@@ -321,6 +327,8 @@ export default defineComponent({
             fontThrulineClass,
             fontUnderlineClass,
             textAlignStyle,
+            translateAttr,
+            translateClass,
             borderClass,
             backgroundTypeClass,
             responsiveClassList,

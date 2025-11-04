@@ -47,10 +47,12 @@
         whiteSpaceClass,
         textAlignClass,
         verticalAlignClass,
-        copyGuardClass
+        copyGuardClass,
+        translateClass
       ]"
       :style="props.style"
       :title="title || undefined"
+      :translate="translateAttr"
       tabindex="0"
       @keydown="onKeydown"
       @copy="onCopyEvent"
@@ -153,6 +155,10 @@ export default defineComponent({
     const fontUnderlineClass = computed(() => (fontUnderline.value ? 'hison-font-underline' : ''))
 
     const copyGuardClass = computed(() => (!copyEnabled.value ? 'hison-no-select' : ''))
+
+    const translateGuard = ref<boolean>(props.translate)
+    const translateClass = computed(() => (translateGuard.value === false ? 'notranslate' : ''))
+    const translateAttr  = computed<undefined | 'no'>(() => (translateGuard.value === false ? 'no' : undefined))
 
     const responsiveClassList = ref<string[]>([])
     const refreshResponsiveClassList = () => {
@@ -315,6 +321,8 @@ export default defineComponent({
         isShowCopyButton: () => showCopyButton.value,
         setShowCopyButton: (v: boolean) => { showCopyButton.value = v },
         copy: async () => { return await doCopy() },
+        isTranslate: () => translateGuard.value,
+        setTranslate: (v: boolean) => { translateGuard.value = v },
         reload: () => reloadHisonComponent(reloadId),
       }
 
@@ -350,6 +358,7 @@ export default defineComponent({
     watch(() => props.copyEnabled, v => { const b = !!v; if (b !== copyEnabled.value) copyEnabled.value = b })
     watch(() => props.showCopyButton, v => { const b = !!v; if (b !== showCopyButton.value) showCopyButton.value = b })
     watch(() => props.copyButtonText, v => { const s = v ?? 'copy'; if (s !== copyButtonText.value) copyButtonText.value = s })
+    watch(() => props.translate, v => { const b = !!v; if (b !== translateGuard.value) translateGuard.value = b })
     watch(() => props.class, () => { refreshResponsiveClassList() })
 
     return {
@@ -379,6 +388,8 @@ export default defineComponent({
       textAlignClass,
       verticalAlignClass,
       copyGuardClass,
+      translateClass,
+      translateAttr,
       onKeydown,
       onCopyEvent,
       onCutEvent,

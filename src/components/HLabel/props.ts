@@ -112,6 +112,12 @@ export const labelProps = {
         default: null,
     },
     /**
+     * Prevent auto-translation by browsers or translation plugins.
+     * - When false: adds `translate="no"` and `.notranslate` to the rendered element
+     * - Default: true
+     */
+    translate: { type: Boolean, default: true },
+    /**
      * Controls keyboard focus order of the element.
      * - `0` enables natural tab navigation, positive numbers set custom order.
      * - `null` or `''` removes tabindex (not focusable).

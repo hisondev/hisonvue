@@ -2002,6 +2002,7 @@ declare module 'vue' {
      * @prop {boolean} [border] - Whether to show border (box-shadow). Default: `false`.
      * @prop {('filled'|'empty'|'transparent')} [backgroundType] - Background style. `'empty'` (default), `'filled'`, or `'transparent'`.
      * @prop {string} [toggleTarget=null] - ID of the target `HInput` (`checkbox` or `radio`) to toggle when the label is clicked or activated by keyboard.
+     * @prop {boolean} [translate=true] - If false : prevents browser/auto translation by adding `translate="no"` and `.notranslate` to the rendered element.
      *
      * ---
      *
@@ -2874,6 +2875,7 @@ declare module 'vue' {
      * @prop {boolean} [copyEnabled=false] - Enables copy via keyboard and button.
      * @prop {boolean} [showCopyButton=false] - Shows the built-in copy button.
      * @prop {string} [copyButtonText='copy'] - Label text for the built-in copy button.
+     * @prop {boolean} [translate=true] - If false : prevents browser/auto translation by adding `translate="no"` and `.notranslate` to the inner `<p>`.
      *
      * ---
      *

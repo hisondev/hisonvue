@@ -3364,6 +3364,17 @@ export interface HLabelMethods extends ComponentMethods {
    */
   setToggleTarget(id: string | null): void
   /**
+   * Returns whether translation is currently enabled.
+   * - When `false`, the label has `translate="no"` and `.notranslate` class.
+   */
+  isTranslate(): boolean
+  /**
+   * Enables or disables browser translation prevention.
+   * - `true`  → nothing (translation allowed)
+   * - `false` → adds `translate="no"` + `.notranslate`
+   */
+  setTranslate(translate: boolean): void
+  /**
    * Gets the current `tabIndex` applied to element.
    * - `null`: no `tabindex` attribute (items not focusable).
    * - `0` or positive number: items can be focused via keyboard navigation.
@@ -4320,6 +4331,17 @@ export interface HParagraphMethods extends ComponentMethods {
    * - Resolves to `true` on success, `false` if copying is blocked or fails.
    */
   copy(): Promise<boolean>
+  /**
+   * Returns whether translation is currently enabled.
+   * - When `false`, the paragraph has `translate="no"` and `.notranslate` class.
+   */
+  isTranslate(): boolean
+  /**
+   * Enables or disables browser translation prevention.
+   * - `true` → nothing
+   * - `false` → adds `translate="no"` + `.notranslate`
+   */
+  setTranslate(translate: boolean): void
 }
 
 /**

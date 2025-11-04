@@ -134,4 +134,10 @@ export const paragraphProps = {
      * Copy button label (also used for accessibility).
      */
     copyButtonText: { type: String, default: 'copy' },
+    /**
+     * Prevent auto-translation by browsers or translation plugins.
+     * - When false: adds `translate="no"` and `.notranslate` to the inner <p>
+     * - Default: true
+     */
+    translate: { type: Boolean, default: true },
 };
