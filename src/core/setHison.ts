@@ -3,7 +3,7 @@ import type { HGridMethods, Hison, HisonConfig, HNoteElement } from "../types";
 import { applyCssVariables } from "./setDocumentFromHisonCloser";
 import { Size } from "../enums";
 import { reloadAllHisonComponents } from "../utils/";
-import { hisonCloser } from "..";
+import { hisonCloser } from "../hisonCloser";
 
 export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
     setHisonFromHisonConfig(hison, hisonConfig)

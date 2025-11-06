@@ -109,9 +109,10 @@ import { filesetProps } from './props'
 import { AttachedFileItem, HFilesetMethods } from '../../types'
 import { addComponentNameToClass, extractPrefixedClasses, extractResponsiveClasses, getIndexSpecificClassNameFromClassList, getUUID, registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable } from '../../utils'
 import { EditMode } from '../../enums'
-import { hison, hisonCloser } from '../..'
+import { hison } from '../..'
 import { useDevice } from '../../core'
 import { InterfaceDataModel } from 'hisonjs'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HFileset',

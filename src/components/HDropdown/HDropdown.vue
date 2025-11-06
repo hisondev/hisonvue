@@ -90,9 +90,10 @@ import {
   addComponentNameToClass
 } from '../../utils'
 import { useDevice } from '../../core'
-import { DropdownTrigger, EditMode, hisonCloser, TextAlign, TextAlignValue } from '../..'
+import { DropdownTrigger, EditMode, TextAlign, TextAlignValue } from '../..'
 import type { HDropdownMethods, HDropdownModel, HDropdownOption } from '../../types'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HDropdown',

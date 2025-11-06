@@ -101,7 +101,7 @@ import {
 } from 'vue'
 import type { HBannerMethods } from '../../types'
 import { bannerProps } from './props'
-import { BackgroundType, type BackgroundTypeValue, hisonCloser } from '../..'
+import { BackgroundType, type BackgroundTypeValue } from '../..'
 import {
   extractResponsiveClasses,
   addComponentNameToClass,
@@ -115,6 +115,7 @@ import {
 import { useDevice } from '../../core'
 import HButton from '../HButton/HButton.vue'
 import type { CSSProperties } from 'vue'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HBanner',

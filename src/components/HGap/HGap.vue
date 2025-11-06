@@ -23,10 +23,10 @@
 
 <script lang="ts">
 import {
-  defineComponent, ref, computed, onMounted, onBeforeUnmount, nextTick, watch, unref
+  defineComponent, ref, computed, onMounted, onBeforeUnmount, nextTick, watch
 } from 'vue'
 import { gapProps } from './props'
-import { BackgroundType, type BackgroundTypeValue, HGapLineStyle, HGapLineStyleValue, hisonCloser } from '../..'
+import { BackgroundType, type BackgroundTypeValue, HGapLineStyle, HGapLineStyleValue } from '../..'
 import {
   extractResponsiveClasses,
   getUUID,
@@ -41,6 +41,7 @@ import {
 } from '../../utils'
 import { useDevice } from '../../core'
 import type { HGapMethods } from '../../types'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
     name: 'HGap',

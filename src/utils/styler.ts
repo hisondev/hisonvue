@@ -1,4 +1,5 @@
-import { hisonCloser } from ".."
+
+import { hisonCloser } from "../hisonCloser"
 import { darkTextColorRGBA, lightTextColorRGBA } from "../core"
 import { isValidHexColor, isValidNumber, isValidRgbaColor } from "./validators"
 

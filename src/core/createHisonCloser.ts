@@ -1,6 +1,6 @@
 import type { HisonConfig } from "../types"
-import { hisonCloser } from ".."
 import { configureChartDefaults, getVg, getVn } from "../plugins"
+import { hisonCloser } from "../hisonCloser"
 
 export const createHisonCloser = (hisonConfig: HisonConfig) => {
 

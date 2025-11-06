@@ -27,7 +27,8 @@ import {
   reloadHisonComponent,
   toClassString
 } from '../../utils'
-import { hison, hisonCloser } from '../..'
+import { hison } from '../..'
+import { hisonCloser } from '../../hisonCloser'
 import { useDevice } from '../../core'
 import { HNoteElement } from '../../types'
 import { InterfaceDataModel } from 'hisonjs'

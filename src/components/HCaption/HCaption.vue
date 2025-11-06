@@ -41,7 +41,7 @@ import {
   defineComponent, ref, computed, onMounted, onBeforeUnmount, nextTick, useSlots, unref, watch, Text
 } from 'vue'
 import { captionProps } from './props'
-import { BackgroundType, TextAlign, type TextAlignValue, type BackgroundTypeValue, hisonCloser } from '../..'
+import { BackgroundType, TextAlign, type TextAlignValue, type BackgroundTypeValue } from '../..'
 import {
   extractResponsiveClasses,
   getUUID,
@@ -53,6 +53,7 @@ import {
 } from '../../utils'
 import { useDevice } from '../../core'
 import type { HCaptionMethods } from '../../types'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
     name: 'HCaption',

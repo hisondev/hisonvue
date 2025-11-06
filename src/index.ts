@@ -38,9 +38,6 @@ const HPopupClientOnly = createSSRClientOnly(() => import('./components/HPopup/H
 const HSpinnerClientOnly = createSSRClientOnly(() => import('./components/HSpinner/HSpinner.vue'), 'HSpinner')
 const HTableClientOnly = createSSRClientOnly(() => import('./components/HTable/HTable.vue'), 'HTable')
 
-export const hisonCloser = {
-  event: { cssEvent: {} }
-} as HisonCloser
 export const hison = createHison() as Hison
 export const hisonvue = {
   install(app: App, hisonConfig?: HisonConfig) {

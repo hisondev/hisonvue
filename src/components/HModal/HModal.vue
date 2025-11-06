@@ -287,7 +287,7 @@ import {
 } from 'vue'
 import { modalProps } from './props'
 import type { HModalMethods } from '../../types'
-import { BackgroundType, hisonCloser, ScreenPosition, ScreenPositionValue } from '../..'
+import { BackgroundType, ScreenPosition, ScreenPositionValue } from '../..'
 import {
   addComponentNameToClass,
   extractPrefixedClasses,
@@ -300,6 +300,7 @@ import {
 } from '../../utils'
 import { useDevice } from '../../core'
 import { acquireScrollLock, releaseScrollLock } from '../../utils/scrollManager'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HModal',

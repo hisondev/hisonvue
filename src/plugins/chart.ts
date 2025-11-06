@@ -18,7 +18,7 @@ import {
   Legend,
   Filler,
 } from 'chart.js'
-import { hisonCloser, HisonConfig } from '..'
+import { HisonConfig } from '..'
 
 Chart.register(
   // controllers

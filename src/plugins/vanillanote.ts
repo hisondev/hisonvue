@@ -1,6 +1,7 @@
 import { getVanillanote } from 'vanillanote2'
 import { isValidHexColor, normalizeToHex } from '../utils'
-import { hisonCloser, HisonConfig } from '..'
+import { HisonConfig } from '..'
+import { hisonCloser } from '../hisonCloser'
 
 export const getVn = (hisonConfig: HisonConfig) => {
     setVnConfigWithHisonConfig(hisonConfig)

@@ -10,10 +10,11 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, onBeforeUnmount, provide, watch } from 'vue'
 import type { HInputGroupMethods } from '../../types'
-import { hisonCloser, EditMode, DataStatus, hison } from '../..'
+import { EditMode, DataStatus, hison } from '../..'
 import { getUUID, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
 import { inputGroupProps } from './props'
 import { InterfaceDataModel } from 'hisonjs'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HInputGroup',

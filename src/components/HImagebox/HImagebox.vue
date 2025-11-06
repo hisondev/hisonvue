@@ -107,10 +107,11 @@
 import { defineComponent, ref, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
 import { imageboxProps } from './props'
 import { EditMode } from '../../enums'
-import { AttachedFileItem, HImageboxMethods, hison, hisonCloser } from '../..'
+import { AttachedFileItem, HImageboxMethods, hison } from '../..'
 import { getUUID, extractResponsiveClasses, registerReloadable, extractPrefixedClasses, getIndexSpecificClassNameFromClassList, reloadHisonComponent, toClassString, addComponentNameToClass } from '../../utils'
 import { useDevice } from '../../core'
 import { InterfaceDataModel } from 'hisonjs'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HImagebox',

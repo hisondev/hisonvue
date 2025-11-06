@@ -68,7 +68,8 @@ import {
 } from 'vue'
 import { spinnerProps } from './props'
 import type { HSpinnerMethods } from '../../types'
-import { BackgroundType, ScreenPosition, ScreenPositionValue, hisonCloser } from '../..'
+import { BackgroundType, ScreenPosition, ScreenPositionValue } from '../..'
+import { hisonCloser } from '../../hisonCloser'
 import {
     addComponentNameToClass,
     extractResponsiveClasses,

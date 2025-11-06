@@ -24,9 +24,10 @@ import {
     toClassString,
     unregisterReloadable
 } from '../../utils'
-import { hison, hisonCloser, Size } from '../..'
+import { hison, Size } from '../..'
 import { useDevice } from '../../core'
 import { InterfaceDataModel } from 'hisonjs'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HGrid',

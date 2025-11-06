@@ -362,7 +362,7 @@ declare module 'vue' {
      * Hisonvue custom button component.
      *
      * `HButton` is a highly customizable and responsive button component that provides styling, state control,
-     * and dynamic behavior via props and runtime methods. It is integrated with `hisonCloser` for global access and control.
+     * and dynamic behavior via props and runtime methods. It is integrated with `hison` for global access and control.
      *
      * ---
      *
@@ -1614,7 +1614,7 @@ declare module 'vue' {
      *
      * `HInput` is a versatile and reactive input component that supports various HTML input types,
      * runtime state control, and full styling support. It features a dual-mode display (editable input or readonly span),
-     * and provides complete integration with `hisonCloser` for runtime interaction.
+     * and provides complete integration with `hison` for runtime interaction.
      *
      * ---
      *
@@ -1910,7 +1910,7 @@ declare module 'vue' {
      *
      * `HLabel` is a flexible text/label component that supports plain text, HTML slot content,
      * or hyperlink rendering via `href`. It provides responsive styling, dynamic runtime control,
-     * and integrates with `hisonCloser` for global access and management.
+     * and integrates with `hison` for global access and management.
      *
      * ---
      *
@@ -2025,7 +2025,7 @@ declare module 'vue' {
      *
      * `HLayout` is a versatile container component for responsive layout composition.
      * It provides full control over visibility, background, borders, and height — with
-     * dynamic class resolution and runtime method integration via `hisonCloser`.
+     * dynamic class resolution and runtime method integration via `hison`.
      *
      * ---
      *
@@ -2107,7 +2107,7 @@ declare module 'vue' {
      *
      * `HList` provides a flexible list wrapper (`<ul>` or `<ol>`) with theme-aware styling,
      * slot-based rendering, and optional data-driven text list rendering. It supports
-     * interactive states, runtime control via methods, and integrates with `hisonCloser`
+     * interactive states, runtime control via methods, and integrates with `hison`
      * for global access and management.
      *
      * ---
@@ -2655,7 +2655,7 @@ declare module 'vue' {
      *
      * `HPagination` is a lightweight, responsive pagination component that renders Bootstrap-like
      * pagination UI using `HButton` internally. It supports v-model page control, windowed page display,
-     * and runtime method controls via `hisonCloser` for global access.
+     * and runtime method controls via `hison` for global access.
      *
      * ---
      *
@@ -2766,7 +2766,7 @@ declare module 'vue' {
      * `HParagraph` renders plain text (safe, non-HTML) or slot content with rich,
      * theme-aware styling. It supports whitespace policies (default: `'pre-wrap'`),
      * font toggles, alignment, and an optional one-click copy button. The component
-     * integrates with `hisonCloser` for global runtime access and device-responsive
+     * integrates with `hison` for global runtime access and device-responsive
      * styling.
      *
      * ---
@@ -3128,7 +3128,7 @@ declare module 'vue' {
      * `HTable` provides a flexible, theme-aware table wrapper supporting
      * striped/hover states, caption handling, section-level alignment,
      * bulk cell class/style injection, and runtime programmatic control.
-     * It integrates with `hisonCloser` for global runtime access and
+     * It integrates with `hison` for global runtime access and
      * device-responsive styling.
      *
      * ---

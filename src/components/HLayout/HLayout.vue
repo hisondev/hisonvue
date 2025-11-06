@@ -23,7 +23,7 @@
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount, watch, nextTick, unref } from 'vue'
 import type { HLayoutMethods } from '../../types'
 import { layoutProps } from './props'
-import { hisonCloser } from '../..'
+import { hisonCloser } from '../../hisonCloser'
 import { addComponentNameToClass, extractResponsiveClasses, getHexCodeFromColorText, getIndexSpecificClassNameFromClassList, getUUID, registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 

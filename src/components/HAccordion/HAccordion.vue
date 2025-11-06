@@ -70,9 +70,10 @@ import {
   addComponentNameToClass
 } from '../../utils'
 import { useDevice } from '../../core'
-import { TextAlign, TextAlignValue, hisonCloser } from '../..'
+import { TextAlign, TextAlignValue } from '../..'
 import type { HAccordionMethods } from '../../types'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HAccordion',

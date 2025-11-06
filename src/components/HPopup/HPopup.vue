@@ -61,7 +61,8 @@ import {
 } from 'vue'
 import { popupProps } from './props'
 import type { HPopupMethods } from '../../types'
-import { hisonCloser, ScreenPosition, ScreenPositionValue } from '../..'
+import { ScreenPosition, ScreenPositionValue } from '../..'
+import { hisonCloser } from '../../hisonCloser'
 import {
     addComponentNameToClass,
     extractPrefixedClasses,

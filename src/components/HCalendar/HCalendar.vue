@@ -65,10 +65,11 @@ import {
   addComponentNameToClass,
 } from '../../utils'
 import { useDevice } from '../../core'
-import { HCalendarView, hison, hisonCloser, Size } from '../..'
+import { HCalendarView, hison, Size } from '../..'
 import { calendarProps } from './props'
 import { HCalendarEvent, HCalendarMethods, HCalendarSpecialTimeMap } from '../../types'
 import { HCalendarTimeFormat } from '../../enums/props'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HCalendar',

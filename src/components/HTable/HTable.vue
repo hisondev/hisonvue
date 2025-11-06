@@ -76,7 +76,8 @@ import {
 } from 'vue'
 import { tableProps } from './props'
 import type { HTableMethods } from '../../types'
-import { BackgroundType, type BackgroundTypeValue, hisonCloser, TextAlignValue, VerticalAlignValue } from '../..'
+import { BackgroundType, type BackgroundTypeValue, TextAlignValue, VerticalAlignValue } from '../..'
+import { hisonCloser } from '../../hisonCloser'
 import {
   extractResponsiveClasses, getUUID, addComponentNameToClass,
   registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable

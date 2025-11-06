@@ -1,4 +1,4 @@
-import { hisonCloser } from "..";
+import { hisonCloser } from "../hisonCloser";
 import { applyDefaultColor, getInvertColor, normalizeToRgba } from "../utils";
 import { dangerColorRGBA, darkTextColorRGBA, emptyColorRGBA, infoColorRGBA, lightTextColorRGBA, mutedColorRGBA, primaryColorRGBA, successColorRGBA, warningColorRGBA } from "./getDefaultHisonConfig";
 

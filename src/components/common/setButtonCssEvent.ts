@@ -1,4 +1,4 @@
-import { hisonCloser } from "../.."
+import { hisonCloser } from "../../hisonCloser";
 
 const activeTimers = new WeakMap<HTMLElement, number>();
 const bound = new WeakSet<HTMLElement>();

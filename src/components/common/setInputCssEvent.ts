@@ -1,4 +1,4 @@
-import { hisonCloser } from "../.."
+import { hisonCloser } from "../../hisonCloser"
 
 const boundInputText = new WeakSet<HTMLElement>()
 const boundInput = new WeakSet<HTMLElement>()

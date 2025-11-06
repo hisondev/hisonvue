@@ -113,9 +113,10 @@
 import { defineComponent, ref, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
 import { paginationProps } from './props'
 import type { HPaginationMethods } from '../../types'
-import { BackgroundType, BackgroundTypeValue, hisonCloser } from '../..'
+import { BackgroundType, BackgroundTypeValue } from '../..'
 import { getUUID, extractResponsiveClasses, addComponentNameToClass, toClassString, registerReloadable, reloadHisonComponent, unregisterReloadable, extractPrefixedClasses } from '../../utils'
 import { useDevice } from '../../core'
+import { hisonCloser } from '../../hisonCloser'
 import HButton from '../HButton/HButton.vue'
 
 export default defineComponent({

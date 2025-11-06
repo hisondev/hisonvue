@@ -503,10 +503,11 @@
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, unref, inject } from 'vue'
 import type { HInputMethods } from '../../types'
 import { inputProps } from './props'
-import { DateFormat, hison, hisonCloser, EditMode, InputType, YearMonthFormat, TimeFormat, TextAlign, TextAlignValue, InputTypeValue } from '../..'
+import { DateFormat, hison, EditMode, InputType, YearMonthFormat, TimeFormat, TextAlign, TextAlignValue, InputTypeValue } from '../..'
 import { extractResponsiveClasses, getDigitsOnly, getIndexSpecificClassNameFromClassList, getMaskValue, getUUID, isNullOrUndefined, addComponentNameToClass, registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable } from '../../utils'
 import { useDevice } from '../../core'
 import { addInputCssEvent, addInputTextCssEvent, removeInputCssEvent, removeInputTextCssEvent } from '../common/setInputCssEvent'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HInput',

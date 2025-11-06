@@ -22,7 +22,8 @@ import {
     addComponentNameToClass
 } from '../../utils'
 import { useDevice } from '../../core'
-import { HChartInstance, hisonCloser } from '../..'
+import { HChartInstance } from '../..'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
     name: 'HChart',

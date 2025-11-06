@@ -45,12 +45,13 @@ import {
 import type { HButtonMethods } from '../../types'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
 import { buttonProps } from './props'
-import { BackgroundType, hisonCloser } from '../..'
+import { BackgroundType } from '../..'
 import {
   extractResponsiveClasses, getUUID, addComponentNameToClass,
   registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable
 } from '../../utils'
 import { useDevice } from '../../core'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HButton',

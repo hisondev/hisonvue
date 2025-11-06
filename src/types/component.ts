@@ -4607,7 +4607,7 @@ export interface HSpinnerMethods extends ComponentMethods {
    */
   setOverlayStyle(s: any): void
   /**
-   * Reloads the spinner instance (re-registers in `hisonCloser`).
+   * Reloads the spinner instance
    */
   reload(): void
 }

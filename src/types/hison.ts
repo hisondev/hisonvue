@@ -35,10 +35,10 @@ import { Size } from "../enums";
  *
  * ---
  * ### Internal Architecture
- * The entire hisonvue runtime is built around a **shared internal state container** known as `hisonCloser`.
+ * The entire hisonvue runtime is built around a **shared internal state container** known as `hison`.
  * This closure encapsulates mutable runtime data and exposes only safe API methods through this public interface.
  *
- * - **Public Setters/Getters** → update the internal `hisonCloser` fields.
+ * - **Public Setters/Getters** → update the internal `hison` fields.
  * - **CSS Variable Management** → uses `applyCssVariables()` to re-apply computed styles to the document root.
  * - **Component Reload** → triggers `reloadAllHisonComponents()` to refresh visual themes non-destructively.
  * - **SSR-Safe Operation** → browser-only side effects are guarded by runtime environment checks.

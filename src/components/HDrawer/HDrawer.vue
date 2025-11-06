@@ -68,7 +68,7 @@ import {
 } from '../../utils'
 import { useDevice } from '../../core'
 import { acquireScrollLock, releaseScrollLock } from '../../utils/scrollManager'
-import { hisonCloser } from '../..'
+import { hisonCloser } from '../../hisonCloser'
 
 type DrawerPos = 'top'|'bottom'|'left'|'right'
 

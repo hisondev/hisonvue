@@ -82,8 +82,9 @@ import {
   extractPrefixedClasses
 } from '../../utils'
 import {
-  BackgroundType, hisonCloser, TextAlign, TextAlignValue, WhiteSpaceValue, VerticalAlignValue
+  BackgroundType, TextAlign, TextAlignValue, WhiteSpaceValue, VerticalAlignValue
 } from '../..'
+import { hisonCloser } from '../../hisonCloser'
 import { useDevice } from '../../core'
 import { paragraphProps } from './props'
 

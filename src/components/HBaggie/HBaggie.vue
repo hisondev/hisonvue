@@ -47,7 +47,7 @@ import {
 } from 'vue'
 import { baggieProps } from './props'
 import type { HBaggieMethods } from '../../types'
-import { BackgroundType, hisonCloser, ScreenPosition, ScreenPositionValue } from '../..'
+import { BackgroundType, ScreenPosition, ScreenPositionValue } from '../..'
 import {
   addComponentNameToClass,
   extractResponsiveClasses,
@@ -59,6 +59,7 @@ import {
 } from '../../utils'
 import { useDevice } from '../../core'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HBaggie',

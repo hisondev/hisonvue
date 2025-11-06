@@ -1,7 +1,8 @@
 import { getVanillagrid } from 'vanillagrid2'
 import { isValidHexColor, normalizeToHex } from '../utils';
 import { Size } from '../enums';
-import { hisonCloser, HisonConfig } from '..';
+import { HisonConfig } from '..';
+import { hisonCloser } from '../hisonCloser';
 
 export const getVg = (hisonConfig: HisonConfig) => {
     setVgConfigWithHisonConfig(hisonConfig);

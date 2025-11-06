@@ -101,13 +101,14 @@ import {
 } from 'vue'
 import { listProps } from './props'
 import type { HListMethods } from '../../types'
-import { BackgroundType, type BackgroundTypeValue, hisonCloser } from '../..'
+import { BackgroundType, type BackgroundTypeValue } from '../..'
 import {
   extractResponsiveClasses, getUUID, addComponentNameToClass,
   registerReloadable, reloadHisonComponent, toClassString, unregisterReloadable
 } from '../../utils'
 import { useDevice } from '../../core'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
   name: 'HList',

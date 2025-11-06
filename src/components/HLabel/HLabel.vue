@@ -54,7 +54,7 @@ import {
     defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, useSlots, unref, watch, Text
 } from 'vue'
 import { labelProps } from './props'
-import { BackgroundType, hisonCloser, TextAlign, TextAlignValue } from '../..'
+import { BackgroundType, TextAlign, TextAlignValue } from '../..'
 import {
     extractResponsiveClasses,
     getUUID,
@@ -67,6 +67,7 @@ import {
 import { useDevice } from '../../core'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
 import { HLabelMethods } from '../../types'
+import { hisonCloser } from '../../hisonCloser'
 
 export default defineComponent({
     name: 'HLabel',
