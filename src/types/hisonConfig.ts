@@ -186,7 +186,7 @@ interface ShieldConfig {
    * the specified URL. If not, access may be blocked.
    *
    * - Default value: `""` (empty string, meaning no restriction)
-   * - Used in `shield.excute(hison: Hison)` to validate the URL.
+   * - Used in `shield.execute(hison: Hison)` to validate the URL.
    */
   shieldURL: string;
   /**
@@ -195,7 +195,7 @@ interface ShieldConfig {
    * When the shield mechanism is activated, only these IPs are granted access.
    *
    * - Default value: `["0:0:0:0:0:0:0:1"]` (allows localhost)
-   * - Used in `shield.excute(hison: Hison)` to verify access permissions.
+   * - Used in `shield.execute(hison: Hison)` to verify access permissions.
    */
   exposeIpList: string[];
   /**
@@ -205,7 +205,7 @@ interface ShieldConfig {
    * ensuring that no further changes can be made.
    *
    * - Default value: `true`
-   * - Used in `shield.excute(hison: Hison)`, where `deepFreeze(hison)` is applied.
+   * - Used in `shield.execute(hison: Hison)`, where `deepFreeze(hison)` is applied.
    */
   isFreeze: boolean;
   /**
@@ -214,7 +214,7 @@ interface ShieldConfig {
    * If `false`, a mechanism is implemented to prevent the user from navigating back.
    *
    * - Default value: `false`
-   * - Used in `shield.excute(hison: Hison)`, where `history.pushState()` is applied 
+   * - Used in `shield.execute(hison: Hison)`, where `history.pushState()` is applied 
    *   to disable the back button.
    */
   isPossibleGoBack: boolean;
@@ -225,7 +225,7 @@ interface ShieldConfig {
    * browser dev tools, resizing, etc.), and alerts the user if an attempt is detected.
    *
    * - Default value: `false`
-   * - Used in `shield.excute(hison: Hison)`, where `shieldFuncCreateBlockDevMode()` is triggered.
+   * - Used in `shield.execute(hison: Hison)`, where `shieldFuncCreateBlockDevMode()` is triggered.
    */
   isPossibleOpenDevTool: boolean;
   /**
@@ -239,7 +239,7 @@ interface ShieldConfig {
    * - Common custom actions include inserting a `debugger;`, showing alerts, or halting program flow.
    *
    * - Default value: `() => {}` (no action)
-   * - Used in `shield.excute(hison: Hison)` when attempting to detect devtool access.
+   * - Used in `shield.execute(hison: Hison)` when attempting to detect devtool access.
    *
    * ---
    * ### Example Usage

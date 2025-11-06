@@ -99,6 +99,17 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
             hisonCloser.componentStyle.invertColor = invert;
             reApplyCssVariables()
         },
+
+        getDeviceType() {
+            if (typeof window === 'undefined') {
+                return 'pc'
+            }
+            const width = window.innerWidth
+            if (width < 768) return 'mb'
+            if (width < 1200) return 'tb'
+            if (width < 1980) return 'pc'
+            return 'wd'
+        },
         
         getFilledColor() { return hisonCloser.componentStyle.filledColor; },
         getEmptyColor() { return hisonCloser.componentStyle.emptyColor; },

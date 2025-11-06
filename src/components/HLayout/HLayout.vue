@@ -15,7 +15,7 @@
         @mouseout="$emit('mouseout', $event, layoutMethods)"
     >
         <div class="hison-layout-frame-adjust"></div>
-        <slot>Hison Layout</slot>
+        <slot></slot>
     </div>
 </template>
 

@@ -1,5 +1,5 @@
 import type { Hison as Hisonjs } from "hisonjs";
-import { HButtonMethods, HInputGroupMethods, HGridMethods, HInputMethods, HLayoutMethods, HNoteElement, HCalendarMethods, HChartInstance, HFilesetMethods, HImageboxMethods, HDropdownMethods, HAccordionMethods, HLabelMethods, HParagraphMethods, HCaptionMethods, HGapMethods, HListMethods, HTableMethods, HModalMethods, HPopupMethods, HDrawerMethods, HSpinnerMethods, HBaggieMethods, HBannerMethods, HPaginationMethods } from "./component";
+import { HButtonMethods, HInputGroupMethods, HGridMethods, HInputMethods, HLayoutMethods, HNoteElement, HCalendarMethods, HChartInstance, HFilesetMethods, HImageboxMethods, HDropdownMethods, HAccordionMethods, HLabelMethods, HParagraphMethods, HCaptionMethods, HGapMethods, HListMethods, HTableMethods, HModalMethods, HPopupMethods, HDrawerMethods, HSpinnerMethods, HBaggieMethods, HBannerMethods, HPaginationMethods, DeviceType } from "./component";
 import { Size } from "../enums";
 
 /**
@@ -333,7 +333,17 @@ export interface Hison extends Hisonjs {
      * When enabled, derived text/background pairs flip to preserve contrast.
      */
     setInvertColor(invert: boolean): void
-
+    /**
+     * Returns the current device type based on the client viewport width.
+     * - SSR-safe: returns `'pc'` by default when executed on the server.
+     *
+     * @returns {'mb' | 'tb' | 'pc' | 'wd'} - Device type:
+     *   - 'mb': mobile (<768px)
+     *   - 'tb': tablet (<1200px)
+     *   - 'pc': desktop (<1980px)
+     *   - 'wd': wide (≥1980px)
+     */
+    getDeviceType(): DeviceType
     /** Returns the base filled surface color. */
     getFilledColor(): string
     /** Returns the base empty/outline surface color. */
