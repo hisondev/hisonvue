@@ -88,6 +88,15 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 ✅ Components are globally available in SSR without hydration errors.
 
+Add the module and global CSS in your `nuxt.config.ts`:
+
+```ts
+export default defineNuxtConfig({
+  modules: [
+    'hisonvue/nuxt',        // ✅ Registers HisonVue (SSR-safe)
+  ],
+```
+
 ---
 
 ### 3️⃣ Runtime control with `hison.component`
