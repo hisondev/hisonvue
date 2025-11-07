@@ -88,7 +88,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 ✅ Components are globally available in SSR without hydration errors.
 
-Add the module and global CSS in your `nuxt.config.ts`:
+Add the module in your `nuxt.config.ts`:
 
 ```ts
 export default defineNuxtConfig({
