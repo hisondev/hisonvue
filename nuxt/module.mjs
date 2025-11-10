@@ -14,7 +14,7 @@ export default defineNuxtModule({
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-
+    /*
     const hasUserHisonvuePlugin = (nuxt.options.plugins || []).some((p) => {
       const src = typeof p === 'string' ? p : p.src
       return src && /hisonvue/i.test(src)
@@ -22,7 +22,7 @@ export default defineNuxtModule({
     if (!hasUserHisonvuePlugin && options.autoInstall !== false) {
       addPlugin(resolver.resolve('./plugin.mjs'))
     }
-    
+    */
     addPlugin({ src: resolver.resolve('./warn-filter.mjs'), mode: 'all' })
 
     const __filename = fileURLToPath(import.meta.url)
