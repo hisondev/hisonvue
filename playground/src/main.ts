@@ -8,6 +8,7 @@ import router from './router'
 const app = createApp(App)
 
 const hisonConfig: HisonConfig = getDefaultHisonConfig()
+hisonConfig.componentStyle.primaryColor = '#217346'
 hisonConfig.componentStyle.size = Size.s
 
 console.log('### hisonConfig',hisonConfig);

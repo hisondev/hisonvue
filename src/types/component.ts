@@ -1614,6 +1614,15 @@ export interface HDrawerMethods extends ComponentMethods {
    */
   isVisible(): boolean
   /**
+   * Sets drawer visibility.
+   * @param v `true` → open, `false` → close
+   */
+  setVisible(v: boolean): void | Promise<void>
+  /**
+   * Whether the menu is currently open.
+   */
+  isOpen(): boolean
+  /**
    * Opens the drawer (with animation and scroll lock).
    */
   open(): void | Promise<void>
@@ -1625,11 +1634,6 @@ export interface HDrawerMethods extends ComponentMethods {
    * Toggles drawer open/close state.
    */
   toggle(): void | Promise<void>
-  /**
-   * Sets drawer visibility.
-   * @param v `true` → open, `false` → close
-   */
-  setVisible(v: boolean): void | Promise<void>
   /**
    * Gets the current z-index of the drawer wrapper.
    */

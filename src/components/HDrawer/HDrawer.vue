@@ -87,6 +87,7 @@ export default defineComponent({
     const drawerRef = ref<HTMLDivElement | null>(null)
 
     const visible = ref<boolean>(props.visible)
+    const isOpen = ref<boolean>(props.visible)
     const zIndex = ref<number>(props.zIndex ?? 1100)
     const border = ref<boolean>(props.border)
     const showOverlay = ref<boolean>(props.showOverlay)
@@ -134,7 +135,7 @@ export default defineComponent({
       ...extractPrefixedClasses(toClassString(props.class) || '', 'color'),
     ])
 
-    const isOverlayVisible = computed(() => visible.value && showOverlay.value)
+    const isOverlayVisible = computed(() => isOpen.value && showOverlay.value)
     const overlayStyleWithZ = computed(() => {
       const zi = (zIndex.value ?? 1100) - 1
       const base = { zIndex: zi } as Record<string, string|number>
@@ -192,24 +193,26 @@ export default defineComponent({
     }
 
     const open = async () => {
-      if (visible.value) return
-      visible.value = true
+      if (isOpen.value) return
+      isOpen.value = true
       lockScroll()
       await nextTick()
       applyEnterAnimation()
       emit('open', unref(drawerMethods)!)
     }
+
     const close = async () => {
-      if (!visible.value) return
+      if (!isOpen.value) return
       try {
         await applyLeaveAnimation()
       } finally {
-        visible.value = false
+        isOpen.value = false
         unlockScroll()
         emit('close', unref(drawerMethods)!)
       }
     }
-    const toggle = async () => (visible.value ? close() : open())
+
+    const toggle = async () => (isOpen.value ? close() : open())
     const onClickClose = () => close()
 
     let swiping = false
@@ -304,7 +307,7 @@ export default defineComponent({
 
       refreshResponsiveClassList()
 
-      if (visible.value) {
+      if (isOpen.value) {
         lockScroll()
         nextTick(applyEnterAnimation)
       }
@@ -314,8 +317,9 @@ export default defineComponent({
         getId: () => id,
         getType: () => 'drawer',
         isVisible: () => visible.value,
+        isOpen: () => isOpen.value,
         open, close, toggle,
-        setVisible: (v: boolean) => (v ? open() : close()),
+        setVisible: (v: boolean) => { visible.value = !!v },
         getZIndex: () => zIndex.value,
         setZIndex: (v: number) => { zIndex.value = v },
         getPosition: () => position.value,
@@ -339,7 +343,7 @@ export default defineComponent({
         isScrollLocked: () => scrollLock.value,
         setScrollLock: (v: boolean) => {
           scrollLock.value = v
-          if (visible.value) (v ? lockScroll() : unlockScroll())
+          if (isOpen.value) (v ? lockScroll() : unlockScroll())
         },
         isBorder: () => border.value,
         setBorder: (v: boolean) => { border.value = v },
@@ -358,7 +362,7 @@ export default defineComponent({
     const unmount = () => {
       unregisterReloadable(reloadId)
       delete hisonCloser.component.drawerList[id]
-      if (visible.value) unlockScroll()
+      if (isOpen.value) unlockScroll()
     }
 
     onMounted(mount)
@@ -369,12 +373,12 @@ export default defineComponent({
       emit('responsive-change', newDevice)
     })
 
-    watch(() => props.visible, v => { if (!!v !== visible.value) (v ? open() : close()) })
+    watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
     watch(() => props.zIndex, v => { const n = Number(v); if (Number.isFinite(n) && n !== zIndex.value) zIndex.value = n })
     watch(() => props.border, v => { const nv = !!v; if (nv !== border.value) border.value = nv })
     watch(() => props.showOverlay, v => { const nv = !!v; if (nv !== showOverlay.value) showOverlay.value = nv })
     watch(() => props.closeClickOverlay, v => { const nv = !!v; if (nv !== closeClickOverlay.value) closeClickOverlay.value = nv })
-    watch(() => props.scrollLock, v => { const nv = !!v; if (nv !== scrollLock.value) { scrollLock.value = nv; if (visible.value) (nv ? lockScroll() : unlockScroll()) } })
+    watch(() => props.scrollLock, v => { const nv = !!v; if (nv !== scrollLock.value) { scrollLock.value = nv; if (isOpen.value) (nv ? lockScroll() : unlockScroll()) } })
     watch(() => props.position, v => { if (v && v !== position.value) { position.value = v as DrawerPos; if (!props.enterAnimationClass) enterClass.value = defaultEnterByPos[position.value]; if (!props.leaveAnimationClass) leaveClass.value = defaultLeaveByPos[position.value] } })
     watch(() => props.width, v => { const n = v == null ? null : Number(v); if (n !== width.value) setWidthImpl(n, false) })
     watch(() => props.height, v => { const n = v == null ? null : Number(v); if (n !== height.value) setHeightImpl(n, false) })
