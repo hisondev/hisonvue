@@ -629,6 +629,11 @@ export interface ComponentStyleConfig {
   successColor: string;
   dangerColor: string;
   warningColor: string;
+  custom1Color: string;
+  custom2Color: string;
+  custom3Color: string;
+  custom4Color: string;
+  custom5Color: string;
   filledColor: string;
   emptyColor: string;
   filledTextColor: string;

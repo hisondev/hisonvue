@@ -70,6 +70,61 @@ export interface ComponentColor {
     emptyTextColor: string | null;
     filledTextColor: string | null;
   }
+  custom1: {
+    buttonColor: string | null;
+    borderColor: string | null;
+    shadowColor: string | null;
+    hoverColor: string | null;
+    activeColor: string | null;
+    rowHoverColor: string | null;
+    stripeColor: string | null;
+    emptyTextColor: string | null;
+    filledTextColor: string | null;
+  }
+  custom2: {
+    buttonColor: string | null;
+    borderColor: string | null;
+    shadowColor: string | null;
+    hoverColor: string | null;
+    activeColor: string | null;
+    rowHoverColor: string | null;
+    stripeColor: string | null;
+    emptyTextColor: string | null;
+    filledTextColor: string | null;
+  }
+  custom3: {
+    buttonColor: string | null;
+    borderColor: string | null;
+    shadowColor: string | null;
+    hoverColor: string | null;
+    activeColor: string | null;
+    rowHoverColor: string | null;
+    stripeColor: string | null;
+    emptyTextColor: string | null;
+    filledTextColor: string | null;
+  }
+  custom4: {
+    buttonColor: string | null;
+    borderColor: string | null;
+    shadowColor: string | null;
+    hoverColor: string | null;
+    activeColor: string | null;
+    rowHoverColor: string | null;
+    stripeColor: string | null;
+    emptyTextColor: string | null;
+    filledTextColor: string | null;
+  }
+  custom5: {
+    buttonColor: string | null;
+    borderColor: string | null;
+    shadowColor: string | null;
+    hoverColor: string | null;
+    activeColor: string | null;
+    rowHoverColor: string | null;
+    stripeColor: string | null;
+    emptyTextColor: string | null;
+    filledTextColor: string | null;
+  }
 }
 
 export interface ComponentStyle extends ComponentStyleConfig {
@@ -80,6 +135,11 @@ export interface ComponentStyle extends ComponentStyleConfig {
   successInvertColor: string;
   dangerInvertColor: string;
   warningInvertColor: string;
+  custom1InvertColor: string;
+  custom2InvertColor: string;
+  custom3InvertColor: string;
+  custom4InvertColor: string;
+  custom5InvertColor: string;
   filledInvertColor: string;
   emptyInvertColor: string;
   filledTextInvertColor: string;

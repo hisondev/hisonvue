@@ -80,7 +80,7 @@ export const layoutProps = {
    * Acceptable values:
    * - Hex: '#ffffff', '#fff'
    * - RGB/RGBA: 'rgb(255,255,255)', 'rgba(0,0,0,0.5)'
-   * - Keyword: 'primary', 'muted', 'info', 'success', 'danger', 'warning'
+   * - Keyword: 'primary', 'muted', 'info', 'success', 'danger', 'warning', 'custom1', 'custom2'..
    *   (these will be resolved via getHexCodeFromColorText)
    */
   backColor: { type: String, required: false },

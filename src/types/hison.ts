@@ -328,6 +328,16 @@ export interface Hison extends Hisonjs {
     setDangerColor(dangerColor: string): void
     /** Sets the warning color (status). */
     setWarningColor(warningColor: string): void
+    /** Sets the custom1 color (status). */
+    setCustom1Color(custom1Color: string): void
+    /** Sets the custom2 color (status). */
+    setCustom2Color(custom2Color: string): void
+    /** Sets the custom3 color (status). */
+    setCustom3Color(custom3Color: string): void
+    /** Sets the custom4 color (status). */
+    setCustom4Color(custom4Color: string): void
+    /** Sets the custom5 color (status). */
+    setCustom5Color(custom5Color: string): void
     /**
      * Enables or disables **color inversion** (dark/light intent).
      * When enabled, derived text/background pairs flip to preserve contrast.
@@ -454,6 +464,91 @@ export interface Hison extends Hisonjs {
     getWarningRowHoverColor(): string
     /** Returns the computed stripe color for the warning palette. */
     getWarningStripeColor(): string
+
+    /** Returns the custom1 base color. */
+    getCustom1Color(): string
+    /** Returns the computed button color for the custom1 palette. */
+    getCustom1ButtonColor(): string
+    /** Returns the computed border color for the custom1 palette. */
+    getCustom1BorderColor(): string
+    /** Returns the computed shadow color for the custom1 palette. */
+    getCustom1ShadowColor(): string
+    /** Returns the computed hover color for the custom1 palette. */
+    getCustom1HoverColor(): string
+    /** Returns the computed active color for the custom1 palette. */
+    getCustom1ActiveColor(): string
+    /** Returns the computed row hover color for the custom1 palette. */
+    getCustom1RowHoverColor(): string
+    /** Returns the computed stripe color for the custom1 palette. */
+    getCustom1StripeColor(): string
+
+    /** Returns the custom2 base color. */
+    getCustom2Color(): string
+    /** Returns the computed button color for the custom2 palette. */
+    getCustom2ButtonColor(): string
+    /** Returns the computed border color for the custom2 palette. */
+    getCustom2BorderColor(): string
+    /** Returns the computed shadow color for the custom2 palette. */
+    getCustom2ShadowColor(): string
+    /** Returns the computed hover color for the custom2 palette. */
+    getCustom2HoverColor(): string
+    /** Returns the computed active color for the custom2 palette. */
+    getCustom2ActiveColor(): string
+    /** Returns the computed row hover color for the custom2 palette. */
+    getCustom2RowHoverColor(): string
+    /** Returns the computed stripe color for the custom2 palette. */
+    getCustom2StripeColor(): string
+
+    /** Returns the custom3 base color. */
+    getCustom3Color(): string
+    /** Returns the computed button color for the custom3 palette. */
+    getCustom3ButtonColor(): string
+    /** Returns the computed border color for the custom3 palette. */
+    getCustom3BorderColor(): string
+    /** Returns the computed shadow color for the custom3 palette. */
+    getCustom3ShadowColor(): string
+    /** Returns the computed hover color for the custom3 palette. */
+    getCustom3HoverColor(): string
+    /** Returns the computed active color for the custom3 palette. */
+    getCustom3ActiveColor(): string
+    /** Returns the computed row hover color for the custom3 palette. */
+    getCustom3RowHoverColor(): string
+    /** Returns the computed stripe color for the custom3 palette. */
+    getCustom3StripeColor(): string
+
+    /** Returns the custom4 base color. */
+    getCustom4Color(): string
+    /** Returns the computed button color for the custom4 palette. */
+    getCustom4ButtonColor(): string
+    /** Returns the computed border color for the custom4 palette. */
+    getCustom4BorderColor(): string
+    /** Returns the computed shadow color for the custom4 palette. */
+    getCustom4ShadowColor(): string
+    /** Returns the computed hover color for the custom4 palette. */
+    getCustom4HoverColor(): string
+    /** Returns the computed active color for the custom4 palette. */
+    getCustom4ActiveColor(): string
+    /** Returns the computed row hover color for the custom4 palette. */
+    getCustom4RowHoverColor(): string
+    /** Returns the computed stripe color for the custom4 palette. */
+    getCustom4StripeColor(): string
+
+    /** Returns the custom5 base color. */
+    getCustom5Color(): string
+    /** Returns the computed button color for the custom5 palette. */
+    getCustom5ButtonColor(): string
+    /** Returns the computed border color for the custom5 palette. */
+    getCustom5BorderColor(): string
+    /** Returns the computed shadow color for the custom5 palette. */
+    getCustom5ShadowColor(): string
+    /** Returns the computed hover color for the custom5 palette. */
+    getCustom5HoverColor(): string
+    /** Returns the computed active color for the custom5 palette. */
+    getCustom5ActiveColor(): string
+    /** Returns the computed row hover color for the custom5 palette. */
+    getCustom5RowHoverColor(): string
+    /** Returns the computed stripe color for the custom5 palette. */
+    getCustom5StripeColor(): string
 
     /** Returns whether theme inversion (dark/light intent) is currently enabled. */
     isInvertColor(): boolean

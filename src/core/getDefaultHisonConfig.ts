@@ -13,6 +13,11 @@ export const infoColorRGBA = 'rgba(147,191,207,1)'
 export const successColorRGBA = 'rgba(95,141,78,1)'
 export const dangerColorRGBA = 'rgba(247,113,109,1)'
 export const warningColorRGBA = 'rgba(255,193,98,1)'
+export const custom1ColorRGBA = 'rgba(0,0,0,1)'
+export const custom2ColorRGBA = 'rgba(0,0,0,1)'
+export const custom3ColorRGBA = 'rgba(0,0,0,1)'
+export const custom4ColorRGBA = 'rgba(0,0,0,1)'
+export const custom5ColorRGBA = 'rgba(0,0,0,1)'
 export const darkTextColorRGBA = 'rgba(48,48,48,1)'
 export const lightTextColorRGBA = 'rgba(255,255,255,1)'
 export const emptyColorRGBA = 'rgba(255,255,255,1)'
@@ -445,6 +450,11 @@ export const getDefaultHisonConfig = () => {
             successColor : successColorRGBA,
             dangerColor : dangerColorRGBA,
             warningColor : warningColorRGBA,
+            custom1Color : custom1ColorRGBA,
+            custom2Color : custom2ColorRGBA,
+            custom3Color : custom3ColorRGBA,
+            custom4Color : custom4ColorRGBA,
+            custom5Color : custom5ColorRGBA,
             invertColor : false,
             minHeightS: 1.7,
             minHeightM: 2,

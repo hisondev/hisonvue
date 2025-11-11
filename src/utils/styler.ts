@@ -170,6 +170,16 @@ export const getHexCodeFromColorText = (colorText: string) => {
         return normalizeToHex(hisonCloser.componentStyle.dangerColor)
     case 'warning' :
         return normalizeToHex(hisonCloser.componentStyle.warningColor)
+    case 'custom1' :
+        return normalizeToHex(hisonCloser.componentStyle.custom1Color)
+    case 'custom2' :
+        return normalizeToHex(hisonCloser.componentStyle.custom2Color)
+    case 'custom3' :
+        return normalizeToHex(hisonCloser.componentStyle.custom3Color)
+    case 'custom4' :
+        return normalizeToHex(hisonCloser.componentStyle.custom4Color)
+    case 'custom5' :
+        return normalizeToHex(hisonCloser.componentStyle.custom5Color)
   }
   return null
 }
@@ -188,6 +198,16 @@ export const getRGBAFromColorText = (colorText: string) => {
         return hisonCloser.componentStyle.dangerColor
     case 'warning' :
         return hisonCloser.componentStyle.warningColor
+    case 'custom1' :
+        return hisonCloser.componentStyle.custom1Color
+    case 'custom2' :
+        return hisonCloser.componentStyle.custom2Color
+    case 'custom3' :
+        return hisonCloser.componentStyle.custom3Color
+    case 'custom4' :
+        return hisonCloser.componentStyle.custom4Color
+    case 'custom5' :
+        return hisonCloser.componentStyle.custom5Color
   }
   return ''
 }

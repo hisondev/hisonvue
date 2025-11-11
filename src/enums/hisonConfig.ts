@@ -11,5 +11,10 @@ export enum Color {
     info = 'info',
     success = 'success',
     danger = 'danger',
-    warning = 'warning'
+    warning = 'warning',
+    custom1 = 'custom1',
+    custom2 = 'custom2',
+    custom3 = 'custom3',
+    custom4 = 'custom4',
+    custom5 = 'custom5'
 }

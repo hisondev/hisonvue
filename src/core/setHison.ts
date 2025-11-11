@@ -95,6 +95,26 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
             hisonCloser.componentStyle.warningColor = warningColor;
             reApplyCssVariables()
         },
+        setCustom1Color(custom1Color: string) {
+            hisonCloser.componentStyle.custom1Color = custom1Color;
+            reApplyCssVariables()
+        },
+        setCustom2Color(custom2Color: string) {
+            hisonCloser.componentStyle.custom2Color = custom2Color;
+            reApplyCssVariables()
+        },
+        setCustom3Color(custom3Color: string) {
+            hisonCloser.componentStyle.custom3Color = custom3Color;
+            reApplyCssVariables()
+        },
+        setCustom4Color(custom4Color: string) {
+            hisonCloser.componentStyle.custom4Color = custom4Color;
+            reApplyCssVariables()
+        },
+        setCustom5Color(custom5Color: string) {
+            hisonCloser.componentStyle.custom5Color = custom5Color;
+            reApplyCssVariables()
+        },
         setInvertColor(invert: boolean) {
             hisonCloser.componentStyle.invertColor = invert;
             reApplyCssVariables()
@@ -169,6 +189,51 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
         getWarningActiveColor() { return hisonCloser.componentStyle.componentColor.warning.activeColor as string; },
         getWarningRowHoverColor() { return hisonCloser.componentStyle.componentColor.warning.rowHoverColor as string; },
         getWarningStripeColor() { return hisonCloser.componentStyle.componentColor.warning.stripeColor as string; },
+
+        getCustom1Color() { return hisonCloser.componentStyle.custom1Color; },
+        getCustom1ButtonColor() { return hisonCloser.componentStyle.componentColor.custom1.buttonColor as string; },
+        getCustom1BorderColor() { return hisonCloser.componentStyle.componentColor.custom1.borderColor as string; },
+        getCustom1ShadowColor() { return hisonCloser.componentStyle.componentColor.custom1.shadowColor as string; },
+        getCustom1HoverColor() { return hisonCloser.componentStyle.componentColor.custom1.hoverColor as string; },
+        getCustom1ActiveColor() { return hisonCloser.componentStyle.componentColor.custom1.activeColor as string; },
+        getCustom1RowHoverColor() { return hisonCloser.componentStyle.componentColor.custom1.rowHoverColor as string; },
+        getCustom1StripeColor() { return hisonCloser.componentStyle.componentColor.custom1.stripeColor as string; },
+
+        getCustom2Color() { return hisonCloser.componentStyle.custom2Color; },
+        getCustom2ButtonColor() { return hisonCloser.componentStyle.componentColor.custom2.buttonColor as string; },
+        getCustom2BorderColor() { return hisonCloser.componentStyle.componentColor.custom2.borderColor as string; },
+        getCustom2ShadowColor() { return hisonCloser.componentStyle.componentColor.custom2.shadowColor as string; },
+        getCustom2HoverColor() { return hisonCloser.componentStyle.componentColor.custom2.hoverColor as string; },
+        getCustom2ActiveColor() { return hisonCloser.componentStyle.componentColor.custom2.activeColor as string; },
+        getCustom2RowHoverColor() { return hisonCloser.componentStyle.componentColor.custom2.rowHoverColor as string; },
+        getCustom2StripeColor() { return hisonCloser.componentStyle.componentColor.custom2.stripeColor as string; },
+
+        getCustom3Color() { return hisonCloser.componentStyle.custom3Color; },
+        getCustom3ButtonColor() { return hisonCloser.componentStyle.componentColor.custom3.buttonColor as string; },
+        getCustom3BorderColor() { return hisonCloser.componentStyle.componentColor.custom3.borderColor as string; },
+        getCustom3ShadowColor() { return hisonCloser.componentStyle.componentColor.custom3.shadowColor as string; },
+        getCustom3HoverColor() { return hisonCloser.componentStyle.componentColor.custom3.hoverColor as string; },
+        getCustom3ActiveColor() { return hisonCloser.componentStyle.componentColor.custom3.activeColor as string; },
+        getCustom3RowHoverColor() { return hisonCloser.componentStyle.componentColor.custom3.rowHoverColor as string; },
+        getCustom3StripeColor() { return hisonCloser.componentStyle.componentColor.custom3.stripeColor as string; },
+
+        getCustom4Color() { return hisonCloser.componentStyle.custom4Color; },
+        getCustom4ButtonColor() { return hisonCloser.componentStyle.componentColor.custom4.buttonColor as string; },
+        getCustom4BorderColor() { return hisonCloser.componentStyle.componentColor.custom4.borderColor as string; },
+        getCustom4ShadowColor() { return hisonCloser.componentStyle.componentColor.custom4.shadowColor as string; },
+        getCustom4HoverColor() { return hisonCloser.componentStyle.componentColor.custom4.hoverColor as string; },
+        getCustom4ActiveColor() { return hisonCloser.componentStyle.componentColor.custom4.activeColor as string; },
+        getCustom4RowHoverColor() { return hisonCloser.componentStyle.componentColor.custom4.rowHoverColor as string; },
+        getCustom4StripeColor() { return hisonCloser.componentStyle.componentColor.custom4.stripeColor as string; },
+
+        getCustom5Color() { return hisonCloser.componentStyle.custom5Color; },
+        getCustom5ButtonColor() { return hisonCloser.componentStyle.componentColor.custom5.buttonColor as string; },
+        getCustom5BorderColor() { return hisonCloser.componentStyle.componentColor.custom5.borderColor as string; },
+        getCustom5ShadowColor() { return hisonCloser.componentStyle.componentColor.custom5.shadowColor as string; },
+        getCustom5HoverColor() { return hisonCloser.componentStyle.componentColor.custom5.hoverColor as string; },
+        getCustom5ActiveColor() { return hisonCloser.componentStyle.componentColor.custom5.activeColor as string; },
+        getCustom5RowHoverColor() { return hisonCloser.componentStyle.componentColor.custom5.rowHoverColor as string; },
+        getCustom5StripeColor() { return hisonCloser.componentStyle.componentColor.custom5.stripeColor as string; },
 
         isInvertColor() { return hisonCloser.componentStyle.invertColor }
     };

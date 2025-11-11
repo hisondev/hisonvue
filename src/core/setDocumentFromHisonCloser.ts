@@ -1,6 +1,21 @@
 import { hisonCloser } from "../hisonCloser";
 import { applyDefaultColor, getInvertColor, normalizeToRgba } from "../utils";
-import { dangerColorRGBA, darkTextColorRGBA, emptyColorRGBA, infoColorRGBA, lightTextColorRGBA, mutedColorRGBA, primaryColorRGBA, successColorRGBA, warningColorRGBA } from "./getDefaultHisonConfig";
+import {
+  custom1ColorRGBA,
+  custom2ColorRGBA,
+  custom3ColorRGBA,
+  custom4ColorRGBA,
+  custom5ColorRGBA,
+  dangerColorRGBA,
+  darkTextColorRGBA,
+  emptyColorRGBA,
+  infoColorRGBA,
+  lightTextColorRGBA,
+  mutedColorRGBA,
+  primaryColorRGBA,
+  successColorRGBA,
+  warningColorRGBA
+} from "./getDefaultHisonConfig";
 
 export const applyCssVariables = () => {
   const c = hisonCloser.componentStyle;
@@ -11,6 +26,11 @@ export const applyCssVariables = () => {
   c.successColor = c.successColor ? normalizeToRgba(c.successColor) : successColorRGBA
   c.dangerColor = c.dangerColor ? normalizeToRgba(c.dangerColor) : dangerColorRGBA
   c.warningColor = c.warningColor ? normalizeToRgba(c.warningColor) : warningColorRGBA
+  c.custom1Color = c.custom1Color ? normalizeToRgba(c.custom1Color) : custom1ColorRGBA
+  c.custom2Color = c.custom2Color ? normalizeToRgba(c.custom2Color) : custom2ColorRGBA
+  c.custom3Color = c.custom3Color ? normalizeToRgba(c.custom3Color) : custom3ColorRGBA
+  c.custom4Color = c.custom4Color ? normalizeToRgba(c.custom4Color) : custom4ColorRGBA
+  c.custom5Color = c.custom5Color ? normalizeToRgba(c.custom5Color) : custom5ColorRGBA
   c.filledColor = c.filledColor ? normalizeToRgba(c.filledColor) : primaryColorRGBA
   c.emptyColor = c.emptyColor ? normalizeToRgba(c.emptyColor) : emptyColorRGBA
   c.filledTextColor = c.filledTextColor ? normalizeToRgba(c.filledTextColor) : lightTextColorRGBA
@@ -22,6 +42,11 @@ export const applyCssVariables = () => {
   c.successInvertColor = getInvertColor(c.successColor)
   c.dangerInvertColor = getInvertColor(c.dangerColor)
   c.warningInvertColor = getInvertColor(c.warningColor)
+  c.custom1InvertColor = getInvertColor(c.custom1Color)
+  c.custom2InvertColor = getInvertColor(c.custom2Color)
+  c.custom3InvertColor = getInvertColor(c.custom3Color)
+  c.custom4InvertColor = getInvertColor(c.custom4Color)
+  c.custom5InvertColor = getInvertColor(c.custom5Color)
   c.filledInvertColor = getInvertColor(c.filledColor)
   c.emptyInvertColor = getInvertColor(c.emptyColor)
   c.filledTextInvertColor = getInvertColor(c.filledTextColor)
@@ -34,6 +59,11 @@ export const applyCssVariables = () => {
   applyDefaultColor(cc.success, c.invertColor ? c.successInvertColor : c.successColor);
   applyDefaultColor(cc.danger, c.invertColor ? c.dangerInvertColor : c.dangerColor);
   applyDefaultColor(cc.warning, c.invertColor ? c.warningInvertColor : c.warningColor);
+  applyDefaultColor(cc.custom1, c.invertColor ? c.custom1InvertColor : c.custom1Color);
+  applyDefaultColor(cc.custom2, c.invertColor ? c.custom2InvertColor : c.custom2Color);
+  applyDefaultColor(cc.custom3, c.invertColor ? c.custom3InvertColor : c.custom3Color);
+  applyDefaultColor(cc.custom4, c.invertColor ? c.custom4InvertColor : c.custom4Color);
+  applyDefaultColor(cc.custom5, c.invertColor ? c.custom5InvertColor : c.custom5Color);
 
   const cssVariables = `
 :root {
@@ -100,6 +130,56 @@ export const applyCssVariables = () => {
   --hison-warning-stripeColor: ${cc.warning.stripeColor};
   --hison-warning-emptyTextColor: ${cc.warning.emptyTextColor};
   --hison-warning-filledTextColor: ${cc.warning.filledTextColor};
+  
+  --hison-custom1-buttonColor: ${cc.custom1.buttonColor};
+  --hison-custom1-borderColor: ${cc.custom1.borderColor};
+  --hison-custom1-shadowColor: ${cc.custom1.shadowColor};
+  --hison-custom1-hoverColor: ${cc.custom1.hoverColor};
+  --hison-custom1-activeColor: ${cc.custom1.activeColor};
+  --hison-custom1-rowHoverColor: ${cc.custom1.rowHoverColor};
+  --hison-custom1-stripeColor: ${cc.custom1.stripeColor};
+  --hison-custom1-emptyTextColor: ${cc.custom1.emptyTextColor};
+  --hison-custom1-filledTextColor: ${cc.custom1.filledTextColor};
+  
+  --hison-custom2-buttonColor: ${cc.custom2.buttonColor};
+  --hison-custom2-borderColor: ${cc.custom2.borderColor};
+  --hison-custom2-shadowColor: ${cc.custom2.shadowColor};
+  --hison-custom2-hoverColor: ${cc.custom2.hoverColor};
+  --hison-custom2-activeColor: ${cc.custom2.activeColor};
+  --hison-custom2-rowHoverColor: ${cc.custom2.rowHoverColor};
+  --hison-custom2-stripeColor: ${cc.custom2.stripeColor};
+  --hison-custom2-emptyTextColor: ${cc.custom2.emptyTextColor};
+  --hison-custom2-filledTextColor: ${cc.custom2.filledTextColor};
+  
+  --hison-custom3-buttonColor: ${cc.custom3.buttonColor};
+  --hison-custom3-borderColor: ${cc.custom3.borderColor};
+  --hison-custom3-shadowColor: ${cc.custom3.shadowColor};
+  --hison-custom3-hoverColor: ${cc.custom3.hoverColor};
+  --hison-custom3-activeColor: ${cc.custom3.activeColor};
+  --hison-custom3-rowHoverColor: ${cc.custom3.rowHoverColor};
+  --hison-custom3-stripeColor: ${cc.custom3.stripeColor};
+  --hison-custom3-emptyTextColor: ${cc.custom3.emptyTextColor};
+  --hison-custom3-filledTextColor: ${cc.custom3.filledTextColor};
+  
+  --hison-custom4-buttonColor: ${cc.custom4.buttonColor};
+  --hison-custom4-borderColor: ${cc.custom4.borderColor};
+  --hison-custom4-shadowColor: ${cc.custom4.shadowColor};
+  --hison-custom4-hoverColor: ${cc.custom4.hoverColor};
+  --hison-custom4-activeColor: ${cc.custom4.activeColor};
+  --hison-custom4-rowHoverColor: ${cc.custom4.rowHoverColor};
+  --hison-custom4-stripeColor: ${cc.custom4.stripeColor};
+  --hison-custom4-emptyTextColor: ${cc.custom4.emptyTextColor};
+  --hison-custom4-filledTextColor: ${cc.custom4.filledTextColor};
+  
+  --hison-custom5-buttonColor: ${cc.custom5.buttonColor};
+  --hison-custom5-borderColor: ${cc.custom5.borderColor};
+  --hison-custom5-shadowColor: ${cc.custom5.shadowColor};
+  --hison-custom5-hoverColor: ${cc.custom5.hoverColor};
+  --hison-custom5-activeColor: ${cc.custom5.activeColor};
+  --hison-custom5-rowHoverColor: ${cc.custom5.rowHoverColor};
+  --hison-custom5-stripeColor: ${cc.custom5.stripeColor};
+  --hison-custom5-emptyTextColor: ${cc.custom5.emptyTextColor};
+  --hison-custom5-filledTextColor: ${cc.custom5.filledTextColor};
 
   --hison-font-family: 'Arial, sans-serif';
   --hison-s-min-height: ${c.minHeightS};
