@@ -3655,6 +3655,28 @@ export interface HListMethods extends ComponentMethods {
    */
   getListItem(index: number): HTMLElement | null
   /**
+   * Gets the current number of columns used for item layout.
+   * - 1: single column
+   * - >=2: multi-column grid-like layout.
+   */
+  getColumns(): number
+  /**
+   * Sets the number of columns used for item layout.
+   * - Values <= 1 are clamped to 1.
+   */
+  setColumns(columns: number): void
+  /**
+   * Gets the current horizontal gap between columns.
+   * - Number → interpreted as pixels.
+   * - String → raw CSS length (e.g. '0.5rem', '8px').
+   */
+  getColumnGap(): number | string
+  /**
+   * Sets the horizontal gap between columns.
+   * @param gap - number (px) or CSS length string.
+   */
+  setColumnGap(gap: number | string): void
+  /**
    * Focuses the list item at `index` (0-based).
    * - Works only when `addEvent` is enabled AND `tabIndex` is neither `null/undefined` nor `-1`.
    * - If `index` is out of bounds or conditions are not met, it's a no-op.

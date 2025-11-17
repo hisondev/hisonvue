@@ -106,6 +106,33 @@ export const listProps = {
    */
   addEvent: { type: Boolean, default: false },
   /**
+   * Number of columns to layout items into.
+   * - 1: single column (default)
+   * - >=2: items are arranged row-wise across this many columns.
+   *
+   * Example:
+   * - 1 → item1
+   *        item2
+   *        item3
+   * - 2 → item1  item2
+   *        item3  item4
+   */
+  columns: {
+    type: Number,
+    default: 1,
+    validator: (v: any) => Number.isInteger(v) && v > 0
+  },
+  /**
+   * Horizontal gap between columns.
+   * - When `columns > 1`, applied as CSS `column-gap` on the list container.
+   * - Number → pixels (e.g. 8 => '8px')
+   * - String → raw CSS length (e.g. '1rem', '12px')
+   */
+  columnGap: {
+    type: [Number, String] as PropType<number | string>,
+    default: 0
+  },
+  /**
    * Controls keyboard focus order of the element.
    * - `0` enables natural tab navigation, positive numbers set custom order.
    * - `null` or `''` removes tabindex (not focusable).

@@ -14,7 +14,7 @@
         borderClass,
         backgroundTypeClass
       ]"
-      :style="props.style"
+      :style="[props.style, listLayoutStyle]"
       @keydown.enter.prevent="onItemClick"
       @keydown.space.prevent="onItemClick"
     >
@@ -27,7 +27,7 @@
             listBorderClass,
             listBackgroundTypeClass
           ]"
-          :style="props.listItemStyle"
+          :style="[listItemLayoutStyle, props.listItemStyle]"
           :ref="setItemRef"
           :tabindex="tabIndex ?? undefined"
           @click="onItemClick"
@@ -61,6 +61,7 @@
             listBorderClass,
             listBackgroundTypeClass
           ]"
+          :style="[listItemLayoutStyle, props.listItemStyle]"
           :ref="setItemRef"
           :tabindex="tabIndex ?? undefined"
           @click="onItemClick"
@@ -109,6 +110,7 @@ import {
 import { useDevice } from '../../core'
 import { addButtonCssEvent, removeButtonCssEvent } from '../common/setButtonCssEvent'
 import { hisonCloser } from '../../hisonCloser'
+import { CSSProperties } from 'vue'
 
 export default defineComponent({
   name: 'HList',
@@ -139,6 +141,9 @@ export default defineComponent({
     const listBackgroundType = ref<BackgroundTypeValue>(props.listBackgroundType || BackgroundType.empty)
 
     const addEventEnabled = ref<boolean>(!!props.addEvent)
+    
+    const columns = ref<number>(props.columns ?? 1)
+    const columnGap = ref<number | string>(props.columnGap ?? 0)
 
     const borderClass = computed(() => (border.value ? 'hison-border' : ''))
     const listBorderClass = computed(() => (listBorder.value ? 'hison-border' : ''))
@@ -161,6 +166,44 @@ export default defineComponent({
     const tabIndex = ref<number | null>(
       props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
     )
+
+    const listLayoutStyle = computed<CSSProperties>(() => {
+      const style: CSSProperties = {}
+      if (columns.value > 1) {
+        style.display = 'flex'
+        style.flexWrap = 'wrap'
+        const gap = columnGap.value
+        if (gap !== null && gap !== undefined) {
+          const gapValue = typeof gap === 'number' ? `${gap}px` : gap
+          style.columnGap = gapValue
+        }
+        style.listStyleType = 'none'
+        style.paddingLeft = 0
+      }
+      return style
+    })
+
+    const listItemLayoutStyle = computed<CSSProperties>(() => {
+      const style: CSSProperties = {}
+      if (columns.value > 1) {
+        const cols = Math.max(1, Math.floor(columns.value))
+
+        const gapRaw = columnGap.value
+        const gapStr =
+          gapRaw == null
+            ? '0px'
+            : typeof gapRaw === 'number'
+              ? `${gapRaw}px`
+              : String(gapRaw)
+
+        if (gapStr === '0' || gapStr === '0px') {
+          style.flex = `0 0 ${100 / cols}%`
+        } else {
+          style.flex = `0 0 calc((100% - (${cols - 1} * ${gapStr})) / ${cols})`
+        }
+      }
+      return style
+    })
 
     const flattenElements = (nodes: VNode[] | undefined, out: VNode[] = []): VNode[] => {
       if (!nodes || nodes.length === 0) return out
@@ -263,6 +306,20 @@ export default defineComponent({
           }
           return itemRefs.value[index] ?? null
         },
+        getColumns: () => columns.value,
+        setColumns: (v: number) => {
+          const n = Number(v)
+          const normalized = !Number.isFinite(n) || n <= 1 ? 1 : Math.floor(n)
+          columns.value = normalized
+        },
+        getColumnGap: () => columnGap.value,
+        setColumnGap: (v: number | string) => {
+          if (v === null || v === undefined) {
+            columnGap.value = 0
+          } else {
+            columnGap.value = v
+          }
+        },
         focus: (index: number = 0) => {
           if (!addEventEnabled.value) return
           const ti = tabIndex.value
@@ -320,6 +377,15 @@ export default defineComponent({
     watch(() => props.showMarker, v => { const b = v !== false; if (b !== showMarker.value) showMarker.value = b })
     watch(() => props.textList, v => { internalItems.value = Array.isArray(v) ? v : [] })
     watch(() => props.addEvent, v => { const b = !!v; if (b !== addEventEnabled.value) { addEventEnabled.value = b; attachItemCssEvents(true) } })
+    watch(() => props.columns, v => {
+      const n = typeof v === 'number' ? v : Number(v)
+      const normalized = !Number.isFinite(n) || n <= 1 ? 1 : Math.floor(n)
+      if (normalized !== columns.value) columns.value = normalized
+    })
+    watch(() => props.columnGap, v => {
+      const nv = (v ?? 0) as any
+      if (nv !== columnGap.value) columnGap.value = nv
+    })
     watch(() => props.tabIndex, v => { const nv = (v === null || v === '') ? null : Number(v); if (nv !== tabIndex.value) tabIndex.value = nv })
     watch(() => props.class, () => { refreshResponsiveClassList() })
     watch(elementNodes, () => { attachItemCssEvents(true) })
@@ -343,6 +409,8 @@ export default defineComponent({
       hasElementSlot,
       elementNodes,
       normalizedItems,
+      listLayoutStyle,
+      listItemLayoutStyle,
       tabIndex,
       setItemRef,
       setItemInnerRef,
