@@ -77,7 +77,7 @@ export default defineComponent({
           radioSelection.value[oldName] = null
           const updated = { ...(props.modelValue || {}) }
           updated[oldName] = null
-          emit('update:modelValue', updated)
+          emit('update:modelValue', updated, inputId)
         }
         if (radioGroups.value[oldName].length === 0) {
           delete radioGroups.value[oldName]
@@ -97,7 +97,7 @@ export default defineComponent({
         }
         const updated = { ...(props.modelValue || {}) }
         updated[newName] = inputId
-        emit('update:modelValue', updated)
+        emit('update:modelValue', updated, inputId)
         if (status.value !== DataStatus.U) status.value = DataStatus.U
       } else {
         if (!Object.prototype.hasOwnProperty.call(radioSelection.value, newName)) {
@@ -118,7 +118,7 @@ export default defineComponent({
 
         const updated = { ...(props.modelValue || {}) }
         updated[name] = selectedId
-        emit('update:modelValue', updated)
+        emit('update:modelValue', updated, selectedId ?? undefined)
 
         if (status.value !== DataStatus.U) status.value = DataStatus.U
         return
@@ -129,7 +129,7 @@ export default defineComponent({
         ...props.modelValue,
         [inputId]: newVal,
       }
-      emit('update:modelValue', updated)
+      emit('update:modelValue', updated, inputId)
     })
 
     const _getDataObject = () => {
