@@ -135,6 +135,16 @@ export const inputProps = {
      */
     placeholder: { type: String, required: false },
     /**
+     * Placeholder text color.
+     * - Semantic tokens: 'primary' | 'muted' | 'info' | 'success' | 'danger' | 'warning'
+     * - Or any valid CSS color string (e.g. '#fff', '#ffffff', 'rgb(...)', 'rgba(...)').
+     * - Default: 'primary'
+     */
+    placeholderColor: {
+        type: String as PropType<string>,
+        default: 'primary',
+    },
+    /**
      * Edit mode of the input.
      * - Values: `'editable'`, `'readonly'`, `'disable'`
      * - Accepts enum `EditMode` or its literal strings

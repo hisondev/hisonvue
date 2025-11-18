@@ -329,7 +329,7 @@
       ref="inputRef"
       :id="`${id}`"
       :name="`${nameAttr}`"
-      :style="[textAlignStyle, props.style]"
+      :style="[textAlignStyle, placeholderColorStyle, props.style]"
       :class="[
         'hison-input',
         `hison-input-${inputType}`,
@@ -397,7 +397,7 @@
         borderClass
       ]"
       :value="inputValue"
-      :style="[textAlignStyle, props.style]"
+      :style="[textAlignStyle, placeholderColorStyle, props.style]"
       :disabled="disable"
       :readonly="readonly"
       :placeholder="placeholder || undefined"
@@ -428,7 +428,7 @@
         ]"
         type="text"
         :value="spanText"
-        :style="[textAlignStyle, props.style]"
+        :style="[textAlignStyle, placeholderColorStyle, props.style]"
         :disabled="disable"
         :readonly="readonly"
         :title="title || undefined"
@@ -467,7 +467,7 @@
           borderClass
         ]"
         :value="inputValue"
-        :style="[textAlignStyle, props.style]"
+        :style="[textAlignStyle, placeholderColorStyle, props.style]"
         :disabled="disable"
         :readonly="readonly"
         :type="inputType"
@@ -500,7 +500,7 @@
 
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, unref, inject } from 'vue'
+import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, unref, inject, CSSProperties } from 'vue'
 import type { HInputMethods } from '../../types'
 import { inputProps } from './props'
 import { DateFormat, hison, EditMode, InputType, YearMonthFormat, TimeFormat, TextAlign, TextAlignValue, InputTypeValue } from '../..'
@@ -705,6 +705,40 @@ export default defineComponent({
       else return []
     })
     const placeholder = ref(props.placeholder ?? '')
+    const placeholderColor = ref<string>(props.placeholderColor ?? 'primary')
+
+    const resolvePlaceholderColor = (c: string | null | undefined): string | null => {
+      if (!c) return null
+      const token = c.trim()
+
+      // hison 테마 토큰 목록
+      const semanticTokens = [
+        'primary',
+        'muted',
+        'info',
+        'success',
+        'danger',
+        'warning',
+        'custom1',
+        'custom2',
+        'custom3',
+        'custom4',
+        'custom5',
+      ] as const
+
+      if (semanticTokens.includes(token as any)) {
+        return `var(--hison-${token}-emptyTextColor)`
+      }
+      return token
+    }
+
+    const placeholderColorStyle = computed<CSSProperties>(() => {
+      const resolved = resolvePlaceholderColor(placeholderColor.value)
+      return resolved
+        ? { '--hison-input-placeholder-color': resolved }
+        : {}
+    })
+
     const fontBold = ref(props.fontBold)
     const fontBoldClass = computed(()=>{
       if(fontBold.value) return 'hison-font-bold'
@@ -973,6 +1007,11 @@ export default defineComponent({
         setRequired : (val: boolean) => { required.value = val },
         getPlaceholder : () => placeholder.value,
         setPlaceholder : (val: string) => { placeholder.value = val },
+        getPlaceholderColor: () => placeholderColor.value,
+        setPlaceholderColor: (val: string) => {
+          const s = (val ?? '').trim()
+          placeholderColor.value = s.length > 0 ? s : 'primary'
+        },
         isFontBold : () => { return fontBold.value },
         setFontBold : (val: boolean) => { fontBold.value = val },
         isFontItalic : () => { return fontItalic.value },
@@ -1060,6 +1099,7 @@ export default defineComponent({
     watch(() => props.textAlign, v => { if (v && v !== textAlign.value && (v === TextAlign.left || v === TextAlign.center || v === TextAlign.right)) textAlign.value = v })
     watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
     watch(() => props.placeholder, v => { const s = v ?? ''; if (s !== placeholder.value) placeholder.value = s })
+    watch(() => props.placeholderColor, v => { const s = v ?? 'primary'; if (s !== placeholderColor.value) placeholderColor.value = s })
     watch(() => props.required, v => { const b = !!v; if (b !== required.value) required.value = b })
     watch(() => props.fontBold, v => { const b = !!v; if (b !== fontBold.value) fontBold.value = b })
     watch(() => props.fontItalic, v => { const b = !!v; if (b !== fontItalic.value) fontItalic.value = b })
@@ -1093,6 +1133,7 @@ export default defineComponent({
         fontThrulineClass,
         fontUnderlineClass,
         textAlignStyle,
+        placeholderColorStyle,
         borderClass,
         disable,
         readonly,
@@ -1121,4 +1162,22 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.hison-input::placeholder {
+  color: var(--hison-input-placeholder-color);
+  opacity: 1;
+}
+
+.hison-input::-webkit-input-placeholder {
+  color: var(--hison-input-placeholder-color);
+}
+
+.hison-input::-moz-placeholder {
+  color: var(--hison-input-placeholder-color);
+  opacity: 1;
+}
+
+.hison-input:-ms-input-placeholder {
+  color: var(--hison-input-placeholder-color);
+}
+</style>

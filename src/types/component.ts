@@ -2950,6 +2950,17 @@ export interface HInputMethods extends ComponentMethods {
    */
   setPlaceholder(placeholder: string): void;
   /**
+   * Gets the current placeholder text color.
+   * - Returns semantic token (e.g. 'primary') or raw CSS color string.
+   */
+  getPlaceholderColor(): string;
+  /**
+   * Sets the placeholder text color.
+   * - Accepts semantic tokens: 'primary' | 'muted' | 'info' | 'success' | 'danger' | 'warning'
+   *   or any valid CSS color string (e.g. '#fff', '#ffffff', 'rgb(...)', 'rgba(...)').
+   */
+  setPlaceholderColor(color: string): void;
+  /**
    * Returns whether bold font is applied to the span text.
    */
   isFontBold(): boolean;
