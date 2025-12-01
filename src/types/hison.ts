@@ -307,7 +307,7 @@ export interface Hison extends Hisonjs {
    */
   style: {
     /** Sets the global size scale. Affects paddings, radii, and control heights. */
-    setSize(size: Size.s | Size.m | Size.l | Size.xl): void
+    setSize(size: Size.xs | Size.s | Size.m | Size.l | Size.xl): void
     /** Sets the base “filled” surface color used by components. */
     setFilledColor(filledColor: string): void
     /** Sets the base “empty/outline” surface color used by components. */

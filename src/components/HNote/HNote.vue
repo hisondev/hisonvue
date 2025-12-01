@@ -167,6 +167,9 @@ export default defineComponent({
     const getSizeLevel = (sizeLevel: number, size: string | null) => {
       size = size ?? hisonCloser.componentStyle.size
       switch (size) {
+        case Size.xs:
+          sizeLevel -= 3
+          break
         case Size.s:
           sizeLevel -= 2
           break

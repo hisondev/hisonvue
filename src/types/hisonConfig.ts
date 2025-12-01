@@ -621,7 +621,7 @@ interface LinkConfig {
 }
 
 export interface ComponentStyleConfig {
-  size: Size.s | Size.m | Size.l | Size.xl;
+  size: Size.xs | Size.s | Size.m | Size.l | Size.xl;
 
   primaryColor: string;
   mutedColor: string;
@@ -641,6 +641,8 @@ export interface ComponentStyleConfig {
   /** Whether to invert colors. Used in dark mode. */
   invertColor: boolean;
 
+  /** The default height of an element when it is small. The unit is 'rem'. (default 1.4) */
+  minHeightXS: number;
   /** The default height of an element when it is small. The unit is 'rem'. (default 1.7) */
   minHeightS: number;
   /** The default height of an element when it is medium. The unit is 'rem'. (default 1.95) */
@@ -649,6 +651,8 @@ export interface ComponentStyleConfig {
   minHeightL: number;
   /** The default height of an element when it is extra large. The unit is 'rem'. (default 2.55) */
   minHeightXL: number;
+  /** The default font size of an element when it is small. The unit is 'rem'. (default 0.6) */
+  fontSizeXS: number;
   /** The default font size of an element when it is small. The unit is 'rem'. (default 0.7) */
   fontSizeS: number;
   /** The default font size of an element when it is medium. The unit is 'rem'. (default 0.75) */
@@ -738,7 +742,7 @@ export interface ComponentConfig {
  * Configuration interface for global Hisonvue settings.
  *
  * @property primaryColor - The main color applied to all components (hex color string).
- * @property size - Default size used across all components (s, m, l, xl).
+ * @property size - Default size used across all components (xs, s, m, l, xl).
  * @property editorConfig - Default config for HNote (based on Vanillanote).
  */
 export interface HisonConfig extends UtilsConfig, ShieldConfig, DataConfig, LinkConfig {

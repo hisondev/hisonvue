@@ -182,10 +182,12 @@ export const applyCssVariables = () => {
   --hison-custom5-filledTextColor: ${cc.custom5.filledTextColor};
 
   --hison-font-family: 'Arial, sans-serif';
+  --hison-xs-min-height: ${c.minHeightXS};
   --hison-s-min-height: ${c.minHeightS};
   --hison-m-min-height: ${c.minHeightM};
   --hison-l-min-height: ${c.minHeightL};
   --hison-xl-min-height: ${c.minHeightXL};
+  --hison-xs-font-size: ${c.fontSizeXS};
   --hison-s-font-size: ${c.fontSizeS};
   --hison-m-font-size: ${c.fontSizeM};
   --hison-l-font-size: ${c.fontSizeL};

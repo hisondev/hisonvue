@@ -21,6 +21,9 @@ const setVgConfigWithHisonConfig = (hisonConfig: HisonConfig) => {
     }
     if(hisonCloser.componentStyle.size) {
         switch (hisonCloser.componentStyle.size) {
+            case Size.xs :
+                hisonConfig.component.grid.attributes.defaultGridCssInfo.sizeLevel = 1;
+                break;
             case Size.s :
                 hisonConfig.component.grid.attributes.defaultGridCssInfo.sizeLevel = 3;
                 break;

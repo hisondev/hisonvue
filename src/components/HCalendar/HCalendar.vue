@@ -196,6 +196,12 @@ export default defineComponent({
             el.style.setProperty('--vuecal-body-font-size', '0.8em')
             el.style.setProperty('--vuecal-no-event-font-size', '0.7em')
             break
+          case Size.xs:
+            el.style.setProperty('--vuecal-header-font-size', '0.5em')
+            el.style.setProperty('--vuecal-title-button-font-size', '0.4em')
+            el.style.setProperty('--vuecal-body-font-size', '0.7em')
+            el.style.setProperty('--vuecal-no-event-font-size', '0.6em')
+            break
         }
         el.style.setProperty('--calendar-clickable-cursor', disable.value ? 'not-allowed' : null)
       }

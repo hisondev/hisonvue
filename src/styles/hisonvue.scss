@@ -115,10 +115,12 @@
     --hison-custom5-filledTextColor: '';
 
     --hison-font-family: 'Arial, sans-serif';
+    --hison-xs-min-height: '';
     --hison-s-min-height: '';
     --hison-m-min-height: '';
     --hison-l-min-height: '';
     --hison-xl-min-height: '';
+    --hison-xs-font-size: '';
     --hison-s-font-size: '';
     --hison-m-font-size: '';
     --hison-l-font-size: '';
@@ -205,6 +207,7 @@
 
 .hison-accordion-header:focus,
 .hison-accordion-header:active { outline: none; }
+.hison-size-xs > .hison-accordion > .hison-accordion-header { height: calc(var(--hison-xs-min-height)  * 1rem); font-size: calc(var(--hison-xs-font-size) * 1rem); }
 .hison-size-s > .hison-accordion > .hison-accordion-header { height: calc(var(--hison-s-min-height)  * 1rem); font-size: calc(var(--hison-s-font-size) * 1rem); }
 .hison-size-m > .hison-accordion > .hison-accordion-header { height: calc(var(--hison-m-min-height)  * 1rem); font-size: calc(var(--hison-m-font-size) * 1rem); }
 .hison-size-l > .hison-accordion > .hison-accordion-header { height: calc(var(--hison-l-min-height)  * 1rem); font-size: calc(var(--hison-l-font-size) * 1rem); }
@@ -695,6 +698,7 @@
   white-space: pre-wrap;
 }
 
+.hison-size-xs > .hison-button { min-height: calc(var(--hison-xs-min-height) * 1rem); font-size: calc(var(--hison-xs-font-size) * 1rem); }
 .hison-size-s > .hison-button { min-height: calc(var(--hison-s-min-height) * 1rem); font-size: calc(var(--hison-s-font-size) * 1rem); }
 .hison-size-m > .hison-button { min-height: calc(var(--hison-m-min-height) * 1rem); font-size: calc(var(--hison-m-font-size) * 1rem); }
 .hison-size-l > .hison-button { min-height: calc(var(--hison-l-min-height) * 1rem); font-size: calc(var(--hison-l-font-size) * 1rem); }
@@ -899,6 +903,7 @@ h4.hison-caption { --caption-level-scale: 2; margin: 0; }
 h5.hison-caption { --caption-level-scale: 1.50; margin: 0; }
 h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 
+.hison-size-xs  > .hison-caption { min-height: calc(var(--hison-xs-min-height) * 1rem); line-height: calc(var(--hison-xs-min-height) - 0.2); --caption-size-scale: 0.55; }
 .hison-size-s  > .hison-caption { min-height: calc(var(--hison-s-min-height) * 1rem); line-height: calc(var(--hison-s-min-height) - 0.3); --caption-size-scale: 0.65; }
 .hison-size-m  > .hison-caption { min-height: calc(var(--hison-m-min-height) * 1rem); line-height: calc(var(--hison-m-min-height) - 0.5); --caption-size-scale: 0.75; }
 .hison-size-l  > .hison-caption { min-height: calc(var(--hison-l-min-height) * 1rem); line-height: calc(var(--hison-l-min-height) - 0.7); --caption-size-scale: 0.85; }
@@ -969,6 +974,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
   color: var(--hison-emptyTextColor);
 }
 
+.hison-size-xs > .hison-drawer{ font-size: calc(var(--hison-xs-font-size) * 1rem); line-height: calc(var(--hison-xs-min-height) - 0.2); }
 .hison-size-s > .hison-drawer{ font-size: calc(var(--hison-s-font-size) * 1rem); line-height: calc(var(--hison-s-min-height) - 0.3); }
 .hison-size-m > .hison-drawer{ font-size: calc(var(--hison-m-font-size) * 1rem); line-height: calc(var(--hison-m-min-height) - 0.5); }
 .hison-size-l > .hison-drawer{ font-size: calc(var(--hison-l-font-size) * 1rem); line-height: calc(var(--hison-l-min-height) - 0.7); }
@@ -1062,6 +1068,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     white-space: nowrap;
 }
 
+.hison-dropdown.hison-size-xs > .hison-dropdown-toggle { height: calc(var(--hison-xs-min-height) * 1rem); font-size: calc(var(--hison-xs-font-size) * 1rem); line-height: calc(var(--hison-xs-min-height) - 0.2); }
 .hison-dropdown.hison-size-s > .hison-dropdown-toggle { height: calc(var(--hison-s-min-height) * 1rem); font-size: calc(var(--hison-s-font-size) * 1rem); line-height: calc(var(--hison-s-min-height) - 0.3); }
 .hison-dropdown.hison-size-m > .hison-dropdown-toggle { height: calc(var(--hison-m-min-height) * 1rem); font-size: calc(var(--hison-m-font-size) * 1rem); line-height: calc(var(--hison-m-min-height) - 0.5); }
 .hison-dropdown.hison-size-l > .hison-dropdown-toggle { height: calc(var(--hison-l-min-height) * 1rem); font-size: calc(var(--hison-l-font-size) * 1rem); line-height: calc(var(--hison-l-min-height) - 0.7); }
@@ -1146,6 +1153,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-dropdown-item.hison-disable { cursor: not-allowed; opacity: .6; }
 .hison-dropdown-empty { padding: 10px; color: #999; }
 
+.hison-dropdown.hison-size-xs > .hison-dropdown-menu > .hison-dropdown-panel > .hison-dropdown-panel-inner > .hison-dropdown-item { height: calc(var(--hison-xs-min-height) * 1rem); font-size: calc(var(--hison-xs-font-size) * 1rem); }
 .hison-dropdown.hison-size-s > .hison-dropdown-menu > .hison-dropdown-panel > .hison-dropdown-panel-inner > .hison-dropdown-item { height: calc(var(--hison-s-min-height) * 1rem); font-size: calc(var(--hison-s-font-size) * 1rem); }
 .hison-dropdown.hison-size-m > .hison-dropdown-menu > .hison-dropdown-panel > .hison-dropdown-panel-inner > .hison-dropdown-item { height: calc(var(--hison-m-min-height) * 1rem); font-size: calc(var(--hison-m-font-size) * 1rem); }
 .hison-dropdown.hison-size-l > .hison-dropdown-menu > .hison-dropdown-panel > .hison-dropdown-panel-inner > .hison-dropdown-item { height: calc(var(--hison-l-min-height) * 1rem); font-size: calc(var(--hison-l-font-size) * 1rem); }
@@ -1374,6 +1382,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 }
 .hison-fileset-add-text,
 .hison-fileset-remove-text { white-space: pre-wrap; }
+.hison-size-xs > .hison-fileset { font-size: calc(var(--hison-xs-font-size) * 1rem); }
 .hison-size-s > .hison-fileset { font-size: calc(var(--hison-s-font-size) * 1rem); }
 .hison-size-m > .hison-fileset { font-size: calc(var(--hison-m-font-size) * 1rem); }
 .hison-size-l > .hison-fileset { font-size: calc(var(--hison-l-font-size) * 1rem); }
@@ -1509,6 +1518,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     padding: 0 8px;
     box-sizing: border-box;
 }
+.hison-size-xs > .hison-fileset > .add-btn-container { height: calc((var(--hison-xs-min-height) + 0.9) * 1rem); }
 .hison-size-s > .hison-fileset > .add-btn-container { height: calc((var(--hison-s-min-height) + 1) * 1rem); }
 .hison-size-m > .hison-fileset > .add-btn-container { height: calc((var(--hison-m-min-height) + 1.1) * 1rem); }
 .hison-size-l > .hison-fileset > .add-btn-container { height: calc((var(--hison-l-min-height) + 1.2) * 1rem); }
@@ -1526,6 +1536,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     border-radius: 2px;
 }
 
+.hison-size-xs  > .hison-gap { height: calc(var(--hison-xs-min-height) * 1rem); }
 .hison-size-s  > .hison-gap { height: calc(var(--hison-s-min-height) * 1rem); }
 .hison-size-m  > .hison-gap { height: calc(var(--hison-m-min-height) * 1rem); }
 .hison-size-l  > .hison-gap { height: calc(var(--hison-l-min-height) * 1rem); }
@@ -1614,6 +1625,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-imagebox-remove-text {
   white-space: pre-wrap;
 }
+.hison-size-xs.hison-imagebox { font-size: calc(var(--hison-xs-font-size) * 1rem); }
 .hison-size-s.hison-imagebox { font-size: calc(var(--hison-s-font-size) * 1rem); }
 .hison-size-m.hison-imagebox { font-size: calc(var(--hison-m-font-size) * 1rem); }
 .hison-size-l.hison-imagebox { font-size: calc(var(--hison-l-font-size) * 1rem); }
@@ -1763,9 +1775,13 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-input:active {
     outline: none;
 }
+.hison-xs-input-margin-adjustment.hison-size-xs.hison-wrapper {
+    margin-top: -1px;
+}
 .hison-s-input-margin-adjustment.hison-size-s.hison-wrapper {
     margin-top: -1px;
 }
+.hison-size-xs > .hison-input { height: calc(var(--hison-xs-min-height) * 1rem); font-size: calc(var(--hison-xs-font-size) * 1rem); }
 .hison-size-s > .hison-input { height: calc(var(--hison-s-min-height) * 1rem); font-size: calc(var(--hison-s-font-size) * 1rem); }
 .hison-size-m > .hison-input { height: calc(var(--hison-m-min-height) * 1rem); font-size: calc(var(--hison-m-font-size) * 1rem); }
 .hison-size-l > .hison-input { height: calc(var(--hison-l-min-height) * 1rem); font-size: calc(var(--hison-l-font-size) * 1rem); }
@@ -1829,6 +1845,11 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     cursor: pointer;
     width: 95%;
 }
+.hison-size-xs > .hison-input input[type="range"] { transform: scale(0.6); }
+.hison-size-xs > .hison-input input[type="range"]:focus {
+    outline: none;
+    transform: scale(0.61);
+}
 .hison-size-s > .hison-input input[type="range"] { transform: scale(0.7); }
 .hison-size-s > .hison-input input[type="range"]:focus {
     outline: none;
@@ -1875,6 +1896,11 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     background: none;
     cursor: pointer;
 }
+.hison-size-xs > .hison-input input[type="color"] { transform: scale(0.65); }
+.hison-size-xs > .hison-input input[type="color"]:focus {
+    outline: none;
+    transform: scale(0.7);
+}
 .hison-size-s > .hison-input input[type="color"] { transform: scale(0.75); }
 .hison-size-s > .hison-input input[type="color"]:focus {
     outline: none;
@@ -1916,6 +1942,10 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     color: var(--hison-emptyTextColor);
 }
 .hison-input-checkbox { cursor: pointer; }
+.hison-size-xs > .hison-input input[type="checkbox"]:focus {
+    outline: none;
+    transform: scale(1.1);
+}
 .hison-size-s > .hison-input input[type="checkbox"]:focus {
     outline: none;
     transform: scale(1.2);
@@ -2008,6 +2038,18 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-input-checkbox-switch > .hison-cswitch-input:focus-visible + .hison-switch-visual {
   outline: 2px solid currentColor;
   outline-offset: 2px;
+}
+
+.hison-size-xs > .hison-input .hison-input-checkbox-switch {
+  width: 1.7rem;
+  height: 0.9rem;
+}
+.hison-size-xs > .hison-input .hison-input-checkbox-switch > .hison-switch-visual::after {
+  width: calc(0.9rem - 6px);
+  height: calc(0.9rem - 6px);
+}
+.hison-size-xs > .hison-input .hison-input-checkbox-switch > .hison-cswitch-input:checked + .hison-switch-visual::after {
+  left: calc(100% - (0.9rem - 6px) - 2px);
 }
 
 .hison-size-s > .hison-input .hison-input-checkbox-switch {
@@ -2154,6 +2196,18 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
   outline-offset: 2px;
 }
 
+.hison-size-xs > .hison-input .hison-input-radio-switch {
+  width: 1.7rem;
+  height: 0.9rem;
+}
+.hison-size-xs > .hison-input .hison-input-radio-switch > .hison-switch-visual::after {
+  width: calc(0.9rem - 6px);
+  height: calc(0.9rem - 6px);
+}
+.hison-size-xs > .hison-input .hison-input-radio-switch > .hison-radio-switch-input:checked + .hison-switch-visual::after {
+  left: calc(100% - (0.9rem - 6px) - 2px);
+}
+
 .hison-size-s > .hison-input .hison-input-radio-switch {
   width: 1.9rem;
   height: 1.0rem;
@@ -2249,6 +2303,8 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
   user-select: none;
 }
 
+.hison-size-xs > .hison-input input[type="radio"] { transform: scale(0.8); }
+.hison-size-xs > .hison-input input[type="radio"]:focus { outline: none; transform: scale(1); }
 .hison-size-s > .hison-input input[type="radio"] { transform: scale(1.0); }
 .hison-size-s > .hison-input input[type="radio"]:focus { outline: none; transform: scale(1.2); }
 .hison-size-m > .hison-input input[type="radio"] { transform: scale(1.15); }
@@ -2375,6 +2431,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     width: 100%;
 }
 
+.hison-size-xs > .hison-label{ min-height: calc(var(--hison-xs-min-height) * 1rem); font-size: calc(var(--hison-xs-font-size) * 1rem); }
 .hison-size-s > .hison-label{ min-height: calc(var(--hison-s-min-height) * 1rem); font-size: calc(var(--hison-s-font-size) * 1rem); }
 .hison-size-m > .hison-label{ min-height: calc(var(--hison-m-min-height) * 1rem); font-size: calc(var(--hison-m-font-size) * 1rem); }
 .hison-size-l > .hison-label{ min-height: calc(var(--hison-l-min-height) * 1rem); font-size: calc(var(--hison-l-font-size) * 1rem); }
@@ -2629,6 +2686,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
   white-space: pre-wrap;
 }
 
+.hison-size-xs > .hison-list .hison-list-item { min-height: calc(var(--hison-xs-min-height) * 1rem); font-size: calc(var(--hison-xs-font-size) * 1rem); line-height: calc(var(--hison-xs-min-height) - 0.2); }
 .hison-size-s > .hison-list .hison-list-item { min-height: calc(var(--hison-s-min-height) * 1rem); font-size: calc(var(--hison-s-font-size) * 1rem); line-height: calc(var(--hison-s-min-height) - 0.3); }
 .hison-size-m > .hison-list .hison-list-item { min-height: calc(var(--hison-m-min-height) * 1rem); font-size: calc(var(--hison-m-font-size) * 1rem); line-height: calc(var(--hison-m-min-height) - 0.5); }
 .hison-size-l > .hison-list .hison-list-item { min-height: calc(var(--hison-l-min-height) * 1rem); font-size: calc(var(--hison-l-font-size) * 1rem); line-height: calc(var(--hison-l-min-height) - 0.7); }
@@ -2912,6 +2970,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
   100% { opacity: 0; transform: scale(0.98); }
 }
 
+.hison-size-xs > .hison-modal{ font-size: calc(var(--hison-xs-font-size) * 1rem); line-height: calc(var(--hison-xs-min-height) - 0.2); }
 .hison-size-s > .hison-modal{ font-size: calc(var(--hison-s-font-size) * 1rem); line-height: calc(var(--hison-s-min-height) - 0.3); }
 .hison-size-m > .hison-modal{ font-size: calc(var(--hison-m-font-size) * 1rem); line-height: calc(var(--hison-m-min-height) - 0.5); }
 .hison-size-l > .hison-modal{ font-size: calc(var(--hison-l-font-size) * 1rem); line-height: calc(var(--hison-l-min-height) - 0.7); }
@@ -3122,6 +3181,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-valign-middle { display: flex; flex-direction: column; justify-content: center; }
 .hison-valign-bottom { display: flex; flex-direction: column; justify-content: flex-end; }
 
+.hison-size-xs > .hison-paragraph { min-height: calc(var(--hison-xs-min-height) * 1rem); font-size: calc(var(--hison-xs-font-size) * 1rem); line-height: calc(var(--hison-xs-min-height) - 0.2); }
 .hison-size-s > .hison-paragraph { min-height: calc(var(--hison-s-min-height) * 1rem); font-size: calc(var(--hison-s-font-size) * 1rem); line-height: calc(var(--hison-s-min-height) - 0.3); }
 .hison-size-m > .hison-paragraph { min-height: calc(var(--hison-m-min-height) * 1rem); font-size: calc(var(--hison-m-font-size) * 1rem); line-height: calc(var(--hison-m-min-height) - 0.5); }
 .hison-size-l > .hison-paragraph { min-height: calc(var(--hison-l-min-height) * 1rem); font-size: calc(var(--hison-l-font-size) * 1rem); line-height: calc(var(--hison-l-min-height) - 0.7); }
@@ -3218,6 +3278,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
   color: var(--hison-emptyTextColor);
 }
 
+.hison-size-xs > .hison-popup{ font-size: calc(var(--hison-xs-font-size) * 1rem); line-height: calc(var(--hison-xs-min-height) - 0.2); }
 .hison-size-s > .hison-popup{ font-size: calc(var(--hison-s-font-size) * 1rem); line-height: calc(var(--hison-s-min-height) - 0.3); }
 .hison-size-m > .hison-popup{ font-size: calc(var(--hison-m-font-size) * 1rem); line-height: calc(var(--hison-m-min-height) - 0.5); }
 .hison-size-l > .hison-popup{ font-size: calc(var(--hison-l-font-size) * 1rem); line-height: calc(var(--hison-l-min-height) - 0.7); }
@@ -3316,11 +3377,13 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     animation: hspin-rotate 1.4s linear infinite;
 }
 
+.hison-size-xs > .hison-spinner .hison-spinner-ring { width: 2em; height: 2em; }
 .hison-size-s > .hison-spinner .hison-spinner-ring { width: 2.2em; height: 2.2em; }
 .hison-size-m > .hison-spinner .hison-spinner-ring { width: 2.4em; height: 2.4em; }
 .hison-size-l > .hison-spinner .hison-spinner-ring { width: 2.6em; height: 2.6em; }
 .hison-size-xl > .hison-spinner .hison-spinner-ring { width: 2.8em; height: 2.8em; }
 
+.hison-size-xs > .hison-spinner .hison-spinner-ring .hison-spinner-ring-seg { border: 0.27em solid currentColor; border-top-color: transparent; border-right-color: transparent; }
 .hison-size-s > .hison-spinner .hison-spinner-ring .hison-spinner-ring-seg { border: 0.3em solid currentColor; border-top-color: transparent; border-right-color: transparent; }
 .hison-size-m > .hison-spinner .hison-spinner-ring .hison-spinner-ring-seg { border: 0.33em solid currentColor; border-top-color: transparent; border-right-color: transparent; }
 .hison-size-l > .hison-spinner .hison-spinner-ring .hison-spinner-ring-seg { border: 0.36em solid currentColor; border-top-color: transparent; border-right-color: transparent; }
@@ -3343,11 +3406,13 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     animation: hspin-bounce 0.9s ease-in-out infinite;
 }
 
+.hison-size-xs > .hison-spinner .hison-spinner-dots { gap: 0.24em; }
 .hison-size-s > .hison-spinner .hison-spinner-dots { gap: 0.27em; }
 .hison-size-m > .hison-spinner .hison-spinner-dots { gap: 0.3em; }
 .hison-size-l > .hison-spinner .hison-spinner-dots { gap: 0.33em; }
 .hison-size-xl > .hison-spinner .hison-spinner-dots { gap: 0.36em; }
 
+.hison-size-xs > .hison-spinner .hison-spinner-dots .hison-spinner-dot { width: 0.41em; height: 0.41em; }
 .hison-size-s > .hison-spinner .hison-spinner-dots .hison-spinner-dot { width: 0.43em; height: 0.43em; }
 .hison-size-m > .hison-spinner .hison-spinner-dots .hison-spinner-dot { width: 0.45em; height: 0.45em; }
 .hison-size-l > .hison-spinner .hison-spinner-dots .hison-spinner-dot { width: 0.47em; height: 0.47em; }
@@ -3367,11 +3432,13 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     animation: hspin-bars 1s ease-in-out infinite;
 }
 
+.hison-size-xs > .hison-spinner .hison-spinner-bars { gap: 0.2em; height: 1em; }
 .hison-size-s > .hison-spinner .hison-spinner-bars { gap: 0.22em; height: 1.2em; }
 .hison-size-m > .hison-spinner .hison-spinner-bars { gap: 0.24em; height: 1.45em; }
 .hison-size-l > .hison-spinner .hison-spinner-bars { gap: 0.26em; height: 1.7em; }
 .hison-size-xl > .hison-spinner .hison-spinner-bars { gap: 0.28em; height: 1.95em; }
 
+.hison-size-xs > .hison-spinner .hison-spinner-bars .hison-spinner-bar { width: 0.27em; }
 .hison-size-s > .hison-spinner .hison-spinner-bars .hison-spinner-bar { width: 0.30em; }
 .hison-size-m > .hison-spinner .hison-spinner-bars .hison-spinner-bar { width: 0.33em; }
 .hison-size-l > .hison-spinner .hison-spinner-bars .hison-spinner-bar { width: 0.36em; }
@@ -3389,6 +3456,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     animation: hspin-pulse 1.1s ease-in-out infinite;
 }
 
+.hison-size-xs > .hison-spinner .hison-spinner-pulse .hison-spinner-pulse-span { width: 2em; height: 2em; }
 .hison-size-s > .hison-spinner .hison-spinner-pulse .hison-spinner-pulse-span { width: 2.2em; height: 2.2em; }
 .hison-size-m > .hison-spinner .hison-spinner-pulse .hison-spinner-pulse-span { width: 2.4em; height: 2.4em; }
 .hison-size-l > .hison-spinner .hison-spinner-pulse .hison-spinner-pulse-span { width: 2.6em; height: 2.6em; }
@@ -3417,6 +3485,8 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 .hison-table { border-collapse: collapse; border-spacing: 0; width: 100%; }
 .hison-table-caption { padding: 0.3rem 0.6rem; }
 
+.hison-size-xs > .hison-table td, 
+.hison-size-xs > .hison-table th { height: calc(var(--hison-xs-min-height) * 1rem); font-size: calc(var(--hison-xs-font-size) * 1rem); line-height: calc(var(--hison-xs-min-height) - 0.2); }
 .hison-size-s > .hison-table td, 
 .hison-size-s > .hison-table th { height: calc(var(--hison-s-min-height) * 1rem); font-size: calc(var(--hison-s-font-size) * 1rem); line-height: calc(var(--hison-s-min-height) - 0.3); }
 .hison-size-m > .hison-table td, 

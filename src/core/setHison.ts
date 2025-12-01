@@ -51,7 +51,7 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
     }
 
     hison.style = {
-        setSize(size: Size.s | Size.m | Size.l | Size.xl) {
+        setSize(size: Size.xs | Size.s | Size.m | Size.l | Size.xl) {
             hisonCloser.componentStyle.size = size;
             reApplyCssVariables()
         },

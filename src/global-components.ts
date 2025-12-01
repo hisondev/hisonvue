@@ -1193,7 +1193,7 @@ declare module 'vue' {
      * ---
      *
      * ### 🎯 Features
-     * - Responsive height sizing via `hison-size-*` classes (`s`, `m`, `l`, `xl`)  
+     * - Responsive height sizing via `hison-size-*` classes (`xs`,`s`, `m`, `l`, `xl`)  
      *   (matches the height scale used by `HLabel` / `HButton`)
      * - Flexible width control via `hison-col-*` grid system (`1`–`12`, default: `12`)
      * - **Line rendering options:**
