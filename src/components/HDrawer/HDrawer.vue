@@ -77,7 +77,7 @@ export default defineComponent({
   props: drawerProps,
   inheritAttrs: false,
   emits: ['mounted', 'responsive-change', 'open', 'close'],
-  setup(props, { emit, slots }) {
+  setup(props, { emit }) {
     const id = props.id || getUUID()
     const reloadId = `hdrawer:${id}`
 
@@ -86,8 +86,9 @@ export default defineComponent({
     const wrapperRef = ref<HTMLDivElement | null>(null)
     const drawerRef = ref<HTMLDivElement | null>(null)
 
+    // ✅ 하나의 상태: visible (HModal과 동일)
     const visible = ref<boolean>(props.visible)
-    const isOpen = ref<boolean>(props.visible)
+
     const zIndex = ref<number>(props.zIndex ?? 1100)
     const border = ref<boolean>(props.border)
     const showOverlay = ref<boolean>(props.showOverlay)
@@ -135,7 +136,9 @@ export default defineComponent({
       ...extractPrefixedClasses(toClassString(props.class) || '', 'color'),
     ])
 
-    const isOverlayVisible = computed(() => isOpen.value && showOverlay.value)
+    // ✅ overlay 표시 여부도 visible 기준
+    const isOverlayVisible = computed(() => visible.value && showOverlay.value)
+
     const overlayStyleWithZ = computed(() => {
       const zi = (zIndex.value ?? 1100) - 1
       const base = { zIndex: zi } as Record<string, string|number>
@@ -192,9 +195,10 @@ export default defineComponent({
       await new Promise(r => setTimeout(r, 200))
     }
 
+    // ✅ HModal 패턴: open/close는 visible만 제어
     const open = async () => {
-      if (isOpen.value) return
-      isOpen.value = true
+      if (visible.value) return
+      visible.value = true
       lockScroll()
       await nextTick()
       applyEnterAnimation()
@@ -202,19 +206,20 @@ export default defineComponent({
     }
 
     const close = async () => {
-      if (!isOpen.value) return
+      if (!visible.value) return
       try {
         await applyLeaveAnimation()
       } finally {
-        isOpen.value = false
+        visible.value = false
         unlockScroll()
         emit('close', unref(drawerMethods)!)
       }
     }
 
-    const toggle = async () => (isOpen.value ? close() : open())
+    const toggle = async () => (visible.value ? close() : open())
     const onClickClose = () => close()
 
+    // swipe close
     let swiping = false
     let sx = 0, sy = 0
     const SWIPE_THRESHOLD = 40
@@ -298,7 +303,8 @@ export default defineComponent({
     const drawerMethods = ref<HDrawerMethods | null>(null)
 
     const mount = () => {
-      if (hisonCloser.component.drawerList[id] && hisonCloser.component.drawerList[id].isHisonvueComponent) console.warn(`[Hisonvue] The drawer ID is at risk of being duplicated. ${id}`)
+      if (hisonCloser.component.drawerList[id] && hisonCloser.component.drawerList[id].isHisonvueComponent)
+        console.warn(`[Hisonvue] The drawer ID is at risk of being duplicated. ${id}`)
 
       registerReloadable(reloadId, () => {
         unmount()
@@ -307,7 +313,8 @@ export default defineComponent({
 
       refreshResponsiveClassList()
 
-      if (isOpen.value) {
+      // ✅ 처음부터 visible=true면 애니메이션 + 스크롤락
+      if (visible.value) {
         lockScroll()
         nextTick(applyEnterAnimation)
       }
@@ -316,42 +323,60 @@ export default defineComponent({
         isHisonvueComponent: true,
         getId: () => id,
         getType: () => 'drawer',
+
         isVisible: () => visible.value,
-        isOpen: () => isOpen.value,
-        open, close, toggle,
-        setVisible: (v: boolean) => { visible.value = !!v },
+        // API 유지용: isOpen은 visible alias
+        isOpen: () => visible.value,
+
+        open,
+        close,
+        toggle,
+
+        // ✅ setVisible도 open/close로 위임 (HModal과 동일)
+        setVisible: (v: boolean) => (v ? open() : close()),
+
         getZIndex: () => zIndex.value,
         setZIndex: (v: number) => { zIndex.value = v },
+
         getPosition: () => position.value,
         setPosition: (p) => {
           position.value = p as DrawerPos
           if (!props.enterAnimationClass) enterClass.value = defaultEnterByPos[position.value]
           if (!props.leaveAnimationClass) leaveClass.value = defaultLeaveByPos[position.value]
         },
+
         getWidth: () => width.value,
         setWidth: (v: number | null, animate = true) => setWidthImpl(v, animate),
         getHeight: () => height.value,
         setHeight: (v: number | null, animate = true) => setHeightImpl(v, animate),
+
         isSwipeCloseEnabled: () => swipeClose.value,
         setSwipeCloseEnabled: (v: boolean) => { swipeClose.value = v },
+
         isCloseButtonVisible: () => closeButtonVisible.value,
         setCloseButtonVisible: (v: boolean) => { closeButtonVisible.value = v },
+
         isOverlayShown: () => showOverlay.value,
         setOverlayShown: (v: boolean) => { showOverlay.value = v },
+
         isCloseClickOverlay: () => closeClickOverlay.value,
         setCloseClickOverlay: (v: boolean) => { closeClickOverlay.value = v },
+
         isScrollLocked: () => scrollLock.value,
         setScrollLock: (v: boolean) => {
           scrollLock.value = v
-          if (isOpen.value) (v ? lockScroll() : unlockScroll())
+          if (visible.value) (v ? lockScroll() : unlockScroll())
         },
+
         isBorder: () => border.value,
         setBorder: (v: boolean) => { border.value = v },
+
         getAnimationClasses: () => ({ enter: enterClass.value, leave: leaveClass.value }),
         setAnimationClasses: (opt) => {
           if ('enter' in opt) enterClass.value = opt.enter || ''
           if ('leave' in opt) leaveClass.value = opt.leave || ''
         },
+
         reload: () => reloadHisonComponent(reloadId),
       }
 
@@ -362,7 +387,7 @@ export default defineComponent({
     const unmount = () => {
       unregisterReloadable(reloadId)
       delete hisonCloser.component.drawerList[id]
-      if (isOpen.value) unlockScroll()
+      if (visible.value) unlockScroll()
     }
 
     onMounted(mount)
@@ -373,21 +398,75 @@ export default defineComponent({
       emit('responsive-change', newDevice)
     })
 
-    watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
-    watch(() => props.zIndex, v => { const n = Number(v); if (Number.isFinite(n) && n !== zIndex.value) zIndex.value = n })
-    watch(() => props.border, v => { const nv = !!v; if (nv !== border.value) border.value = nv })
-    watch(() => props.showOverlay, v => { const nv = !!v; if (nv !== showOverlay.value) showOverlay.value = nv })
-    watch(() => props.closeClickOverlay, v => { const nv = !!v; if (nv !== closeClickOverlay.value) closeClickOverlay.value = nv })
-    watch(() => props.scrollLock, v => { const nv = !!v; if (nv !== scrollLock.value) { scrollLock.value = nv; if (isOpen.value) (nv ? lockScroll() : unlockScroll()) } })
-    watch(() => props.position, v => { if (v && v !== position.value) { position.value = v as DrawerPos; if (!props.enterAnimationClass) enterClass.value = defaultEnterByPos[position.value]; if (!props.leaveAnimationClass) leaveClass.value = defaultLeaveByPos[position.value] } })
-    watch(() => props.width, v => { const n = v == null ? null : Number(v); if (n !== width.value) setWidthImpl(n, false) })
-    watch(() => props.height, v => { const n = v == null ? null : Number(v); if (n !== height.value) setHeightImpl(n, false) })
-    watch(() => props.closeButtonVisible, v => { const nv = !!v; if (nv !== closeButtonVisible.value) closeButtonVisible.value = nv })
-    watch(() => props.closeButtonText, v => { const t = v ?? 'X'; if (t !== closeButtonText.value) closeButtonText.value = t })
-    watch(() => props.closeButtonTitle, v => { const t = v ?? 'Close'; if (t !== closeButtonTitle.value) closeButtonTitle.value = t })
-    watch(() => props.swipeClose, v => { const nv = !!v; if (nv !== swipeClose.value) swipeClose.value = nv })
-    watch(() => props.enterAnimationClass, v => { const nc = v || defaultEnterByPos[position.value]; if (nc !== enterClass.value) enterClass.value = nc })
-    watch(() => props.leaveAnimationClass, v => { const nc = v || defaultLeaveByPos[position.value]; if (nc !== leaveClass.value) leaveClass.value = nc })
+    // ✅ HModal과 동일: prop.visible <-> 내부 visible 동기화
+    watch(() => props.visible, v => {
+      const b = !!v
+      if (b && !visible.value) open()
+      else if (!b && visible.value) close()
+    })
+
+    watch(() => props.zIndex, v => {
+      const n = Number(v)
+      if (Number.isFinite(n) && n !== zIndex.value) zIndex.value = n
+    })
+    watch(() => props.border, v => {
+      const nv = !!v
+      if (nv !== border.value) border.value = nv
+    })
+    watch(() => props.showOverlay, v => {
+      const nv = !!v
+      if (nv !== showOverlay.value) showOverlay.value = nv
+    })
+    watch(() => props.closeClickOverlay, v => {
+      const nv = !!v
+      if (nv !== closeClickOverlay.value) closeClickOverlay.value = nv
+    })
+    watch(() => props.scrollLock, v => {
+      const nv = !!v
+      if (nv !== scrollLock.value) {
+        scrollLock.value = nv
+        if (visible.value) (nv ? lockScroll() : unlockScroll())
+      }
+    })
+    watch(() => props.position, v => {
+      if (v && v !== position.value) {
+        position.value = v as DrawerPos
+        if (!props.enterAnimationClass) enterClass.value = defaultEnterByPos[position.value]
+        if (!props.leaveAnimationClass) leaveClass.value = defaultLeaveByPos[position.value]
+      }
+    })
+    watch(() => props.width, v => {
+      const n = v == null ? null : Number(v)
+      if (n !== width.value) setWidthImpl(n, false)
+    })
+    watch(() => props.height, v => {
+      const n = v == null ? null : Number(v)
+      if (n !== height.value) setHeightImpl(n, false)
+    })
+    watch(() => props.closeButtonVisible, v => {
+      const nv = !!v
+      if (nv !== closeButtonVisible.value) closeButtonVisible.value = nv
+    })
+    watch(() => props.closeButtonText, v => {
+      const t = v ?? 'X'
+      if (t !== closeButtonText.value) closeButtonText.value = t
+    })
+    watch(() => props.closeButtonTitle, v => {
+      const t = v ?? 'Close'
+      if (t !== closeButtonTitle.value) closeButtonTitle.value = t
+    })
+    watch(() => props.swipeClose, v => {
+      const nv = !!v
+      if (nv !== swipeClose.value) swipeClose.value = nv
+    })
+    watch(() => props.enterAnimationClass, v => {
+      const nc = v || defaultEnterByPos[position.value]
+      if (nc !== enterClass.value) enterClass.value = nc
+    })
+    watch(() => props.leaveAnimationClass, v => {
+      const nc = v || defaultLeaveByPos[position.value]
+      if (nc !== leaveClass.value) leaveClass.value = nc
+    })
     watch(() => props.class, () => refreshResponsiveClassList())
 
     return {

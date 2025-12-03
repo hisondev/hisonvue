@@ -251,9 +251,6 @@ export default defineComponent({
 
       const root = editorWrap.value
       if (!root) return
-
-      if (destroyed.value) return
-
       vn.mountNote(root)
 
       const noteElement: any = vn.getNote(id)
