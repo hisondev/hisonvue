@@ -36,13 +36,61 @@ export default defineComponent({
     const radioGroups = ref<Record<string, string[]>>({})
     const radioSelection = ref<Record<string, string | null>>({})
 
+    const inputDataKeyMap = ref<Record<string, string>>({})
+
+    const getDataKeyOfInputId = (inputId: string) => {
+      const input = hison.component.getInput(inputId)
+      const dk = (input as any)?.getDataKey?.()
+      const key = (dk ?? '').toString().trim()
+      return key ? key : inputId
+    }
+
+    const refreshDataKey = (inputId: string) => {
+      const dk = getDataKeyOfInputId(inputId)
+      inputDataKeyMap.value[inputId] = dk
+      return dk
+    }
+
+    const warnDuplicateDataKeys = () => {
+      const used: Record<string, string[]> = {}
+      ownedInputIds.value.forEach((inputId) => {
+        const dk = inputDataKeyMap.value[inputId] ?? refreshDataKey(inputId)
+        if (!used[dk]) used[dk] = []
+        used[dk].push(inputId)
+      })
+      Object.entries(used).forEach(([dk, ids]) => {
+        if (ids.length > 1) {
+          console.warn(`[Hisonvue] Duplicate dataKey detected in HInputGroup(${id}). dataKey=${dk} inputIds=${ids.join(',')}`)
+        }
+      })
+    }
+
+    const resolveRadioSelectedDataKey = (name: string, selected: any) => {
+      if (!selected || typeof selected !== 'string') return null
+      const ids = radioGroups.value[name] || []
+      if (ids.includes(selected)) {
+        return inputDataKeyMap.value[selected] ?? refreshDataKey(selected)
+      }
+      for (const inputId of ids) {
+        const dk = inputDataKeyMap.value[inputId] ?? refreshDataKey(inputId)
+        if (dk === selected) return selected
+      }
+      return null
+    }
+
     provide('registerToInputGroup', (inputId: string) => {
       if (!ownedInputIds.value.includes(inputId)) {
         ownedInputIds.value.push(inputId)
-        ownedInputIds.value.sort((a, b) => a.localeCompare(b));
+        ownedInputIds.value.sort((a, b) => a.localeCompare(b))
+
+        const dataKey = refreshDataKey(inputId)
+        warnDuplicateDataKeys()
 
         const model = props.modelValue ?? {}
-        if (model && Object.prototype.hasOwnProperty.call(model, inputId)) {
+        if (model && Object.prototype.hasOwnProperty.call(model, dataKey)) {
+          hison.component.getInput(inputId)?.setValue?.(model[dataKey])
+        } else if (model && Object.prototype.hasOwnProperty.call(model, inputId)) {
+          // backward-compat fallback (id-based)
           hison.component.getInput(inputId)?.setValue?.(model[inputId])
         }
 
@@ -53,9 +101,9 @@ export default defineComponent({
           if (!radioGroups.value[name].includes(inputId)) {
             radioGroups.value[name].push(inputId)
           }
-          
+
           if (input.getValue?.()) {
-            radioSelection.value[name] = inputId
+            radioSelection.value[name] = dataKey
           } else if (!Object.prototype.hasOwnProperty.call(radioSelection.value, name)) {
             radioSelection.value[name] = null
           }
@@ -71,9 +119,11 @@ export default defineComponent({
     ) => {
       if (oldName === newName) return
 
+      const dataKey = inputDataKeyMap.value[inputId] ?? refreshDataKey(inputId)
+
       if (oldName && radioGroups.value[oldName]) {
         radioGroups.value[oldName] = radioGroups.value[oldName].filter(id => id !== inputId)
-        if (radioSelection.value[oldName] === inputId) {
+        if (radioSelection.value[oldName] === dataKey) {
           radioSelection.value[oldName] = null
           const updated = { ...(props.modelValue || {}) }
           updated[oldName] = null
@@ -91,12 +141,12 @@ export default defineComponent({
       }
 
       if (checked) {
-        radioSelection.value[newName] = inputId
+        radioSelection.value[newName] = dataKey
         for (const id of radioGroups.value[newName]) {
           hison.component.getInput(id)?.setValue?.(id === inputId)
         }
         const updated = { ...(props.modelValue || {}) }
-        updated[newName] = inputId
+        updated[newName] = dataKey
         emit('update:modelValue', updated, inputId)
         if (status.value !== DataStatus.U) status.value = DataStatus.U
       } else {
@@ -109,25 +159,28 @@ export default defineComponent({
     provide('notifyInputGroupStatus', (inputId: string, newVal: any) => {
       if (radioGroups.value[inputId]) {
         const name = inputId
-        const selectedId = newVal as string | null
-        radioSelection.value[name] = selectedId
+        const selectedDataKey = newVal as string | null
+        radioSelection.value[name] = selectedDataKey
 
         for (const id of radioGroups.value[name]) {
-          hison.component.getInput(id)?.setValue?.(id === selectedId)
+          const dk = inputDataKeyMap.value[id] ?? refreshDataKey(id)
+          hison.component.getInput(id)?.setValue?.(dk === selectedDataKey)
         }
 
         const updated = { ...(props.modelValue || {}) }
-        updated[name] = selectedId
-        emit('update:modelValue', updated, selectedId ?? undefined)
+        updated[name] = selectedDataKey
+        emit('update:modelValue', updated, selectedDataKey ?? undefined)
 
         if (status.value !== DataStatus.U) status.value = DataStatus.U
         return
       }
 
       if (status.value !== DataStatus.U) status.value = DataStatus.U
+
+      const dataKey = inputDataKeyMap.value[inputId] ?? refreshDataKey(inputId)
       const updated = {
         ...props.modelValue,
-        [inputId]: newVal,
+        [dataKey]: newVal,
       }
       emit('update:modelValue', updated, inputId)
     })
@@ -135,19 +188,27 @@ export default defineComponent({
     const _getDataObject = () => {
       const obj: Record<string, any> = {}
       if(!ownedInputIds.value) return obj
-      
+
       ownedInputIds.value.forEach((id) => {
         const input = hison.component.getInput(id)
         if (!input) return
         if (input.getInputType?.() !== 'radio') {
-          obj[id] = input.getValue?.()
+          const dataKey = inputDataKeyMap.value[id] ?? refreshDataKey(id)
+          obj[dataKey] = input.getValue?.()
         }
       })
 
       for (const [name, ids] of Object.entries(radioGroups.value)) {
-        let selectedId: string | null = radioSelection.value[name] ?? null
-        if (selectedId && !ids.includes(selectedId)) selectedId = null
-        obj[name] = selectedId
+        let selectedDataKey: string | null = radioSelection.value[name] ?? null
+        if (selectedDataKey) {
+          let exists = false
+          for (const inputId of ids) {
+            const dk = inputDataKeyMap.value[inputId] ?? refreshDataKey(inputId)
+            if (dk === selectedDataKey) { exists = true; break }
+          }
+          if (!exists) selectedDataKey = null
+        }
+        obj[name] = selectedDataKey
       }
       return obj
     }
@@ -155,24 +216,32 @@ export default defineComponent({
     const _setDataObject = (dataObject: Record<string, any>) => {
       if (!dataObject || typeof dataObject !== 'object') return
 
-      Object.keys(dataObject).forEach((key) => {
-        if (ownedInputIds.value.includes(key)) {
-          const value = dataObject[key]
-          hison.component.getInput(key)?.setValue?.(value)
+      ownedInputIds.value.forEach((inputId) => {
+        const input = hison.component.getInput(inputId)
+        if (!input) return
+        if (input.getInputType?.() === 'radio') return
+
+        const dataKey = inputDataKeyMap.value[inputId] ?? refreshDataKey(inputId)
+        if (Object.prototype.hasOwnProperty.call(dataObject, dataKey)) {
+          input.setValue?.(dataObject[dataKey])
+        } else if (Object.prototype.hasOwnProperty.call(dataObject, inputId)) {
+          // backward-compat fallback (id-based)
+          input.setValue?.(dataObject[inputId])
         }
       })
 
       for (const [name, ids] of Object.entries(radioGroups.value)) {
         if (!Object.prototype.hasOwnProperty.call(dataObject, name)) continue
-        const selectedId = dataObject[name] as string | null
+        const selectedDataKey = resolveRadioSelectedDataKey(name, dataObject[name])
 
         ids.forEach((id) => {
           const input = hison.component.getInput(id)
           if (!input) return
-          const checked = selectedId === id
+          const dk = inputDataKeyMap.value[id] ?? refreshDataKey(id)
+          const checked = selectedDataKey === dk
           ;(input as any).setValue?.(checked)
         })
-        radioSelection.value[name] = selectedId ?? null
+        radioSelection.value[name] = selectedDataKey ?? null
       }
     }
 
@@ -267,6 +336,7 @@ export default defineComponent({
       unregisterReloadable(reloadId)
       delete hisonCloser.component.inputGroupList[id]
       ownedInputIds.value = []
+      inputDataKeyMap.value = {}
     }
 
     onMounted(mount)

@@ -41,7 +41,7 @@ const noteData3 = ref<NoteData>()
 const onBoldBeforeClick = (e: Event) => { console.log('onBoldBeforeClick'); return false }
 const onTextareaBeforeFocus = (e: Event) => { console.log('onTextareaBeforeFocus'); return false}
 
-let testToggle = false;
+let testToggle = true;
 
 const goBack = () => {
     router.push('/')
@@ -53,6 +53,8 @@ const getNote1 = () => {
 }
 const setNote3 = () => {
     noteData3.value = noteData1.value;
+    hison.style.setInvertColor(testToggle)
+    testToggle = !testToggle
 }
 
 const mountNote1 = (note: VanillanoteElement) => {
@@ -63,7 +65,7 @@ const mountNote3 = () => {
 }
 const btnMount = (btn: HButtonMethods) => {
     console.log('btnMount!!!!!!!!!!!!!!!!!!!!!!')
-    btn.setDisable(true)
+    btn.setDisable(false)
 }
 
 onMounted(() => {

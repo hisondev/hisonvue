@@ -8,12 +8,12 @@
     ]"
   >
     <div
-    v-if="inputType === 'range'"
-    :class="[
-      'hison-input',
-      'hison-input-range-div',
-    ]"
-    :style="[textAlignStyle, props.style]"
+      v-if="inputType === 'range'"
+      :class="[
+        'hison-input',
+        'hison-input-range-div',
+      ]"
+      :style="[textAlignStyle, props.style]"
     >
       <input
         ref="inputRef"
@@ -60,12 +60,12 @@
     </div>
 
     <div
-    v-else-if="inputType === 'color'"
-    :class="[
-      'hison-input',
-      'hison-input-color-div',
-    ]"
-    :style="[textAlignStyle, props.style]"
+      v-else-if="inputType === 'color'"
+      :class="[
+        'hison-input',
+        'hison-input-color-div',
+      ]"
+      :style="[textAlignStyle, props.style]"
     >
       <input
         ref="inputRef"
@@ -120,7 +120,6 @@
       ]"
       :style="[textAlignStyle, props.style]"
     >
-      <!-- default -->
       <template v-if="toggleStyle !== 'switch'">
         <input
           ref="inputRef"
@@ -166,7 +165,6 @@
         />
       </template>
 
-      <!-- switch -->
       <template v-else>
         <label :class="['hison-input-checkbox-switch', ...editModeClassList]">
           <input
@@ -270,7 +268,6 @@
         />
       </template>
 
-      <!-- switch 모양: input은 그대로 두고, 시각화 span 추가 -->
       <template v-else>
         <label :class="['hison-input-radio-switch', ...editModeClassList]">
           <input
@@ -311,7 +308,6 @@
 
             @contextmenu="$emit('contextmenu', $event, inputMethods)"
           />
-          <!-- 시각화 -->
           <span
             class="hison-switch-visual"
             :class="[
@@ -444,7 +440,7 @@
         @mouseover="$emit('mouseover', $event, inputMethods)"
         @mouseout="$emit('mouseout', $event, inputMethods)"
         @mousemove="$emit('mousemove', $event, inputMethods)"
-    
+
         @pointerdown="$emit('pointerdown', $event, inputMethods)"
         @pointerup="$emit('pointerup', $event, inputMethods)"
         @pointermove="$emit('pointermove', $event, inputMethods)"
@@ -498,7 +494,6 @@
   </div>
 </template>
 
-
 <script lang="ts">
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount, nextTick, watch, unref, inject, CSSProperties } from 'vue'
 import type { HInputMethods } from '../../types'
@@ -513,7 +508,7 @@ export default defineComponent({
   name: 'HInput',
   props: inputProps,
   inheritAttrs: false,
-  
+
   emits: [
     'update:modelValue',
     'mounted',
@@ -562,6 +557,10 @@ export default defineComponent({
     const id = props.id ? props.id : getUUID()
     const name = ref(props.name ?? id)
     const nameAttr = computed(() => name.value)
+
+    // dataKey: used only for data extraction in HInputGroup (id remains the runtime key)
+    const dataKey = ref<string>(((props.dataKey ?? '').trim() || id))
+
     const reloadId = `hinput:${id}`
     const device = useDevice()
 
@@ -625,15 +624,15 @@ export default defineComponent({
     const border = ref<boolean>(props.border ?? true)
     const getCutLengthString = (value: any) => {
       value = String(value)
-      if(maxLength.value) value = value.substring(0, maxLength.value)
-      if(maxByte.value) value = hison.utils.getCutByteLength(value, maxByte.value)
+      if (maxLength.value) value = value.substring(0, maxLength.value)
+      if (maxByte.value) value = hison.utils.getCutByteLength(value, maxByte.value)
       return value
     }
     const getAdjustedNumber = (value: any) => {
       value = Number(value)
-      if(maxNumber.value && value > maxNumber.value) value = maxNumber.value
-      if(minNumber.value && value < minNumber.value) value = minNumber.value
-      if(roundNumber.value) value = hison.utils.getRound(value, roundNumber.value)
+      if (maxNumber.value && value > maxNumber.value) value = maxNumber.value
+      if (minNumber.value && value < minNumber.value) value = minNumber.value
+      if (roundNumber.value) value = hison.utils.getRound(value, roundNumber.value)
       return value
     }
     const computeValue = (value: any) => {
@@ -659,24 +658,24 @@ export default defineComponent({
             if (inputType.value === InputType.number) value = getAdjustedNumber(value)
             break
           case InputType.date:
-            if(value) value = hison.utils.getDateWithFormat(value, DateFormat['yyyy-MM-dd'])
+            if (value) value = hison.utils.getDateWithFormat(value, DateFormat['yyyy-MM-dd'])
             break
           case InputType.month:
-            if(value) value = hison.utils.getDateWithFormat(value, YearMonthFormat['yyyy-MM'])
+            if (value) value = hison.utils.getDateWithFormat(value, YearMonthFormat['yyyy-MM'])
             break
           case InputType.time:
-            if(value) value = hison.utils.getDateWithFormat(value, TimeFormat['HH:mm:ss'])
+            if (value) value = hison.utils.getDateWithFormat(value, TimeFormat['HH:mm:ss'])
             break
           case InputType.checkbox:
           case InputType.radio:
             value = !!value
           default:
             break
-        } 
+        }
       } catch (e) {
         console.warn('[HInput] Failed to format value', value, e)
       }
-      return value;
+      return value
     }
 
     const modelValue = ref(computeValue(props.modelValue))
@@ -687,21 +686,21 @@ export default defineComponent({
     const nullText = ref(props.nullText ?? '')
     const editMode = ref(props.editMode)
     const disable = computed(() => {
-      if(editMode.value === EditMode.disable) return true
+      if (editMode.value === EditMode.disable) return true
       return false
     })
     const readonly = computed(() => {
-      if(editMode.value === EditMode.readonly) return true
+      if (editMode.value === EditMode.readonly) return true
       return false
     })
     const borderClass = computed(() => (border.value && !readonly.value ? 'hison-border' : ''))
     const editModeClassList = computed(() => {
-      if(editMode.value !== EditMode.editable) return [`hison-input-${editMode.value}`, `hison-input-${inputExpressionType.value}-${editMode.value}`]
+      if (editMode.value !== EditMode.editable) return [`hison-input-${editMode.value}`, `hison-input-${inputExpressionType.value}-${editMode.value}`]
       else return []
     })
     const required = ref(props.required)
-    const requiredClassList = computed(()=>{
-      if(required.value) return [`hison-input-required`, `hison-input-${inputExpressionType.value}-required`]
+    const requiredClassList = computed(() => {
+      if (required.value) return [`hison-input-required`, `hison-input-${inputExpressionType.value}-required`]
       else return []
     })
     const placeholder = ref(props.placeholder ?? '')
@@ -711,7 +710,6 @@ export default defineComponent({
       if (!c) return null
       const token = c.trim()
 
-      // hison 테마 토큰 목록
       const semanticTokens = [
         'primary',
         'muted',
@@ -740,22 +738,22 @@ export default defineComponent({
     })
 
     const fontBold = ref(props.fontBold)
-    const fontBoldClass = computed(()=>{
-      if(fontBold.value) return 'hison-font-bold'
+    const fontBoldClass = computed(() => {
+      if (fontBold.value) return 'hison-font-bold'
     })
     const fontItalic = ref(props.fontItalic)
-    const fontItalicClass = computed(()=>{
-      if(fontItalic.value) return 'hison-font-italic'
+    const fontItalicClass = computed(() => {
+      if (fontItalic.value) return 'hison-font-italic'
     })
     const fontThruline = ref(props.fontThruline)
-    const fontThrulineClass = computed(()=>{
-      if(fontThruline.value) return 'hison-font-thruline'
+    const fontThrulineClass = computed(() => {
+      if (fontThruline.value) return 'hison-font-thruline'
     })
     const fontUnderline = ref(props.fontUnderline)
-    const fontUnderlineClass = computed(()=>{
-      if(fontUnderline.value) return 'hison-font-underline'
+    const fontUnderlineClass = computed(() => {
+      if (fontUnderline.value) return 'hison-font-underline'
     })
-    
+
     const visibleClass = computed(() => visible.value ? '' : 'hison-display-none')
     const editing = ref(false)
     const isModified = ref(false)
@@ -780,24 +778,24 @@ export default defineComponent({
         switch (inputType.value) {
           case InputType.password:
             text = '•'.repeat(value.length)
-            break;
+            break
           case InputType.number:
             text = hison.utils.getNumberFormat(value, format.value ?? hison.getNumberFormat())
-            break;
+            break
           case InputType.date:
             text = hison.utils.getDateWithFormat(value, format.value ?? hison.getDateFormat())
-            break;
+            break
           case InputType.month:
             text = hison.utils.getDateWithFormat(value, format.value ?? hison.getYearMonthFormat())
-            break;
+            break
           case InputType.time:
             text = hison.utils.getDateWithFormat(value, format.value ?? hison.getTimeFormat())
-            break;
+            break
           case InputType.select:
             const selectEl = inputRef.value as HTMLSelectElement
             const selectedIndex = selectEl.selectedIndex
             text = selectedIndex >= 0 ? selectEl.options[selectedIndex].text : ''
-            break;
+            break
         }
       } catch (e) {
         console.warn('[HInput] Failed to format value', value, e)
@@ -807,13 +805,13 @@ export default defineComponent({
     }
     const spanText = ref('')
     const onTextInputFocus = (e: Event) => {
-      if(editMode.value === EditMode.editable) editing.value = true
+      if (editMode.value === EditMode.editable) editing.value = true
       nextTick(() => {
         inputRef.value?.focus()
       })
     }
     const onInput = (e: Event) => {
-      let value = inputRef.value!.value
+      let value = (inputRef.value as any)!.value
       if (inputType.value === InputType.mask || inputType.value === InputType.digit
         || ((maxLength.value || maxByte.value)
           && (inputType.value === InputType.text
@@ -823,7 +821,7 @@ export default defineComponent({
           ))
       ) {
         value = computeValue(value)
-        inputRef.value!.value = value
+        ;(inputRef.value as any)!.value = value
       }
       modelValue.value = value
       isModified.value = true
@@ -836,7 +834,7 @@ export default defineComponent({
       emit('focus', e, inputMethods.value)
     }
     const onBlur = (e: Event) => {
-      if(oldValue.value !== modelValue.value) {
+      if (oldValue.value !== modelValue.value) {
         updateValue(modelValue.value, true, true)
         isModified.value = true
         notifyInputGroupStatus?.(id, modelValue.value)
@@ -883,7 +881,8 @@ export default defineComponent({
       updateValue(target.checked, false, true)
       isModified.value = true
       if (notifyInputGroupStatus && name.value) {
-        notifyInputGroupStatus(name.value, target.checked ? id : null)
+        const selectedKey = target.checked ? (dataKey.value || id) : null
+        notifyInputGroupStatus(name.value, selectedKey)
       } else {
         notifyInputGroupStatus?.(id, modelValue.value)
       }
@@ -914,8 +913,8 @@ export default defineComponent({
       if (!inputRef.value) return
 
       refreshResponsiveClassList()
-      if(inputTextRef.value) addInputTextCssEvent(inputTextRef.value)
-      if(inputType.value !== InputType.checkbox
+      if (inputTextRef.value) addInputTextCssEvent(inputTextRef.value)
+      if (inputType.value !== InputType.checkbox
         && inputType.value !== InputType.radio
         && inputType.value !== InputType.range
         && inputType.value !== InputType.color
@@ -924,10 +923,24 @@ export default defineComponent({
       updateValue(modelValue.value, false)
       inputMethods.value = {
         isHisonvueComponent: true,
-        getId : () => id,
-        getType : () => 'input',
-        getName : () => name.value,
-        setName : (val: string) => {
+        getId: () => id,
+        getType: () => 'input',
+
+        getDataKey: () => dataKey.value,
+        setDataKey: (val: string) => {
+          const s = (val ?? '').trim()
+          const nextKey = s.length > 0 ? s : id
+          if (nextKey === dataKey.value) return
+          dataKey.value = nextKey
+
+          // Radio: if currently checked, reflect the new selected key to group mapping.
+          if (inputType.value === InputType.radio && !!modelValue.value && notifyInputGroupStatus && name.value) {
+            notifyInputGroupStatus(name.value, dataKey.value)
+          }
+        },
+
+        getName: () => name.value,
+        setName: (val: string) => {
           if (val === name.value) return
           const prev = name.value
           name.value = val
@@ -935,19 +948,19 @@ export default defineComponent({
             radioMembershipChanged?.(id, prev, val, !!modelValue.value)
           }
         },
-        getText : () => { return spanText.value },
-        getValue : () => { return modelValue.value },
-        setValue : (val: any) => {
+        getText: () => { return spanText.value },
+        getValue: () => { return modelValue.value },
+        setValue: (val: any) => {
           oldValue.value = modelValue.value
           modelValue.value = val
           updateValue(modelValue.value)
         },
-        getTitle : () => title.value,
-        setTitle : (val: string) => { title.value = val },
-        isVisible : () => visible.value,
-        setVisible : (val: boolean) => { visible.value = val },
-        getInputType : () => { return inputType.value },
-        setInputType : (val: keyof typeof InputType) => {
+        getTitle: () => title.value,
+        setTitle: (val: string) => { title.value = val },
+        isVisible: () => visible.value,
+        setVisible: (val: boolean) => { visible.value = val },
+        getInputType: () => { return inputType.value },
+        setInputType: (val: keyof typeof InputType) => {
           inputType.value = InputType[val]
           oldValue.value = modelValue.value
           updateValue(modelValue.value)
@@ -955,71 +968,71 @@ export default defineComponent({
             textAlign.value = computeDefaultTextAlign(inputType.value)
           }
         },
-        getFormat : () => { return format.value ?? '' },
-        setFormat : (val: string) => {
+        getFormat: () => { return format.value ?? '' },
+        setFormat: (val: string) => {
           format.value = val
           oldValue.value = modelValue.value
           updateValue(modelValue.value)
         },
-        getNullText : () => { return nullText.value },
-        setNullText : (val: string) => {
+        getNullText: () => { return nullText.value },
+        setNullText: (val: string) => {
           nullText.value = val
-          if(isNullOrUndefined(modelValue.value) || modelValue.value === '') spanText.value = computeSpanText(modelValue.value)
+          if (isNullOrUndefined(modelValue.value) || modelValue.value === '') spanText.value = computeSpanText(modelValue.value)
         },
-        getEditMode : () => { return editMode.value },
-        setEditMode : (val: EditMode) => { editMode.value = val },
-        getMaxNumber : () => { return maxNumber.value },
-        setMaxNumber : (val: number) => {
-          if(!hison.utils.isNumeric(val)) return
+        getEditMode: () => { return editMode.value },
+        setEditMode: (val: EditMode) => { editMode.value = val },
+        getMaxNumber: () => { return maxNumber.value },
+        setMaxNumber: (val: number) => {
+          if (!hison.utils.isNumeric(val)) return
           maxNumber.value = val
           oldValue.value = modelValue.value
-          if(inputType.value === InputType.number) updateValue(modelValue.value)
+          if (inputType.value === InputType.number) updateValue(modelValue.value)
         },
-        getMinNumber : () => { return minNumber.value },
-        setMinNumber : (val: number) => {
-          if(!hison.utils.isNumeric(val)) return
+        getMinNumber: () => { return minNumber.value },
+        setMinNumber: (val: number) => {
+          if (!hison.utils.isNumeric(val)) return
           minNumber.value = val
           oldValue.value = modelValue.value
-          if(inputType.value === InputType.number) updateValue(modelValue.value)
+          if (inputType.value === InputType.number) updateValue(modelValue.value)
         },
-        getRoundNumber : () => { return roundNumber.value },
-        setRoundNumber : (val: number) => {
-          if(!hison.utils.isPositiveInteger(val)
+        getRoundNumber: () => { return roundNumber.value },
+        setRoundNumber: (val: number) => {
+          if (!hison.utils.isPositiveInteger(val)
             && !hison.utils.isNegativeInteger(val)
             && val !== 0) return
           roundNumber.value = val
           oldValue.value = modelValue.value
-          if(inputType.value === InputType.number) updateValue(modelValue.value)
+          if (inputType.value === InputType.number) updateValue(modelValue.value)
         },
-        getMaxLength : () => { return maxLength.value },
-        setMaxLength : (val: number) => {
-          if(hison.utils.isPositiveInteger(val)) maxLength.value = val 
+        getMaxLength: () => { return maxLength.value },
+        setMaxLength: (val: number) => {
+          if (hison.utils.isPositiveInteger(val)) maxLength.value = val
           oldValue.value = modelValue.value
           updateValue(modelValue.value)
         },
-        getMaxByte : () => { return maxByte.value },
-        setMaxByte : (val: number) => {
-          if(hison.utils.isPositiveInteger(val)) maxByte.value = val
+        getMaxByte: () => { return maxByte.value },
+        setMaxByte: (val: number) => {
+          if (hison.utils.isPositiveInteger(val)) maxByte.value = val
           oldValue.value = modelValue.value
           updateValue(modelValue.value)
         },
-        getRequired : () => { return required.value },
-        setRequired : (val: boolean) => { required.value = val },
-        getPlaceholder : () => placeholder.value,
-        setPlaceholder : (val: string) => { placeholder.value = val },
+        getRequired: () => { return required.value },
+        setRequired: (val: boolean) => { required.value = val },
+        getPlaceholder: () => placeholder.value,
+        setPlaceholder: (val: string) => { placeholder.value = val },
         getPlaceholderColor: () => placeholderColor.value,
         setPlaceholderColor: (val: string) => {
           const s = (val ?? '').trim()
           placeholderColor.value = s.length > 0 ? s : 'primary'
         },
-        isFontBold : () => { return fontBold.value },
-        setFontBold : (val: boolean) => { fontBold.value = val },
-        isFontItalic : () => { return fontItalic.value },
-        setFontItalic : (val: boolean) => { fontItalic.value = val },
-        isFontThruline : () => { return fontThruline.value },
-        setFontThruline : (val: boolean) => { fontThruline.value = val },
-        isFontUnderline : () => { return fontUnderline.value },
-        setFontUnderline : (val: boolean) => { fontUnderline.value = val },
+        isFontBold: () => { return fontBold.value },
+        setFontBold: (val: boolean) => { fontBold.value = val },
+        isFontItalic: () => { return fontItalic.value },
+        setFontItalic: (val: boolean) => { fontItalic.value = val },
+        isFontThruline: () => { return fontThruline.value },
+        setFontThruline: (val: boolean) => { fontThruline.value = val },
+        isFontUnderline: () => { return fontUnderline.value },
+        setFontUnderline: (val: boolean) => { fontUnderline.value = val },
         getTextAlign: () => textAlign.value,
         setTextAlign: (v: TextAlign) => {
           if (v === TextAlign.left || v === TextAlign.center || v === TextAlign.right) {
@@ -1028,8 +1041,8 @@ export default defineComponent({
         },
         isBorder: () => border.value,
         setBorder: (val: boolean) => { border.value = val },
-        isModified : () => { return isModified.value },
-        setModified : (val: boolean) => { isModified.value = val},
+        isModified: () => { return isModified.value },
+        setModified: (val: boolean) => { isModified.value = val },
         getToggleStyle: () => toggleStyle.value,
         setToggleStyle: (style: 'default' | 'switch') => {
           if (style === 'default' || style === 'switch') {
@@ -1040,8 +1053,8 @@ export default defineComponent({
         setTabIndex: (v: number | null) => {
           tabIndex.value = v !== null && v !== undefined ? Number(v) : null
         },
-        focus : () => {
-          if(inputTextRef.value) inputTextRef.value.focus()
+        focus: () => {
+          if (inputTextRef.value) inputTextRef.value.focus()
           else inputRef.value?.focus()
         },
         reload: () => reloadHisonComponent(reloadId)
@@ -1056,12 +1069,12 @@ export default defineComponent({
     const unmount = () => {
       unregisterReloadable(reloadId)
       delete hisonCloser.component.inputList[id]
-      if(inputType.value !== InputType.checkbox
+      if (inputType.value !== InputType.checkbox
         && inputType.value !== InputType.radio
         && inputType.value !== InputType.range
         && inputType.value !== InputType.color
       ) removeInputCssEvent(inputRef.value!)
-      if(inputTextRef.value) removeInputTextCssEvent(inputTextRef.value)
+      if (inputTextRef.value) removeInputTextCssEvent(inputTextRef.value)
     }
 
     onMounted(mount)
@@ -1071,7 +1084,7 @@ export default defineComponent({
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
     })
-    
+
     watch(() => props.modelValue, (newVal) => {
       updateValue(newVal, false)
     })
@@ -1082,6 +1095,17 @@ export default defineComponent({
         name.value = v
         if (inputType.value === InputType.radio) {
           radioMembershipChanged?.(id, prev, v, !!modelValue.value)
+        }
+      }
+    })
+
+    watch(() => props.dataKey, (v) => {
+      const s = (v ?? '').trim()
+      const nv = s.length > 0 ? s : id
+      if (nv !== dataKey.value) {
+        dataKey.value = nv
+        if (inputType.value === InputType.radio && !!modelValue.value && notifyInputGroupStatus && name.value) {
+          notifyInputGroupStatus(name.value, dataKey.value)
         }
       }
     })
@@ -1116,47 +1140,47 @@ export default defineComponent({
     })
 
     return {
-        inputRef,
-        inputTextRef,
-        inputMethods: computed(() => unref(inputMethods)),
-        inputValue,
-        editing,
-        props,
-        id,
-        nameAttr,
-        responsiveClassList,
-        visibleClass,
-        editModeClassList,
-        requiredClassList,
-        fontBoldClass,
-        fontItalicClass,
-        fontThrulineClass,
-        fontUnderlineClass,
-        textAlignStyle,
-        placeholderColorStyle,
-        borderClass,
-        disable,
-        readonly,
-        inputType,
-        inputExpressionType,
-        inputAttrType,
-        title,
-        placeholder,
-        maxNumber,
-        minNumber,
-        spanText,
-        toggleStyle,
-        tabIndex,
-        onInput,
-        onTextInputFocus,
-        onFocus,
-        onBlur,
-        onRangeChange,
-        onColorChange,
-        onCheckboxChange,
-        onRadioChange,
-        onSelectChange,
-        onKeydown,
+      inputRef,
+      inputTextRef,
+      inputMethods: computed(() => unref(inputMethods)),
+      inputValue,
+      editing,
+      props,
+      id,
+      nameAttr,
+      responsiveClassList,
+      visibleClass,
+      editModeClassList,
+      requiredClassList,
+      fontBoldClass,
+      fontItalicClass,
+      fontThrulineClass,
+      fontUnderlineClass,
+      textAlignStyle,
+      placeholderColorStyle,
+      borderClass,
+      disable,
+      readonly,
+      inputType,
+      inputExpressionType,
+      inputAttrType,
+      title,
+      placeholder,
+      maxNumber,
+      minNumber,
+      spanText,
+      toggleStyle,
+      tabIndex,
+      onInput,
+      onTextInputFocus,
+      onFocus,
+      onBlur,
+      onRangeChange,
+      onColorChange,
+      onCheckboxChange,
+      onRadioChange,
+      onSelectChange,
+      onKeydown,
     }
   }
 })

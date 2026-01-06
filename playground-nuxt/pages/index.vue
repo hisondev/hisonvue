@@ -16,7 +16,7 @@
         id="b2"
         class="hison-col-5 hison-size-l-mb hison-size-s-pc hison-color-muted-mb hison-color-info-pc"
         text="button1"
-        @click="openDrawer1"
+        @click="onClickCenterButton2"
         ></HButton>
         <HGap
           class="hison-col-2 hison-size-l-mb hison-size-s-pc hison-color-info-mb hison-color-muted-pc"
@@ -28,7 +28,7 @@
         class="hison-col-5 hison-size-l-mb hison-size-s-pc hison-color-warning-mb hison-color-primary-pc"
         text="button2"
         :backgroundType="'filled'"
-        @click="openDrawer2"
+        @click="onClickCenterButton3"
         ></HButton>
     </HLayout>
     <HButton
@@ -39,6 +39,183 @@
     >
       Go to Grid<br>(right-button)
     </HButton>
+  </HLayout>
+  <HLayout>
+    <HInputGroup id="inputGroup1" v-model="dataObject">
+      <HLayout id="layout1" class="hison-col-12-tb hison-col-6-pc">
+        <HFileset
+          id="fileset"
+          class="hison-size-s-mb hison-size-s-pc hison-pos-right hison-color-primary-mb hison-color-success-pc"
+          v-model="files"
+          :multiCols="true"
+          :placeholder="'저장된 파일이 없습니다.'"
+          :addButtonText="'추가'"
+          :removeButtonText="'삭제'"
+          :enableDrop="true"
+          :visible="true"
+          :editMode="EditMode.editable"
+          :disallowedTypes="[]"
+          :multiple="true"
+          :maxFileCount="0"
+          style="height: 200px; margin-bottom: 5px;"
+          >
+          <template #file-icon="{ file }">
+            <span v-if="file.extension === 'pdf'">📕&nbsp;</span>
+            <span v-else-if="file.extension === 'jpg'">🖼️&nbsp;</span>
+            <span v-else>📄&nbsp;</span>
+          </template>
+          <!--
+          <template #remove-button="{ file, index, remove, disable }">
+            <span
+              class="custom-remove-btn"
+              :disabled="disable"
+              @click="remove"
+              :style="'cursor: pointer;'"
+            >
+              ❌
+            </span>
+          </template>
+          -->
+        </HFileset>
+        <HInput
+        id="range"
+        class="hison-col-12 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-primary-mb hison-color-success-pc"
+        dataKey="data1"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.range"
+        ></HInput>
+        <HInput
+        id="color"
+        class="hison-col-3 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-primary-mb hison-color-success-pc"
+        dataKey="data2"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.color"
+        ></HInput>
+        <HInput
+        id="checkbox"
+        class="hison-col-3 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-danger-mb hison-color-warning-pc"
+        dataKey="data3"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.checkbox"
+        ></HInput>
+        <HInput
+        id="select"
+        class="hison-col-6 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-danger-mb hison-color-warning-pc"
+        dataKey="data4"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.select"
+        :editMode="EditMode.editable"
+        :options="option1"
+        ></HInput>
+      </HLayout>
+      <HLayout id="layout2" class="hison-col-12-tb hison-col-6-pc">
+        <HInput
+        id="input1"
+        class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-muted-pc"
+        dataKey="data5"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.date"
+        :format="DateFormat['MMMM dd, yyyy']"
+        :required="true"
+        :editMode="EditMode.editable"
+        ></HInput>
+        <HInput
+        id="input2"
+        class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-info-pc"
+        dataKey="data6"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.text"
+        placeholder="please insert text here."
+        ref="input2Ref"
+        :required="true"
+        :editMode="EditMode.readonly"
+        ></HInput>
+        <HInput
+        id="input3"
+        class="hison-col-4 hison-size-l-mb hison-size-s-pc hison-pos-right hison-color-success-pc"
+        dataKey="data7"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.date"
+        ></HInput>
+        <HInput
+        id="input4"
+        class="hison-col-3 hison-size-xl-mb hison-size-s-pc hison-pos-left hison-color-danger-pc"
+        dataKey="data8"
+        style="margin-bottom: 5px;"
+        v-model="inputValue4"
+        :inputType="InputType.number"
+        format="$$ #,###.##"
+        nullText="$$"
+        :maxNumber="10000"
+        :editMode="EditMode.disable"
+        @input="onInput4"
+        ></HInput>
+        <HButton
+        class="hison-col-3 hison-size-xl-mb hison-size-s-pc hison-pos-left"
+        :backgroundType="BackgroundType.empty"
+        >
+          Korea
+        </HButton>
+        <HInput
+        id="select2"
+        class="hison-col-3 hison-size-xl-mb hison-size-s-pc hison-pos-left"
+        dataKey="data9"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.select"
+        :editMode="EditMode.editable"
+        :options="option1"
+        ></HInput>
+        <HInput
+        id="input5"
+        class="hison-col-8 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-mb"
+        dataKey="data10"
+        style="margin-bottom: 5px;"
+        v-model="inputValue5"
+        :inputType="InputType.mask"
+        format="AA999"
+        nullText="-"
+        :required="true"
+        :maxNumber="15"
+        :editMode="'disable'"
+        placeholder="testtest"
+        ></HInput>
+        <HInput
+        id="input6"
+        class="hison-col-12 hison-size-l-mb hison-size-s-pc hison-pos-left-mb hison-pos-right-pc hison-color-warning-pc"
+        dataKey="data11"
+        style="margin-bottom: 5px;"
+        v-model="inputValue6"
+        :inputType="InputType.password"
+        placeholder="testtest"
+        :editMode="EditMode.readonly"
+        maxLength="10"
+        ></HInput>
+        <HInput
+        id="inputRadio1"
+        name="radioTest"
+        class="hison-col-4"
+        dataKey="data12"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.radio"
+        ></HInput>
+        <HInput
+        id="inputRadio2"
+        name="radioTest"
+        class="hison-col-4"
+        dataKey="data13"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.radio"
+        ></HInput>
+        <HInput
+        id="inputRadio3"
+        name="radioTest"
+        class="hison-col-4"
+        dataKey="data14"
+        style="margin-bottom: 5px;"
+        :inputType="InputType.radio"
+        ></HInput>
+      </HLayout>
+    </HInputGroup>
   </HLayout>
   <HLayout>
     <HChart
@@ -124,8 +301,42 @@
 </template>
 
 <script setup lang="ts">
+const onClickCenterButton2 = () => {
+  const inputGroup = hison.component.getInputGroup('inputGroup1')
+  console.log('inputGroup.getDataObject',inputGroup?.getDataObject())
+  console.log('inputGroup.getDataModel',inputGroup?.getDataModel())
+}
+const onClickCenterButton3 = () => {
+}
+
+let dataObject = ref({
+  checkbox : true,
+  color : "#128483",
+  input1 : "2025-11-28",
+  input2 : '',
+  input3 : "2025-11-19",
+  input4 : 4321.4231,
+  input5 : "FA123",
+  input6 : "15sdfxzcv1",
+  range : 70,
+  select : "value4",
+})
+const files = ref<AttachedFileItem[]>([])
+const option1 = [
+  { text: '가나다1', value: 'value1' },
+  { text: '가나다2', value: 'value2' },
+  { text: 'text3', value: 'value3' },
+  { text: 'text4', value: 'value4' },
+  { text: 'text5', value: 'value5' },
+]
+const inputValue4 = ref<any>('1234.1234');
+const onInput4 = (value: any, ...param: any) => {
+}
+const inputValue5 = 'hr123';
+const inputValue6 = '15sdfxzcv1515asd'
+
 import { ChartData, ChartOptions } from 'chart.js'
-import { DayOfWeek, HCalendarView, hison } from 'hisonvue'
+import { AttachedFileItem, BackgroundType, DateFormat, DayOfWeek, EditMode, HCalendarView, hison, InputType } from 'hisonvue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
@@ -288,10 +499,6 @@ const chartOptions1 = ref<ChartOptions>({
   }
 })
 
-const onClickCenterButton2 = () => {
-}
-const onClickCenterButton3 = () => {
-}
 const goToGridTest = () => {
   router.push('/gridTest')
 }

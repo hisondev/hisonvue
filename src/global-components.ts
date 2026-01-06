@@ -1653,12 +1653,13 @@ declare module 'vue' {
      * - For `inputType="radio"`, the HTML `name` attribute **defines the group**.
      * - `HInputGroup` aggregates radios by `name` and exposes/accepts values in the shape:
      *   ```ts
-     *   { [name: string]: selectedRadioId | null }
+     *   { [name: string]: selectedRadioKey | null }
      *   ```
-     *   where `selectedRadioId` is the `id` of the checked `HInput` in that group.
+     *   where `selectedRadioKey` is the `dataKey` of the checked `HInput`
+     *   (falls back to `id` when `dataKey` is omitted or empty).
      * - When the user checks a radio:
      *   - The radio’s own `v-model` becomes `true` (others in the same group become `false`).
-     *   - The parent `HInputGroup` updates its mapping `{ [name]: id | null }`.
+     *   - The parent `HInputGroup` updates its mapping `{ [name]: dataKey | null }` (fallback to `id`).
      * - If there is **no initial value** (no `v-model` provided), radios/checkboxes default to:
      *   - `getValue() === false`
      *   - `getText() === uncheckedText`
@@ -1671,13 +1672,13 @@ declare module 'vue' {
      *   <HInput id="r3" inputType="radio" name="theme" />
      * </HInputGroup>
      * ```
-     * - Group `lang` → `{ lang: "r1" }`
+     * - Group `lang` → `{ lang: "r1" }` (or the checked radio’s `dataKey` if provided)
      * - Group `theme` → `{ theme: null }` (none selected)
      *
      * #### Dynamic re-grouping
      * - Calling `setName('newGroup')` on a radio **moves** it to another group at runtime.
      * - `HInputGroup` re-registers the membership and preserves the radio’s checked state,
-     *   updating its `{ [name]: id | null }` mapping accordingly.
+     *   updating its `{ [name]: dataKey | null }` mapping accordingly (fallback to `id`).
      *
      * ---
      *
@@ -1695,9 +1696,11 @@ declare module 'vue' {
      *
      * ---
      *
-     * ### 📛 About `id` and `name`
+     * ### 📛 About `id`, `name`, and `dataKey`
      * - `id` is applied to the **editable** input element and is used to access methods via
      *   `hison.component.getInput(id)`. If `name` is not provided, it **defaults to** `id`.
+     * - `dataKey` is used by `HInputGroup` when extracting data (`getDataObject()` / `getDataModel()`).
+     *   If `dataKey` is omitted or empty, it falls back to `id`.
      * - For the **readonly display** (span-text) that uses a hidden text input for layout consistency
      *   (i.e., for types other than `range`, `color`, `checkbox`, `radio`, `select`, `textarea`),
      *   the component renders:
@@ -1708,9 +1711,11 @@ declare module 'vue' {
      * ---
      *
      * @prop {string} id - Unique input identifier. Enables runtime access via `hison.component.getInput(id)`.
-     * @prop {string} [name] - HTML `name` attribute. Defaults to `id`.  
+     * @prop {string} [dataKey] - Data extraction key used by `HInputGroup`. Defaults to `id` when omitted/empty.
+     * @prop {string} [name] - HTML `name` attribute. Defaults to `id`.
      *   For `inputType="radio"`, this acts as the **group key**. `HInputGroup` will expose/accept the current
-     *   selection as `{ [name]: selectedRadioId | null }`. When radios share the same `name`, only one can be `true`.
+     *   selection as `{ [name]: selectedRadioKey | null }`, where `selectedRadioKey` is the checked radio’s `dataKey`
+     *   (fallback to `id`). When radios share the same `name`, only one can be `true`.
      *
      * @prop {string | string[] | Record<string, boolean>} [class] - Additional class string. Supports `hison-*` responsive system.
      * @prop {string | CSSProperties | CSSProperties[]} [style] - Inline CSS style.
@@ -1771,9 +1776,8 @@ declare module 'vue' {
      * and provides group-level runtime control such as loading data, resetting values,
      * validating required fields, and checking modification state.
      *
-     * It is especially useful for handling structured form data such as
-     * `Record<string, any>`, `DataWrapper`, or `DataModel`, and integrates with
-     * `hison.component.getInputGroup(id)` to expose runtime control methods like
+     * It is designed to manage structured form data such as `Record<string, any>` and `DataModel`,
+     * and integrates with `hison.component.getInputGroup(id)` to expose runtime control methods like
      * `.load()`, `.clear()`, `.getDataObject()`, and more.
      *
      * ---
@@ -1782,7 +1786,6 @@ declare module 'vue' {
      * - Automatically registers all child `<HInput>` components rendered inside its `<slot />`.
      * - Supports loading data from:
      *   - `Record<string, any>`
-     *   - `InterfaceDataWrapper`
      *   - `InterfaceDataModel`
      * - Two-way binding with `v-model` for entire form data as `Record<string, any>`.
      * - Can reset all child inputs via `.clear()`.
@@ -1794,6 +1797,16 @@ declare module 'vue' {
      *
      * ---
      *
+     * ### 🧩 About `id` and `dataKey`
+     * - Every child `HInput` must have a unique **`id`**. This `id` is used for runtime access
+     *   (e.g., `hison.component.getInput(id)`), focus control, and internal registration.
+     * - For group-level data I/O (`v-model`, `getDataObject()`, `load()`, `setDataObject()`),
+     *   `HInputGroup` uses each child input’s **`dataKey`** (if provided). If `dataKey` is empty,
+     *   it falls back to the input’s `id`.
+     * - If duplicate `dataKey` values exist within the same group, a `console.warn` is emitted.
+     *
+     * ---
+     *
      * ### 🔘 Radio Grouping by `name`
      * - When a child `HInput` has `inputType="radio"`, its **HTML `name`** defines
      *   the radio **group key** within this `HInputGroup`.
@@ -1801,14 +1814,14 @@ declare module 'vue' {
      * - **Data shape (I/O)** for radios is normalized to:
      *   ```ts
      *   // Used in getDataObject(), v-model emits, load(), setDataObject()
-     *   { [radioGroupName: string]: selectedRadioId | null }
+     *   { [radioGroupName: string]: selectedRadioDataKey | null }
      *   ```
      *   - `radioGroupName`: the `name` of the radio group
-     *   - `selectedRadioId`: the `id` of the selected `HInput` in that group
+     *   - `selectedRadioDataKey`: the selected radio’s `dataKey` (fallback to `id`)
      *   - `null`: no selection in that group
-     * - Non-radio fields use their **input `id` as key**:
+     * - Non-radio fields use their **`dataKey` as key** (fallback to `id`):
      *   ```ts
-     *   { [inputId: string]: value }
+     *   { [dataKey: string]: value }
      *   ```
      * - If no initial value is provided, each radio’s local `v-model` is `false`,
      *   and the group entry becomes `{ [name]: null }` in the group-level object.
@@ -1817,32 +1830,27 @@ declare module 'vue' {
      * ```vue
      * <HInputGroup id="grp" v-model="form">
      *   <!-- group: 'lang' -->
-     *   <HInput id="r1" inputType="radio" name="lang" :modelValue="true" />
-     *   <HInput id="r2" inputType="radio" name="lang" />
+     *   <HInput id="r1" inputType="radio" name="lang" dataKey="lang_ko" :modelValue="true" />
+     *   <HInput id="r2" inputType="radio" name="lang" dataKey="lang_en" />
      *
-     *   <!-- group: 'theme' -->
-     *   <HInput id="r3" inputType="radio" name="theme" />
-     *   <HInput id="r4" inputType="radio" name="theme" />
-     *
-     *   <!-- normal inputs -->
-     *   <HInput id="email" inputType="email" />
+     *   <!-- normal input -->
+     *   <HInput id="email" inputType="email" dataKey="user_email" />
      * </HInputGroup>
      * ```
      * - Example result of `getDataObject()` (or v-model binding object):
      *   ```ts
      *   {
      *     // radios by group name
-     *     lang: "r1",
-     *     theme: null,
-     *     // non-radio by id
-     *     email: "user@example.com"
+     *     lang: "lang_ko",
+     *     // non-radio by dataKey
+     *     user_email: "user@example.com"
      *   }
      *   ```
      *
      * #### Dynamic re-grouping
      * - When `setName('newGroup')` is called on a radio, that radio moves
      *   **to the new group at runtime**. The `HInputGroup` re-registers membership
-     *   and immediately updates the `{ [name]: id | null }` mapping.
+     *   and immediately updates the `{ [name]: dataKey | null }` mapping.
      * - A previously checked radio will transfer to the new group,
      *   and the old group’s selection will be reset (leaving `null` if applicable).
      *
@@ -1851,12 +1859,12 @@ declare module 'vue' {
      * ### ⚙️ Usage
      * ```vue
      * <HInputGroup id="group1" v-model="formData" :editMode="'editable'">
-     *   <HInput id="userid" inputType="text" required />
-     *   <HInput id="email" inputType="email" />
+     *   <HInput id="userid" inputType="text" dataKey="user_id" required />
+     *   <HInput id="email" inputType="email" dataKey="email" />
      *
      *   <!-- radio group 'agree' -->
-     *   <HInput id="agreeY" inputType="radio" name="agree" />
-     *   <HInput id="agreeN" inputType="radio" name="agree" />
+     *   <HInput id="agreeY" inputType="radio" name="agree" dataKey="Y" />
+     *   <HInput id="agreeN" inputType="radio" name="agree" dataKey="N" />
      * </HInputGroup>
      * ```
      *
@@ -1865,30 +1873,29 @@ declare module 'vue' {
      * ### 🛠 Runtime Usage
      * Use `hison.component.getInputGroup(id)` to access and control the group:
      * ```ts
-     * const group = hison.component.getInputGroup('group1');
+     * const group = hison.component.getInputGroup('group1')
      * group.load({
-     *   userid: 'abc',
+     *   user_id: 'abc',
      *   email: 'test@example.com',
-     *   agree: 'agreeY'  // radio by group name → selected radio id
-     * });
+     *   agree: 'Y' // radio by group name → selected radio dataKey (fallback to id)
+     * })
      *
-     * const data = group.getDataObject(); // { userid, email, agree }
-     * group.clear();
-     * group.setStatus('U');
-     * group.setEditMode('readonly');
-     * const dataModel = group.getDataModel(); // hison.data.DataModel
-     * const changed = group.isModified();
+     * const data = group.getDataObject() // { user_id, email, agree }
+     * group.clear()
+     * group.setStatus('U')
+     * group.setEditMode('readonly')
+     * const dataModel = group.getDataModel() // hison.data.DataModel
+     * const changed = group.isModified()
      * ```
      *
      * ---
      *
      * ### 🔒 Notes
      * - `v-model` is fully supported and emits changes whenever any child `HInput` updates.
-     * - Child `HInput` components must have an `id` matching their corresponding data key
-     *   (except radios, which are keyed by group `name`).
-     * - Radios default to `false` when not initialized; group mapping defaults to `null`.
+     * - Child `HInput` **`id`** is always required for runtime control and registration.
+     * - Group data keys use **`dataKey` first** (fallback to `id`) for non-radio fields.
+     * - Radios are keyed by group `name`, and store **selected radio `dataKey`** (fallback to `id`) or `null`.
      * - Inputs auto-sync their values from `v-model` on registration and emit changes upward.
-     * - Modification tracking reflects only user-triggered changes.
      * - Grouped `HInput` instances self-register via `provide('registerToInputGroup')`.
      *
      * ---
@@ -1897,8 +1904,8 @@ declare module 'vue' {
      * @prop {('editable' | 'disable' | 'readonly')} [editMode='editable'] - Edit mode.
      * @prop {('C' | 'R' | 'U' | 'D')} [status='R'] - Data status (`C`, `R`, `U`, `D`). Controlled via `.getStatus()` / `.setStatus()`.
      * @prop {Record<string, any>} [modelValue] - Used with `v-model` for two-way binding.
-     *   - **Non-radio**: keyed by child input **`id`** → value
-     *   - **Radio**: keyed by radio **`name`** → **selected radio `id`** or `null`
+     *   - **Non-radio**: keyed by child input **`dataKey`** (fallback to `id`) → value
+     *   - **Radio**: keyed by radio **`name`** → **selected radio `dataKey`** (fallback to `id`) or `null`
      *
      * @event mounted - Fired after mount with `HInputGroupMethods` instance.
      * @event update:modelValue - Fired whenever any child `HInput` changes, emitting the updated object.

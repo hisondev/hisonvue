@@ -2822,6 +2822,18 @@ export interface HInputMethods extends ComponentMethods {
    */
   setName(name: string): void;
   /**
+   * Gets the data extraction key for `HInputGroup`.
+   * - Used as the key when `HInputGroup` extracts data.
+   * - If empty, `HInput` falls back to `id`.
+   */
+  getDataKey(): string
+  /**
+   * Sets the data extraction key for `HInputGroup`.
+   * - If empty, it falls back to `id`.
+   * - This does not change the runtime identifier (`id`).
+   */
+  setDataKey(dataKey: string): void
+  /**
    * Returns the formatted display text shown in the span layer.
    * - Applies `format`, `nullText`, and masking logic based on `type`.
    */
