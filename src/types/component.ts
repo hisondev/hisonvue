@@ -3058,6 +3058,16 @@ export interface HInputMethods extends ComponentMethods {
    */
   setToggleStyle(style: 'default' | 'switch'): void
   /**
+   * Returns whether automatic capitalization is disabled on mobile keyboards.
+   * @returns `true` if disabled, otherwise `false`.
+   */
+  getDisableAutoCapitalize(): boolean
+  /**
+   * Enables or disables automatic capitalization on mobile keyboards.
+   * @param v - `true` to disable auto capitalization, otherwise `false`.
+   */
+  setDisableAutoCapitalize(v: boolean): void
+  /**
    * Gets the current `tabIndex` applied to element.
    * - `null`: no `tabindex` attribute (items not focusable).
    * - `0` or positive number: items can be focused via keyboard navigation.

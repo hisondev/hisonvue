@@ -401,6 +401,9 @@
       :title="title || undefined"
       :maxlength="maxLength || undefined"
       :tabindex="tabIndex ?? undefined"
+      :autocapitalize="disableAutoCapitalize ? 'off' : undefined"
+      :autocorrect="disableAutoCapitalize ? 'off' : undefined"
+      :spellcheck="disableAutoCapitalize ? false : undefined"
       @input="onInput"
       @focus="onFocus"
       @blur="onBlur"
@@ -431,6 +434,9 @@
         :title="title || undefined"
         :placeholder="placeholder || undefined"
         :tabindex="tabIndex ?? undefined"
+        :autocapitalize="disableAutoCapitalize ? 'off' : undefined"
+        :autocorrect="disableAutoCapitalize ? 'off' : undefined"
+        :spellcheck="disableAutoCapitalize ? false : undefined"
         @focus="onTextInputFocus"
         @click="$emit('click', $event, inputMethods)"
         @dblclick="$emit('dblclick', $event, inputMethods)"
@@ -473,6 +479,9 @@
         :max="maxNumber || undefined"
         :min="minNumber || undefined"
         :tabindex="tabIndex ?? undefined"
+        :autocapitalize="disableAutoCapitalize ? 'off' : undefined"
+        :autocorrect="disableAutoCapitalize ? 'off' : undefined"
+        :spellcheck="disableAutoCapitalize ? false : undefined"
         @focus="onFocus"
         @blur="onBlur"
         @input="onInput"
@@ -768,6 +777,8 @@ export default defineComponent({
       props.tabIndex !== null && props.tabIndex !== '' ? Number(props.tabIndex) : null
     )
 
+    const disableAutoCapitalize = ref<boolean>(!!props.disableAutoCapitalize)
+
     const registerToInputGroup = inject<((inputId: string) => void) | null>('registerToInputGroup', null)
     const notifyInputGroupStatus = inject<((inputId: string, newVal: any) => void) | null>('notifyInputGroupStatus', null)
     const radioMembershipChanged = inject<((inputId: string, oldName: string, newName: string, checked: boolean) => void) | null>('radioMembershipChanged', null)
@@ -982,6 +993,10 @@ export default defineComponent({
         setTitle: (val: string) => { title.value = val },
         isVisible: () => visible.value,
         setVisible: (val: boolean) => { visible.value = val },
+
+        getDisableAutoCapitalize: () => disableAutoCapitalize.value,
+        setDisableAutoCapitalize: (v: boolean) => { disableAutoCapitalize.value = !!v },
+
         getInputType: () => { return inputType.value },
         setInputType: (val: keyof typeof InputType) => {
           inputType.value = InputType[val]
@@ -1133,6 +1148,11 @@ export default defineComponent({
       }
     })
 
+    watch(() => props.disableAutoCapitalize, (v) => {
+      const b = !!v
+      if (b !== disableAutoCapitalize.value) disableAutoCapitalize.value = b
+    })
+
     watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
     watch(() => props.title, v => { const s = v ?? ''; if (s !== title.value) title.value = s })
     watch(() => props.nullText, v => { const s = v ?? ''; if (s !== nullText.value) { nullText.value = s; if (isNullOrUndefined(modelValue.value) || modelValue.value === '') spanText.value = computeSpanText(modelValue.value) } })
@@ -1194,6 +1214,7 @@ export default defineComponent({
       spanText,
       toggleStyle,
       tabIndex,
+      disableAutoCapitalize,
       onInput,
       onTextInputFocus,
       onFocus,

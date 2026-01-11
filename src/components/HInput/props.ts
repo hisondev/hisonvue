@@ -217,6 +217,11 @@ export const inputProps = {
   },
 
   /**
+   * Disables automatic capitalization behavior on mobile keyboards.
+   */
+  disableAutoCapitalize: { type: Boolean, default: false },
+
+  /**
    * Controls keyboard focus order of the element.
    */
   tabIndex: {
