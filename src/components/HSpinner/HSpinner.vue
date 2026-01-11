@@ -10,6 +10,7 @@
 
     <div
         ref="wrapperRef"
+        tabindex="-1"
         :class="['hison-spinner-wrapper', ...responsiveClassList]"
         :style="wrapperStyle"
     >
@@ -162,9 +163,12 @@ export default defineComponent({
 
         const open = async () => {
             if (visible.value) return
+            const ae = document.activeElement as any
+            if (ae && typeof ae.blur === 'function') ae.blur()
             visible.value = true
             lockScroll()
             await nextTick()
+            wrapperRef.value?.focus()
             armTimeout()
             emit('open', unref(spinnerMethods)!)
         }
@@ -199,7 +203,12 @@ export default defineComponent({
             refreshResponsiveClassList()
 
             if (visible.value) {
+                const ae = document.activeElement as any
+                if (ae && typeof ae.blur === 'function') ae.blur()
                 lockScroll()
+                nextTick(() => {
+                    wrapperRef.value?.focus()
+                })
                 armTimeout()
             }
 
