@@ -2846,8 +2846,22 @@ export interface HInputMethods extends ComponentMethods {
   /**
    * Sets the current input value.
    * - Automatically re-applies formatting and validation.
+   *
+   * @param opt - Optional flags (default: all `true`)
+   *   - `emitModelValue`: emit `update:modelValue`
+   *   - `emitChange`: emit `change(oldValue, newValue, methods)`
+   *   - `notifyGroup`: sync with `HInputGroup` (radio: `{ [name]: selectedKey | null }`)
+   *   - `markModified`: set `isModified = true`
    */
-  setValue(value: any): void;
+  setValue: (
+    val: any,
+    opt?: {
+      emitModelValue?: boolean
+      emitChange?: boolean
+      notifyGroup?: boolean
+      markModified?: boolean
+    }
+  ) => void
   /**
    * Gets the current input type.
    * - Matches the `InputType` enum (e.g., `'text'`, `'date'`, `'number'`, etc.)

@@ -214,6 +214,16 @@
         style="margin-bottom: 5px;"
         :inputType="InputType.radio"
         ></HInput>
+        <HLabel
+        :toggle-target="'test_check'"
+        class="hison-col-6"
+        :text-align="'right'"
+        >test</HLabel>
+        <HInput
+        id="test_check"
+        class="hison-col-6"
+        :input-type="'checkbox'"
+        />
       </HLayout>
     </HInputGroup>
   </HLayout>

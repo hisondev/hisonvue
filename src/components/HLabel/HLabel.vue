@@ -1,3 +1,4 @@
+<!-- HLabel.vue -->
 <template>
   <div
     :class="[
@@ -175,10 +176,18 @@ export default defineComponent({
             if ((t !== 'checkbox' && t !== 'radio') || em !== 'editable') return
 
             const cur = !!api.getValue?.()
+
+            const opt = {
+                emitModelValue: true,
+                emitChange: true,
+                notifyGroup: true,
+                markModified: true,
+            }
+
             if (t === 'checkbox') {
-                api.setValue?.(!cur)
+                api.setValue?.(!cur, opt)
             } else {
-                api.setValue?.(true)
+                api.setValue?.(true, opt)
             }
         }
 

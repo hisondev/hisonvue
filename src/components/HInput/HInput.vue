@@ -1,3 +1,4 @@
+<!-- HInput.vue -->
 <template>
   <div
     :class="[
@@ -504,6 +505,13 @@ import { useDevice } from '../../core'
 import { addInputCssEvent, addInputTextCssEvent, removeInputCssEvent, removeInputTextCssEvent } from '../common/setInputCssEvent'
 import { hisonCloser } from '../../hisonCloser'
 
+type SetValueOptions = {
+  emitModelValue?: boolean
+  emitChange?: boolean
+  notifyGroup?: boolean
+  markModified?: boolean
+}
+
 export default defineComponent({
   name: 'HInput',
   props: inputProps,
@@ -558,7 +566,6 @@ export default defineComponent({
     const name = ref(props.name ?? id)
     const nameAttr = computed(() => name.value)
 
-    // dataKey: used only for data extraction in HInputGroup (id remains the runtime key)
     const dataKey = ref<string>(((props.dataKey ?? '').trim() || id))
 
     const reloadId = `hinput:${id}`
@@ -933,7 +940,6 @@ export default defineComponent({
           if (nextKey === dataKey.value) return
           dataKey.value = nextKey
 
-          // Radio: if currently checked, reflect the new selected key to group mapping.
           if (inputType.value === InputType.radio && !!modelValue.value && notifyInputGroupStatus && name.value) {
             notifyInputGroupStatus(name.value, dataKey.value)
           }
@@ -950,10 +956,27 @@ export default defineComponent({
         },
         getText: () => { return spanText.value },
         getValue: () => { return modelValue.value },
-        setValue: (val: any) => {
+        setValue: (val: any, opt?: SetValueOptions) => {
           oldValue.value = modelValue.value
           modelValue.value = val
-          updateValue(modelValue.value)
+          updateValue(modelValue.value, true, !!opt?.emitChange)
+
+          if (opt?.markModified) {
+            isModified.value = true
+          }
+
+          if (opt?.notifyGroup) {
+            if (inputType.value === InputType.radio && notifyInputGroupStatus && name.value) {
+              const selectedKey = !!modelValue.value ? (dataKey.value || id) : null
+              notifyInputGroupStatus(name.value, selectedKey)
+            } else {
+              notifyInputGroupStatus?.(id, modelValue.value)
+            }
+          }
+
+          if (opt?.emitModelValue) {
+            emit('update:modelValue', modelValue.value)
+          }
         },
         getTitle: () => title.value,
         setTitle: (val: string) => { title.value = val },
