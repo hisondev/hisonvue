@@ -223,6 +223,7 @@
         id="test_check"
         class="hison-col-6"
         :input-type="'checkbox'"
+        @change="checkbox_onChange"
         />
       </HLayout>
     </HInputGroup>
@@ -317,6 +318,10 @@ const onClickCenterButton2 = () => {
   console.log('inputGroup.getDataModel',inputGroup?.getDataModel())
 }
 const onClickCenterButton3 = () => {
+}
+const checkbox_onChange = (oldV: any, newV: any) => {
+  console.log('checkbox_onChange')
+  console.log(oldV, newV)
 }
 
 let dataObject = ref({
