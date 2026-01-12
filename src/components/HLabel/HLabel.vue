@@ -166,29 +166,29 @@ export default defineComponent({
 
         const toggleTargetInput = () => {
             if (!hasToggleTarget.value) return
-
             const tgtId = String(toggleTarget.value)
+
+            // 1) DOM을 직접 클릭해서 HInput의 @change 루트로 보냄 (v-model 확실)
+            const el = document.getElementById(tgtId) as HTMLInputElement | null
+            if (el && (el.type === 'checkbox' || el.type === 'radio') && !el.disabled) {
+                el.click()
+                return
+            }
+
+            // 2) fallback (DOM 못 찾을 때만)
             const api = (hisonCloser.component.inputList as any)?.[tgtId]
             if (!api || !api.isHisonvueComponent) return
-
             const t = api.getInputType?.()
             const em = api.getEditMode?.()
             if ((t !== 'checkbox' && t !== 'radio') || em !== 'editable') return
 
             const cur = !!api.getValue?.()
-
-            const opt = {
+            api.setValue?.(t === 'checkbox' ? !cur : true, {
                 emitModelValue: true,
                 emitChange: true,
                 notifyGroup: true,
                 markModified: true,
-            }
-
-            if (t === 'checkbox') {
-                api.setValue?.(!cur, opt)
-            } else {
-                api.setValue?.(true, opt)
-            }
+            })
         }
 
         const onClick = (e: MouseEvent) => {

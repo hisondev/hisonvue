@@ -43,7 +43,7 @@
           v-if="!imageValue"
           :id="`hison_imagebox_add_button_${id}`"
           :disable="disable"
-          :class="['hison-col-12', ...buttonClassList]"
+          :class="['hison-col-12', 'imgbox-btn-add', ...buttonClassList]"
           :tabindex="tabIndex ?? undefined"
           @click="openFileDialog"
           @focus="$emit('focus', imageboxMethods)"
@@ -61,7 +61,7 @@
           <HButton
             :id="`hison_imagebox_add_button_${id}`"
             :disable="disable"
-            :class="['hison-col-6', ...buttonClassList]"
+            :class="['hison-col-6', 'imgbox-btn-add', ...buttonClassList]"
             @click="openFileDialog"
             @focus="$emit('focus', imageboxMethods)"
             @blur="$emit('blur', imageboxMethods)"
@@ -77,7 +77,7 @@
           <HButton
             :id="`hison_imagebox_remove_button_${id}`"
             :disable="disable"
-            :class="['hison-col-6', ...buttonClassList]"
+            :class="['hison-col-6', 'imgbox-btn-remove', ...buttonClassList]"
             @click="removeImage"
           >
             <template v-if="$slots['remove-button']">

@@ -1688,8 +1688,8 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     color: var(--hison-emptyTextColor);
 }
 .img-preview {
-    position: relative;
-    width: 100%;
+    display: flex;
+    justify-content: center;
     height: 100%;
     min-width: 60px;
     min-height: 60px;
@@ -1712,7 +1712,7 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
 }
 .preview-img {
     display: block;
-    width: 100%;
+    width: auto;
     height: 100%;
     object-fit: cover;
 }

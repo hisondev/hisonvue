@@ -97,7 +97,8 @@
 
 <script lang="ts">
 import {
-  defineComponent, ref, computed, nextTick, onMounted, onBeforeUnmount, watch, useSlots, VNode, unref
+  defineComponent, ref, computed, nextTick, onMounted, onBeforeUnmount, watch, useSlots, VNode, unref,
+  Fragment, Comment
 } from 'vue'
 import type { HBannerMethods } from '../../types'
 import { bannerProps } from './props'
@@ -175,9 +176,33 @@ export default defineComponent({
 
     const initialIndex = ref<number>(props.initialIndex ?? 0)
 
+    // v-for/조건부 렌더링 등으로 default slot이 Fragment로 묶이는 경우를 펼쳐서
+    // "실제 슬라이드 노드"가 slideNodes에 각각 들어가도록 처리한다.
+    const flattenSlideNodes = (nodes: VNode[]): VNode[] => {
+      const out: VNode[] = []
+
+      const walk = (n: any) => {
+        if (!n) return
+        if (Array.isArray(n)) {
+          n.forEach(walk)
+          return
+        }
+        if (n.type === Comment) return
+        if (n.type === Fragment) {
+          const ch = (n.children as any)
+          if (Array.isArray(ch)) ch.forEach(walk)
+          return
+        }
+        out.push(n)
+      }
+
+      walk(nodes)
+      return out
+    }
+
     const slideNodes = computed<VNode[]>(() => {
       const nodes = slots.default?.() ?? []
-      return nodes
+      return flattenSlideNodes(nodes)
     })
     const slideCount = computed(() => slideNodes.value.length)
 
