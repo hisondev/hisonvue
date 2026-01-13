@@ -73,6 +73,16 @@ export const filesetProps = {
         default: undefined,
     },
     /**
+     * Button-only mode.
+     *
+     * - `true`: Renders only the add/upload button (no wrapper, no file list UI).
+     * - `false`: Renders the normal fileset UI (file list + add button).
+     *
+     * In button-only mode, the `class` prop is passed directly to `<HButton>`
+     * (without responsive filtering), because `<HButton>` already handles responsive classes.
+     */
+    buttonOnly: { type: Boolean, default: false },
+    /**
      * Wrap files into multiple columns (UI option).
      */
     multiCols: { type: Boolean, default: false },
@@ -97,7 +107,7 @@ export const filesetProps = {
     /**
      * Disallowed file types (string or string[]).
      * - MIME types or extensions. Comma-separated string supported.
-     * - Ignored if `allowedTypes` is set.
+     * - Applied even when `allowedTypes` is set. If a type matches both, it will be rejected.
      */
     disallowedTypes: {
         type: [String, Array] as PropType<string | string[]>,

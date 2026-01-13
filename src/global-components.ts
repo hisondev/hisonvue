@@ -1104,40 +1104,41 @@ declare module 'vue' {
      *
      * ---
      *
-     * @prop {string} [id] Unique identifier for the file set. Enables runtime access via `hison.vue.getInput(id)`. Duplicate IDs will throw an error.
-     * @prop {string | string[] | Record<string, boolean>} [class] Additional class string. Supports all hisonvue responsive, color, and size classes.
+     * @prop {string} [id] Unique identifier for the file set. Enables runtime access via `hison.vue.getInput(id)`.
+     * @prop {string | string[] | Record<string, boolean>} [class] Additional class string. Supports responsive classes.
      * @prop {string | CSSProperties | CSSProperties[]} [style] Inline CSS style for the container.
      * @prop {boolean} [visible=true] Controls component visibility.
-     * @prop {('editable' | 'disable' | 'readonly')} [editMode='editable'] Edit state: `'editable'`, `'readonly'`, or `'disable'`.
+     * @prop {('editable' | 'disable' | 'readonly')} [editMode='editable'] Edit state.
      * @prop {AttachedFileItem[]} [modelValue=[]] File list (preloaded or new). Controlled via `v-model`.
      * @prop {string} [attId=''] Group ID for backend file association.
-     * @prop {string} [addButtonText='Add'] Label for the add/upload button (if not using the `add-button` slot).
-     * @prop {string} [removeButtonText='x'] Label for the remove button (if not using the `remove-button` slot).
-     * @prop {string} [placeholder='drop your files.'] Message shown when file list is empty.
+     * @prop {string} [addButtonText='Add'] Label for the add/upload button.
+     * @prop {string} [removeButtonText='x'] Label for the remove button.
+     * @prop {string} [placeholder='There are no files.'] Message shown when file list is empty.
      * @prop {boolean} [enableDrop=true] Enables drag-and-drop file upload area.
-     * @prop {(file: AttachedFileItem) => void} [downloadHandler] Custom download handler. Overrides default download logic.
-     * @prop {boolean} [multiCols=false] Display files in multiple columns (two-row layout).
+     * @prop {(file: AttachedFileItem) => void} [downloadHandler] Custom download handler.
+     * @prop {boolean} [multiCols=false] Display files in multiple columns.
      * @prop {boolean} [multiple=true] Allow multiple file selection/upload.
-     * @prop {string | string[]} [allowedTypes] Allowed MIME types or extensions. Accepts array or comma-separated string.
-     * @prop {string | string[]} [disallowedTypes] Disallowed MIME types or extensions. Accepts array or comma-separated string.
-     * @prop {number} [maxFileSize=Infinity] Maximum file size (bytes) per file. Exceeding files are rejected.
-     * @prop {number} [maxTotalFileSize=Infinity] Maximum total size (bytes) for all files combined.
+     * @prop {boolean} [buttonOnly=false] When true, renders only the upload/add button (no wrapper, no file list UI).
+     * @prop {string | string[]} [allowedTypes] Allowed MIME types or extensions.
+     * @prop {string | string[]} [disallowedTypes] Disallowed MIME types or extensions. Applied even when `allowedTypes` is set. If a type matches both, it will be rejected.
+     * @prop {number} [maxFileSize=Infinity] Maximum file size per file (bytes).
+     * @prop {number} [maxTotalFileSize=Infinity] Maximum total size for all files (bytes).
      * @prop {number} [maxFileCount=0] Maximum number of files allowed (0: unlimited).
-     * @prop {(file: File, allowed: string[]|null, disallowed: string[]|null) => void} [onDisallowedType] Callback when file type/extension is not allowed.
+     * @prop {(file: File, allowed: string[]|null, disallowed: string[]|null) => void} [onDisallowedType] Callback when file type is rejected.
      * @prop {(file: File, size: number, max: number) => void} [onMaxFileSizeExceeded] Callback when a file is too large.
      * @prop {(file: File, total: number, max: number) => void} [onMaxTotalSizeExceeded] Callback when total file size limit is exceeded.
      *
      * ---
      *
-     * @event mounted Emitted on mount. Passes `HFilesetMethods` instance.
-     * @event responsive-change Emitted on device class change (mobile/tablet/pc/wide).
-     * @event update:modelValue Emitted when the file list changes (add, remove, delete, etc).
-     * @event add Emitted when a file is added. Arguments: `(file: AttachedFileItem, methods: HFilesetMethods)`
-     * @event remove Emitted when a file is removed. Arguments: `(file: AttachedFileItem, methods: HFilesetMethods)`
-     * @event change Emitted whenever the file list is changed. Arguments: `(newList: AttachedFileItem[], oldList: AttachedFileItem[], methods: HFilesetMethods)`
-     * @event download Emitted when a download is triggered. Arguments: `(file: AttachedFileItem, methods: HFilesetMethods)`
-     * @event focus Emitted when the add button or file input receives focus.
-     * @event blur Emitted when the file input or file set loses focus.
+     * @event mounted Emitted on mount. Arguments: `(methods: HFilesetMethods)`.
+     * @event responsive-change Emitted on device class change. Arguments: `(device: string)`.
+     * @event update:modelValue Emitted when the internal file list changes. Arguments: `(list: AttachedFileItem[])`.
+     * @event add Emitted when files are added. Arguments: `(added: AttachedFileItem[], methods: HFilesetMethods)`.
+     * @event remove Emitted when a file is removed/marked deleted. Arguments: `(file: AttachedFileItem, index: number, methods: HFilesetMethods)`.
+     * @event change Emitted whenever the file list is changed. Arguments: `(list: AttachedFileItem[], methods: HFilesetMethods)`.
+     * @event download Emitted when a download is triggered. Arguments: `(file: AttachedFileItem, methods: HFilesetMethods)`.
+     * @event focus Emitted when the add button receives focus. Arguments: `(methods: HFilesetMethods)`.
+     * @event blur Emitted when the add button loses focus. Arguments: `(methods: HFilesetMethods)`.
      *
      * ---
      *

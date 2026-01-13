@@ -48,16 +48,16 @@
           class="hison-size-s-mb hison-size-s-pc hison-pos-right hison-color-primary-mb hison-color-success-pc"
           v-model="files"
           :multiCols="true"
+          :button-only="true"
           :placeholder="'저장된 파일이 없습니다.'"
           :addButtonText="'추가'"
           :removeButtonText="'삭제'"
           :enableDrop="true"
-          :visible="true"
           :editMode="EditMode.editable"
           :disallowedTypes="[]"
           :multiple="true"
           :maxFileCount="0"
-          style="height: 200px; margin-bottom: 5px;"
+          @add="file_onAdd"
           >
           <template #file-icon="{ file }">
             <span v-if="file.extension === 'pdf'">📕&nbsp;</span>
@@ -312,6 +312,9 @@
 </template>
 
 <script setup lang="ts">
+const file_onAdd = (...params: any) => {
+  console.log(...params)
+}
 const onClickCenterButton2 = () => {
   const inputGroup = hison.component.getInputGroup('inputGroup1')
   console.log('inputGroup.getDataObject',inputGroup?.getDataObject())

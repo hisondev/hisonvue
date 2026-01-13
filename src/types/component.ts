@@ -2091,6 +2091,19 @@ export interface HFilesetMethods extends ComponentMethods {
    */
   setDownloadHandler(downloadHandler: (file: AttachedFileItem) => void): void;
   /**
+   * Returns whether the component is currently in button-only mode.
+   *
+   * - `true`: Only the add/upload button is rendered.
+   * - `false`: Normal mode (file list + add button).
+   */
+  isButtonOnly(): boolean;
+  /**
+   * Enables or disables button-only mode.
+   *
+   * @param v - `true` to render only the button, `false` for normal UI.
+   */
+  setButtonOnly(v: boolean): void;
+  /**
    * Returns whether the file list is currently displayed in multiple columns.
    * 
    * - Controlled by the `multiCols` prop.
