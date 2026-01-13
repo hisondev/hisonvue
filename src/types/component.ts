@@ -2643,6 +2643,16 @@ export interface HImageboxMethods extends ComponentMethods {
    */
   setRemoveButtonText(removeButtonText: string): void;
   /**
+   * Returns the current modify/edit button text.
+   * @returns Current text for the modify button shown when an image exists.
+   */
+  getModifyButtonText(): string
+  /**
+   * Sets the modify/edit button text.
+   * @param val - New text for the modify button shown when an image exists.
+   */
+  setModifyButtonText(val: string): void
+  /**
    * Gets the current placeholder text (empty state message).
    * 
    * - Shown when there is no image in the image box.

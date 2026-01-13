@@ -1,3 +1,4 @@
+<!-- src/components/HImagebox/HImagebox.vue -->
 <template>
   <div
     :class="[
@@ -61,16 +62,17 @@
           <HButton
             :id="`hison_imagebox_add_button_${id}`"
             :disable="disable"
-            :class="['hison-col-6', 'imgbox-add-btn', ...buttonClassList]"
+            :class="['hison-col-6', 'imgbox-modify-btn', ...buttonClassList]"
             @click="openFileDialog"
             @focus="$emit('focus', imageboxMethods)"
             @blur="$emit('blur', imageboxMethods)"
           >
-            <template v-if="$slots['add-button']">
-              <slot name="add-button" :add="openFileDialog" />
+            <template v-if="$slots['modify-button']">
+              <slot name="modify-button" :modify="openFileDialog" />
             </template>
             <template v-else>
-              <span class="hison-imagebox-add-text">{{ addButtonText }}</span>
+              <!-- ✅ 변경: 이미지가 있을 때는 "수정" 텍스트 노출 -->
+              <span class="hison-imagebox-modify-text">{{ modifyButtonText }}</span>
             </template>
           </HButton>
 
@@ -155,7 +157,9 @@ export default defineComponent({
 
     const placeholder = ref(props.placeholder)
     const addButtonText = ref(props.addButtonText)
+    const modifyButtonText = ref(props.modifyButtonText)
     const removeButtonText = ref(props.removeButtonText)
+
     const allowedTypes = ref<string[]>(Array.isArray(props.allowedTypes) ? props.allowedTypes : props.allowedTypes ? props.allowedTypes.split(',') : [])
     const disallowedTypes = ref<string[]>(Array.isArray(props.disallowedTypes) ? props.disallowedTypes : props.disallowedTypes ? props.disallowedTypes.split(',') : [])
     const maxFileSize = ref<number>(props.maxFileSize ?? hison.getMaxFilesetSize())
@@ -370,6 +374,11 @@ export default defineComponent({
         setAttId: (val: string) => { attId.value = val },
         getAddButtonText: () => addButtonText.value,
         setAddButtonText: (val: string) => addButtonText.value = val,
+
+        // ✅ new: modify button text runtime
+        getModifyButtonText: () => modifyButtonText.value,
+        setModifyButtonText: (val: string) => { modifyButtonText.value = val },
+
         getRemoveButtonText: () => removeButtonText.value,
         setRemoveButtonText: (val: string) => removeButtonText.value = val,
         getPlaceholder: () => placeholder.value,
@@ -405,12 +414,6 @@ export default defineComponent({
     onMounted(mount)
     onBeforeUnmount(unmount)
 
-    watch(() => props.modelValue, (val) => {
-      if (val !== imageValue.value) {
-        imageValue.value = val
-        setPreviewUrl(val)
-      }
-    })
     watch(device, (newDevice) => {
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
@@ -427,6 +430,12 @@ export default defineComponent({
     watch(() => props.onMaxFileSizeExceeded, v => { const fn = typeof v === 'function' ? v : undefined; if (fn !== onMaxFileSizeExceeded.value) onMaxFileSizeExceeded.value = fn })
     watch(() => props.placeholder, v => { const s = v ?? ''; if (s !== placeholder.value) placeholder.value = s })
     watch(() => props.addButtonText, v => { const s = v ?? ''; if (s !== addButtonText.value) addButtonText.value = s })
+
+    watch(() => props.modifyButtonText, v => {
+      const s = v ?? ''
+      if (s !== modifyButtonText.value) modifyButtonText.value = s
+    })
+
     watch(() => props.removeButtonText, v => { const s = v ?? ''; if (s !== removeButtonText.value) removeButtonText.value = s })
     watch(() => props.enableDrop, v => { const b = !!v; if (b !== enableDrop.value) enableDrop.value = b })
     watch(() => props.modelValue, v => { if (v !== imageValue.value) { imageValue.value = v; setPreviewUrl(v) } })
@@ -448,6 +457,7 @@ export default defineComponent({
       disable,
       readonly,
       addButtonText,
+      modifyButtonText,
       removeButtonText,
       placeholder,
       isDragging,

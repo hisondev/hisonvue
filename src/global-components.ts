@@ -1544,6 +1544,7 @@ declare module 'vue' {
      * @prop {string} [attId=''] Group ID for backend image association.
      * @prop {string} [addButtonText='Add'] Label for the add/upload button (if not using the `add-button` slot).
      * @prop {string} [removeButtonText='Remove'] Label for the remove button (if not using the `remove-button` slot).
+     * @prop {string} [modifyButtonText='Edit'] Text for the edit/modify button shown when an image already exists.
      * @prop {string} [placeholder='There is no image'] Message shown when no image is present (shows in the empty slot unless overridden).
      * @prop {boolean} [enableDrop=true] Enables drag-and-drop image upload area.
      * @prop {string | string[]} [allowedTypes] Allowed MIME types or extensions (array or comma-separated string).
@@ -1605,6 +1606,19 @@ declare module 'vue' {
      * <HImagebox>
      *   <template #remove-button="{ remove }">
      *     <span><i class="fa fa-trash"></i> Delete</span>
+     *   </template>
+     * </HImagebox>
+     * 
+     * @slot modify-button
+     * Customizes the **inside** of the modify button (`HButton`) shown when an image already exists.
+     * Replaces only the button's content, not the button itself.
+     * Scoped props:
+     *   - `modify: () => void` (opens file dialog to replace the current image)
+     *
+     * @example
+     * <HImagebox>
+     *   <template #modify-button="{ modify }">
+     *     <span><i class="fa fa-pen"></i> Change</span>
      *   </template>
      * </HImagebox>
      */

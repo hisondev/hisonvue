@@ -171,6 +171,18 @@ export const imageboxProps = {
 	 */
 	removeButtonText: { type: String, default: 'Remove' },
 	/**
+	 * Text label for the modify/edit button shown when an image already exists.
+	 * - Used only when `modelValue` is not null (i.e., when the remove button is also visible).
+	 * - If the `add-button` slot is provided, this prop is ignored.
+	 * - Supports multiline (use '\\n', rendered as <br>).
+	 *
+	 * @default 'Edit'
+	 *
+	 * @example
+	 * <HImagebox modifyButtonText="Change" />
+	 */
+	modifyButtonText: { type: String, default: 'Edit' },
+	/**
 	 * Placeholder string shown when no image is present.
 	 * - Displayed in the center of the preview area when modelValue is null or empty.
 	 * - Use for instructional text or icons.
