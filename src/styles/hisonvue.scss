@@ -3355,6 +3355,11 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
     max-height: 90vh;
 }
 
+.hison-spinner-wrapper:focus,
+.hison-spinner-wrapper:focus-visible {
+    outline: none;
+}
+
 .hison-color-primary > .hison-spinner :where(.hison-spinner-ring-seg, .hison-spinner-dot, .hison-spinner-bar, .hison-spinner-pulse-span) { color: var(--hison-primary-buttonColor); }
 .hison-color-muted > .hison-spinner :where(.hison-spinner-ring-seg, .hison-spinner-dot, .hison-spinner-bar, .hison-spinner-pulse-span) { color: var(--hison-muted-buttonColor); }
 .hison-color-info > .hison-spinner :where(.hison-spinner-ring-seg, .hison-spinner-dot, .hison-spinner-bar, .hison-spinner-pulse-span) { color: var(--hison-info-buttonColor); }

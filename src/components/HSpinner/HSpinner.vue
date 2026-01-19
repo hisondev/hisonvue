@@ -161,10 +161,45 @@ export default defineComponent({
         const lockScroll = () => acquireScrollLock(id)
         const unlockScroll = () => releaseScrollLock(id)
 
+        const prevActiveElement = ref<HTMLElement | null>(null)
+
+        const capturePrevActiveElementAndBlur = () => {
+            const ae = document.activeElement as any
+            if (
+                ae &&
+                ae instanceof HTMLElement &&
+                ae !== wrapperRef.value &&
+                ae !== document.body &&
+                ae !== document.documentElement
+            ) {
+                prevActiveElement.value = ae
+            } else {
+                prevActiveElement.value = null
+            }
+            if (ae && typeof ae.blur === 'function') ae.blur()
+        }
+
+        const restorePrevActiveElementIfPossible = () => {
+            const el = prevActiveElement.value
+            prevActiveElement.value = null
+            if (!el) return
+
+            const root = document.documentElement
+            if (!root || !root.contains(el)) return
+
+            const cur = document.activeElement as any
+            if (cur && cur !== document.body && cur !== document.documentElement && cur !== wrapperRef.value) return
+
+            try {
+                ;(el as any).focus?.({ preventScroll: true })
+            } catch {
+                try { el.focus() } catch {}
+            }
+        }
+
         const open = async () => {
             if (visible.value) return
-            const ae = document.activeElement as any
-            if (ae && typeof ae.blur === 'function') ae.blur()
+            capturePrevActiveElementAndBlur()
             visible.value = true
             lockScroll()
             await nextTick()
@@ -180,6 +215,7 @@ export default defineComponent({
                 visible.value = false
                 unlockScroll()
                 emit('close', unref(spinnerMethods)!)
+                restorePrevActiveElementIfPossible()
             }
         }
         const toggle = async () => {
@@ -203,8 +239,7 @@ export default defineComponent({
             refreshResponsiveClassList()
 
             if (visible.value) {
-                const ae = document.activeElement as any
-                if (ae && typeof ae.blur === 'function') ae.blur()
+                capturePrevActiveElementAndBlur()
                 lockScroll()
                 nextTick(() => {
                     wrapperRef.value?.focus()
