@@ -8,7 +8,7 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "hisonvue": "^1.1.32",
+    "hisonvue": "^1.1.33",
     "nuxt": "^3.16.0",
     "vue": "^3.5.13"
   }
