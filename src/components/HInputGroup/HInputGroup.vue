@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, onBeforeUnmount, provide, watch } from 'vue'
+import { defineComponent, ref, onMounted, onBeforeUnmount, provide, watch, nextTick } from 'vue'
 import type { HInputGroupMethods } from '../../types'
 import { EditMode, DataStatus, hison } from '../..'
 import { getUUID, registerReloadable, reloadHisonComponent, unregisterReloadable } from '../../utils'
@@ -35,13 +35,23 @@ export default defineComponent({
     const radioSelection = ref<Record<string, string | null>>({})
     const inputDataKeyMap = ref<Record<string, string>>({})
 
-    // programmatic setValue 중 notifyInputGroupStatus 루프/중복 emit 방지 플래그
     const applying = ref(false)
+
+    const pendingLoadData = ref<Record<string, any> | null>(null)
+    const pendingLoadEmitted = ref(false)
+    let pendingClearToken = 0
+    const scheduleClearPending = () => {
+      const token = ++pendingClearToken
+      nextTick(() => {
+        if (token !== pendingClearToken) return
+        pendingLoadData.value = null
+        pendingLoadEmitted.value = false
+      })
+    }
 
     const hasOwn = (obj: any, key: string) => Object.prototype.hasOwnProperty.call(obj, key)
     const getInput = (inputId: string) => hison.component.getInput(inputId)
 
-    // dataKey는 "현재값"을 매번 읽어서 캐시에 최신화한다(런타임 변경 stale 방지)
     const readDataKey = (inputId: string) => {
       const input = getInput(inputId)
       const dk = ((input as any)?.getDataKey?.() ?? '').toString().trim()
@@ -55,7 +65,6 @@ export default defineComponent({
       return input?.getInputType?.() === 'radio'
     }
 
-    // dataKey 중복 + (radio group name vs dataKey) 충돌 경고
     const warnKeyIssues = () => {
       const used: Record<string, string[]> = {}
 
@@ -91,7 +100,6 @@ export default defineComponent({
       })
     }
 
-    // radio group value는 inputId(레거시) 또는 dataKey(신규)로 들어올 수 있으므로 dataKey로 정규화
     const resolveRadioSelectedDataKey = (name: string, selected: any) => {
       if (selected == null) return null
       if (typeof selected !== 'string') return null
@@ -100,12 +108,10 @@ export default defineComponent({
 
       const ids = radioGroups.value[name] || []
 
-      // 1) inputId로 들어온 경우
       if (ids.includes(raw)) {
         return readDataKey(raw)
       }
 
-      // 2) dataKey로 들어온 경우
       for (const inputId of ids) {
         const dk = readDataKey(inputId)
         if (dk === raw) return raw
@@ -125,16 +131,20 @@ export default defineComponent({
       radioSelection.value[name] = selectedDataKey
     }
 
-    // patch 반영 (있는 키만) + (옵션) 부모 modelValue도 patch emit
     const applyPatchCore = (dataObject: Record<string, any>, syncModel: boolean) => {
       if (!dataObject || typeof dataObject !== 'object') return
+
+      if (syncModel) {
+        pendingLoadData.value = { ...(dataObject as any) }
+        pendingLoadEmitted.value = false
+      }
+
       if (!ownedInputIds.value || ownedInputIds.value.length === 0) return
 
       const patch: Record<string, any> = {}
 
       applying.value = true
       try {
-        // 1) non-radio patch
         ownedInputIds.value.forEach((inputId) => {
           const input = getInput(inputId)
           if (!input) return
@@ -147,14 +157,12 @@ export default defineComponent({
             input.setValue?.(v)
             patch[dk] = v
           } else if (hasOwn(dataObject, inputId)) {
-            // backward-compat: id 기반 입력을 dk로 정규화해 반영
             const v = dataObject[inputId]
             input.setValue?.(v)
             patch[dk] = v
           }
         })
 
-        // 2) radio patch (group name 키가 들어온 경우만)
         for (const [name] of Object.entries(radioGroups.value)) {
           if (!hasOwn(dataObject, name)) continue
 
@@ -175,6 +183,9 @@ export default defineComponent({
         updated[k] = patch[k]
       })
       emit('update:modelValue', updated)
+
+      pendingLoadEmitted.value = true
+      scheduleClearPending()
     }
 
     const applyPatchToInputs = (dataObject: Record<string, any>) => applyPatchCore(dataObject, false)
@@ -186,13 +197,11 @@ export default defineComponent({
       ownedInputIds.value.push(inputId)
       ownedInputIds.value.sort((a, b) => a.localeCompare(b))
 
-      // dataKey 최신화
       readDataKey(inputId)
 
       const input = getInput(inputId)
       const model = (props.modelValue || {}) as Record<string, any>
 
-      // non-radio: modelValue 기반 초기 주입 (키가 있을 때만 = patch)
       if (input && input.getInputType?.() !== 'radio') {
         const dk = readDataKey(inputId)
         if (hasOwn(model, dk)) {
@@ -210,11 +219,21 @@ export default defineComponent({
             applying.value = false
           }
         }
+
         warnKeyIssues()
+
+        if (pendingLoadData.value) {
+          const pending = pendingLoadData.value
+          if (!pendingLoadEmitted.value) {
+            applyPatchCore(pending, true)
+          } else {
+            applyPatchCore(pending, false)
+            scheduleClearPending()
+          }
+        }
         return
       }
 
-      // radio: 그룹(name) 키(modelValue[name]) 우선 반영(늦게 등록되어도 동기화되도록)
       if (input && input.getInputType?.() === 'radio') {
         const name = (input as any).getName?.() || inputId
 
@@ -230,7 +249,6 @@ export default defineComponent({
             applying.value = false
           }
         } else {
-          // modelValue에 없으면 현재 체크 상태 존중
           const dk = readDataKey(inputId)
           if (input.getValue?.()) {
             applying.value = true
@@ -245,6 +263,16 @@ export default defineComponent({
         }
 
         warnKeyIssues()
+
+        if (pendingLoadData.value) {
+          const pending = pendingLoadData.value
+          if (!pendingLoadEmitted.value) {
+            applyPatchCore(pending, true)
+          } else {
+            applyPatchCore(pending, false)
+            scheduleClearPending()
+          }
+        }
       }
     })
 
@@ -293,10 +321,8 @@ export default defineComponent({
     })
 
     provide('notifyInputGroupStatus', (inputId: string, newVal: any) => {
-      // programmatic setValue 중에는 notify 무시 (루프/중복 emit 방지)
       if (applying.value) return
 
-      // radio 그룹 notify (inputId === group name)
       if (radioGroups.value[inputId]) {
         const name = inputId
         const selected = typeof newVal === 'string' ? newVal : null
@@ -360,7 +386,6 @@ export default defineComponent({
     }
 
     const _setDataObject = (dataObject: Record<string, any>) => {
-      // patch 반영: 있는 키만 input에 적용 (emit 없음)
       applyPatchToInputs(dataObject)
     }
 
@@ -399,8 +424,6 @@ export default defineComponent({
 
         setDataModel: <T extends Record<string, any>>(dataModel: InterfaceDataModel<T>) => {
           if (dataModel.getRowCount() > 0) {
-            // load/setDataObject 후 :model-value가 "안 바뀌는" 문제 해결 포인트
-            // -> patch를 부모 modelValue에도 반영(emit)
             applyPatchAndSyncModel(dataModel.getRow(0))
           }
         },
@@ -408,7 +431,6 @@ export default defineComponent({
         getDataObject: () => _getDataObject(),
 
         setDataObject: (dataObject: Record<string, any>) => {
-          // patch + 부모 modelValue patch emit
           applyPatchAndSyncModel(dataObject)
         },
 
@@ -447,7 +469,6 @@ export default defineComponent({
             const input = getInput(inputId)
             if (!input?.getRequired?.()) continue
 
-            // required 체크는 "null/undefined"만 실패로 처리 (0/false는 허용)
             const v = input.getValue?.()
             if (v === null || v === undefined) return input
             if (typeof v === 'string' && v.trim() === '') return input
@@ -489,12 +510,15 @@ export default defineComponent({
       radioGroups.value = {}
       radioSelection.value = {}
       inputDataKeyMap.value = {}
+
+      pendingLoadData.value = null
+      pendingLoadEmitted.value = false
+      pendingClearToken = 0
     }
 
     onMounted(mount)
     onBeforeUnmount(unmount)
 
-    // modelValue 변경 시: patch 반영(있는 키만)으로 input만 갱신 (emit 없음)
     watch(
       () => props.modelValue,
       (nv) => {
