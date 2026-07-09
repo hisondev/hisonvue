@@ -1,6 +1,6 @@
 {
   "name": "hisonvue",
-  "version": "1.1.35",
+  "version": "1.1.36",
   "main": "./dist/hisonvue.cjs.js",
   "module": "./dist/hisonvue.es.js",
   "types": "./dist/hisonvue.d.ts",
@@ -28,18 +28,20 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && npm run type:bundle",
-    "type:bundle": "dts-bundle-generator -c dts-bundle-generator.json",
+    "type:bundle": "node scripts/append-global-components.mjs",
     "build:nuxt": "tsc nuxt/module.ts --module ESNext --outDir nuxt && tsc nuxt/plugin.ts --module ESNext --outDir nuxt",
     "type-check": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node test/smoke.mjs"
   },
   "peerDependencies": {
-    "@nuxt/kit": "^3.0.0",
+    "@nuxt/kit": ">=3.0.0 <5.0.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
     "dts-bundle-generator": "^9.5.1",
+    "jsdom": "^29.1.1",
     "sass-embedded": "^1.87.0",
     "typescript": "^5.8.2",
     "vite": "^6.2.2",
@@ -47,10 +49,10 @@
     "vue": "^3.5.13"
   },
   "dependencies": {
-    "chart.js": "^4.5.0",
-    "hisonjs": "^1.2.11",
-    "vanillagrid2": "^1.0.8",
-    "vanillanote2": "^1.1.0",
+    "chart.js": "^4.5.1",
+    "hisonjs": "^1.2.12",
+    "vanillagrid2": "^1.0.9",
+    "vanillanote2": "^1.1.1",
     "vue-cal": "^4.10.2"
   }
 }

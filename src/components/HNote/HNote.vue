@@ -22,8 +22,10 @@ import {
   getHexCodeFromColorText,
   getUUID,
   registerReloadable,
+  registerRestyle,
   getIndexSpecificClassNameFromClassList,
   unregisterReloadable,
+  unregisterRestyle,
   reloadHisonComponent,
   toClassString
 } from '../../utils'
@@ -138,6 +140,9 @@ export default defineComponent({
       for (const [key, value] of Object.entries(props)) {
         if (EXCLUDED_KEYS.includes(key as any)) continue
         if (value === undefined || value === null) continue
+        // event handler props are wired via note._elementEvents after mount —
+        // serializing a function into a DOM attribute is meaningless
+        if (typeof value === 'function') continue
         attrs[key.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())] = String(value)
       }
 
@@ -216,15 +221,41 @@ export default defineComponent({
       return true
     }
 
+    // getNoteData() serializes the whole document (html + files + images...),
+    // so emitting on every DOM mutation makes typing O(document) per keystroke.
+    // isModified is set immediately; the v-model emit is debounced (trailing).
+    const SYNC_DEBOUNCE_MS = 300
+    let syncTimer: number | null = null
     const syncNoteData = () => {
-      if (noteInstance.value) {
-        isModified.value = true
+      if (!noteInstance.value) return
+      isModified.value = true
+      if (syncTimer !== null) window.clearTimeout(syncTimer)
+      syncTimer = window.setTimeout(() => {
+        syncTimer = null
+        if (!alive.value || destroyed.value || !noteInstance.value) return
         emit('update:modelValue', noteInstance.value.getNoteData())
+      }, SYNC_DEBOUNCE_MS)
+    }
+    const flushSyncNoteData = () => {
+      if (syncTimer !== null) {
+        window.clearTimeout(syncTimer)
+        syncTimer = null
+        if (noteInstance.value) emit('update:modelValue', noteInstance.value.getNoteData())
       }
     }
 
+    // Content snapshot used to survive a rebuild (theme restyle, breakpoint
+    // change, ...). Without it, a remount would drop everything typed since
+    // the last v-model sync — or everything, when v-model is not used.
+    let pendingRestore: NoteData | null = null
     const reloadSafe = () => {
       if (!alive.value) return
+      if (syncTimer !== null) { window.clearTimeout(syncTimer); syncTimer = null }
+      try {
+        pendingRestore = noteInstance.value ? noteInstance.value.getNoteData() : null
+      } catch (e) {
+        pendingRestore = null
+      }
       unregisterReloadable(reloadId)
       unmount()
       forceRecomputeBindAttrs()
@@ -243,6 +274,13 @@ export default defineComponent({
         if (!alive.value) return
         reloadSafe()
       })
+      // vanillanote paints colors from attributes at mount time (no in-place
+      // recolor API), so a theme change needs a rebuild — but reloadSafe
+      // snapshots the content first, so nothing the user typed is lost.
+      registerRestyle(reloadId, () => {
+        if (!alive.value) return
+        reloadSafe()
+      })
 
       if (!vnInited) {
         vn.init()
@@ -258,8 +296,10 @@ export default defineComponent({
       noteInstance.value = noteElement as HNoteElement
       const note = noteInstance.value as any
 
-      if (props.modelValue && note) {
-        note.setNoteData(props.modelValue)
+      const restoreData = pendingRestore ?? props.modelValue
+      pendingRestore = null
+      if (restoreData && note) {
+        note.setNoteData(restoreData)
       }
       if (tabIndex.value && note?._elements?.textarea) {
         note._elements.textarea.setAttribute('tabIndex', String(tabIndex.value))
@@ -615,7 +655,10 @@ export default defineComponent({
     }
 
     const unmount = () => {
+      // deliver the last debounced edit to v-model before the note goes away
+      flushSyncNoteData()
       unregisterReloadable(reloadId)
+      unregisterRestyle(reloadId)
       const root = editorWrap.value
       if (!root || destroyed.value) {
         mutationObserver.disconnect()

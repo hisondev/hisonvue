@@ -536,6 +536,9 @@
 .hison-banner {
     position: relative;
     display: block;
+    /* horizontal swipes are handled by the component; keep vertical page
+       scroll native so touches on the banner never block scrolling */
+    touch-action: pan-y;
 }
 .hison-banner-viewport {
     width: 100%;
@@ -3268,7 +3271,12 @@ h6.hison-caption { --caption-level-scale: 1.00; margin: 0; }
   align-items: center;
   flex: 0 0 auto;
 }
-.hison-popup-topbar.hison-draggable { cursor: move; }
+.hison-popup-topbar.hison-draggable {
+  cursor: move;
+  /* without this, touch-dragging the bar scrolls the page (pointercancel)
+     instead of moving the popup */
+  touch-action: none;
+}
 
 .hison-popup-body {
   flex: 1 1 auto;

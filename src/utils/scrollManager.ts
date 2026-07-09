@@ -1,17 +1,33 @@
 let holders = new Set<string>();              // Active lock holders (modal ids)
 let originalOverflow: string | null = null;   // Stores the original overflow before first lock
+let originalBodyOverflow: string | null = null;
+let originalBodyOverscroll: string | null = null;
 
 function applyDesiredOverflow() {
   // Apply correct overflow state:
   // - If at least one holder → force hidden
   // - If none → restore original overflow
+  // html alone is not enough on iOS Safari — lock body as well and contain
+  // overscroll so the page behind an overlay doesn't rubber-band.
+  // (Not a 100% iOS guarantee; the full position:fixed technique is too
+  //  invasive for a library default.)
   if (holders.size > 0) {
     if (document.documentElement.style.overflow !== 'hidden') {
       document.documentElement.style.overflow = 'hidden';
     }
+    if (document.body.style.overflow !== 'hidden') {
+      document.body.style.overflow = 'hidden';
+    }
+    if ((document.body.style as any).overscrollBehavior !== 'contain') {
+      (document.body.style as any).overscrollBehavior = 'contain';
+    }
   } else {
     document.documentElement.style.overflow = originalOverflow ?? '';
+    document.body.style.overflow = originalBodyOverflow ?? '';
+    (document.body.style as any).overscrollBehavior = originalBodyOverscroll ?? '';
     originalOverflow = null;
+    originalBodyOverflow = null;
+    originalBodyOverscroll = null;
   }
 }
 
@@ -24,8 +40,10 @@ export function acquireScrollLock(key: string) {
   if (!key) key = '__unknown__';
 
   if (holders.size === 0) {
-    // Save original overflow only on the very first acquire
+    // Save original values only on the very first acquire
     originalOverflow = document.documentElement.style.overflow || '';
+    originalBodyOverflow = document.body.style.overflow || '';
+    originalBodyOverscroll = (document.body.style as any).overscrollBehavior || '';
   }
 
   holders.add(key);

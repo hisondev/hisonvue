@@ -1,7 +1,8 @@
 # hisonvue — hisondev Vue 3 UI 컴포넌트 라이브러리 (npm)
 
 hisonjs를 포함/확장하는 Vue 3 컴포넌트 25종. nonoshow 프론트엔드의 핵심 라이브러리.
-npm `hisonvue` v1.1.35 / MIT / 의존: hisonjs, vanillagrid2, vanillanote2, chart.js, vue-cal / peer: vue 3, @nuxt/kit.
+npm `hisonvue` v1.1.36 / MIT / 의존: hisonjs ^1.2.12, vanillagrid2 ^1.0.9, vanillanote2 ^1.1.1, chart.js, vue-cal / peer: vue 3, @nuxt/kit.
+(v1.1.36 = 보완 프로젝트 7단계 산출 — 변경 내역: `../../../md/hisondev-hisonvue.md` 9절)
 
 ## 구조
 
@@ -23,10 +24,11 @@ js/hisonvue/
 ## 핵심 사실
 
 - **hison 싱글톤**: hisonjs hison + `component`(getXxx 25종) + `style`(setter 17/getter 90여) + `cssEvent`(Button 14·Input 12) + fileset 한도 4종. 내부 상태는 hisonCloser에 보관
-- **플러그인 install**: 사용자 config 부분 병합(누락 키만 기본값) → CSS 변수 적용 → 디바이스 리스너 → `provide('hison')` → 컴포넌트 전역 등록(createSSRClientOnly로 SSR-safe)
+- **플러그인 install**: 사용자 config **deepMerge**(중첩 키 단위로 기본값 폴백, v1.1.36~) → CSS 변수 적용 → 디바이스 리스너 → `provide('hison')` → 컴포넌트 전역 등록(createSSRClientOnly로 SSR-safe)
 - **getXxx 반환**: 베이스 ComponentMethods(getId/getType/isVisible/setVisible/reload) 확장. 특수: getGrid=+vanillagrid GridMethods, getNote=+VanillanoteElement, getChart=+Chart.js Chart, getInputGroup은 visible 계열 없음
 - **HisonConfig** = hisonjs 4설정 + componentStyle(size xs~xl, 11색, minHeight/fontSize) + component(grid/note/chart config 주입 + fileset 한도) + event.cssEvent
-- **hison.style.setXxx는 호출 즉시** CSS 변수 재적용 + 전 컴포넌트 reload
+- **hison.style.setXxx는 호출 즉시** CSS 변수 재적용 + (v1.1.36~) **색상 setter는 restyle**(무파괴 in-place — grid 데이터·note 내용 보존), **setSize만 전 컴포넌트 reload**(재구축)
+- 빌드: `npm run build`(vite + append-global-components) / `npm test`(jsdom 스모크 23케이스) / `npm run type-check`
 - 디바이스 기준: mb<768, tb<1200, pc<1980, wd≥1980 (SSR은 'pc')
 - CSS 클래스: `hison-col-*`(12분할/5%/3·7분할), `hison-size-*`, `hison-color-*`, `hison-pos-*`, 접미어 `-mb/-tb/-pc/-wd`
 - `Befoer` 철자(cssEvent)는 의도된 공식 표기

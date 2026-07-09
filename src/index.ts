@@ -10,6 +10,7 @@ import {
   applyCssVariables,
   initializeDeviceListener
 } from './core'
+import { deepMerge } from './utils'
 import './styles/hisonvue.scss'
 
 const HAccordionClientOnly = createSSRClientOnly(() => import('./components/HAccordion/HAccordion.vue'), 'HAccordion')
@@ -42,15 +43,12 @@ export const hison = createHison() as Hison
 export const hisonvue = {
   install(app: App, hisonConfig?: HisonConfig) {
     const defaultHisonConfig = getDefaultHisonConfig()
-    if (hisonConfig) {
-      Object.keys(defaultHisonConfig).forEach((key) => {
-        if (!(key in hisonConfig!)) {
-          (hisonConfig as any)[key] = defaultHisonConfig[key as keyof HisonConfig]
-        }
-      })
-    } else {
-      hisonConfig = getDefaultHisonConfig()
-    }
+    // Deep-merge: a partial user config (e.g. componentStyle with only primaryColor,
+    // or event without cssEvent) falls back to defaults key-by-key, so nested keys
+    // never end up undefined.
+    hisonConfig = hisonConfig
+      ? deepMerge(defaultHisonConfig, hisonConfig) as HisonConfig
+      : defaultHisonConfig
     createHisonCloser(hisonConfig)
     setHison(hison, hisonConfig)
 

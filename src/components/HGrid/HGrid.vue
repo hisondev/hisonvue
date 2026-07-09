@@ -20,9 +20,11 @@ import {
     getSpecificClassValueFromClassList,
     getUUID,
     registerReloadable,
+    registerRestyle,
     reloadHisonComponent,
     toClassString,
-    unregisterReloadable
+    unregisterReloadable,
+    unregisterRestyle
 } from '../../utils'
 import { hison, Size } from '../..'
 import { useDevice } from '../../core'
@@ -73,6 +75,9 @@ export default defineComponent({
         for (const [key, value] of Object.entries(props)) {
             if (EXCLUDED_KEYS.includes(key as any)) continue
             if (value === undefined || value === null) continue
+            // event handler props are wired via setOnXxx after mount —
+            // serializing a function into a DOM attribute is meaningless
+            if (typeof value === 'function') continue
 
             attrs[key.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())] = String(value)
         }
@@ -128,6 +133,23 @@ export default defineComponent({
                 if (!alive.value) return
                 mount()
             })
+        })
+
+        // Color-only theme change: repaint the mounted grid in place
+        // (setGridColor / invertColor) so rows, edits and undo stack survive.
+        registerRestyle(reloadId, () => {
+            if (!alive.value || destroyed.value) return
+            const grid: any = gridInstance.value
+            if (!grid) return
+            const classList = extractResponsiveClasses(toClassString(props.class) || '', device.value)
+            let colorToken = (props.color ? String(props.color) : null)
+                ?? getSpecificClassValueFromClassList(classList, 'color')
+                ?? 'primary'
+            const hexColor = getHexCodeFromColorText(colorToken) ?? colorToken
+            if (hexColor && typeof grid.setGridColor === 'function') grid.setGridColor(hexColor)
+            if (typeof grid.invertColor === 'function') {
+                grid.invertColor(!!(props.invertColor || hisonCloser.componentStyle.invertColor))
+            }
         })
 
         if (!vgInited) {
@@ -244,6 +266,7 @@ export default defineComponent({
 
     const unmount = () => {
         unregisterReloadable(reloadId)
+        unregisterRestyle(reloadId)
         const root = editorWrap.value
         if (!root || destroyed.value) return
         if (!(root as any).isConnected) {

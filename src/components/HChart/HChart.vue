@@ -18,6 +18,7 @@ import {
 import { chartProps } from './props'
 import {
     getUUID, extractResponsiveClasses, registerReloadable, unregisterReloadable,
+    registerRestyle, unregisterRestyle,
     getIndexSpecificClassNameFromClassList, getRGBAFromColorText, reloadHisonComponent, toClassString,
     addComponentNameToClass
 } from '../../utils'
@@ -174,23 +175,24 @@ export default defineComponent({
             }, loadDelay.value)
         }
 
-        registerReloadable(reloadId, async () => {
+        // Full rebuild (structural changes: size, chart type, explicit reload()).
+        // isUnmounting must be reset after unmount, otherwise mount() bails out
+        // and the chart never comes back.
+        const reloadChart = async () => {
             if (!isAlive) return
-            unregisterReloadable(reloadId)
             await unmount()
+            isUnmounting = false
             await mount()
-            registerReloadable(reloadId, async () => {
-                if (!isAlive) return
-                unregisterReloadable(reloadId)
-                await unmount()
-                await mount()
-                registerReloadable(reloadId, async () => {
-                    if (!isAlive) return
-                    unregisterReloadable(reloadId)
-                    await unmount()
-                    await mount()
-                })
-            })
+        }
+        registerReloadable(reloadId, () => { reloadChart() })
+
+        // Color-only theme change: re-resolve semantic color tokens and update
+        // the live chart without destroying it.
+        registerRestyle(reloadId, () => {
+            if (!isAlive || isUnmounting || destroyed.value || !chartInstance.value) return
+            chartInstance.value.data = getSafeChartData(resolveChartColors(toRaw(props.modelValue)))
+            chartInstance.value.options = getSafeChartOptions(resolveChartColors(toRaw(props.options)))
+            chartInstance.value.update('none')
         })
 
         onMounted(async () => {
@@ -215,6 +217,7 @@ export default defineComponent({
             }
             await unmount()
             unregisterReloadable(reloadId)
+            unregisterRestyle(reloadId)
         })
 
         watch(device, () => {

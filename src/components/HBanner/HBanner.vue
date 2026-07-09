@@ -17,8 +17,9 @@
             @mouseenter="onMouseEnter"
             @mouseleave="onMouseLeave"
             @touchstart.passive="onTouchStart"
-            @touchmove.prevent="onTouchMove"
+            @touchmove.passive="onTouchMove"
             @touchend.passive="onTouchEnd"
+            @touchcancel.passive="onTouchCancel"
         >
           <div class="hison-banner-viewport">
             <div
@@ -109,6 +110,7 @@ import {
   getIndexSpecificClassNameFromClassList,
   getUUID,
   registerReloadable,
+  unregisterReloadable,
   reloadHisonComponent,
   toClassString,
   extractPrefixedClasses
@@ -310,6 +312,12 @@ export default defineComponent({
       touchStartX.value = null
       touchDeltaX.value = 0
     }
+    // Fired when the browser takes over the gesture (e.g. vertical pan-y scroll):
+    // reset so the aborted swipe never triggers a slide change later.
+    const onTouchCancel = () => {
+      touchStartX.value = null
+      touchDeltaX.value = 0
+    }
 
     const mount = () => {
       if (hisonCloser.component.bannerList[id] && hisonCloser.component.bannerList[id].isHisonvueComponent) console.warn(`[Hisonvue] The banner ID is at risk of being duplicated. ${id}`)
@@ -376,6 +384,7 @@ export default defineComponent({
     }
 
     const unmount = () => {
+      unregisterReloadable(reloadId)
       clearAutoplay()
       delete hisonCloser.component.bannerList[id]
     }
@@ -447,6 +456,7 @@ export default defineComponent({
       onTouchStart,
       onTouchMove,
       onTouchEnd,
+      onTouchCancel,
     }
   }
 })

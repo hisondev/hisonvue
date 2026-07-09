@@ -624,7 +624,7 @@ export default defineComponent({
     watch(() => props.scrollLock, v => { const b = !!v; if (b !== scrollLock.value) { scrollLock.value = b; if (visible.value) (b ? lockScroll() : unlockScroll()) } })
     watch(() => props.border, v => { const b = !!v; if (b !== border.value) border.value = b })
     watch(() => props.backgroundType, v => { if (v && v !== backgroundType.value) backgroundType.value = v as any })
-    watch(() => props.zIndex, v => { const n = Number(v ?? 1300); if (n !== zIndex.value) zIndex.value = n })
+    watch(() => props.zIndex, v => { const n = Number(v ?? 1000); if (n !== zIndex.value) zIndex.value = n })
     watch(() => props.position, v => { if (v && v !== modalPosition.value) modalPosition.value = v as any })
     watch(() => props.enterAnimationClass, v => { const s = v || 'hison-modal-enter'; if (s !== enterClass.value) enterClass.value = s })
     watch(() => props.leaveAnimationClass, v => { const s = v || 'hison-modal-leave'; if (s !== leaveClass.value) leaveClass.value = s })

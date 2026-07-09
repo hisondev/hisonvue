@@ -221,18 +221,35 @@ export default defineComponent({
 
     // swipe close
     let swiping = false
+    let swipePointerId: number | null = null
     let sx = 0, sy = 0
     const SWIPE_THRESHOLD = 40
+    const cancelSwipe = () => {
+      swiping = false
+      swipePointerId = null
+      window.removeEventListener('pointerup', onSwipePointerUp, { capture: true } as any)
+      window.removeEventListener('pointercancel', onSwipePointerCancel, { capture: true } as any)
+    }
     const onSwipePointerDown = (e: PointerEvent) => {
       if (!swipeClose.value) return
       swiping = true
+      swipePointerId = e.pointerId
       sx = e.clientX
       sy = e.clientY
       window.addEventListener('pointerup', onSwipePointerUp, { once: true, capture: true })
+      // on touch, a scroll gesture inside the drawer fires pointercancel and
+      // pointerup never comes — without this, the armed once-listener would
+      // misjudge the NEXT tap anywhere as a swipe and close the drawer
+      window.addEventListener('pointercancel', onSwipePointerCancel, { once: true, capture: true })
+    }
+    const onSwipePointerCancel = (e: PointerEvent) => {
+      if (swipePointerId !== null && e.pointerId !== swipePointerId) return
+      cancelSwipe()
     }
     const onSwipePointerUp = (e: PointerEvent) => {
       if (!swiping) return
-      swiping = false
+      if (swipePointerId !== null && e.pointerId !== swipePointerId) return
+      cancelSwipe()
       const dx = e.clientX - sx
       const dy = e.clientY - sy
       const absX = Math.abs(dx), absY = Math.abs(dy)
@@ -385,6 +402,7 @@ export default defineComponent({
     }
 
     const unmount = () => {
+      cancelSwipe()
       unregisterReloadable(reloadId)
       delete hisonCloser.component.drawerList[id]
       if (visible.value) unlockScroll()

@@ -265,10 +265,7 @@ export default defineComponent({
 
         const onPointerUp = () => {
             if (!isDragging.value) return
-            isDragging.value = false
-            document.removeEventListener('pointermove', onPointerMove, true)
-            document.removeEventListener('pointerup', onPointerUp, true)
-            document.body.style.userSelect = ''
+            cleanupDrag()
         }
 
         const onTopbarPointerDown = (e: PointerEvent) => {
@@ -284,15 +281,23 @@ export default defineComponent({
             startLeft = left.value ?? 0
             startTop  = top.value  ?? 0
 
+            // keep receiving pointermove even when the finger/cursor leaves
+            // the topbar mid-drag (essential on touch devices)
+            try { (e.currentTarget as HTMLElement)?.setPointerCapture?.(e.pointerId) } catch {}
+
             document.body.style.userSelect = 'none'
             document.addEventListener('pointermove', onPointerMove, true)
             document.addEventListener('pointerup', onPointerUp, true)
+            // touch scroll/browser gestures abort the drag with pointercancel,
+            // not pointerup — clean up there too or the drag state leaks
+            document.addEventListener('pointercancel', onPointerUp, true)
         }
 
         const cleanupDrag = () => {
             if (rafId != null) { cancelAnimationFrame(rafId); rafId = null }
             document.removeEventListener('pointermove', onPointerMove, true)
             document.removeEventListener('pointerup', onPointerUp, true)
+            document.removeEventListener('pointercancel', onPointerUp, true)
             document.body.style.userSelect = ''
             isDragging.value = false
         }

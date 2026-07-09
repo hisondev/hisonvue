@@ -55,7 +55,6 @@ const onTouchstart = (e: TouchEvent) => {
   if (target.readOnly) return
   if (hisonCloser.event.cssEvent.input_onBeforeTouchstart(e) === false) {
     e.stopPropagation()
-    e.preventDefault()
     return
   }
   target.classList.add('hison-input-on-mouseover')
@@ -67,7 +66,6 @@ const onTouchend = (e: TouchEvent) => {
   if (target.readOnly) return
   if (hisonCloser.event.cssEvent.input_onBeforeTouchend(e) === false) {
     e.stopPropagation()
-    e.preventDefault()
     return
   }
   target.classList.remove('hison-input-on-mouseover')
@@ -85,9 +83,9 @@ export const addInputTextCssEvent = (el: HTMLInputElement) => {
   boundInputText.add(el)
   el.addEventListener('mouseenter', onMouseover)
   el.addEventListener('mouseleave', onMouseout)
-  el.addEventListener('touchstart', onTouchstart, { passive: false, capture: true })
-  el.addEventListener('touchend', onTouchend, { passive: false, capture: true })
-  el.addEventListener('touchcancel', onTouchcancel, { passive: false, capture: true })
+  el.addEventListener('touchstart', onTouchstart, { passive: true, capture: true })
+  el.addEventListener('touchend', onTouchend, { passive: true, capture: true })
+  el.addEventListener('touchcancel', onTouchcancel, { passive: true, capture: true })
 }
 
 export const removeInputTextCssEvent = (el: HTMLInputElement) => {

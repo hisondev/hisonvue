@@ -97,7 +97,7 @@
 
 <script lang="ts">
 import {
-  defineComponent, ref, computed, onMounted, onBeforeUnmount, nextTick, Text, Comment, Fragment, type VNode,
+  defineComponent, ref, computed, onMounted, onBeforeUnmount, onBeforeUpdate, nextTick, Text, Comment, Fragment, type VNode,
   watch, type ComponentPublicInstance
 } from 'vue'
 import { listProps } from './props'
@@ -343,6 +343,13 @@ export default defineComponent({
 
     onMounted(mount)
     onBeforeUnmount(unmount)
+
+    // function-refs accumulate across re-renders; reset before each patch so
+    // removed <li> elements don't linger in the arrays (getListRowCount etc.)
+    onBeforeUpdate(() => {
+      itemRefs.value = []
+      itemInnerRefs.value = []
+    })
 
     const toHTMLElement = (v: Element | ComponentPublicInstance | null): HTMLElement | null => {
       if (!v) return null

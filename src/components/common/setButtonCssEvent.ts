@@ -84,11 +84,12 @@ const onMouseout = (e: MouseEvent) => {
   hisonCloser.event.cssEvent.button_onAfterMouseout(e);
 };
 
+// touch handlers are registered passive so the browser never waits for them
+// before starting a scroll — so no preventDefault here, stopPropagation only
 const onTouchstart = (e: TouchEvent) => {
   const target = e.currentTarget as HTMLElement;
   if (hisonCloser.event.cssEvent.button_onBeforeTouchstart(e) === false) {
     e.stopPropagation();
-    e.preventDefault();
     return;
   }
   target.classList.add("hison-button-on-mouseover");
@@ -99,11 +100,18 @@ const onTouchend = (e: TouchEvent) => {
   const target = e.currentTarget as HTMLElement;
   if (hisonCloser.event.cssEvent.button_onBeforeTouchend(e) === false) {
     e.stopPropagation();
-    e.preventDefault();
     return;
   }
   target.classList.remove("hison-button-on-mouseover");
   hisonCloser.event.cssEvent.button_onAfterTouchend(e);
+};
+
+// scroll-after-touch cancels the gesture without a touchend — clear the
+// hover class here or the button stays highlighted until the next tap
+const onTouchcancel = (e: TouchEvent) => {
+  const target = e.currentTarget as HTMLElement;
+  target.classList.remove("hison-button-on-mouseover");
+  target.classList.remove("hison-button-on-active");
 };
 
 export const addButtonCssEvent = (el: HTMLElement) => {
@@ -118,8 +126,9 @@ export const addButtonCssEvent = (el: HTMLElement) => {
   el.addEventListener("mouseenter", onMouseover);
   el.addEventListener("mouseleave", onMouseout);
 
-  el.addEventListener("touchstart", onTouchstart, { passive: false, capture: true });
-  el.addEventListener("touchend", onTouchend, { passive: false, capture: true });
+  el.addEventListener("touchstart", onTouchstart, { passive: true, capture: true });
+  el.addEventListener("touchend", onTouchend, { passive: true, capture: true });
+  el.addEventListener("touchcancel", onTouchcancel, { passive: true, capture: true });
 };
 
 export const removeButtonCssEvent = (el: HTMLElement) => {
@@ -133,6 +142,7 @@ export const removeButtonCssEvent = (el: HTMLElement) => {
   el.removeEventListener("mouseleave", onMouseout);
   el.removeEventListener("touchstart", onTouchstart, { capture: true });
   el.removeEventListener("touchend", onTouchend, { capture: true });
+  el.removeEventListener("touchcancel", onTouchcancel, { capture: true });
 
   const tid = activeTimers.get(el);
   if (tid) {

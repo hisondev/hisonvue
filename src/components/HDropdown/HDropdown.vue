@@ -229,7 +229,7 @@ export default defineComponent({
       if (isOpen.value) positionMenu()
     }
 
-    const onDocMousedown = (e: MouseEvent) => {
+    const onDocMousedown = (e: PointerEvent) => {
       if (!isOpen.value) return
       const t = e.target as Node | null
       const inToggle = !!toggleRef.value && !!t && toggleRef.value.contains(t)
@@ -350,7 +350,7 @@ export default defineComponent({
       }
       hisonCloser.component.dropdownList[id] = dropdownMethods.value
 
-      document.addEventListener('mousedown', onDocMousedown)
+      document.addEventListener('pointerdown', onDocMousedown)
       window.addEventListener('scroll', onScrollOrResize, true)
       window.addEventListener('resize', onScrollOrResize)
 
@@ -361,7 +361,7 @@ export default defineComponent({
 
     const unmount = () => {
       unregisterReloadable(reloadId)
-      try { document.removeEventListener('mousedown', onDocMousedown) } catch {}
+      try { document.removeEventListener('pointerdown', onDocMousedown) } catch {}
       try { window.removeEventListener('scroll', onScrollOrResize, true) } catch {}
       try { window.removeEventListener('resize', onScrollOrResize) } catch {}
       if (toggleRef.value) removeButtonCssEvent(toggleRef.value)

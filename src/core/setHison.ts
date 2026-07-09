@@ -2,7 +2,7 @@ import { setHisonFromHisonConfig } from "../plugins";
 import type { HGridMethods, Hison, HisonConfig, HNoteElement } from "../types";
 import { applyCssVariables } from "./setDocumentFromHisonCloser";
 import { Size } from "../enums";
-import { reloadAllHisonComponents } from "../utils/";
+import { reloadAllHisonComponents, restyleAllHisonComponents } from "../utils/";
 import { hisonCloser } from "../hisonCloser";
 
 export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
@@ -43,10 +43,19 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
       setInputOnAfterTouchend(func: ((e: TouchEvent) => void)) {hisonCloser.event.cssEvent.input_onAfterTouchend = func},
     };
 
+    // Structural change (size, ...): components must be rebuilt.
     const reApplyCssVariables = () => {
         if (typeof window !== 'undefined') {
           applyCssVariables()
           reloadAllHisonComponents()
+        }
+    }
+    // Color-only change: CSS variables cover most components; grid/note/chart/calendar
+    // re-apply colors in place via their restyle handlers (state preserved).
+    const reApplyCssVariablesInPlace = () => {
+        if (typeof window !== 'undefined') {
+          applyCssVariables()
+          restyleAllHisonComponents()
         }
     }
 
@@ -57,67 +66,67 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
         },
         setFilledColor(filledColor: string) {
             hisonCloser.componentStyle.filledColor = filledColor;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setEmptyColor(emptyColor: string) {
             hisonCloser.componentStyle.emptyColor = emptyColor;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setFilledTextColor(filledTextColor: string) {
             hisonCloser.componentStyle.filledTextColor = filledTextColor;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setEmptyTextColor(emptyTextColor: string) {
             hisonCloser.componentStyle.emptyTextColor = emptyTextColor;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setPrimaryColor(primaryColor: string) {
             hisonCloser.componentStyle.primaryColor = primaryColor;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setMutedColor(mutedColor: string) {
             hisonCloser.componentStyle.mutedColor = mutedColor;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setInfoColor(infoColor: string) {
             hisonCloser.componentStyle.infoColor = infoColor;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setSuccessColor(successColor: string) {
             hisonCloser.componentStyle.successColor = successColor;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setDangerColor(dangerColor: string) {
             hisonCloser.componentStyle.dangerColor = dangerColor;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setWarningColor(warningColor: string) {
             hisonCloser.componentStyle.warningColor = warningColor;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setCustom1Color(custom1Color: string) {
             hisonCloser.componentStyle.custom1Color = custom1Color;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setCustom2Color(custom2Color: string) {
             hisonCloser.componentStyle.custom2Color = custom2Color;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setCustom3Color(custom3Color: string) {
             hisonCloser.componentStyle.custom3Color = custom3Color;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setCustom4Color(custom4Color: string) {
             hisonCloser.componentStyle.custom4Color = custom4Color;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setCustom5Color(custom5Color: string) {
             hisonCloser.componentStyle.custom5Color = custom5Color;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
         setInvertColor(invert: boolean) {
             hisonCloser.componentStyle.invertColor = invert;
-            reApplyCssVariables()
+            reApplyCssVariablesInPlace()
         },
 
         getDeviceType() {

@@ -60,6 +60,8 @@ import {
   getRGBAFromColorText,
   getInvertColor,
   unregisterReloadable,
+  registerRestyle,
+  unregisterRestyle,
   reloadHisonComponent,
   toClassString,
   addComponentNameToClass,
@@ -335,10 +337,20 @@ export default defineComponent({
         if (!isAlive.value) return
         unregisterReloadable(reloadId)
         unmount()
+        // unmount() marks the component unmounting/destroyed; reset the flags
+        // so mount() can actually run again on reload.
+        isUnmounting.value = false
+        destroyed.value = false
         nextTick(() => {
           if (!isAlive.value) return
           mount()
         })
+      })
+      // Color-only theme change: vue-cal is styled via CSS variables on its
+      // root element — re-applying them is enough, no rebuild needed.
+      registerRestyle(reloadId, () => {
+        if (!isAlive.value || isUnmounting.value || destroyed.value) return
+        refreshResponsiveClassList()
       })
 
       if (!calendarRef.value) return
@@ -507,11 +519,13 @@ export default defineComponent({
     const unmount = () => {
       if (isUnmounting.value || destroyed.value) {
         unregisterReloadable(reloadId)
+        unregisterRestyle(reloadId)
         delete hisonCloser.component.calendarList[id]
         return
       }
       isUnmounting.value = true
       unregisterReloadable(reloadId)
+      unregisterRestyle(reloadId)
       delete hisonCloser.component.calendarList[id]
       destroyed.value = true
     }
@@ -526,20 +540,6 @@ export default defineComponent({
       if (isUnmounting.value || destroyed.value) return
       refreshResponsiveClassList()
       emit('responsive-change', newDevice)
-    })
-
-    watch(() => selectedDate.value, () => {
-      if (destroyed.value) return
-      adjustStyleChangedDate()
-    })
-    watch(() => props.selectedDate, (newVal) => {
-      if (destroyed.value) return
-      selectedDate.value = hison.utils.getJSDateObject(newVal) ?? new Date()
-      adjustStyleChangedDate()
-    })
-    watch(() => props.events, (newVal) => {
-      if (destroyed.value) return
-      events.value = newVal
     })
 
     watch(() => props.visible, v => { if (v !== visible.value) visible.value = !!v })

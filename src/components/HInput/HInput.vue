@@ -476,8 +476,9 @@
         :type="inputType"
         :title="title || undefined"
         :placeholder="placeholder || undefined"
-        :max="maxNumber || undefined"
-        :min="minNumber || undefined"
+        :max="maxNumber ?? undefined"
+        :min="minNumber ?? undefined"
+        :inputmode="inputType === 'digit' ? 'numeric' : undefined"
         :tabindex="tabIndex ?? undefined"
         :autocapitalize="disableAutoCapitalize ? 'off' : undefined"
         :autocorrect="disableAutoCapitalize ? 'off' : undefined"
@@ -645,10 +646,15 @@ export default defineComponent({
       return value
     }
     const getAdjustedNumber = (value: any) => {
+      // '' (cleared input) must stay null — Number('') is 0 and would turn an
+      // intentionally empty field into a phantom 0 on the server
+      if (value === '' || (typeof value === 'string' && value.trim() === '')) return null
       value = Number(value)
-      if (maxNumber.value && value > maxNumber.value) value = maxNumber.value
-      if (minNumber.value && value < minNumber.value) value = minNumber.value
-      if (roundNumber.value) value = hison.utils.getRound(value, roundNumber.value)
+      if (Number.isNaN(value)) return null
+      // null-checks (not truthy): 0 is a valid max/min/round boundary
+      if (maxNumber.value !== null && value > maxNumber.value) value = maxNumber.value
+      if (minNumber.value !== null && value < minNumber.value) value = minNumber.value
+      if (roundNumber.value !== null) value = hison.utils.getRound(value, roundNumber.value)
       return value
     }
     const computeValue = (value: any) => {
@@ -919,6 +925,16 @@ export default defineComponent({
         e.stopPropagation()
         return
       }
+      // readonly <select>: CSS pointer-events only blocks the mouse — arrow
+      // keys / typeahead would still change the value, so block them here
+      // (Tab & Escape stay usable for keyboard navigation)
+      if (readonly.value && inputType.value === InputType.select) {
+        if (e.key !== 'Tab' && e.key !== 'Escape') {
+          e.preventDefault()
+          e.stopPropagation()
+          return
+        }
+      }
       emit('keydown', e, inputMethods.value)
     }
 
@@ -1124,7 +1140,13 @@ export default defineComponent({
     })
 
     watch(() => props.modelValue, (newVal) => {
-      updateValue(newVal, false)
+      // identical echo of our own update:modelValue — nothing to do
+      // (also prevents clobbering the input while the user is typing)
+      if (newVal === modelValue.value) return
+      // external value: run through computeValue like the initial prop,
+      // so formatting/clamping is consistent whether the value came from
+      // the initial render or a later parent update
+      updateValue(newVal, true)
     })
 
     watch(() => props.name, (v) => {
