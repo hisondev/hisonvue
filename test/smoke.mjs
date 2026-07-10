@@ -288,6 +288,23 @@ if (d1) {
 }
 
 // ─────────────────────────────────────────────────────────────
+// 9. install with a FULL config (nonoshow pattern) —
+//    getDefaultHisonConfig()의 chart 기본값은 chart.js defaults에서 온
+//    null-prototype 객체(hasOwnProperty 없음) → deepMerge가 죽으면 안 된다
+//    ⚠️ 재설치가 전역 레지스트리를 리셋하므로 반드시 마지막 섹션에 둘 것
+// ─────────────────────────────────────────────────────────────
+check('install: full default config (null-prototype chart defaults) does not crash deep-merge', () => {
+  const fullConfig = getDefaultHisonConfig()
+  fullConfig.componentStyle.primaryColor = 'rgba(1,2,3,1)'
+  const fullHolder = document.createElement('div')
+  document.body.appendChild(fullHolder)
+  const appFull = createApp({ render: () => h('div') })
+  appFull.use(hisonvue, fullConfig)
+  appFull.mount(fullHolder)
+  appFull.unmount()
+})
+
+// ─────────────────────────────────────────────────────────────
 console.log('\nhisonvue smoke test')
 console.log(results.join('\n'))
 console.log(`\n${passed} passed, ${failed} failed`)

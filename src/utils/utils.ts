@@ -13,7 +13,8 @@ export const deepMerge = (target: any, source: any) => {
     const result = { ...target }
     for (const key in source) {
         if (
-            source.hasOwnProperty(key) &&
+            // chart.js defaults 등 null-prototype 객체는 hasOwnProperty가 없으므로 직접 호출 금지
+            Object.prototype.hasOwnProperty.call(source, key) &&
             typeof source[key] === 'object' &&
             !Array.isArray(source[key]) &&
             source[key] !== null
