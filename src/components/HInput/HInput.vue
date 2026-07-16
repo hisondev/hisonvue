@@ -1245,6 +1245,10 @@ export default defineComponent({
       placeholder,
       maxNumber,
       minNumber,
+      // ⚠️ setup() 스타일이라 return에 없으면 템플릿 바인딩이 undefined로 풀림 —
+      //    v1.1.38에서 이 두 개가 누락되어 date max가 실제로 안 붙던 버그 수정
+      nativeMaxAttr,
+      nativeMinAttr,
       spanText,
       toggleStyle,
       tabIndex,
