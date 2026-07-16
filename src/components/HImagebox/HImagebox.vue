@@ -231,12 +231,21 @@ export default defineComponent({
     const showAddButton = computed(() => editMode.value !== EditMode.readonly)
     const showRemoveButton = computed(() => !!imageValue.value && editMode.value !== EditMode.readonly)
 
+    // 타입 매칭 — MIME 완전 일치 / 확장자 / 와일드카드('image/*' 등) 지원.
+    // 기본 allowedTypes에 'image/*'가 있는데 완전 일치로만 비교해 확장자 목록 밖 이미지
+    // (image/heic·image/webp 등)가 전부 거부되던 문제 수정 — 모바일 HEIC 업로드 차단의 근원
+    const matchesFileType = (t: string, type: string, ext: string): boolean => {
+      const tl = t.trim().toLowerCase()
+      if (tl.endsWith('/*')) return type.toLowerCase().startsWith(tl.slice(0, -1))
+      return tl === type.toLowerCase() || tl === ext
+    }
+
     const isFileTypeAllowed = (file: File): boolean => {
       const type = file.type
       const ext = '.' + file.name.split('.').pop()?.toLowerCase()
 
       if (allowedTypes.value.length > 0) {
-        const allowed = allowedTypes.value.some(t => t === type || t === ext)
+        const allowed = allowedTypes.value.some(t => matchesFileType(t, type, ext))
         if (!allowed) {
           console.warn(`File type not in allowedTypes: ${type} / ${ext}`)
           onDisallowedType.value?.(file, allowedTypes.value, null)
@@ -245,7 +254,7 @@ export default defineComponent({
       }
 
       if (disallowedTypes.value.length > 0) {
-        const blocked = disallowedTypes.value.some(t => t === type || t === ext)
+        const blocked = disallowedTypes.value.some(t => matchesFileType(t, type, ext))
         if (blocked) {
           console.warn(`File type is in disallowedTypes: ${type} / ${ext}`)
           onDisallowedType.value?.(file, null, disallowedTypes.value)

@@ -476,8 +476,8 @@
         :type="inputType"
         :title="title || undefined"
         :placeholder="placeholder || undefined"
-        :max="maxNumber ?? undefined"
-        :min="minNumber ?? undefined"
+        :max="nativeMaxAttr"
+        :min="nativeMinAttr"
         :inputmode="inputType === 'digit' ? 'numeric' : undefined"
         :tabindex="tabIndex ?? undefined"
         :autocapitalize="disableAutoCapitalize ? 'off' : undefined"
@@ -621,6 +621,18 @@ export default defineComponent({
     const maxNumber = ref(hison.utils.isNumeric(props.maxNumber) ? Number(props.maxNumber) : null)
     const minNumber = ref(hison.utils.isNumeric(props.minNumber) ? Number(props.minNumber) : null)
     const roundNumber = ref(hison.utils.isInteger(props.roundNumber) || hison.utils.isNegativeInteger(props.roundNumber) || props.roundNumber === '0' ? Number(props.roundNumber) : null)
+    // 네이티브 input의 max/min 속성 — number는 사용자 지정값, date/month는 4자리 연도 상한 기본값.
+    // (max 미지정 시 브라우저 date 연도 세그먼트가 6자리(최대 275760년)까지 입력을 허용해
+    //  "199003"처럼 연도에 년+월이 붙어 들어가는 문제 차단. 값 검증(getAdjustedNumber)과는 별개의 UI 제약)
+    const nativeMaxAttr = computed(() => {
+      switch (inputType.value) {
+        case InputType.number: return maxNumber.value ?? undefined
+        case InputType.date: return '9999-12-31'
+        case InputType.month: return '9999-12'
+        default: return undefined
+      }
+    })
+    const nativeMinAttr = computed(() => (inputType.value === InputType.number ? (minNumber.value ?? undefined) : undefined))
     const maxLength = ref(hison.utils.isPositiveInteger(props.maxLength) ? Number(props.maxLength) : null)
     const maxByte = ref(hison.utils.isPositiveInteger(props.maxByte) ? Number(props.maxByte) : null)
     const computeDefaultTextAlign = (inputType: InputTypeValue): TextAlign => {

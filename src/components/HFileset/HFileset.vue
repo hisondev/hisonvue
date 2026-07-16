@@ -254,12 +254,19 @@ export default defineComponent({
       fileInputRef.value?.click()
     }
 
+    // 타입 매칭 — MIME 완전 일치 / 확장자 / 와일드카드('image/*' 등) 지원 (HImagebox와 동일 수정)
+    const matchesFileType = (t: string, type: string, ext: string): boolean => {
+      const tl = t.trim().toLowerCase()
+      if (tl.endsWith('/*')) return type.toLowerCase().startsWith(tl.slice(0, -1))
+      return tl === type.toLowerCase() || tl === ext
+    }
+
     const isFileTypeAllowed = (file: File): boolean => {
       const type = file.type
       const ext = '.' + file.name.split('.').pop()?.toLowerCase()
 
       if (allowedTypes.value.length > 0) {
-        const allowed = allowedTypes.value.some(t => t === type || t === ext)
+        const allowed = allowedTypes.value.some(t => matchesFileType(t, type, ext))
         if (!allowed) {
           console.warn(`File type not in allowedTypes: ${type} / ${ext}`)
           onDisallowedType.value?.(file, allowedTypes.value, null)
@@ -269,7 +276,7 @@ export default defineComponent({
 
       // ✅ implementation-first: allowedTypes 있어도 disallowedTypes 적용
       if (disallowedTypes.value.length > 0) {
-        const blocked = disallowedTypes.value.some(t => t === type || t === ext)
+        const blocked = disallowedTypes.value.some(t => matchesFileType(t, type, ext))
         if (blocked) {
           console.warn(`File type is in disallowedTypes: ${type} / ${ext}`)
           onDisallowedType.value?.(file, null, disallowedTypes.value)

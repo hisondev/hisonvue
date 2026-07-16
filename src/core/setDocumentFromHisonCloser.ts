@@ -71,6 +71,7 @@ export const applyCssVariables = () => {
   --hison-emptyColor: ${c.invertColor ? c.emptyInvertColor : c.emptyColor};
   --hison-filledTextColor: ${c.invertColor ? c.filledTextInvertColor : c.filledTextColor};
   --hison-emptyTextColor: ${c.invertColor ? c.emptyTextInvertColor : c.emptyTextColor};
+  --hison-colorScheme: ${c.invertColor ? 'dark' : 'light'};
   --hison-primary-buttonColor: ${cc.primary.buttonColor};
   --hison-primary-borderColor: ${cc.primary.borderColor};
   --hison-primary-shadowColor: ${cc.primary.shadowColor};
