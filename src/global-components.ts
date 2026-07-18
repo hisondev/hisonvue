@@ -935,6 +935,8 @@ declare module 'vue' {
      * - Internal scrollable **maxHeight** support
      * - Runtime API: `hison.component.getDropdown(id)`
      * - Custom caret via `<slot name="caret">`
+     * - Custom item rendering via `<slot name="item">` (scoped — badges, icons, etc.)
+     * - Custom toggle label via `<slot name="toggle-label">` (scoped)
      *
      * ---
      *
@@ -966,6 +968,25 @@ declare module 'vue' {
      * </HDropdown>
      * ```
      *
+     * #### Custom item rendering (scoped slot)
+     * Options accept extra custom fields (e.g. `badge`) which are passed through
+     * to the scoped slots untouched. Fallback rendering is plain `option.label`.
+     * ```vue
+     * <HDropdown :modelValue="{ value: 'pending', options: [
+     *   { label: 'Requests', value: 'pending', badge: 3 },
+     *   { label: 'Upcoming', value: 'upcoming' }
+     * ]}">
+     *   <template #item="{ option, selected }">
+     *     <span :class="{ 'is-selected': selected }">{{ option.label }}</span>
+     *     <span v-if="option.badge" class="my-badge">{{ option.badge }}</span>
+     *   </template>
+     *   <template #toggle-label="{ option, label, placeholder }">
+     *     <span>{{ label || placeholder }}</span>
+     *     <span v-if="option?.badge" class="my-badge">{{ option.badge }}</span>
+     *   </template>
+     * </HDropdown>
+     * ```
+     *
      * ---
      *
      * ### 🛠 Runtime Usage
@@ -987,6 +1008,8 @@ declare module 'vue' {
      * ---
      *
      * @slot caret Override the toggle caret. Defaults to ▾ if not provided.
+     * @slot item Scoped slot for each menu item. Props: `option: HDropdownOption`, `index: number`, `selected: boolean`. Defaults to `option.label` text.
+     * @slot toggle-label Scoped slot for the toggle label. Props: `option: HDropdownOption | null` (currently selected), `label: string`, `placeholder: string`. Defaults to `label || placeholder` text.
      *
      * @prop {string} id - Unique dropdown identifier. Accessible at runtime via `hison.component.getDropdown(id)`.
      * @prop {string | string[] | Record<string, boolean>} [class] - Additional class string(s). Supports the `hison-*` responsive system.

@@ -91,7 +91,8 @@ export const dropdownProps = {
     /**
      * Model: { value, options }
      * - value: selected value
-     * - options: array of { label, value, disabled? }
+     * - options: array of { label, value, disabled?, ...customFields }
+     *   (custom fields are passed through to the `item` / `toggle-label` scoped slots)
      * - Supports v-model
      */
     modelValue: { type: Object as PropType<HDropdownModel>, required: true },

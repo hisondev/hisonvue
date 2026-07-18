@@ -53,7 +53,7 @@ const { createApp, h, nextTick } = await import('vue')
 const {
   hison, hisonvue, getDefaultHisonConfig,
   HInputClientOnly, HGridClientOnly, HNoteClientOnly, HButtonClientOnly,
-  HBannerClientOnly, HModalClientOnly, HDrawerClientOnly,
+  HBannerClientOnly, HModalClientOnly, HDrawerClientOnly, HDropdownClientOnly,
 } = await import('../dist/hisonvue.es.js')
 
 let passed = 0
@@ -293,6 +293,68 @@ if (d1) {
 //    null-prototype 객체(hasOwnProperty 없음) → deepMerge가 죽으면 안 된다
 //    ⚠️ 재설치가 전역 레지스트리를 리셋하므로 반드시 마지막 섹션에 둘 것
 // ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// 9. HDropdown scoped slots (item / toggle-label) — custom option fields
+//    must pass through untouched; default rendering stays plain label text
+// ─────────────────────────────────────────────────────────────
+{
+  const holder = document.createElement('div')
+  document.body.appendChild(holder)
+  const ddModel = { value: 'a', options: [
+    { label: 'Alpha', value: 'a', badge: 3 },
+    { label: 'Beta', value: 'b' },
+  ] }
+  const app3 = createApp({
+    render: () => [
+      h(HDropdownClientOnly, { id: 'dd1', modelValue: ddModel }, {
+        item: ({ option, selected }) => h('span', { class: 'dd-slot-item' }, [
+          option.label,
+          option.badge ? h('span', { class: 'dd-slot-badge' }, String(option.badge)) : null,
+          selected ? '*' : '',
+        ]),
+        'toggle-label': ({ option, label }) => h('span', { class: 'dd-slot-toggle' }, [
+          label,
+          option?.badge ? `(${option.badge})` : '',
+        ]),
+      }),
+      h(HDropdownClientOnly, { id: 'dd2', modelValue: ddModel }),
+    ],
+  })
+  app3.use(hisonvue)
+  app3.mount(holder)
+  await flush(6)
+  const dd1 = hison.component.getDropdown('dd1')
+  check('HDropdown: mounted & registered', () => assert.ok(dd1))
+  if (dd1) {
+    dd1.open()
+    await flush(3)
+    check('HDropdown: item slot renders custom option field (badge)', () => {
+      const badges = holder.querySelectorAll('.dd-slot-badge')
+      assert.ok(badges.length >= 1, 'badge span missing in item slot')
+      assert.equal(badges[0].textContent, '3')
+    })
+    check('HDropdown: item slot receives selected flag', () => {
+      const items = [...holder.querySelectorAll('.dd-slot-item')]
+      assert.ok(items.some(el => el.textContent.includes('Alpha') && el.textContent.includes('*')))
+    })
+    check('HDropdown: toggle-label slot renders selected option custom field', () => {
+      const t = holder.querySelector('.dd-slot-toggle')
+      assert.ok(t, 'toggle-label slot missing')
+      assert.equal(t.textContent, 'Alpha(3)')
+    })
+    check('HDropdown: default (no slot) still renders plain label text', () => {
+      const dd2El = [...holder.querySelectorAll('.hison-dropdown')][1]
+      const label = dd2El?.querySelector('.hison-dropdown-label')
+      assert.equal(label?.textContent.trim(), 'Alpha')
+      assert.equal(dd2El.querySelector('.dd-slot-badge'), null)
+    })
+    dd1.close()
+    await flush(2)
+  }
+  app3.unmount()
+  await flush(2)
+}
+
 check('install: full default config (null-prototype chart defaults) does not crash deep-merge', () => {
   const fullConfig = getDefaultHisonConfig()
   fullConfig.componentStyle.primaryColor = 'rgba(1,2,3,1)'

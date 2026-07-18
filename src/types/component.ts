@@ -327,8 +327,14 @@ export interface HGridColumn {
  * Each option has a `label` (shown to user) and `value` (programmatic).
  * Optional `disabled` makes the item visible but not selectable.
  *
+ * Any extra custom field may be attached (e.g. `badge`, `icon`, `count`)
+ * and consumed inside the `item` / `toggle-label` scoped slots via `option`.
+ *
  * @example
  * { label: 'Korea', value: 'KR' }
+ * @example
+ * // extra fields for scoped-slot rendering
+ * { label: 'Requests', value: 'pending', badge: 3 }
  */
 export interface HDropdownOption {
   /** Display text shown in the dropdown menu */
@@ -337,6 +343,8 @@ export interface HDropdownOption {
   value: any
   /** If true, option is visible but cannot be selected */
   disabled?: boolean
+  /** Extra custom fields consumed by the `item` / `toggle-label` scoped slots */
+  [key: string]: any
 }
 
 /**

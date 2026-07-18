@@ -31,7 +31,14 @@
       @keydown.space.prevent="onToggleClick($event)"
     >
       <span class="hison-dropdown-label">
-        {{ selectedLabel || placeholder }}
+        <slot
+          name="toggle-label"
+          :option="selectedOption"
+          :label="selectedLabel"
+          :placeholder="placeholder"
+        >
+          {{ selectedLabel || placeholder }}
+        </slot>
       </span>
       <slot name="caret">
         <span class="hison-dropdown-caret">▾</span>
@@ -69,7 +76,14 @@
             :aria-selected="opt.value === selectedValue ? 'true' : 'false'"
             @click="onSelect(opt, $event)"
           >
-            {{ opt.label }}
+            <slot
+              name="item"
+              :option="opt"
+              :index="idx"
+              :selected="opt.value === selectedValue"
+            >
+              {{ opt.label }}
+            </slot>
           </div>
           <div v-if="options.length === 0" class="hison-dropdown-empty">No options</div>
         </div>
@@ -148,9 +162,12 @@ export default defineComponent({
       addComponentNameToClass(responsiveClassList.value, 'color', 'primary')
     }
 
+    const selectedOption = computed<HDropdownOption | null>(() => {
+      return options.value.find(o => o.value === selectedValue.value) ?? null
+    })
+
     const selectedLabel = computed(() => {
-      const found = options.value.find(o => o.value === selectedValue.value)
-      return found?.label ?? ''
+      return selectedOption.value?.label ?? ''
     })
 
     const maxHeight = ref<number>(props.maxHeight ?? 240)
@@ -407,7 +424,7 @@ export default defineComponent({
       visibleClass, disableClass, readonlyClass,
       responsiveClassList,
       isOpen, trigger,
-      selectedValue, selectedLabel, placeholder,
+      selectedValue, selectedOption, selectedLabel, placeholder,
       activeDescId, menuInlineStyle,
       options,
       animate, rootInlineStyle,

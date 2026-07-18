@@ -1,8 +1,8 @@
 # hisonvue — hisondev Vue 3 UI 컴포넌트 라이브러리 (npm)
 
 hisonjs를 포함/확장하는 Vue 3 컴포넌트 25종. nonoshow 프론트엔드의 핵심 라이브러리.
-npm `hisonvue` v1.1.37 (2026-07-10 deepMerge null-prototype hotfix — md 9-1절, publish 완료) / MIT / 의존: hisonjs ^1.2.12, vanillagrid2 ^1.0.9, vanillanote2 ^1.1.1, chart.js, vue-cal / peer: vue 3, @nuxt/kit.
-(v1.1.36 = 보완 프로젝트 7단계 산출 — 변경 내역: `../../../md/hisondev-hisonvue.md` 9절, 1.1.37 hotfix는 9-1절)
+npm `hisonvue` v1.1.40 (2026-07-18 HDropdown scoped slots `item`/`toggle-label` + HDropdownOption 커스텀 필드 허용 — publish 대기) / MIT / 의존: hisonjs ^1.2.12, vanillagrid2 ^1.0.9, vanillanote2 ^1.1.1, chart.js, vue-cal / peer: vue 3, @nuxt/kit.
+(v1.1.36 = 보완 프로젝트 7단계 산출 — 변경 내역: `../../../md/hisondev-hisonvue.md` 9절, 1.1.37 hotfix는 9-1절, 1.1.38~39 = date input·HImagebox 수정)
 
 ## 구조
 
