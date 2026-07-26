@@ -882,10 +882,21 @@ export default defineComponent({
       modelValue.value = doComputeValue ? computeValue(value) : value
       spanText.value = computeSpanText(modelValue.value)
 
-      if (inputType.value === InputType.checkbox || inputType.value === InputType.radio) {
-        (inputRef.value as HTMLInputElement).checked = !!modelValue.value
-      } else {
-        ;(inputRef.value as any).value = modelValue.value
+      /**
+       * ★DOM 반영은 엘리먼트가 살아있을 때만 (2026-07-26)
+       * 언마운트 도중에도 blur가 발생한다: 포커스된 input이 v-if로 제거되면 브라우저가
+       * 제거 과정에서 blur를 쏘고 → onBlur → updateValue 순으로 도달하는데,
+       * 그 시점엔 inputRef가 이미 null이라 "Cannot set properties of null (setting 'value')"로 터졌다.
+       * (조건부 렌더 영역 안의 입력에서 재현 — 값 자체는 modelValue에 이미 반영돼 동작엔 영향 없고
+       *  콘솔 에러만 발생. 방어만 하면 되고 이 경우 DOM에 쓸 대상도 없다.)
+       */
+      const el = inputRef.value as HTMLInputElement | null
+      if (el) {
+        if (inputType.value === InputType.checkbox || inputType.value === InputType.radio) {
+          el.checked = !!modelValue.value
+        } else {
+          el.value = modelValue.value
+        }
       }
 
       if (doCallChangeEmit) emit('change', oldValue.value, modelValue.value, inputMethods.value)
@@ -1139,7 +1150,8 @@ export default defineComponent({
         && inputType.value !== InputType.radio
         && inputType.value !== InputType.range
         && inputType.value !== InputType.color
-      ) removeInputCssEvent(inputRef.value!)
+        /* 언마운트 시점엔 ref가 이미 비어있을 수 있다 — 바로 아래 inputTextRef와 동일하게 가드 (2026-07-26) */
+      ) { if (inputRef.value) removeInputCssEvent(inputRef.value) }
       if (inputTextRef.value) removeInputTextCssEvent(inputTextRef.value)
     }
 
