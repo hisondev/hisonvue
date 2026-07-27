@@ -40,11 +40,17 @@
         </template>
 
         <template v-else-if="hasHref">
-            {{ internalText }}
+            <slot v-if="renderSlotText" />
+            <template v-else>{{ internalText }}</template>
         </template>
 
         <template v-else>
-            <span class="hison-label-text">{{ internalText }}</span>
+            <!-- ★텍스트 전용 슬롯도 <slot/>을 그대로 렌더한다 (v1.1.42 —
+                 구현체가 마운트 시 1회 스냅샷하던 것을 폐기. 상세는 script의 renderSlotText 주석) -->
+            <span class="hison-label-text">
+                <slot v-if="renderSlotText" />
+                <template v-else>{{ internalText }}</template>
+            </span>
         </template>
     </component>
   </div>
@@ -139,12 +145,35 @@ export default defineComponent({
         })
 
         const internalText = ref<string>(props.text || '')
-        onMounted(() => {
-            if (isTextOnlySlot.value) {
-                const text = slotNodes.value.map(v => String(v.children ?? '')).join('')
-                internalText.value = text
-            }
-        })
+
+        /**
+         * setText()로 슬롯 텍스트를 덮어썼는지 — 덮어쓴 뒤에는 슬롯 대신 internalText를 렌더한다.
+         * (슬롯과 setText를 함께 쓰는 건 모순된 사용이지만, 기존 setText 계약을 깨지 않기 위해 남긴다)
+         */
+        const textOverridden = ref(false)
+
+        /**
+         * ★텍스트 전용 슬롯을 "그대로 렌더"할지 (v1.1.42 수정)
+         *
+         * 구버전은 onMounted에서 슬롯 텍스트를 internalText로 **1회 스냅샷**하고,
+         * `watch(slotNodes, ...)`로 갱신하려 했다. 그러나 그 watch는 **발화하지 않는다**:
+         * $slots는 반응형 객체가 아니라(컴파일된 슬롯은 부모 리렌더 시 슬롯 함수만 교체된다)
+         * `computed(() => slots.default())`에 의존을 걸 수 없어 재평가 트리거가 없기 때문이다.
+         * → 부모가 슬롯 텍스트를 바꿔도(예: 다국어 전환) 라벨이 마운트 시점 값으로 굳었다.
+         *   (실사고: nonoshow 상단 네브 — 계정 전환으로 언어가 바뀌어도 메뉴명만 이전 언어로 남음)
+         *
+         * 요소 슬롯 경로(hasElementSlot)는 원래 <slot/>을 그대로 렌더해 정상 동작했으므로,
+         * 텍스트 전용 슬롯도 같은 방식으로 통일한다. 스냅샷·죽은 watch는 제거.
+         * .hison-label-text 래퍼는 유지 — 이 클래스에 스타일을 건 앱이 깨지지 않게 한다.
+         */
+        const renderSlotText = computed(() => isTextOnlySlot.value && !textOverridden.value)
+
+        /** 슬롯 텍스트를 "호출 시점에" 직접 평가 — getText()용 (slotNodes 캐시를 신뢰할 수 없어서) */
+        const readSlotText = (): string => {
+            const nodes = slots.default ? slots.default() : []
+            if (!nodes.length || !nodes.every(v => v.type === Text)) return ''
+            return nodes.map(v => String(v.children ?? '')).join('')
+        }
 
         const toggleTarget = ref<string | null>(props.toggleTarget ?? null)
         const hasToggleTarget = computed(() => !!(toggleTarget.value && String(toggleTarget.value).trim()))
@@ -233,8 +262,19 @@ export default defineComponent({
                 setVisible: (val: boolean) => { visible.value = val },
                 getTitle: () => title.value,
                 setTitle: (val: string) => { title.value = val },
-                getText: () => (hasElementSlot.value ? '' : internalText.value),
-                setText: (val: string) => { if (!hasElementSlot.value) internalText.value = val },
+                // 텍스트 전용 슬롯을 쓰는 중이면 화면에 보이는 값 = 슬롯 텍스트라 그걸 읽어준다
+                // (호출 시점에 슬롯을 직접 평가 — slotNodes computed는 재평가되지 않으므로 신뢰할 수 없다)
+                getText: () => {
+                    if (hasElementSlot.value) return ''
+                    if (renderSlotText.value) return readSlotText()
+                    return internalText.value
+                },
+                // 슬롯을 쓰던 중이라도 setText를 부르면 그 값이 우선한다(기존 계약 유지)
+                setText: (val: string) => {
+                    if (hasElementSlot.value) return
+                    internalText.value = val
+                    textOverridden.value = true
+                },
                 getHref: () => href.value ?? '',
                 setHref: (val?: string | null) => { href.value = val ?? null },
                 getAnchorAttrs: () => ({ ...rawAnchorAttrs.value }),
@@ -305,7 +345,8 @@ export default defineComponent({
         watch(() => props.visible, v => { const nv = !!v; if (nv !== visible.value) visible.value = nv })
         watch(() => props.title, v => { const s = v ?? ''; if (s !== title.value) title.value = s })
         watch(() => props.text, v => { if (!hasElementSlot.value) { const s = v ?? ''; if (s !== internalText.value) internalText.value = s } })
-        watch(slotNodes, nv => { if (isTextOnlySlot.value) { const text = nv.map(v => String(v.children ?? '')).join(''); if (text !== internalText.value) internalText.value = text } })
+        /* (제거됨 v1.1.42) watch(slotNodes, ...) — $slots가 반응형이 아니라 발화하지 않는 죽은 코드였다.
+           슬롯 텍스트는 이제 <slot/>으로 직접 렌더하므로 동기화 자체가 필요 없다. renderSlotText 주석 참조 */
         watch(() => props.href, v => { const s = v ?? null; if (s !== href.value) href.value = s })
         watch(() => props.anchorAttrs, v => { const next = { ...(v || {}) }; if (JSON.stringify(next) !== JSON.stringify(rawAnchorAttrs.value)) rawAnchorAttrs.value = next })
         watch(() => props.fontBold, v => { const b = !!v; if (b !== fontBold.value) fontBold.value = b })
@@ -330,6 +371,7 @@ export default defineComponent({
             hasElementSlot,
             renderTag,
             internalText,
+            renderSlotText,
             computedAnchorAttrs,
             visibleClass,
             fontBoldClass,

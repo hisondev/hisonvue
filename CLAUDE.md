@@ -1,8 +1,19 @@
 # hisonvue — hisondev Vue 3 UI 컴포넌트 라이브러리 (npm)
 
 hisonjs를 포함/확장하는 Vue 3 컴포넌트 25종. nonoshow 프론트엔드의 핵심 라이브러리.
-npm `hisonvue` v1.1.40 (2026-07-18 HDropdown scoped slots `item`/`toggle-label` + HDropdownOption 커스텀 필드 허용 — publish 대기) / MIT / 의존: hisonjs ^1.2.12, vanillagrid2 ^1.0.9, vanillanote2 ^1.1.1, chart.js, vue-cal / peer: vue 3, @nuxt/kit.
-(v1.1.36 = 보완 프로젝트 7단계 산출 — 변경 내역: `../../../md/hisondev-hisonvue.md` 9절, 1.1.37 hotfix는 9-1절, 1.1.38~39 = date input·HImagebox 수정)
+npm `hisonvue` **v1.1.42** (2026-07-26 HLabel 텍스트 전용 슬롯 반응성 수정 — **publish 대기**) / MIT / 의존: hisonjs ^1.2.12, vanillagrid2 ^1.0.9, vanillanote2 ^1.1.1, chart.js, vue-cal / peer: vue 3, @nuxt/kit.
+(v1.1.36 = 보완 프로젝트 7단계 산출 — 변경 내역: `../../../md/hisondev-hisonvue.md` 9절, 1.1.37 hotfix는 9-1절, 1.1.38~39 = date input·HImagebox 수정, 1.1.40 = HDropdown scoped slots `item`/`toggle-label` + HDropdownOption 커스텀 필드 허용, 1.1.41 = HInput 언마운트 blur null 가드)
+
+### v1.1.42 — HLabel 텍스트 전용 슬롯이 갱신되지 않던 버그 (2026-07-26)
+
+- **증상**: `<HLabel>{{ 변수 }}</HLabel>`처럼 **텍스트만** 슬롯으로 주면, 부모가 값을 바꿔도 라벨이 **마운트 시점 값으로 굳었다**. (실사고 = nonoshow 상단 네브: 계정 전환으로 앱 언어가 바뀌어도 메뉴명만 이전 언어로 남음)
+- **원인**: 구현이 `onMounted`에서 슬롯 텍스트를 `internalText`로 **1회 스냅샷**하고 `watch(slotNodes, …)`로 갱신하려 했는데, 그 watch가 **발화하지 않았다**. `$slots`는 반응형 객체가 아니라(컴파일된 슬롯은 부모 리렌더 시 슬롯 함수만 교체) `computed(() => slots.default())`에 의존을 걸 수 없어 재평가 트리거가 없다.
+- **수정**: 텍스트 전용 슬롯도 **`<slot/>`을 그대로 렌더**(요소 슬롯 경로는 원래 정상 동작했으므로 통일). 스냅샷·죽은 watch 제거. `href` 분기도 동일 적용.
+  - `.hison-label-text` 래퍼 **유지** — 이 클래스에 스타일을 건 앱이 깨지지 않게
+  - `setText()` 계약 보존 — `textOverridden` 플래그로 슬롯보다 우선
+  - `getText()` — 슬롯 사용 중이면 호출 시점에 슬롯을 직접 평가(`slotNodes` 캐시는 신뢰 불가)
+- ⚠️ **남은 한계**: `isTextOnlySlot` 판정도 같은 `slotNodes` computed를 쓰므로, **슬롯의 종류가 런타임에 텍스트↔요소로 바뀌는 경우**는 여전히 첫 판정에 고정된다(실사용에선 거의 없어 방치).
+- 📌 **권장 사용법**: 단순 텍스트 라벨은 슬롯이 아니라 **`:text` prop**으로 줄 것 — 1차 API이고 `watch(() => props.text)`로 확실히 갱신된다.
 
 ## 구조
 
