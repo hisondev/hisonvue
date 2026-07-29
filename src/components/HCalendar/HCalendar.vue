@@ -8,6 +8,7 @@
       disableClass
     ]"
     :style="props.style"
+    @click.capture="onRootClickCapture"
   >
     <component
       :is="VueCal"
@@ -313,12 +314,49 @@ export default defineComponent({
         adjustStyleChangedDate()
       }
       activeView.value = event.view
+      // month 뷰 그리드의 첫 셀 날짜 — 아래 복원 폴백의 기준점 (vue-cal이 month에서만 내려준다)
+      viewFirstCellDate.value = event.firstCellDate instanceof Date ? event.firstCellDate : null
       emit('view-change', event)
+    }
+
+    /* ── 셀 날짜 복원 폴백 ─────────────────────────────────────────────
+     * 🔴 vue-cal v4는 클릭된 셀의 날짜를 mousedown/touchstart에서만 채운다(timeAtCursor).
+     *    그런데 셀의 onCellMouseDown 첫 줄이 `if ("ontouchstart" in window && !touch) return false`라,
+     *    **터치를 지원하는 환경에서 마우스로 클릭하면**(실기기 하이브리드·브라우저 디바이스 모드 등)
+     *    그 경로가 통째로 막히고 click만 도달한다 → `$emit('cell-click', undefined)`.
+     *    예전 구현은 그 값을 `_date.date`로 바로 읽어 TypeError로 죽었고, 예외 때문에 선택도 중단됐다.
+     * → ① 널 가드로 절대 던지지 않고 ② month 뷰라면 "그리드 첫 셀 날짜 + 클릭된 셀의 순번"으로 복원한다.
+     *    week/day 뷰는 시각(시:분)까지 필요해 순번만으로는 정확히 만들 수 없으므로 복원하지 않는다(무시). */
+    const viewFirstCellDate = ref<Date | null>(null)
+    const lastCellIndex = ref(-1)
+
+    const onRootClickCapture = (e: Event) => {
+      const target = e.target as HTMLElement | null
+      const cell = target?.closest?.('.vuecal__cell') as HTMLElement | null
+      if (!cell || !cell.parentElement) {
+        lastCellIndex.value = -1
+        return
+      }
+      const cells = Array.from(cell.parentElement.children)
+        .filter((el) => el.classList.contains('vuecal__cell'))
+      lastCellIndex.value = cells.indexOf(cell)
+    }
+
+    const recoverCellDate = (): Date | null => {
+      if (activeView.value !== HCalendarView.month) return null
+      const base = viewFirstCellDate.value
+      const idx = lastCellIndex.value
+      if (!base || idx < 0) return null
+      const d = new Date(base.getTime())
+      d.setDate(d.getDate() + idx)
+      return Number.isNaN(d.getTime()) ? null : d
     }
 
     const onCellClick = (_date: any) => {
       if (destroyed.value) return
-      const date = _date instanceof Date ? _date : _date.date
+      const raw = _date instanceof Date ? _date : (_date?.date ?? null)
+      const date = raw ?? recoverCellDate()
+      if (!date) return // 복원 불가 = 조용히 무시 (예전처럼 예외로 화면을 멈추지 않는다)
       if(!disable.value) {
         selectedDate.value = date
         emit('cell-click', date)
@@ -605,6 +643,7 @@ export default defineComponent({
       disableViews,
       onViewChange,
       onCellClick,
+      onRootClickCapture,
     }
   }
 })

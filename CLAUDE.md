@@ -1,8 +1,16 @@
 # hisonvue — hisondev Vue 3 UI 컴포넌트 라이브러리 (npm)
 
 hisonjs를 포함/확장하는 Vue 3 컴포넌트 25종. nonoshow 프론트엔드의 핵심 라이브러리.
-npm `hisonvue` **v1.1.42** (2026-07-26 HLabel 텍스트 전용 슬롯 반응성 수정 — **publish 대기**) / MIT / 의존: hisonjs ^1.2.12, vanillagrid2 ^1.0.9, vanillanote2 ^1.1.1, chart.js, vue-cal / peer: vue 3, @nuxt/kit.
+npm `hisonvue` **v1.1.42** (2026-07-26 HLabel 텍스트 전용 슬롯 반응성 수정 — 2026-07-28 배포 완료·nonoshow 반영) / MIT / 의존: hisonjs ^1.2.12, vanillagrid2 ^1.0.9, vanillanote2 ^1.1.1, chart.js, vue-cal / peer: vue 3, @nuxt/kit.
 (v1.1.36 = 보완 프로젝트 7단계 산출 — 변경 내역: `../../../md/hisondev-hisonvue.md` 9절, 1.1.37 hotfix는 9-1절, 1.1.38~39 = date input·HImagebox 수정, 1.1.40 = HDropdown scoped slots `item`/`toggle-label` + HDropdownOption 커스텀 필드 허용, 1.1.41 = HInput 언마운트 blur null 가드)
+
+### v1.1.43 — HCalendar 셀 클릭이 터치 지원 환경에서 죽던 버그 (2026-07-29)
+
+- **증상**: 날짜를 클릭하면 `Uncaught TypeError: Cannot read properties of null (reading 'date')`가 나고 **선택이 아예 안 된다**. (실사고 = nonoshow 예약 플로우 날짜 스텝 — 다음 스텝으로 넘어가지 못함)
+- **원인**: vue-cal v4는 클릭된 셀의 날짜를 **mousedown/touchstart에서만** 채운다(`timeAtCursor`). 그런데 셀의 `onCellMouseDown` 첫 줄이 `if ("ontouchstart" in window && !touch) return false` — **터치를 지원하는 환경에서 마우스로 클릭하면**(하이브리드 노트북·브라우저 디바이스 모드 등) 그 경로가 통째로 막히고 click만 도달해 `$emit('cell-click', undefined)`가 나간다. 구현이 그 값을 `_date.date`로 바로 읽어 예외가 났고, 그 예외 때문에 선택 로직까지 중단됐다.
+- **수정**: ①널 가드(`_date?.date ?? null`) — 어떤 경우에도 던지지 않는다 ②**복원 폴백**: month 뷰라면 `view-change`의 `firstCellDate`(그리드 첫 셀) + 클릭된 셀의 그리드 순번으로 날짜를 되살린다. 래퍼 루트의 `@click.capture`가 순번만 기록한다(이벤트를 삼키지 않음)
+- ⚠️ **week/day 뷰는 복원하지 않는다** — 시각(시:분)까지 필요해 순번만으로는 정확히 만들 수 없다. 그 경우 클릭은 조용히 무시된다(예전처럼 예외로 화면이 멈추지는 않는다)
+- 📌 nonoshow에는 배포 전까지 같은 원리의 임시 폴백이 `pages/product/reserve/[id].vue`에 들어가 있다 — **이 버전 반영 후 제거 가능**(해당 주석에 원복 조건 명시)
 
 ### v1.1.42 — HLabel 텍스트 전용 슬롯이 갱신되지 않던 버그 (2026-07-26)
 
