@@ -3,6 +3,7 @@ import { GridAlign, GridVerticalAlign, EditMode, InputType, DataStatus, DayOfWee
 import { NoteData, VanillanoteElement } from "vanillanote2"
 import { InterfaceDataModel } from "hisonjs"
 import { Chart } from "chart.js"
+import { HGridExcelOptions } from "./excel"
 
 export type DeviceType = 'mb' | 'tb' | 'pc' | 'wd'
 
@@ -2442,6 +2443,42 @@ export interface HGridMethods extends ComponentMethods, Omit<GridMethods, 'isGri
    * @param dataModel A `DataModel` object representing the rows to load into the grid.
    */
   setDataModel<T extends Record<string, any>>(dataModel: InterfaceDataModel<T>): void;
+  /**
+   * Downloads the current grid content as an `.xlsx` file.
+   *
+   * The file is generated **in the browser with no external dependency** — no
+   * server round-trip and no spreadsheet library. Column metadata is taken from
+   * the grid itself, so headers, number/date types, display formats, column widths
+   * and hidden columns match what is on screen.
+   *
+   * ---
+   *
+   * ### 🔧 Example Usage
+   * ```ts
+   * const grid = hison.component.getGrid('customerGrid')
+   * await grid.downloadExcel({ fileName: '고객목록.xlsx' })
+   *
+   * // Only some columns, in a fixed order, with a row-count guard
+   * await grid.downloadExcel({
+   *   fileName: '고객목록.xlsx',
+   *   columns: ['name', 'phone', 'visitCount'],
+   *   maxRows: 10000,
+   * })
+   * ```
+   *
+   * ---
+   *
+   * ### ⚠️ Notes
+   * - The built-in `v-g-rownum` / `v-g-status` columns and hidden columns are
+   *   excluded by default (see `HGridExcelOptions`).
+   * - Rows hidden by a column filter are excluded.
+   * - Grid footers (`$$SUM`, `$$AVG`, …) are appended as bold rows.
+   * - Throws when `maxRows` is exceeded — the file is never silently truncated.
+   *
+   * @param options Export options.
+   * @returns `true` once the file has been handed to the browser or save handler.
+   */
+  downloadExcel(options?: HGridExcelOptions): Promise<boolean>;
   /**
    * Loads data into the grid.
    *

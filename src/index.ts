@@ -138,6 +138,21 @@ export {
   HTableClientOnly,
 }
 export { getDefaultHisonConfig } from './core'
+export {
+  createZip,
+  crc32,
+  createExcelBlob,
+  downloadExcelFile,
+  saveExcelBlob,
+  setExcelSaveHandler,
+  getExcelSaveHandler,
+  normalizeExcelFileName,
+  escapeXml,
+  getColumnLetter,
+  toExcelSerial,
+  buildGridSheet,
+  downloadGridExcel,
+} from './excel'
 export * from './types'
 export * from './enums'
 

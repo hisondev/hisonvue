@@ -4,6 +4,14 @@ import { applyCssVariables } from "./setDocumentFromHisonCloser";
 import { Size } from "../enums";
 import { reloadAllHisonComponents, restyleAllHisonComponents } from "../utils/";
 import { hisonCloser } from "../hisonCloser";
+import {
+    createExcelBlob,
+    downloadExcelFile,
+    getExcelSaveHandler,
+    normalizeExcelFileName,
+    saveExcelBlob,
+    setExcelSaveHandler,
+} from "../excel";
 
 export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
     setHisonFromHisonConfig(hison, hisonConfig)
@@ -12,7 +20,15 @@ export const setHison = (hison: Hison, hisonConfig: HisonConfig) => {
     hison.setMaxFilesetTotalSize = (fileTotalSize: number) => { hisonCloser.componentConfig.filesetTotalSize = fileTotalSize };
     hison.getMaxFilesetSize = () => { return hisonCloser.componentConfig.filesetSize };
     hison.getMaxFilesetTotalSize = () => { return hisonCloser.componentConfig.filesetTotalSize };
-  
+
+    hison.excel = {
+      download: (sheets, options) => downloadExcelFile(sheets, options),
+      getBlob: (sheets, options) => createExcelBlob(sheets, options),
+      save: (blob, fileName) => saveExcelBlob(blob, normalizeExcelFileName(fileName)),
+      setSaveHandler: (handler) => { setExcelSaveHandler(handler) },
+      getSaveHandler: () => getExcelSaveHandler(),
+    };
+
     hison.cssEvent = {
       setButtonOnBefoerFocus(func: ((e: FocusEvent) => boolean)) {hisonCloser.event.cssEvent.button_onBeforeFocus = func},
       setButtonOnAfterFocus(func: ((e: FocusEvent) => void)) {hisonCloser.event.cssEvent.button_onAfterFocus = func},

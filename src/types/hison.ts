@@ -1,6 +1,7 @@
 import type { Hison as Hisonjs } from "hisonjs";
 import { HButtonMethods, HInputGroupMethods, HGridMethods, HInputMethods, HLayoutMethods, HNoteElement, HCalendarMethods, HChartInstance, HFilesetMethods, HImageboxMethods, HDropdownMethods, HAccordionMethods, HLabelMethods, HParagraphMethods, HCaptionMethods, HGapMethods, HListMethods, HTableMethods, HModalMethods, HPopupMethods, HDrawerMethods, HSpinnerMethods, HBaggieMethods, HBannerMethods, HPaginationMethods, DeviceType } from "./component";
 import { Size } from "../enums";
+import type { HExcelOptions, HExcelSaveHandler, HExcelSheet } from "./excel";
 
 /**
  * Global runtime facade for the `hisonvue` ecosystem.
@@ -283,6 +284,72 @@ export interface Hison extends Hisonjs {
     getSpinner(spinnerId: string): HSpinnerMethods | null
     /** Returns the runtime methods for an HTable, or `null` if not found. */
     getTable(tableId: string): HTableMethods | null
+  }
+
+  /**
+   * Excel (`.xlsx`) export facade.
+   *
+   * The workbook is assembled **in the browser with zero dependencies** — the file is
+   * a ZIP of OOXML parts written by hisonvue itself, so nothing is sent to the server
+   * and no spreadsheet library is bundled.
+   *
+   * Use this when the data is not in a grid (a computed statement, an aggregated
+   * report, several sheets at once). For grid data use `grid.downloadExcel()`, which
+   * reuses the same writer but fills in the column metadata for you.
+   *
+   * @remarks
+   * - Dates are written as Excel date serials so sorting and date arithmetic work.
+   *   Pass `dateAsText: true` to keep them as plain strings.
+   * - Uncompressed (STORE) archives are the fallback when the browser has no
+   *   `CompressionStream` (iOS < 16.4). The file is bigger but opens everywhere.
+   * - `maxRows` makes an oversized export **throw** rather than silently truncate.
+   *
+   * @example
+   * // Single sheet from plain data
+   * await hison.excel.download({
+   *   name: '손익계산서',
+   *   columns: [
+   *     { header: '항목', key: 'title' },
+   *     { header: '금액', key: 'amount', type: 'number', format: '#,##0' },
+   *   ],
+   *   rows: statementRows,
+   * }, { fileName: '손익계산서_2026-08.xlsx' })
+   *
+   * @example
+   * // Route saving through a native WebView bridge, once, app-wide
+   * hison.excel.setSaveHandler(async (blob, fileName) => {
+   *   if (!window.AppBridge) return false   // false → fall back to browser download
+   *   window.AppBridge.saveFile(fileName, await toBase64(blob))
+   * })
+   */
+  excel: {
+    /**
+     * Builds a workbook and saves it.
+     *
+     * @param sheets  One sheet, or an array of sheets (one tab each).
+     * @param options Export options.
+     * @returns `true` once the file has been handed to the browser or save handler.
+     */
+    download(sheets: HExcelSheet | HExcelSheet[], options?: HExcelOptions): Promise<boolean>
+    /**
+     * Builds a workbook and returns it without saving — for previews, uploads or
+     * attaching the file to a request.
+     */
+    getBlob(sheets: HExcelSheet | HExcelSheet[], options?: HExcelOptions): Promise<Blob>
+    /**
+     * Saves an already built workbook.
+     *
+     * @param blob     Workbook bytes.
+     * @param fileName File name (`.xlsx` is appended when missing).
+     */
+    save(blob: Blob, fileName: string): Promise<boolean>
+    /**
+     * Registers the app-wide save handler used when a call does not pass its own.
+     * Pass `null` to clear it.
+     */
+    setSaveHandler(handler: HExcelSaveHandler | null): void
+    /** Returns the app-wide save handler, or `null`. */
+    getSaveHandler(): HExcelSaveHandler | null
   }
 
   /**

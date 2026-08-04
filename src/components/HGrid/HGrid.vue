@@ -11,8 +11,9 @@
 <script lang="ts">
 import { defineComponent, computed, onMounted, onBeforeUnmount, ref, nextTick, triggerRef, watch } from 'vue'
 import type { Vanillagrid } from 'vanillagrid2'
-import type { HGridColumn, HGridMethods } from '../../types'
+import type { HGridColumn, HGridExcelOptions, HGridMethods } from '../../types'
 import { gridEventProps, gridProps } from './props'
+import { downloadGridExcel } from '../../excel'
 import {
     extractResponsiveClasses,
     getHexCodeFromColorText,
@@ -206,6 +207,9 @@ export default defineComponent({
             gridInstance.value.setDataModel = <T extends Record<string, any>>(dataModel: InterfaceDataModel<T>) => {
             if (!dataModel || dataModel.getRowCount() == 0) return
                 return gridInstance.value!.load(dataModel)
+            }
+            gridInstance.value.downloadExcel = (options?: HGridExcelOptions) => {
+                return downloadGridExcel(gridInstance.value!, options)
             }
             gridInstance.value.reload = () => reloadHisonComponent(reloadId)
             const originGridMethodLoad = gridInstance.value.load.bind(gridInstance.value)
