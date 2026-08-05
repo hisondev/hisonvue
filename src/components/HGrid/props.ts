@@ -175,7 +175,19 @@ export const gridProps = {
     linkHasUnderLine: { type: Boolean, required: false },
 
     /* Inverts the colors of the grid. */
-    invertColor: { type: Boolean, default: false },
+    /**
+     * Inverts the grid's colors (dark scheme).
+     *
+     * ★`default: undefined` on purpose (2026-08-05). With `default: false` the component
+     * could not tell "the author left this out" from "the author explicitly said false",
+     * so it always overwrote `VanillagridConfig.attributes.defaultGridCssInfo.invertColor`
+     * with `false` — making the config-level default unusable and forcing apps to invert
+     * every grid after mount (which flickers white for a frame).
+     *
+     * Resolution order when unspecified: `componentStyle.invertColor` → the vanillagrid
+     * config default. Pass `false` explicitly to force a light grid regardless of those.
+     */
+    invertColor: { type: Boolean, default: undefined },
 
     /* Sets the main color of the grid. Enter the 16-digit color code in cssText. Ex) '#ffffff' */
     color: {

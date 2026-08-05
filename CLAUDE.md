@@ -1,8 +1,25 @@
 # hisonvue — hisondev Vue 3 UI 컴포넌트 라이브러리 (npm)
 
 hisonjs를 포함/확장하는 Vue 3 컴포넌트 25종. nonoshow 프론트엔드의 핵심 라이브러리.
-npm `hisonvue` **v1.1.44** (2026-08-04 무의존 엑셀(XLSX) 라이터 신규 — ★미배포) / MIT / 의존: hisonjs ^1.2.12, vanillagrid2 ^1.0.9, vanillanote2 ^1.1.1, chart.js, vue-cal / peer: vue 3, @nuxt/kit. **의존성 추가 0건 유지**
+npm `hisonvue` **v1.1.45** (2026-08-05 config가 통하지 않던 결함 2건 수정 — ★미배포) / MIT / 의존: hisonjs ^1.2.12, vanillagrid2 ^1.0.9, vanillanote2 ^1.1.1, chart.js, vue-cal / peer: vue 3, @nuxt/kit. **의존성 추가 0건 유지**
 (v1.1.36 = 보완 프로젝트 7단계 산출 — 변경 내역: `../../../md/hisondev-hisonvue.md` 9절, 1.1.37 hotfix는 9-1절, 1.1.38~39 = date input·HImagebox 수정, 1.1.40 = HDropdown scoped slots `item`/`toggle-label` + HDropdownOption 커스텀 필드 허용, 1.1.41 = HInput 언마운트 blur null 가드, 1.1.42 = HLabel 텍스트 슬롯 반응성, 1.1.43 = HCalendar 셀 클릭 크래시)
+
+### v1.1.45 — config로 넣은 값이 통하지 않던 결함 2건 (2026-08-05)
+
+> 발단: 앱(meetkat)이 **"그리드를 처음부터 다크로"**(마운트 후 반전하면 흰색이 한 프레임 번쩍인다)와
+> **헤더 필터 아이콘 σ 교체**를 `hisonConfig`로 하려다 둘 다 무시됐다. 원인은 라이브러리 쪽 두 곳이었다.
+
+- 🔴 **① `deepMerge`가 DOM 노드를 평범한 객체로 뭉갰다** (`src/utils/utils.ts`)
+  - `install`은 `deepMerge(기본config, 사용자config)`를 하는데, `typeof el === 'object'`라 **DOM 노드에도 재귀**해 프로토타입에 있던 것들이 사라진 `{}`를 만들었다. vanillagrid는 `instanceof HTMLElement && nodeType === 1`로 검사하므로 탈락 → 기본 `'σ'`로 폴백.
+  - **앱에서 우회가 불가능했다** — 무엇을 넣든 이 함수를 지난다. `elements.filterSpan`·`sortAscSpan`·`sortDescSpan`이 전부 같은 함정이었다.
+  - 수정 = `isAtomicValue()` 신설: **DOM 노드**(`nodeType` + `cloneNode`)·`Date`·`RegExp`·`Map`·`Set`은 재귀하지 않고 **그대로 대입**한다. 평범한 객체의 키별 병합은 그대로.
+- 🔴 **② HGrid `invertColor` prop이 `default: false`라 "미지정"과 "명시적 false"를 구분 못 했다** (`components/HGrid/props.ts`, `HGrid.vue`)
+  - 세 지점(`bindAttrs` / `registerRestyle` / `device` watch)이 전부 `props.invertColor || componentStyle.invertColor`를 읽었다. prop을 안 줘도 `false`라, **`defaultGridCssInfo.invertColor`를 항상 덮어써** config 레벨 기본값이 무용지물이었다.
+  - 그래서 앱은 마운트 후 `grid.invertColor(true)`를 걸 수밖에 없었고 → **흰색 → 다크 리페인트(깜빡임)**.
+  - 수정 = prop `default: undefined` + **`resolveInvertColor()` 공통 해석**: `명시 prop → componentStyle 플래그 → vanillagrid config 기본값`. `bindAttrs`가 결과를 **항상 `invert-color` 속성으로 내보내** 그리드가 **생성 시점부터** 그 상태로 만들어진다(깜빡임 없음). `false`를 명시하면 여전히 강제 라이트.
+  - ⚠️**호환**: prop을 쓰던 코드는 그대로 동작한다. 달라지는 건 **prop을 안 준 그리드가 이제 config 기본값을 따른다**는 것뿐 — 기본값이 `false`이므로 기존 앱의 동작은 변하지 않는다.
+- ★**왜 전역 플래그로는 안 되나**(같은 길을 다시 파지 말 것): `componentStyle.invertColor`를 켜면 `setDocumentFromHisonCloser`가 팔레트를 통째로 `*InvertColor` 슬롯으로 갈아끼운다. 그 슬롯은 `createHisonCloser`가 **null로 하드코딩**하고 config로 채울 수도 없어서, 브랜드색이 단순 RGB 반전으로 망가진다. **그리드 한정 반전은 이 PR의 경로가 유일하다.**
+- 검증: `npm test` **58케이스**(회귀 2건 신규 — 커스텀 DOM filterSpan이 install을 통과하는지 / prop 없이 config 기본값이 마운트된 그리드에 도달하고 `invert-color` 속성으로 나가는지) + `npm run build` + `npm run type-check` 통과
 
 ### v1.1.44 — 무의존 엑셀(XLSX) 다운로드 (2026-08-04, 신규 기능)
 

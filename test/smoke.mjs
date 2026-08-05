@@ -86,10 +86,22 @@ let timeoutApplied = null
 const originalSetTimeout = hison.setTimeout.bind(hison)
 hison.setTimeout = (ms) => { timeoutApplied = ms; return originalSetTimeout(ms) }
 
+// 2026-08-05 regressions, exercised through the real install path:
+//   ① a custom DOM node in `elements.filterSpan` must survive deepMerge
+//   ② `defaultGridCssInfo.invertColor` must reach the mounted grid when the prop is omitted
+const customFilterIcon = document.createElement('span')
+customFilterIcon.setAttribute('data-custom-filter', '1')
+customFilterIcon.textContent = 'FLT'
+
+const gridCfg = getDefaultHisonConfig().component.grid
+gridCfg.elements.filterSpan = customFilterIcon
+gridCfg.attributes.defaultGridCssInfo.invertColor = true
+
 const partialConfig = {
   componentStyle: { primaryColor: 'rgba(10,20,30,1)' },
   event: {},
   timeout: 0, // falsy — must still be applied (0 = unlimited in hisonjs 1.2.12)
+  component: { grid: gridCfg },
 }
 
 const holderChildren = { inputs: [], mounted: false }
@@ -725,6 +737,33 @@ check('excel: hison.excel facade is wired on the singleton', () => {
   assert.equal(typeof hison.excel.getBlob, 'function')
   assert.equal(typeof hison.excel.save, 'function')
   assert.equal(typeof hison.excel.setSaveHandler, 'function')
+})
+
+// ─────────────────────────────────────────────────────────────
+// config regressions (2026-08-05)
+//   ① deepMerge used to recurse into DOM nodes and flatten them to `{}`, so a custom
+//      `elements.filterSpan` (grid header filter icon) never survived install.
+//   ② HGrid's `invertColor` prop defaulted to `false`, which was indistinguishable from
+//      "unspecified" — it always overwrote `defaultGridCssInfo.invertColor`, making a
+//      dark-by-default grid impossible (apps had to invert after mount = white flash).
+// ─────────────────────────────────────────────────────────────
+check('config: a custom DOM filterSpan survives install (deepMerge must not flatten nodes)', () => {
+  // Before the fix deepMerge recursed into the node and produced `{}`, so vanillagrid's
+  // `instanceof HTMLElement` check failed and it fell back to the built-in 'σ'.
+  const spans = [...document.querySelectorAll('[data-custom-filter="1"]')]
+  assert.ok(spans.length > 0, 'custom filter icon must be cloned into grid headers')
+  assert.ok(spans.every((s) => s.textContent.includes('FLT')))
+  assert.equal(document.body.innerHTML.includes('σ'), false, 'must not fall back to the default σ')
+})
+
+check('config: defaultGridCssInfo.invertColor reaches the mounted grid when the prop is omitted', () => {
+  // Before the fix the prop defaulted to `false`, which was indistinguishable from
+  // "omitted" and always overwrote the config default → dark-by-default was impossible.
+  const cssInfo = hison.component.getGrid('g1').getGridInfo().cssInfo
+  assert.equal(cssInfo.invertColor, true)
+  // the rendered box must carry the resolved state so there is no post-mount repaint
+  const box = document.querySelector('[data-vanillagrid]')
+  assert.equal(box.getAttribute('invert-color'), 'true')
 })
 
 // ─────────────────────────────────────────────────────────────

@@ -43,6 +43,24 @@ export default defineComponent({
     const vg: Vanillagrid = hisonCloser.grid
     const editorWrap = ref<HTMLElement | null>(null)
     const gridInstance = ref<HGridMethods | null>(null)
+
+    /**
+     * Resolves the effective "invert colors" state for this grid.
+     *
+     * ★Why this exists (2026-08-05): the three places that touch invertColor used to read
+     * `props.invertColor || componentStyle.invertColor`. Because the prop defaulted to
+     * `false`, an unspecified prop always resolved to `false` and **overwrote the
+     * config-level default** (`defaultGridCssInfo.invertColor`), so setting a dark default
+     * for every grid at boot was impossible — apps had to invert after mount, which paints
+     * the grid white for a frame first.
+     *
+     * Order: explicit prop → global componentStyle flag → vanillagrid config default.
+     */
+    const resolveInvertColor = (): boolean => {
+        if (props.invertColor !== undefined && props.invertColor !== null) return !!props.invertColor
+        if (hisonCloser.componentStyle.invertColor) return true
+        return !!(vg as any)?.attributes?.defaultGridCssInfo?.invertColor
+    }
     const id = props.id ? props.id : getUUID()
     const reloadId = `hgrid:${id}`
     const device = useDevice()
@@ -92,9 +110,9 @@ export default defineComponent({
         if (attrs.color) {
             attrs.color = getHexCodeFromColorText(attrs.color) ?? attrs.color
         }
-        if (props.invertColor || hisonCloser.componentStyle.invertColor) {
-            attrs['invert-color'] = 'true'
-        }
+        // ★Always emit the attribute (not only when true) so the mounted grid starts in the
+        //   resolved state — vanillagrid reads it at build time, so there is no white frame.
+        attrs['invert-color'] = resolveInvertColor() ? 'true' : 'false'
         gridColor.value = attrs.color
         return attrs
     })
@@ -149,7 +167,7 @@ export default defineComponent({
             const hexColor = getHexCodeFromColorText(colorToken) ?? colorToken
             if (hexColor && typeof grid.setGridColor === 'function') grid.setGridColor(hexColor)
             if (typeof grid.invertColor === 'function') {
-                grid.invertColor(!!(props.invertColor || hisonCloser.componentStyle.invertColor))
+                grid.invertColor(resolveInvertColor())
             }
         })
 
@@ -317,10 +335,10 @@ export default defineComponent({
             if (typeof grid.setGridColor === 'function') {
                 grid.setGridColor(hexColor)
             }
-            if (props.invertColor || hisonCloser.componentStyle.invertColor) {
-                if (typeof grid.invertColor === 'function') {
-                    grid.invertColor(true)
-                }
+            // setGridColor() recomputes the color set (back to light), so re-apply the
+            // resolved state — including `false`, which restores the light set explicitly.
+            if (typeof grid.invertColor === 'function') {
+                grid.invertColor(resolveInvertColor())
             }
         }
         emit('responsive-change', newDevice)

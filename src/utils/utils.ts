@@ -6,6 +6,27 @@ export const isNullOrUndefined = (value: any) => {
     return false
 }
 
+/**
+ * 재귀 병합에서 **통째로 대입해야 하는 값**인지 판정한다.
+ *
+ * 이런 값들은 "속성 주머니"가 아니라 정체성을 가진 인스턴스라, 재귀로 열거해 복사하면
+ * 프로토타입에 있던 동작이 사라진 껍데기 객체가 된다.
+ *
+ * ★실사고 (2026-08-05): `VanillagridConfig.elements.filterSpan`에 사용자가 커스텀
+ *   `<span>`(그리드 헤더 필터 아이콘)을 넣었는데, deepMerge가 DOM 노드에도 재귀해
+ *   `{}`로 만들어 버렸다. vanillagrid는 `instanceof HTMLElement`로 검사하므로 탈락해
+ *   기본 'σ'로 폴백했고, 앱에서는 우회할 방법이 아예 없었다(무엇을 넣든 이 함수를 지난다).
+ */
+const isAtomicValue = (value: any): boolean => {
+    // DOM 노드 (elements.filterSpan / sortAscSpan / sortDescSpan 등)
+    if (typeof value.nodeType === 'number' && typeof value.cloneNode === 'function') return true
+    // 열거 복사로는 복원되지 않는 내장 인스턴스들
+    if (value instanceof Date || value instanceof RegExp) return true
+    if (typeof Map !== 'undefined' && value instanceof Map) return true
+    if (typeof Set !== 'undefined' && value instanceof Set) return true
+    return false
+}
+
 /** 객체 간 재귀 병합 (deep merge) */
 export const deepMerge = (target: any, source: any) => {
     if (typeof target !== 'object' || typeof source !== 'object') return source
@@ -17,7 +38,9 @@ export const deepMerge = (target: any, source: any) => {
             Object.prototype.hasOwnProperty.call(source, key) &&
             typeof source[key] === 'object' &&
             !Array.isArray(source[key]) &&
-            source[key] !== null
+            source[key] !== null &&
+            // ★DOM 노드·Date·RegExp·Map·Set은 재귀하지 않고 그대로 넘긴다
+            !isAtomicValue(source[key])
         ) {
             result[key] = deepMerge(result[key] ?? {}, source[key])
         } else {
