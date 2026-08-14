@@ -4,6 +4,21 @@ hisonjs를 포함/확장하는 Vue 3 컴포넌트 25종. nonoshow 프론트엔�
 npm `hisonvue` **v1.1.45** (2026-08-05 config가 통하지 않던 결함 2건 수정 — ★미배포) / MIT / 의존: hisonjs ^1.2.12, vanillagrid2 ^1.0.9, vanillanote2 ^1.1.1, chart.js, vue-cal / peer: vue 3, @nuxt/kit. **의존성 추가 0건 유지**
 (v1.1.36 = 보완 프로젝트 7단계 산출 — 변경 내역: `../../../md/hisondev-hisonvue.md` 9절, 1.1.37 hotfix는 9-1절, 1.1.38~39 = date input·HImagebox 수정, 1.1.40 = HDropdown scoped slots `item`/`toggle-label` + HDropdownOption 커스텀 필드 허용, 1.1.41 = HInput 언마운트 blur null 가드, 1.1.42 = HLabel 텍스트 슬롯 반응성, 1.1.43 = HCalendar 셀 클릭 크래시)
 
+### v1.1.46 — 🔴 HInput의 maxNumber/maxLength가 "표시만" 제한하고 저장은 못 막던 버그 (2026-08-15) ★미배포
+
+> 발단: meetkat 상품 편집에서 **가격 칸에 99999999999999를 넣고 blur하면 화면엔 9,999,999,999가 보이는데
+> 자동저장은 원본 거대값을 서버로 보냈다.** maxNumber가 사실상 무력했다.
+
+- 🔴 **원인 = `onBlur`가 클램프 결과를 `v-model`로 되돌리지 않았다** (`components/HInput/HInput.vue`)
+  - `onInput`은 **raw**를 `update:modelValue`로 쏜다(number 타입은 onInput의 절단 분기 밖이다) → 부모엔 원본이 들어간다.
+  - `onBlur` → `updateValue(v, doComputeValue=true, …)`가 `computeValue`로 **maxNumber·minNumber·roundNumber·maxLength·maxByte**를 적용하지만, 그 결과를 **`update:modelValue`로 알리지 않았다.**
+  - 결과: **컴포넌트 내부/DOM은 클램프값, 부모 v-model은 원본**으로 갈라진다. `@change="save()"`(표준 사용법)로 저장하는 화면은 원본을 그대로 보낸다.
+- **수정 = `onBlur`에서 클램프만 시키고(`doCallChangeEmit=false`) `update:modelValue` → `change` 순으로 직접 발행**
+  - 🔴**순서가 핵심**이다. `updateValue(…, true)`는 change를 **자기 끝에서** 쏘므로 그 뒤에 `update:modelValue`를 붙이면 change 핸들러가 여전히 낡은 부모 값을 읽는다 — 버그가 그대로 재발한다.
+  - ★`updateValue` 안에서 쏘지 않은 이유: 프로그램적 `setValue` 경로도 같은 함수를 타는데 거기서 쏘면 부모 watch와 물려 순환이 된다.
+- ⚠️**호환**: 지금까지 "부모 값은 원본, 화면은 클램프"에 의존하던 코드가 있다면 값이 달라진다. 다만 그건 **문서화된 계약이 아니라 버그**였고(maxNumber의 정의가 "최대값"이다), 의존한다는 것 자체가 원본을 저장하고 있었다는 뜻이다.
+- 검증: `npm test` **60케이스**(회귀 2건 신규 — 클램프가 v-model에 반영되는지 / change가 v-model 갱신 **뒤에** 오는지). ★두 케이스 모두 **수정 전 코드에서 실패하는 것을 실측 확인**했다(`change handler saw stale parent value 99999`). + `npm run build` + `npm run type-check` 통과
+
 ### v1.1.45 — config로 넣은 값이 통하지 않던 결함 2건 (2026-08-05)
 
 > 발단: 앱(meetkat)이 **"그리드를 처음부터 다크로"**(마운트 후 반전하면 흰색이 한 프레임 번쩍인다)와

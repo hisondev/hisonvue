@@ -105,10 +105,20 @@ const partialConfig = {
 }
 
 const holderChildren = { inputs: [], mounted: false }
+/* 2026-08-15 회귀 프로브 — blur 시 clamp 결과가 v-model로 되돌아오는지, 그리고
+   change 핸들러가 "이미 갱신된" 부모 값을 보는지(emit 순서)를 같이 잡는다 */
+const syncProbe = { model: 0, modelEmits: [], changeSawModel: [], changeArg: [] }
 const root = createApp({
   render() {
     return h('div', [
       h(HInputClientOnly, { id: 'num1', inputType: 'number', maxNumber: 0, minNumber: -10, roundNumber: 0, modelValue: 5.7 }),
+      // 2026-08-15 회귀: blur 클램프가 v-model로 되돌아오는지 (아래 'clamped value' 케이스)
+      h(HInputClientOnly, {
+        id: 'clamp1', inputType: 'number', maxNumber: 100, minNumber: 0,
+        modelValue: syncProbe.model,
+        'onUpdate:modelValue': (v) => { syncProbe.model = v; syncProbe.modelEmits.push(v) },
+        onChange: (_o, n) => { syncProbe.changeSawModel.push(syncProbe.model); syncProbe.changeArg.push(n) },
+      }),
       h(HInputClientOnly, { id: 'sel1', inputType: 'select', editMode: 'readonly', options: [{ value: 'a', text: 'A' }, { value: 'b', text: 'B' }], modelValue: 'a' }),
       h(HGridClientOnly, { id: 'g1', columns: [{ id: 'c1', header: 'C1', dataType: 'text' }, { id: 'c2', header: 'C2', dataType: 'text' }] }),
       h(HNoteClientOnly, { id: 'n1' }),
@@ -764,6 +774,34 @@ check('config: defaultGridCssInfo.invertColor reaches the mounted grid when the 
   // the rendered box must carry the resolved state so there is no post-mount repaint
   const box = document.querySelector('[data-vanillagrid]')
   assert.equal(box.getAttribute('invert-color'), 'true')
+})
+
+// ─────────────────────────────────────────────────────────────
+// HInput: blur 클램프가 v-model에 반영되는가 (2026-08-15 회귀)
+//   구버전은 updateValue가 내부 값만 클램프하고 update:modelValue를 쏘지 않아
+//   **화면엔 100이 보이는데 바인딩된 값은 99999**로 갈라졌다. @change로 저장하는
+//   화면(자동저장)이 그 원본을 그대로 서버에 보내 maxNumber가 무력화됐다.
+// ─────────────────────────────────────────────────────────────
+{
+  const el = document.getElementById('clamp1')
+  el.value = '99999'
+  el.dispatchEvent(new window.Event('input', { bubbles: true }))
+  await flush(2)
+  el.dispatchEvent(new window.FocusEvent('blur', { bubbles: false }))
+  await flush(4)
+}
+
+check('HInput: blur clamps to maxNumber AND syncs it back through v-model', () => {
+  assert.equal(syncProbe.model, 100, `v-model must receive the clamped value, got ${syncProbe.model}`)
+  assert.ok(syncProbe.modelEmits.includes(100), 'update:modelValue must be emitted with the clamped value')
+})
+
+check('HInput: change fires AFTER v-model is updated (handlers read fresh parent state)', () => {
+  // @change="save()" 가 표준 사용법이라, change 시점의 부모 값이 이미 클램프돼 있어야 한다.
+  assert.ok(syncProbe.changeSawModel.length > 0, 'change must fire on blur')
+  assert.equal(syncProbe.changeSawModel.at(-1), 100,
+    `change handler saw stale parent value ${syncProbe.changeSawModel.at(-1)} (must be 100)`)
+  assert.equal(syncProbe.changeArg.at(-1), 100, 'change payload must carry the clamped value')
 })
 
 // ─────────────────────────────────────────────────────────────

@@ -871,9 +871,30 @@ export default defineComponent({
     }
     const onBlur = (e: Event) => {
       if (oldValue.value !== modelValue.value) {
-        updateValue(modelValue.value, true, true)
+        /**
+         * 🔴 v-model 동기화 (2026-08-15 수정) — 없으면 **보이는 값과 바인딩된 값이 갈라진다.**
+         *
+         * updateValue(…, doComputeValue=true)가 computeValue → getAdjustedNumber/getAdjustedText로
+         * maxNumber·minNumber·roundNumber·maxLength·maxByte를 적용하는데, 그 결과를 부모에게
+         * 알리지 않았다. onInput은 raw를 emit하므로(number 타입은 onInput의 절단 분기 밖이다)
+         * 부모의 v-model에는 **클램프 전 원본이 남는다**.
+         *
+         * 실사고(meetkat 상품 편집): maxNumber=9999999999인 가격 칸에 99999999999999를 넣고 blur하면
+         * 화면엔 9,999,999,999가 보이는데 @change로 도는 자동저장은 **원본 거대값을 서버로 보냈다**.
+         * 즉 maxNumber가 "표시만" 제한하고 실제 저장은 막지 못했다.
+         *
+         * 🔴**순서가 핵심이다**: `updateValue(…, doCallChangeEmit=true)`는 change를 **자기 끝에서** 쏘므로,
+         *   그 뒤에 update:modelValue를 붙이면 change 핸들러가 여전히 낡은 부모 값을 읽는다
+         *   (`@change="save()"`가 표준 사용법이라 이게 곧 버그 재발이다).
+         *   → updateValue는 **클램프만** 시키고(false), 여기서 **update:modelValue → change** 순으로 직접 쏜다.
+         * ★updateValue 안에서 쏘지 않는 이유: 프로그램적 setValue 경로(아래 1043~1094행)도 같은 함수를
+         *   타는데 거기서 update:modelValue를 쏘면 부모 watch와 물려 순환이 된다.
+         */
+        updateValue(modelValue.value, true, false)
         isModified.value = true
         notifyInputGroupStatus?.(id, modelValue.value)
+        emit('update:modelValue', modelValue.value)
+        emit('change', oldValue.value, modelValue.value, inputMethods.value)
       }
       editing.value = false
       emit('blur', e, inputMethods.value)
