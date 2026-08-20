@@ -152,13 +152,27 @@ export default defineComponent({
 
           const dk = readDataKey(inputId)
 
+          /**
+           * 🔴 동일값 에코 스킵 (2026-08-17) — 없으면 **그룹에 묶인 인풋의 blur change가 영영 안 난다.**
+           *
+           * 타이핑 1키마다: onInput → notifyInputGroupStatus → 그룹이 새 객체로 update:modelValue
+           * → 부모 v-model 갱신 → 이 deep watch → 여기로 되돌아와 **입력 중인 그 인풋에 setValue(같은 값)**.
+           * setValue의 첫 줄이 `oldValue = modelValue`라 blur의 변경 판정 기준(oldValue)이
+           * 키 입력마다 현재값으로 덮였다 → blur 시 oldValue === modelValue → change 미발화.
+           * 실사고(meetkat 프로필 설정): `@change` 자동 저장이 텍스트·날짜 인풋에서 통째로 죽어
+           * "저장된다면서 저장 안 됨"이 됐다(셀렉트만 살았다 — change 경로가 blur 비교와 무관).
+           *
+           * 값이 이미 같으면 손대지 않는다 — 에코가 no-op이 되고 불필요한 DOM 쓰기도 사라진다.
+           * (HInput 자신의 v-model 에코 가드("identical echo … nothing to do")와 같은 원칙을
+           *  그룹 경로에도 적용한 것이다. null↔'' 같은 타입 차이는 setValue로 흘려 정규화한다.)
+           */
           if (hasOwn(dataObject, dk)) {
             const v = dataObject[dk]
-            input.setValue?.(v)
+            if (input.getValue?.() !== v) input.setValue?.(v)
             patch[dk] = v
           } else if (hasOwn(dataObject, inputId)) {
             const v = dataObject[inputId]
-            input.setValue?.(v)
+            if (input.getValue?.() !== v) input.setValue?.(v)
             patch[dk] = v
           }
         })
